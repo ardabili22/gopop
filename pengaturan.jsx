@@ -368,8 +368,19 @@ function SupplierModal({ supplier, kategoriOptions, onClose, onSave }) {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
         }}>
           <button onClick={onClose} style={secondaryBtn()}>Batal</button>
-          <button onClick={() => isValid ? onSave(form) : window.muurahToast('Lengkapi nama, kategori, dan endpoint', 'error')}
-            style={{ ...primaryBtn(), opacity: isValid ? 1 : 0.5 }}>
+          <button onClick={() => {
+            if (!isValid) { window.muurahToast('Lengkapi nama, kategori, dan endpoint', 'error'); return; }
+            if (supplier) {
+              window.muurahConfirm({
+                title: 'Simpan perubahan konfigurasi "' + form.name + '"?',
+                body: 'Endpoint, API key, dan status koneksi yang baru akan langsung dipakai untuk transaksi ke supplier ini.',
+                confirmLabel: 'Simpan Perubahan',
+                onConfirm: () => onSave(form),
+              });
+            } else {
+              onSave(form);
+            }
+          }} style={{ ...primaryBtn(), opacity: isValid ? 1 : 0.5 }}>
             <Icons.check size={14} strokeWidth={2.5} /> {supplier ? 'Simpan Perubahan' : 'Tambah Supplier'}
           </button>
         </div>
@@ -650,7 +661,17 @@ function GatewayModal({ gateway, onClose, onSave, onDelete }) {
             <button onClick={() => {
               if (!isValid) { window.muurahToast('Lengkapi nama, API key, dan webhook URL', 'error'); return; }
               const initial = form.initial || form.name.trim()[0]?.toUpperCase() || '?';
-              onSave({ ...form, initial });
+              const finalData = { ...form, initial };
+              if (gateway) {
+                window.muurahConfirm({
+                  title: 'Simpan perubahan konfigurasi ' + gateway.name + '?',
+                  body: 'API key dan webhook URL yang baru akan langsung dipakai untuk transaksi pembayaran selanjutnya. Pastikan kredensial sudah benar.',
+                  confirmLabel: 'Simpan Perubahan',
+                  onConfirm: () => onSave(finalData),
+                });
+              } else {
+                onSave(finalData);
+              }
             }} style={primaryBtn()}>
               <Icons.check size={14} strokeWidth={2.5} /> {gateway ? 'Simpan Perubahan' : 'Tambah Gateway'}
             </button>
@@ -909,7 +930,7 @@ function SaldoLimitPanel() {
             <PsField label="Maksimal top-up"><PsPriceInput value={limitForm.maxTopUp} onChange={(v) => ul('maxTopUp', v)} /></PsField>
           </FormRow>
         </FormSection>
-        <FooterBar editor="Dimas Pratama" ago="3 jam lalu" />
+        <FooterBar editor="Dimas Pratama" ago="3 jam lalu" confirmCrucial="Limit Transaksi" />
       </PanelCard>
 
       {topupTarget && (
@@ -983,7 +1004,17 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
         {['manual', 'otomatis'].map(md => {
           const active = b.mode === md;
           return (
-            <button key={md} type="button" onClick={() => onUpdate({ mode: md, ...(md === 'manual' && b.t1 == null ? { t1: 500_000, t2: 1_000_000, t3: 3_000_000 } : {}) })} style={{
+            <button key={md} type="button" onClick={() => {
+              if (md === b.mode) return;
+              window.muurahConfirm({
+                title: 'Ubah mode threshold ' + b.nama + ' ke "' + md + '"?',
+                body: md === 'otomatis'
+                  ? 'Threshold T1/T2/T3 akan dihitung otomatis dari rata-rata transaksi harian, menggantikan nilai manual yang sudah diatur.'
+                  : 'Threshold akan kembali ke nilai manual yang diatur sebelumnya (atau default jika belum pernah diisi).',
+                confirmLabel: 'Ya, Ubah Mode',
+                onConfirm: () => onUpdate({ mode: md, ...(md === 'manual' && b.t1 == null ? { t1: 500_000, t2: 1_000_000, t3: 3_000_000 } : {}) }),
+              });
+            }} style={{
               flex: 1, padding: '5px 8px', borderRadius: 7, cursor: 'pointer',
               background: active ? '#4A2D8C' : '#F0EBFF',
               color: active ? '#FFFFFF' : '#574872',
@@ -1011,7 +1042,17 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
       )}
 
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, cursor: 'pointer', color: '#574872' }}>
-        <Toggle checked={b.autoThrottle} onChange={(v) => onUpdate({ autoThrottle: v })} />
+        <Toggle checked={b.autoThrottle} onChange={(v) => {
+          window.muurahConfirm({
+            title: (v ? 'Aktifkan' : 'Matikan') + ' auto-turunkan limit untuk ' + b.nama + '?',
+            body: v
+              ? 'Saat status biller masuk Danger atau Blackout, limit maksimum per transaksi untuk produk dari biller ini akan otomatis diturunkan ke nilai yang diatur.'
+              : 'Limit transaksi untuk biller ini akan kembali mengikuti Limit Transaksi global, walaupun status sedang Danger/Blackout.',
+            confirmLabel: v ? 'Aktifkan' : 'Matikan',
+            danger: !v,
+            onConfirm: () => onUpdate({ autoThrottle: v }),
+          });
+        }} />
         Auto-turunkan limit saat Danger/Blackout
       </label>
       {b.autoThrottle && (
@@ -1045,7 +1086,17 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
               background: isActive ? zm.bg : 'transparent',
             }}>
               <Toggle checked={b.maintenance[key]} disabled={isAman}
-                onChange={(v) => onUpdate({ maintenance: { ...b.maintenance, [key]: v } })} />
+                onChange={(v) => {
+                  window.muurahConfirm({
+                    title: (v ? 'Aktifkan' : 'Matikan') + ' pop-up saat status "' + zm.label + '" untuk ' + b.nama + '?',
+                    body: v
+                      ? 'Saat ' + b.nama + ' berstatus ' + zm.label + ', semua produk di daftar "Produk Terdampak" (' + b.produkAffected.length + ' produk) akan menampilkan pop-up ke end-user.'
+                      : 'Pop-up tidak akan muncul ke end-user lagi saat ' + b.nama + ' berstatus ' + zm.label + ', meskipun produk masih ada di daftar terdampak.',
+                    confirmLabel: v ? 'Aktifkan' : 'Matikan',
+                    danger: !v && key !== 'aman',
+                    onConfirm: () => onUpdate({ maintenance: { ...b.maintenance, [key]: v } }),
+                  });
+                }} />
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: zm.dot, flexShrink: 0 }} />
               <span style={{ color: isAman ? '#9085AE' : '#574872' }}>
                 Tampilkan pop-up saat <b>{zm.label}</b>
@@ -1441,7 +1492,12 @@ function FeePanel() {
         <button onClick={() => setAdding(true)} style={{ ...secondaryBtn(), marginRight: 8 }}>
           <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> Tambah Kategori Fee
         </button>
-        <button onClick={() => window.muurahToast('Semua konfigurasi fee berhasil disimpan', 'success')} style={primaryBtn()}>Simpan Semua</button>
+        <button onClick={() => window.muurahConfirm({
+          title: 'Simpan semua perubahan Fee & Biaya Admin?',
+          body: 'Perubahan fee per kategori ini akan langsung berlaku untuk transaksi baru di semua channel yang dikonfigurasi.',
+          confirmLabel: 'Simpan Semua',
+          onConfirm: () => window.muurahToast('Semua konfigurasi fee berhasil disimpan', 'success'),
+        })} style={primaryBtn()}>Simpan Semua</button>
       </>} padded={false}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
@@ -1932,8 +1988,19 @@ function Toggle({ checked, onChange, disabled }) {
   );
 }
 
-function FooterBar({ editor, ago, testBtn }) {
-  const handleSave = () => window.muurahToast('Pengaturan berhasil disimpan', 'success');
+function FooterBar({ editor, ago, testBtn, confirmCrucial }) {
+  const handleSave = () => {
+    if (confirmCrucial) {
+      window.muurahConfirm({
+        title: 'Simpan perubahan ' + confirmCrucial + '?',
+        body: 'Perubahan ini akan langsung berlaku untuk semua user dan transaksi baru.',
+        confirmLabel: 'Simpan Perubahan',
+        onConfirm: () => window.muurahToast('Pengaturan berhasil disimpan', 'success'),
+      });
+      return;
+    }
+    window.muurahToast('Pengaturan berhasil disimpan', 'success');
+  };
   const handleTest = () => window.muurahToast('Test notification dikirim ke admin@muurah.com', 'info');
   return (
     <div style={{
