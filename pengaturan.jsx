@@ -466,7 +466,16 @@ function PaymentGatewayPanel() {
     });
   }
   function toggleGateway(gw) {
-    setGateways(gs => gs.map(g => g.id === gw.id ? { ...g, on: !g.on } : g));
+    const turningOff = gw.on;
+    window.muurahConfirm({
+      title: (turningOff ? 'Matikan' : 'Aktifkan') + ' payment gateway "' + gw.name + '"?',
+      body: turningOff
+        ? 'Transaksi baru tidak akan bisa menggunakan ' + gw.name + ' lagi. Pastikan ada gateway lain yang aktif sebagai pengganti.'
+        : gw.name + ' akan kembali bisa dipakai untuk transaksi baru.',
+      confirmLabel: turningOff ? 'Matikan' : 'Aktifkan',
+      danger: turningOff,
+      onConfirm: () => setGateways(gs => gs.map(g => g.id === gw.id ? { ...g, on: !g.on } : g)),
+    });
   }
 
   return (
