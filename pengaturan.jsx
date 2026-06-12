@@ -743,11 +743,21 @@ const ZONA_META = {
 };
 const ZONA_ORDER = ['blackout', 'danger', 'warning', 'aman'];
 
+const MAINTENANCE_DEFAULT = { aman: false, warning: false, danger: true, blackout: true };
+
 const BILLER_SALDO_SEED = [
-  { id: 'sb-a', nama: 'Supplier A', saldo: 750_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 1_500_000, autoThrottle: false, throttleLimit: 500_000 },
-  { id: 'sb-b', nama: 'Supplier B', saldo: 32_400_000, mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 6_000_000, autoThrottle: false, throttleLimit: 500_000 },
-  { id: 'sb-c', nama: 'Supplier C', saldo: 4_500_000,  mode: 'otomatis', t1: null,    t2: null,      t3: null,      avgHarian: 1_800_000, autoThrottle: false, throttleLimit: 500_000 },
-  { id: 'sb-d', nama: 'Supplier D', saldo: 320_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 10_000_000, autoThrottle: true,  throttleLimit: 200_000 },
+  { id: 'sb-a', nama: 'Supplier A', saldo: 750_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 1_500_000, autoThrottle: false, throttleLimit: 500_000,
+    maintenance: { aman: false, warning: false, danger: true, blackout: true },
+    produkAffected: ['PDAM', 'Token Listrik PLN'] },
+  { id: 'sb-b', nama: 'Supplier B', saldo: 32_400_000, mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 6_000_000, autoThrottle: false, throttleLimit: 500_000,
+    maintenance: { aman: false, warning: false, danger: true, blackout: true },
+    produkAffected: ['Voucher Game'] },
+  { id: 'sb-c', nama: 'Supplier C', saldo: 4_500_000,  mode: 'otomatis', t1: null,    t2: null,      t3: null,      avgHarian: 1_800_000, autoThrottle: false, throttleLimit: 500_000,
+    maintenance: { aman: false, warning: true, danger: true, blackout: true },
+    produkAffected: ['BPJS Kesehatan', 'Internet & TV'] },
+  { id: 'sb-d', nama: 'Supplier D', saldo: 320_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 10_000_000, autoThrottle: true,  throttleLimit: 200_000,
+    maintenance: { aman: false, warning: true, danger: true, blackout: true },
+    produkAffected: ['Pulsa 100.000', 'Token Listrik PLN', 'Paket Data XL 12GB'] },
 ];
 
 const BILLER_TOPUP_HISTORY_SEED = [
@@ -814,6 +824,31 @@ function SaldoLimitPanel() {
             ⚠️ Badge "Traffic Tinggi" muncul kalau prediksi saldo habis &lt; 6 jam
           </span>
         </div>
+
+        {/* Active maintenance summary */}
+        {(() => {
+          const activeMaint = billers.flatMap(b => {
+            const { zona } = computeZona(b);
+            return (b.maintenance[zona] && b.produkAffected.length > 0)
+              ? [{ biller: b.nama, zona, produk: b.produkAffected }]
+              : [];
+          });
+          if (activeMaint.length === 0) return null;
+          return (
+            <div style={{ padding: '12px 24px', background: '#1A1228', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#FFD3C4', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                ⚠ Produk Sedang Maintenance (popup aktif di end-user app)
+              </span>
+              {activeMaint.map((a) => (
+                <div key={a.biller} style={{ fontSize: 12, color: '#FFFFFF' }}>
+                  <span style={{ fontWeight: 700, color: ZONA_META[a.zona].dot }}>{ZONA_META[a.zona].label}</span>
+                  {' · ' + a.biller + ' — '}
+                  <span style={{ color: '#E5DEF8' }}>{a.produk.join(', ')}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         <div style={{ padding: '16px 24px', display: 'grid', gridTemplateColumns: `repeat(${billers.length}, 1fr)`, gap: 14 }}>
           {billers.map((b) => (
@@ -989,6 +1024,37 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
         </div>
       )}
 
+      {/* Maintenance actions per status */}
+      <div style={{ borderTop: '1px solid #F0EBFF', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.6px', textTransform: 'uppercase' }}>Aksi Maintenance per Status</span>
+        {ZONA_ORDER.map((key) => {
+          const zm = ZONA_META[key];
+          const isAman = key === 'aman';
+          const isActive = zona === key && b.maintenance[key];
+          return (
+            <label key={key} style={{
+              display: 'flex', alignItems: 'center', gap: 8, fontSize: 11,
+              cursor: isAman ? 'default' : 'pointer',
+              padding: '4px 6px', borderRadius: 6,
+              background: isActive ? zm.bg : 'transparent',
+            }}>
+              <Toggle checked={b.maintenance[key]} disabled={isAman}
+                onChange={(v) => onUpdate({ maintenance: { ...b.maintenance, [key]: v } })} />
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: zm.dot, flexShrink: 0 }} />
+              <span style={{ color: isAman ? '#9085AE' : '#574872' }}>
+                Maintenance saat <b>{zm.label}</b>
+              </span>
+              {isActive && (
+                <span style={{ marginLeft: 'auto', fontSize: 9, fontWeight: 700, color: zm.fg, background: '#FFFFFF', padding: '2px 6px', borderRadius: 4 }}>AKTIF</span>
+              )}
+            </label>
+          );
+        })}
+      </div>
+
+      {/* Produk terdampak */}
+      <ProdukTerdampakField products={b.produkAffected} onChange={(list) => onUpdate({ produkAffected: list })} />
+
       <button onClick={onTopUp} style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
@@ -996,6 +1062,56 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
       }}>
         <Icons.wallet size={13} /> Top-up Saldo
       </button>
+    </div>
+  );
+}
+
+function ProdukTerdampakField({ products, onChange }) {
+  const [input, setInput] = usePsState('');
+  function add() {
+    const v = input.trim();
+    if (!v) return;
+    if (products.includes(v)) { window.muurahToast('Produk "' + v + '" sudah ada di daftar', 'error'); return; }
+    onChange([...products, v]);
+    setInput('');
+  }
+  function remove(p) {
+    onChange(products.filter(x => x !== p));
+  }
+  return (
+    <div style={{ borderTop: '1px solid #F0EBFF', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.6px', textTransform: 'uppercase' }}>Produk Terdampak (akan muncul popup Maintenance)</span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {products.map(p => (
+          <span key={p} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: '#F0EBFF', color: '#4A2D8C', fontSize: 11, fontWeight: 600,
+            padding: '4px 6px 4px 10px', borderRadius: 8,
+          }}>
+            {p}
+            <button onClick={() => remove(p)} style={{
+              width: 16, height: 16, border: 0, borderRadius: '50%',
+              background: 'rgba(74,45,140,0.12)', color: '#4A2D8C', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+            }}><Icons.x size={10} /></button>
+          </span>
+        ))}
+        {products.length === 0 && <span style={{ fontSize: 11, color: '#9085AE' }}>Belum ada produk dipilih</span>}
+      </div>
+      <div style={{ display: 'flex', gap: 6 }}>
+        <input value={input} onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
+          placeholder="cth. PDAM, Token Listrik, Pulsa 100.000"
+          style={{
+            flex: 1, background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 7,
+            height: 28, padding: '0 8px', fontSize: 11, color: '#1A1228', outline: 'none', fontFamily: 'inherit',
+          }} />
+        <button onClick={add} style={{
+          width: 28, height: 28, border: 0, borderRadius: 7,
+          background: '#4A2D8C', color: '#FFFFFF', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
+        }}>+</button>
+      </div>
     </div>
   );
 }
@@ -1655,15 +1771,15 @@ function BigToggleRow({ label, desc, checked, onChange, danger }) {
   );
 }
 
-function Toggle({ checked, onChange }) {
+function Toggle({ checked, onChange, disabled }) {
   return (
-    <span onClick={(e) => { e.stopPropagation(); onChange(!checked); }} role="switch" aria-checked={checked} tabIndex={0}
+    <span onClick={(e) => { e.stopPropagation(); if (!disabled) onChange(!checked); }} role="switch" aria-checked={checked} tabIndex={0}
       style={{
         position: 'relative', display: 'inline-block',
         width: 36, height: 20, borderRadius: 20,
         background: checked ? '#4A2D8C' : '#C5B8EF',
-        cursor: 'pointer', transition: 'background 130ms ease',
-        flexShrink: 0,
+        cursor: disabled ? 'not-allowed' : 'pointer', transition: 'background 130ms ease',
+        flexShrink: 0, opacity: disabled ? 0.5 : 1,
       }}>
       <span style={{
         position: 'absolute', top: 2, left: checked ? 18 : 2,
