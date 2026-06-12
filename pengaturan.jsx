@@ -748,16 +748,16 @@ const MAINTENANCE_DEFAULT = { aman: false, warning: false, danger: true, blackou
 const BILLER_SALDO_SEED = [
   { id: 'sb-a', nama: 'Supplier A', saldo: 750_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 1_500_000, autoThrottle: false, throttleLimit: 500_000,
     maintenance: { aman: false, warning: false, danger: true, blackout: true },
-    produkAffected: ['PDAM', 'Token Listrik PLN'] },
+    produkAffected: ['PDAM Surya Sembada Surabaya', 'Token Listrik PLN 100.000', 'Pulsa Telkomsel 10.000'] },
   { id: 'sb-b', nama: 'Supplier B', saldo: 32_400_000, mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 6_000_000, autoThrottle: false, throttleLimit: 500_000,
     maintenance: { aman: false, warning: false, danger: true, blackout: true },
-    produkAffected: ['Voucher Game'] },
+    produkAffected: ['Mobile Legends 86 Diamond', 'Free Fire 100 Diamond'] },
   { id: 'sb-c', nama: 'Supplier C', saldo: 4_500_000,  mode: 'otomatis', t1: null,    t2: null,      t3: null,      avgHarian: 1_800_000, autoThrottle: false, throttleLimit: 500_000,
     maintenance: { aman: false, warning: true, danger: true, blackout: true },
-    produkAffected: ['BPJS Kesehatan', 'Internet & TV'] },
+    produkAffected: ['BPJS Kesehatan', 'Internet & TV Indihome'] },
   { id: 'sb-d', nama: 'Supplier D', saldo: 320_000,    mode: 'manual',   t1: 500_000, t2: 1_000_000, t3: 3_000_000, avgHarian: 10_000_000, autoThrottle: true,  throttleLimit: 200_000,
     maintenance: { aman: false, warning: true, danger: true, blackout: true },
-    produkAffected: ['Pulsa 100.000', 'Token Listrik PLN', 'Paket Data XL 12GB'] },
+    produkAffected: ['Pulsa Telkomsel 100.000', 'Token Listrik PLN 100.000', 'XL Hot Rod 12GB 30 Hari'] },
 ];
 
 const BILLER_TOPUP_HISTORY_SEED = [
@@ -1083,8 +1083,45 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
   );
 }
 
+const PRODUK_CATALOG_KATEGORI = ['Semua', 'Pulsa', 'Paket Data', 'Token PLN', 'Voucher Game', 'E-Wallet', 'BPJS', 'PDAM', 'Internet & TV', 'Kartu Kredit'];
+const PRODUK_CATALOG = [
+  { nama: 'Pulsa Telkomsel 10.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Telkomsel 25.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Telkomsel 50.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Telkomsel 100.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Indosat 25.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Indosat 50.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa XL 25.000', kategori: 'Pulsa' },
+  { nama: 'Pulsa Tri 25.000', kategori: 'Pulsa' },
+  { nama: 'XL Hot Rod 12GB 30 Hari', kategori: 'Paket Data' },
+  { nama: 'Telkomsel OMG 17GB', kategori: 'Paket Data' },
+  { nama: 'Indosat Freedom 15GB', kategori: 'Paket Data' },
+  { nama: 'Token Listrik PLN 20.000', kategori: 'Token PLN' },
+  { nama: 'Token Listrik PLN 50.000', kategori: 'Token PLN' },
+  { nama: 'Token Listrik PLN 100.000', kategori: 'Token PLN' },
+  { nama: 'Token Listrik PLN 200.000', kategori: 'Token PLN' },
+  { nama: 'Mobile Legends 86 Diamond', kategori: 'Voucher Game' },
+  { nama: 'Mobile Legends 172 Diamond', kategori: 'Voucher Game' },
+  { nama: 'Free Fire 100 Diamond', kategori: 'Voucher Game' },
+  { nama: 'PUBG Mobile 60 UC', kategori: 'Voucher Game' },
+  { nama: 'GoPay 50.000', kategori: 'E-Wallet' },
+  { nama: 'GoPay 100.000', kategori: 'E-Wallet' },
+  { nama: 'OVO 50.000', kategori: 'E-Wallet' },
+  { nama: 'Dana 100.000', kategori: 'E-Wallet' },
+  { nama: 'ShopeePay 50.000', kategori: 'E-Wallet' },
+  { nama: 'BPJS Kesehatan', kategori: 'BPJS' },
+  { nama: 'BPJS Ketenagakerjaan', kategori: 'BPJS' },
+  { nama: 'PDAM Surya Sembada Surabaya', kategori: 'PDAM' },
+  { nama: 'PDAM Tirta Asasta Depok', kategori: 'PDAM' },
+  { nama: 'Internet & TV Indihome', kategori: 'Internet & TV' },
+  { nama: 'Internet & TV MNC Play', kategori: 'Internet & TV' },
+  { nama: 'Kartu Kredit BCA', kategori: 'Kartu Kredit' },
+  { nama: 'Kartu Kredit Mandiri', kategori: 'Kartu Kredit' },
+];
+
 function ProdukTerdampakModal({ biller, onClose, onChange }) {
-  const [input, setInput] = usePsState('');
+  const [katFilter, setKatFilter] = usePsState('Semua');
+  const [query, setQuery] = usePsState('');
   const products = biller.produkAffected;
 
   React.useEffect(() => {
@@ -1093,34 +1130,38 @@ function ProdukTerdampakModal({ biller, onClose, onChange }) {
     return () => window.removeEventListener('keydown', h);
   }, [onClose]);
 
-  function add() {
-    const v = input.trim();
-    if (!v) return;
-    if (products.includes(v)) { window.muurahToast('Produk "' + v + '" sudah ada di daftar', 'error'); return; }
-    onChange([...products, v]);
-    setInput('');
+  function toggle(nama) {
+    if (products.includes(nama)) {
+      onChange(products.filter(x => x !== nama));
+    } else {
+      onChange([...products, nama]);
+    }
   }
-  function remove(p) {
-    onChange(products.filter(x => x !== p));
-  }
+
+  const filtered = PRODUK_CATALOG.filter(p => {
+    if (katFilter !== 'Semua' && p.kategori !== katFilter) return false;
+    if (query && !p.nama.toLowerCase().includes(query.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(26,18,40,0.45)', animation: 'muurah-fade 180ms ease' }} />
       <div style={{
-        position: 'relative', width: 460, background: '#FFFFFF', borderRadius: 16,
+        position: 'relative', width: 600, maxHeight: 'calc(100vh - 80px)',
+        background: '#FFFFFF', borderRadius: 16,
         boxShadow: '0 24px 60px rgba(26,18,40,0.25)',
         display: 'flex', flexDirection: 'column',
         animation: 'muurah-pop 220ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}>
         <div style={{
           padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0,
         }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 600, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{biller.nama}</div>
             <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', marginTop: 4, letterSpacing: '-0.01em' }}>Produk Terdampak Pop-up</div>
-            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>Produk-produk ini akan menampilkan pop-up ke user saat status biller masuk kondisi yang di-toggle aktif</div>
+            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>Pilih produk yang akan menampilkan pop-up ke user saat status biller masuk kondisi yang di-toggle aktif</div>
           </div>
           <button onClick={onClose} aria-label="Tutup" style={{
             width: 32, height: 32, border: '1px solid #E0D9F5', borderRadius: 10,
@@ -1129,39 +1170,84 @@ function ProdukTerdampakModal({ biller, onClose, onChange }) {
           }}><Icons.x size={16} /></button>
         </div>
 
-        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {products.map(p => (
-              <span key={p} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: '#F0EBFF', color: '#4A2D8C', fontSize: 12, fontWeight: 600,
-                padding: '6px 8px 6px 12px', borderRadius: 9,
-              }}>
-                {p}
-                <button onClick={() => remove(p)} style={{
-                  width: 18, height: 18, border: 0, borderRadius: '50%',
-                  background: 'rgba(74,45,140,0.12)', color: '#4A2D8C', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
-                }}><Icons.x size={11} /></button>
-              </span>
-            ))}
-            {products.length === 0 && <span style={{ fontSize: 12, color: '#9085AE' }}>Belum ada produk dipilih.</span>}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input value={input} onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
-              placeholder="cth. PDAM, Token Listrik, Pulsa 100.000"
+        {/* Filter row */}
+        <div style={{ padding: '14px 24px', borderBottom: '1px solid #F0EBFF', display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
+          <div style={{ position: 'relative' }}>
+            <Icons.search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9085AE' }} />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cari produk…"
               style={{
-                flex: 1, background: '#F0EBFF', border: '1px solid transparent', borderRadius: 10,
-                height: 38, padding: '0 12px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit',
+                background: '#F0EBFF', border: '1px solid transparent', borderRadius: 10,
+                height: 38, padding: '0 12px 0 36px', fontSize: 13, color: '#1A1228',
+                outline: 'none', fontFamily: 'inherit', width: '100%',
               }} />
-            <button onClick={add} style={primaryBtn()}>
-              <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> Tambah
-            </button>
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {PRODUK_CATALOG_KATEGORI.map(k => {
+              const active = katFilter === k;
+              return (
+                <button key={k} type="button" onClick={() => setKatFilter(k)} style={{
+                  padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
+                  background: active ? '#4A2D8C' : '#F0EBFF',
+                  color: active ? '#FFFFFF' : '#574872',
+                  border: 0, fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                }}>{k}</button>
+              );
+            })}
           </div>
         </div>
 
-        <div style={{ padding: '16px 24px', borderTop: '1px solid #E0D9F5', display: 'flex', justifyContent: 'flex-end' }}>
+        {/* Table */}
+        <div style={{ overflowY: 'auto', flex: 1 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ position: 'sticky', top: 0, background: '#FFFFFF', zIndex: 1 }}>
+                <th style={{ ...psThStyle, width: 44, paddingLeft: 24 }}></th>
+                <th style={psThStyle}>Nama Produk</th>
+                <th style={{ ...psThStyle, textAlign: 'right', paddingRight: 24 }}>Kategori</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p) => {
+                const checked = products.includes(p.nama);
+                return (
+                  <tr key={p.nama} onClick={() => toggle(p.nama)} style={{
+                    borderTop: '1px solid #F0EBFF', height: 46, cursor: 'pointer',
+                    background: checked ? '#F0EBFF' : 'transparent',
+                  }}
+                    onMouseEnter={(e) => { if (!checked) e.currentTarget.style.background = '#FAF8FF'; }}
+                    onMouseLeave={(e) => { if (!checked) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <td style={{ ...psTdStyle, paddingLeft: 24 }}>
+                      <span style={{
+                        width: 18, height: 18, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: checked ? 'none' : '1.5px solid #C5B8EF',
+                        background: checked ? '#4A2D8C' : '#FFFFFF',
+                        color: '#FFFFFF',
+                      }}>
+                        {checked && <Icons.check size={12} strokeWidth={3} />}
+                      </span>
+                    </td>
+                    <td style={{ ...psTdStyle, color: '#1A1228', fontWeight: checked ? 600 : 500 }}>{p.nama}</td>
+                    <td style={{ ...psTdStyle, textAlign: 'right', paddingRight: 24 }}>
+                      <span style={{ fontSize: 11, color: '#574872', background: '#F0EBFF', padding: '3px 9px', borderRadius: 6, fontWeight: 600 }}>{p.kategori}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={3} style={{ padding: '32px 24px', textAlign: 'center', fontSize: 13, color: '#9085AE' }}>Produk tidak ditemukan.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{
+          padding: '16px 24px', borderTop: '1px solid #E0D9F5', flexShrink: 0,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span style={{ fontSize: 12, color: '#9085AE' }}>
+            <b style={{ color: '#4A2D8C', fontFamily: 'JetBrains Mono, monospace' }}>{products.length}</b> produk dipilih
+          </span>
           <button onClick={onClose} style={primaryBtn()}>
             <Icons.check size={14} strokeWidth={2.5} /> Selesai
           </button>
