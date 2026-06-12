@@ -787,6 +787,7 @@ function SaldoLimitPanel() {
   const [billers, setBillers] = usePsState(BILLER_SALDO_SEED);
   const [history, setHistory] = usePsState(BILLER_TOPUP_HISTORY_SEED);
   const [topupTarget, setTopupTarget] = usePsState(null);
+  const [produkModalTarget, setProdukModalTarget] = usePsState(null);
   const [limitForm, setLimitForm] = usePsState({
     minTxn: 5_000, maxTxn: 2_000_000,
     maxHarianTxn: 20, maxHarianNominal: 5_000_000,
@@ -835,15 +836,15 @@ function SaldoLimitPanel() {
           });
           if (activeMaint.length === 0) return null;
           return (
-            <div style={{ padding: '12px 24px', background: '#1A1228', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#FFD3C4', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
-                ⚠ Produk Sedang Maintenance (popup aktif di end-user app)
+            <div style={{ padding: '12px 24px', background: '#FFFBEB', borderBottom: '1px solid #FCD34D', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#D97706', letterSpacing: '0.6px', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Icons.alert size={12} strokeWidth={2.6} /> Produk Sedang Menampilkan Pop-up di End-User App
               </span>
               {activeMaint.map((a) => (
-                <div key={a.biller} style={{ fontSize: 12, color: '#FFFFFF' }}>
-                  <span style={{ fontWeight: 700, color: ZONA_META[a.zona].dot }}>{ZONA_META[a.zona].label}</span>
+                <div key={a.biller} style={{ fontSize: 12, color: '#574872' }}>
+                  <span style={{ fontWeight: 700, color: ZONA_META[a.zona].fg }}>{ZONA_META[a.zona].label}</span>
                   {' · ' + a.biller + ' — '}
-                  <span style={{ color: '#E5DEF8' }}>{a.produk.join(', ')}</span>
+                  <span style={{ color: '#1A1228' }}>{a.produk.join(', ')}</span>
                 </div>
               ))}
             </div>
@@ -854,7 +855,8 @@ function SaldoLimitPanel() {
           {billers.map((b) => (
             <BillerSaldoCard key={b.id} biller={b}
               onUpdate={(patch) => updateBiller(b.id, patch)}
-              onTopUp={() => setTopupTarget(b)} />
+              onTopUp={() => setTopupTarget(b)}
+              onOpenProdukModal={() => setProdukModalTarget(b.id)} />
           ))}
         </div>
 
@@ -913,11 +915,15 @@ function SaldoLimitPanel() {
       {topupTarget && (
         <BillerTopUpModal biller={topupTarget} onClose={() => setTopupTarget(null)} onSave={saveTopup} />
       )}
+      {produkModalTarget && (
+        <ProdukTerdampakModal biller={billers.find(x => x.id === produkModalTarget)} onClose={() => setProdukModalTarget(null)}
+          onChange={(list) => updateBiller(produkModalTarget, { produkAffected: list })} />
+      )}
     </div>
   );
 }
 
-function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
+function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
   const { zona, t1, t2, t3, hoursLeft, highBurn } = computeZona(b);
   const m = ZONA_META[zona];
 
@@ -1024,9 +1030,9 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
         </div>
       )}
 
-      {/* Maintenance actions per status */}
+      {/* Pop-up actions per status */}
       <div style={{ borderTop: '1px solid #F0EBFF', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.6px', textTransform: 'uppercase' }}>Aksi Maintenance per Status</span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.6px', textTransform: 'uppercase' }}>Aksi Pop-up per Status</span>
         {ZONA_ORDER.map((key) => {
           const zm = ZONA_META[key];
           const isAman = key === 'aman';
@@ -1042,7 +1048,7 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
                 onChange={(v) => onUpdate({ maintenance: { ...b.maintenance, [key]: v } })} />
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: zm.dot, flexShrink: 0 }} />
               <span style={{ color: isAman ? '#9085AE' : '#574872' }}>
-                Maintenance saat <b>{zm.label}</b>
+                Tampilkan pop-up saat <b>{zm.label}</b>
               </span>
               {isActive && (
                 <span style={{ marginLeft: 'auto', fontSize: 9, fontWeight: 700, color: zm.fg, background: '#FFFFFF', padding: '2px 6px', borderRadius: 4 }}>AKTIF</span>
@@ -1053,7 +1059,18 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
       </div>
 
       {/* Produk terdampak */}
-      <ProdukTerdampakField products={b.produkAffected} onChange={(list) => onUpdate({ produkAffected: list })} />
+      <button onClick={() => onOpenProdukModal()} style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+        width: '100%', background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 8,
+        height: 34, padding: '0 10px', fontSize: 12, fontWeight: 600, color: '#574872',
+        fontFamily: 'inherit', cursor: 'pointer',
+      }}>
+        <span>Kelola Produk Terdampak Pop-up</span>
+        <span style={{
+          background: '#F0EBFF', color: '#4A2D8C', fontSize: 11, fontWeight: 700,
+          padding: '2px 8px', borderRadius: 10, fontFamily: 'JetBrains Mono, monospace',
+        }}>{b.produkAffected.length}</span>
+      </button>
 
       <button onClick={onTopUp} style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -1066,8 +1083,16 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp }) {
   );
 }
 
-function ProdukTerdampakField({ products, onChange }) {
+function ProdukTerdampakModal({ biller, onClose, onChange }) {
   const [input, setInput] = usePsState('');
+  const products = biller.produkAffected;
+
+  React.useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
   function add() {
     const v = input.trim();
     if (!v) return;
@@ -1078,39 +1103,69 @@ function ProdukTerdampakField({ products, onChange }) {
   function remove(p) {
     onChange(products.filter(x => x !== p));
   }
+
   return (
-    <div style={{ borderTop: '1px solid #F0EBFF', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.6px', textTransform: 'uppercase' }}>Produk Terdampak (akan muncul popup Maintenance)</span>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-        {products.map(p => (
-          <span key={p} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: '#F0EBFF', color: '#4A2D8C', fontSize: 11, fontWeight: 600,
-            padding: '4px 6px 4px 10px', borderRadius: 8,
-          }}>
-            {p}
-            <button onClick={() => remove(p)} style={{
-              width: 16, height: 16, border: 0, borderRadius: '50%',
-              background: 'rgba(74,45,140,0.12)', color: '#4A2D8C', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
-            }}><Icons.x size={10} /></button>
-          </span>
-        ))}
-        {products.length === 0 && <span style={{ fontSize: 11, color: '#9085AE' }}>Belum ada produk dipilih</span>}
-      </div>
-      <div style={{ display: 'flex', gap: 6 }}>
-        <input value={input} onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
-          placeholder="cth. PDAM, Token Listrik, Pulsa 100.000"
-          style={{
-            flex: 1, background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 7,
-            height: 28, padding: '0 8px', fontSize: 11, color: '#1A1228', outline: 'none', fontFamily: 'inherit',
-          }} />
-        <button onClick={add} style={{
-          width: 28, height: 28, border: 0, borderRadius: 7,
-          background: '#4A2D8C', color: '#FFFFFF', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
-        }}>+</button>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(26,18,40,0.45)', animation: 'muurah-fade 180ms ease' }} />
+      <div style={{
+        position: 'relative', width: 460, background: '#FFFFFF', borderRadius: 16,
+        boxShadow: '0 24px 60px rgba(26,18,40,0.25)',
+        display: 'flex', flexDirection: 'column',
+        animation: 'muurah-pop 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+      }}>
+        <div style={{
+          padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{biller.nama}</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', marginTop: 4, letterSpacing: '-0.01em' }}>Produk Terdampak Pop-up</div>
+            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>Produk-produk ini akan menampilkan pop-up ke user saat status biller masuk kondisi yang di-toggle aktif</div>
+          </div>
+          <button onClick={onClose} aria-label="Tutup" style={{
+            width: 32, height: 32, border: '1px solid #E0D9F5', borderRadius: 10,
+            background: '#FFFFFF', color: '#574872', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}><Icons.x size={16} /></button>
+        </div>
+
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {products.map(p => (
+              <span key={p} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: '#F0EBFF', color: '#4A2D8C', fontSize: 12, fontWeight: 600,
+                padding: '6px 8px 6px 12px', borderRadius: 9,
+              }}>
+                {p}
+                <button onClick={() => remove(p)} style={{
+                  width: 18, height: 18, border: 0, borderRadius: '50%',
+                  background: 'rgba(74,45,140,0.12)', color: '#4A2D8C', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+                }}><Icons.x size={11} /></button>
+              </span>
+            ))}
+            {products.length === 0 && <span style={{ fontSize: 12, color: '#9085AE' }}>Belum ada produk dipilih.</span>}
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input value={input} onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
+              placeholder="cth. PDAM, Token Listrik, Pulsa 100.000"
+              style={{
+                flex: 1, background: '#F0EBFF', border: '1px solid transparent', borderRadius: 10,
+                height: 38, padding: '0 12px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit',
+              }} />
+            <button onClick={add} style={primaryBtn()}>
+              <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> Tambah
+            </button>
+          </div>
+        </div>
+
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #E0D9F5', display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={onClose} style={primaryBtn()}>
+            <Icons.check size={14} strokeWidth={2.5} /> Selesai
+          </button>
+        </div>
       </div>
     </div>
   );
