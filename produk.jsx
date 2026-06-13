@@ -1309,6 +1309,7 @@ function PromoHargaPanel() {
   const [promos, setPromos] = useProdState(PROMO_HARGA_SEED);
   const [editing, setEditing] = useProdState(null);
   const [adding, setAdding] = useProdState(false);
+  const [bulkOpen, setBulkOpen] = useProdState(false);
 
   function targetLabel(p) {
     if (p.scope === 'kategori') {
@@ -1327,14 +1328,22 @@ function PromoHargaPanel() {
     return p.selesai ? fmt(p.mulai) + ' – ' + fmt(p.selesai) : 'Mulai ' + fmt(p.mulai);
   }
 
-  function savePromo(data) {
+  function savePromo(dataOrList) {
     if (editing) {
+      const data = dataOrList;
       setPromos(ps => ps.map(p => p.id === editing.id ? { ...p, ...data } : p));
       window.muurahToast('Promo "' + targetLabel(data) + '" berhasil diperbarui', 'success');
     } else {
-      const newId = 'PH-' + String(Math.max(0, ...promos.map(p => parseInt(p.id.split('-')[1]))) + 1).padStart(3, '0');
-      setPromos(ps => [...ps, { ...data, id: newId }]);
-      window.muurahToast('Promo harga berhasil ditambahkan', 'success');
+      const list = Array.isArray(dataOrList) ? dataOrList : [dataOrList];
+      let nextNum = Math.max(0, ...promos.map(p => parseInt(p.id.split('-')[1]))) + 1;
+      const newEntries = list.map(data => ({ ...data, id: 'PH-' + String(nextNum++).padStart(3, '0') }));
+      setPromos(ps => [...ps, ...newEntries]);
+      window.muurahToast(
+        newEntries.length > 1
+          ? newEntries.length + ' promo harga berhasil ditambahkan'
+          : 'Promo harga berhasil ditambahkan',
+        'success'
+      );
     }
     setEditing(null);
     setAdding(false);
@@ -1363,18 +1372,39 @@ function PromoHargaPanel() {
     });
   }
 
+  function saveBulk({ targets, scope, tipe, nilai, mulai, selesai, status }) {
+    let lastNum = Math.max(0, ...promos.map(p => parseInt(p.id.split('-')[1])));
+    const newPromos = targets.map(target => {
+      lastNum += 1;
+      return { id: 'PH-' + String(lastNum).padStart(3, '0'), scope, target, tipe, nilai, mulai, selesai: selesai || null, status };
+    });
+    setPromos(ps => [...ps, ...newPromos]);
+    setBulkOpen(false);
+    window.muurahToast(newPromos.length + ' promo harga berhasil dibuat sekaligus', 'success');
+  }
+
   return (
     <PanelCard2
       title="Promo Harga Produk"
       subtitle="Diskon langsung di harga jual — berbeda dari Promo & Voucher (kode kupon). Produk yang sedang kena promo harga ini hanya berlaku untuk harga normal & tidak bisa dipakai bersamaan dengan kode voucher."
-      action={<button onClick={() => setAdding(true)} style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        background: '#4A2D8C', color: '#FFFFFF', border: 0,
-        height: 38, padding: '0 16px', borderRadius: 10,
-        fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
-      }}>
-        <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Tambah Promo Harga
-      </button>}
+      action={<div style={{ display: 'flex', gap: 8 }}>
+        <button onClick={() => setBulkOpen(true)} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
+          height: 38, padding: '0 16px', borderRadius: 10,
+          fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
+        }}>
+          <Icons.percent size={14} /> Atur Diskon Massal
+        </button>
+        <button onClick={() => setAdding(true)} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: '#4A2D8C', color: '#FFFFFF', border: 0,
+          height: 38, padding: '0 16px', borderRadius: 10,
+          fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
+        }}>
+          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Tambah Promo Harga
+        </button>
+      </div>}
       padded={false}
     >
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -1428,6 +1458,9 @@ function PromoHargaPanel() {
       {(editing || adding) && (
         <PromoHargaModal promo={editing} onClose={() => { setEditing(null); setAdding(false); }} onSave={savePromo} />
       )}
+      {bulkOpen && (
+        <BulkPromoModal onClose={() => setBulkOpen(false)} onSave={saveBulk} />
+      )}
     </PanelCard2>
   );
 }
@@ -1452,7 +1485,7 @@ function PanelCard2({ title, subtitle, action, children, padded = true }) {
 }
 
 function PromoHargaModal({ promo, onClose, onSave }) {
-  const [form, setForm] = useProdState(promo ? { ...promo } : { scope: 'kategori', target: TABS[1].id, tipe: 'persen', nilai: 5, mulai: '2026-06-13', selesai: '', status: 'aktif' });
+  const [form, setForm] = useProdState(promo ? { ...promo } : { scope: 'kategori', target: null, targets: [], tipe: 'persen', nilai: 5, mulai: '2026-06-13', selesai: '', status: 'aktif' });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   React.useEffect(() => {
@@ -1462,8 +1495,13 @@ function PromoHargaModal({ promo, onClose, onSave }) {
   }, [onClose]);
 
   const kategoriOptions = TABS.filter(t => t.id !== 'semua');
-  const isValid = form.target && form.nilai > 0 && form.mulai &&
-    (form.tipe !== 'persen' || form.nilai <= 100);
+  const isValid = promo
+    ? (form.target && form.nilai > 0 && form.mulai && (form.tipe !== 'persen' || form.nilai <= 100))
+    : (form.targets.length > 0 && form.nilai > 0 && form.mulai && (form.tipe !== 'persen' || form.nilai <= 100));
+
+  function toggleTarget(id) {
+    setForm(f => ({ ...f, targets: f.targets.includes(id) ? f.targets.filter(x => x !== id) : [...f.targets, id] }));
+  }
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1498,7 +1536,7 @@ function PromoHargaModal({ promo, onClose, onSave }) {
               {[{ id: 'kategori', label: 'Kategori' }, { id: 'produk', label: 'Produk Individual' }].map(s => {
                 const active = form.scope === s.id;
                 return (
-                  <button key={s.id} type="button" onClick={() => setForm(f => ({ ...f, scope: s.id, target: s.id === 'kategori' ? kategoriOptions[0].id : PRODUK_DATA[0].sku }))} style={{
+                  <button key={s.id} type="button" onClick={() => setForm(f => ({ ...f, scope: s.id, target: null, targets: [] }))} style={{
                     flex: 1, padding: '8px 10px', borderRadius: 9, cursor: 'pointer',
                     background: active ? '#EDE8FF' : '#FFFFFF',
                     border: active ? '1.5px solid #4A2D8C' : '1px solid #E0D9F5',
@@ -1510,15 +1548,49 @@ function PromoHargaModal({ promo, onClose, onSave }) {
             </div>
           </PhField>
 
-          <PhField label={form.scope === 'kategori' ? 'Pilih Kategori' : 'Pilih Produk'}>
-            {form.scope === 'kategori' ? (
-              <ProdSelect value={form.target} onChange={(v) => u('target', v)}
-                options={kategoriOptions.map(t => ({ value: t.id, label: t.label }))} />
-            ) : (
-              <ProdSelect value={form.target} onChange={(v) => u('target', v)}
-                options={PRODUK_DATA.map(p => ({ value: p.sku, label: p.nama + ' — Rp ' + p.jual.toLocaleString('id-ID') }))} />
-            )}
-          </PhField>
+          {promo ? (
+            <PhField label={form.scope === 'kategori' ? 'Kategori' : 'Produk'}>
+              {form.scope === 'kategori' ? (
+                <ProdSelect value={form.target} onChange={(v) => u('target', v)}
+                  options={kategoriOptions.map(t => ({ value: t.id, label: t.label }))} />
+              ) : (
+                <ProdSelect value={form.target} onChange={(v) => u('target', v)}
+                  options={PRODUK_DATA.map(p => ({ value: p.sku, label: p.nama + ' — Rp ' + p.jual.toLocaleString('id-ID') }))} />
+              )}
+            </PhField>
+          ) : (
+            <PhField label={(form.scope === 'kategori' ? 'Pilih Kategori' : 'Pilih Produk') + ' — bisa lebih dari satu, diskon yang sama akan diterapkan ke semuanya'}>
+              <div style={{ border: '1px solid #E0D9F5', borderRadius: 10, maxHeight: 220, overflowY: 'auto' }}>
+                {(form.scope === 'kategori'
+                  ? kategoriOptions.map(t => ({ id: t.id, label: t.label, sub: null }))
+                  : PRODUK_DATA.map(p => ({ id: p.sku, label: p.nama, sub: 'Rp ' + p.jual.toLocaleString('id-ID') }))
+                ).map((opt, i) => {
+                  const checked = form.targets.includes(opt.id);
+                  return (
+                    <label key={opt.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', cursor: 'pointer',
+                      borderTop: i === 0 ? 'none' : '1px solid #F0EBFF',
+                      background: checked ? '#F0EBFF' : 'transparent',
+                    }}>
+                      <span style={{
+                        width: 18, height: 18, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: checked ? 'none' : '1.5px solid #C5B8EF',
+                        background: checked ? '#4A2D8C' : '#FFFFFF', color: '#FFFFFF', flexShrink: 0,
+                      }}>
+                        {checked && <Icons.check size={12} strokeWidth={3} />}
+                      </span>
+                      <span style={{ fontSize: 13, color: '#1A1228', fontWeight: checked ? 600 : 500, flex: 1 }}>{opt.label}</span>
+                      {opt.sub && <span style={{ fontSize: 12, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace' }}>{opt.sub}</span>}
+                      <input type="checkbox" checked={checked} onChange={() => toggleTarget(opt.id)} style={{ display: 'none' }} />
+                    </label>
+                  );
+                })}
+              </div>
+              {form.targets.length > 0 && (
+                <div style={{ fontSize: 12, color: '#4A2D8C', fontWeight: 600 }}>{form.targets.length} {form.scope === 'kategori' ? 'kategori' : 'produk'} dipilih</div>
+              )}
+            </PhField>
+          )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <PhField label="Tipe Diskon">
@@ -1556,17 +1628,25 @@ function PromoHargaModal({ promo, onClose, onSave }) {
           </div>
 
           {form.scope === 'produk' && (() => {
-            const prod = PRODUK_DATA.find(p => p.sku === form.target);
-            if (!prod) return null;
-            const diskon = form.tipe === 'persen' ? Math.round(prod.jual * form.nilai / 100) : form.nilai;
-            const harga = Math.max(0, prod.jual - diskon);
+            const skus = promo ? [form.target] : form.targets;
+            const prods = PRODUK_DATA.filter(p => skus.includes(p.sku));
+            if (prods.length === 0) return null;
             return (
-              <div style={{ background: '#F0EBFF', borderRadius: 10, padding: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-                <span style={{ color: '#574872' }}>Preview harga</span>
-                <span>
-                  <span style={{ color: '#9085AE', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace', marginRight: 8 }}>Rp {prod.jual.toLocaleString('id-ID')}</span>
-                  <span style={{ color: '#16A34A', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>Rp {harga.toLocaleString('id-ID')}</span>
-                </span>
+              <div style={{ background: '#F0EBFF', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Preview Harga</span>
+                {prods.map(prod => {
+                  const diskon = form.tipe === 'persen' ? Math.round(prod.jual * form.nilai / 100) : form.nilai;
+                  const harga = Math.max(0, prod.jual - diskon);
+                  return (
+                    <div key={prod.sku} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
+                      <span style={{ color: '#574872' }}>{prod.nama}</span>
+                      <span>
+                        <span style={{ color: '#9085AE', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace', marginRight: 8 }}>Rp {prod.jual.toLocaleString('id-ID')}</span>
+                        <span style={{ color: '#16A34A', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>Rp {harga.toLocaleString('id-ID')}</span>
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             );
           })()}
@@ -1583,8 +1663,10 @@ function PromoHargaModal({ promo, onClose, onSave }) {
           <button onClick={onClose} style={phSecondaryBtn()}>Batal</button>
           <button onClick={() => {
             if (!isValid) { window.muurahToast('Lengkapi target, nilai diskon (persen maks 100), dan tanggal mulai', 'error'); return; }
-            const finalData = { ...form, selesai: form.selesai || null };
+            const { targets, target, ...rest } = form;
+            const common = { ...rest, selesai: form.selesai || null };
             if (promo) {
+              const finalData = { ...common, target };
               window.muurahConfirm({
                 title: 'Simpan perubahan promo ini?',
                 body: 'Harga produk akan langsung berubah sesuai konfigurasi baru untuk transaksi selanjutnya.',
@@ -1592,10 +1674,11 @@ function PromoHargaModal({ promo, onClose, onSave }) {
                 onConfirm: () => onSave(finalData),
               });
             } else {
-              onSave(finalData);
+              const list = targets.map(t => ({ ...common, scope: form.scope, target: t }));
+              onSave(list);
             }
           }} style={phPrimaryBtn()}>
-            <Icons.check size={14} strokeWidth={2.5} /> {promo ? 'Simpan Perubahan' : 'Tambah Promo'}
+            <Icons.check size={14} strokeWidth={2.5} /> {promo ? 'Simpan Perubahan' : (form.targets.length > 1 ? `Tambah ${form.targets.length} Promo` : 'Tambah Promo')}
           </button>
         </div>
       </div>
@@ -1657,3 +1740,237 @@ const phThStyle = {
   padding: '12px 14px', background: '#F0EBFF',
 };
 const phTdStyle = { padding: '14px 14px', verticalAlign: 'middle' };
+
+// ─── Bulk Adjust Promo Harga ──────────────────────────────────────────────────
+function BulkPromoModal({ onClose, onSave }) {
+  const [scope, setScope] = useProdState('kategori');
+  const [selectedKategori, setSelectedKategori] = useProdState([]);
+  const [selectedProduk, setSelectedProduk] = useProdState([]);
+  const [katFilter, setKatFilter] = useProdState('semua');
+  const [tipe, setTipe] = useProdState('persen');
+  const [nilai, setNilai] = useProdState(5);
+  const [mulai, setMulai] = useProdState('2026-06-13');
+  const [selesai, setSelesai] = useProdState('');
+  const [status, setStatus] = useProdState('aktif');
+
+  React.useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  const kategoriOptions = TABS.filter(t => t.id !== 'semua');
+  const produkFiltered = PRODUK_DATA.filter(p => katFilter === 'semua' || p.kategori === katFilter);
+
+  function toggleKategori(id) {
+    setSelectedKategori(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
+  }
+  function toggleProduk(sku) {
+    setSelectedProduk(s => s.includes(sku) ? s.filter(x => x !== sku) : [...s, sku]);
+  }
+  function toggleAllVisible() {
+    const visibleSkus = produkFiltered.map(p => p.sku);
+    const allSelected = visibleSkus.every(sku => selectedProduk.includes(sku));
+    if (allSelected) {
+      setSelectedProduk(s => s.filter(sku => !visibleSkus.includes(sku)));
+    } else {
+      setSelectedProduk(s => [...new Set([...s, ...visibleSkus])]);
+    }
+  }
+
+  const targets = scope === 'kategori' ? selectedKategori : selectedProduk;
+  const isValid = targets.length > 0 && nilai > 0 && mulai && (tipe !== 'persen' || nilai <= 100);
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(26,18,40,0.45)', animation: 'muurah-fade 180ms ease' }} />
+      <div style={{
+        position: 'relative', width: 640, maxHeight: 'calc(100vh - 60px)',
+        background: '#FFFFFF', borderRadius: 16,
+        boxShadow: '0 24px 60px rgba(26,18,40,0.25)',
+        display: 'flex', flexDirection: 'column',
+        animation: 'muurah-pop 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+      }}>
+        <div style={{
+          padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0,
+        }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Promo Harga Produk</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', marginTop: 4, letterSpacing: '-0.01em' }}>Atur Diskon Massal</div>
+            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>Terapkan diskon yang sama ke banyak kategori/produk sekaligus, tanpa setting satu-satu</div>
+          </div>
+          <button onClick={onClose} aria-label="Tutup" style={{
+            width: 32, height: 32, border: '1px solid #E0D9F5', borderRadius: 10,
+            background: '#FFFFFF', color: '#574872', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}><Icons.x size={16} /></button>
+        </div>
+
+        <div style={{ padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* Scope switch */}
+          <PhField label="Terapkan ke">
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[{ id: 'kategori', label: 'Beberapa Kategori' }, { id: 'produk', label: 'Beberapa Produk' }].map(s => {
+                const active = scope === s.id;
+                return (
+                  <button key={s.id} type="button" onClick={() => setScope(s.id)} style={{
+                    flex: 1, padding: '8px 10px', borderRadius: 9, cursor: 'pointer',
+                    background: active ? '#EDE8FF' : '#FFFFFF',
+                    border: active ? '1.5px solid #4A2D8C' : '1px solid #E0D9F5',
+                    color: active ? '#4A2D8C' : '#574872',
+                    fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                  }}>{s.label}</button>
+                );
+              })}
+            </div>
+          </PhField>
+
+          {scope === 'kategori' ? (
+            <PhField label={'Pilih Kategori (' + selectedKategori.length + ' dipilih)'}>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {kategoriOptions.map(k => {
+                  const active = selectedKategori.includes(k.id);
+                  return (
+                    <button key={k.id} type="button" onClick={() => toggleKategori(k.id)} style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '7px 12px', borderRadius: 8, cursor: 'pointer',
+                      background: active ? '#4A2D8C' : '#F0EBFF',
+                      color: active ? '#FFFFFF' : '#574872',
+                      border: 0, fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                    }}>
+                      {active && <Icons.check size={12} strokeWidth={2.8} />} {k.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </PhField>
+          ) : (
+            <PhField label={'Pilih Produk (' + selectedProduk.length + ' dipilih)'}>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+                {['semua', ...kategoriOptions.map(k => k.id)].map(k => {
+                  const active = katFilter === k;
+                  const lbl = k === 'semua' ? 'Semua' : kategoriOptions.find(x => x.id === k).label;
+                  return (
+                    <button key={k} type="button" onClick={() => setKatFilter(k)} style={{
+                      padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
+                      background: active ? '#4A2D8C' : '#F0EBFF',
+                      color: active ? '#FFFFFF' : '#574872',
+                      border: 0, fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                    }}>{lbl}</button>
+                  );
+                })}
+              </div>
+              <div style={{ border: '1px solid #E0D9F5', borderRadius: 10, overflow: 'hidden', maxHeight: 220, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ position: 'sticky', top: 0, background: '#F0EBFF' }}>
+                      <th style={{ ...phThStyle, background: '#F0EBFF', width: 40, paddingLeft: 12 }}>
+                        <button onClick={toggleAllVisible} title="Pilih/batalkan semua" style={{
+                          width: 18, height: 18, borderRadius: 5, border: '1.5px solid #C5B8EF',
+                          background: '#FFFFFF', cursor: 'pointer', padding: 0,
+                        }} />
+                      </th>
+                      <th style={{ ...phThStyle, background: '#F0EBFF' }}>Nama Produk</th>
+                      <th style={{ ...phThStyle, background: '#F0EBFF', textAlign: 'right' }}>Harga</th>
+                      <th style={{ ...phThStyle, background: '#F0EBFF', textAlign: 'right', paddingRight: 12 }}>Kategori</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {produkFiltered.map(p => {
+                      const checked = selectedProduk.includes(p.sku);
+                      return (
+                        <tr key={p.sku} onClick={() => toggleProduk(p.sku)} style={{
+                          borderTop: '1px solid #F0EBFF', height: 42, cursor: 'pointer',
+                          background: checked ? '#F0EBFF' : 'transparent',
+                        }}>
+                          <td style={{ ...phTdStyle, paddingLeft: 12 }}>
+                            <span style={{
+                              width: 16, height: 16, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              border: checked ? 'none' : '1.5px solid #C5B8EF',
+                              background: checked ? '#4A2D8C' : '#FFFFFF', color: '#FFFFFF',
+                            }}>{checked && <Icons.check size={10} strokeWidth={3} />}</span>
+                          </td>
+                          <td style={{ ...phTdStyle, color: '#1A1228', fontWeight: checked ? 600 : 500 }}>{p.nama}</td>
+                          <td style={{ ...phTdStyle, textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', color: '#574872' }}>Rp {p.jual.toLocaleString('id-ID')}</td>
+                          <td style={{ ...phTdStyle, textAlign: 'right', paddingRight: 12 }}>
+                            <span style={{ fontSize: 11, color: '#574872', background: '#F0EBFF', padding: '2px 8px', borderRadius: 6, fontWeight: 600 }}>{kategoriOptions.find(k => k.id === p.kategori)?.label || p.kategori}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {produkFiltered.length === 0 && (
+                      <tr><td colSpan={4} style={{ padding: '20px', textAlign: 'center', fontSize: 12, color: '#9085AE' }}>Tidak ada produk.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </PhField>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <PhField label="Tipe Diskon">
+              <div style={{ display: 'flex', gap: 8 }}>
+                {[{ id: 'persen', label: '% Persen' }, { id: 'nominal', label: 'Rp Nominal' }].map(t => {
+                  const active = tipe === t.id;
+                  return (
+                    <button key={t.id} type="button" onClick={() => setTipe(t.id)} style={{
+                      flex: 1, padding: '8px 10px', borderRadius: 9, cursor: 'pointer',
+                      background: active ? '#EDE8FF' : '#FFFFFF',
+                      border: active ? '1.5px solid #4A2D8C' : '1px solid #E0D9F5',
+                      color: active ? '#4A2D8C' : '#574872',
+                      fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                    }}>{t.label}</button>
+                  );
+                })}
+              </div>
+            </PhField>
+            <PhField label={'Nilai Diskon' + (tipe === 'persen' ? ' (%, maks 100)' : ' (Rp)')}>
+              <input type="number" min="0" max={tipe === 'persen' ? 100 : undefined}
+                value={nilai} onChange={(e) => setNilai(parseInt(e.target.value) || 0)}
+                style={phInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+            </PhField>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <PhField label="Tanggal Mulai">
+              <input type="date" value={mulai} onChange={(e) => setMulai(e.target.value)}
+                style={phInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+            </PhField>
+            <PhField label="Tanggal Selesai (opsional)">
+              <input type="date" value={selesai} onChange={(e) => setSelesai(e.target.value)}
+                style={phInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+            </PhField>
+          </div>
+
+          <PhField label="Status">
+            <PsSelectLike value={status} onChange={setStatus} options={[{ value: 'aktif', label: 'Aktif' }, { value: 'nonaktif', label: 'Nonaktif' }]} />
+          </PhField>
+        </div>
+
+        <div style={{
+          padding: '16px 24px', borderTop: '1px solid #E0D9F5', flexShrink: 0,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span style={{ fontSize: 12, color: '#9085AE' }}>
+            <b style={{ color: '#4A2D8C', fontFamily: 'JetBrains Mono, monospace' }}>{targets.length}</b> {scope === 'kategori' ? 'kategori' : 'produk'} terpilih
+          </span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={onClose} style={phSecondaryBtn()}>Batal</button>
+            <button onClick={() => {
+              if (!isValid) { window.muurahToast('Pilih minimal 1 ' + (scope === 'kategori' ? 'kategori' : 'produk') + ', isi nilai diskon (persen maks 100), dan tanggal mulai', 'error'); return; }
+              window.muurahConfirm({
+                title: 'Buat ' + targets.length + ' promo harga sekaligus?',
+                body: 'Diskon ' + (tipe === 'persen' ? nilai + '%' : 'Rp ' + nilai.toLocaleString('id-ID')) + ' akan diterapkan ke ' + targets.length + ' ' + (scope === 'kategori' ? 'kategori' : 'produk') + ' yang dipilih, mulai ' + mulai + (selesai ? ' sampai ' + selesai : ' tanpa batas waktu') + '.',
+                confirmLabel: 'Buat Promo',
+                onConfirm: () => onSave({ targets, scope, tipe, nilai, mulai, selesai, status }),
+              });
+            }} style={phPrimaryBtn()}>
+              <Icons.check size={14} strokeWidth={2.5} /> Terapkan ke {targets.length || ''} Item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
