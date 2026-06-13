@@ -2,12 +2,39 @@
 const { useState: useProdState, useMemo: useProdMemo, useEffect: useProdEffect } = React;
 
 const PRODUK_DATA = [
-  { sku: 'TSEL-PUL-10',   nama: 'Pulsa Telkomsel 10.000',     operator: 'Telkomsel', hpp: 9_850,   jual: 10_500,  l1: 10_300, l2: 10_100, l3: 9_950,  kategori: 'pulsa', status: 'aktif' },
-  { sku: 'TSEL-PUL-25',   nama: 'Pulsa Telkomsel 25.000',     operator: 'Telkomsel', hpp: 24_625,  jual: 25_500,  l1: 25_250, l2: 25_100, l3: 24_900, kategori: 'pulsa', status: 'aktif' },
-  { sku: 'ISAT-PUL-25',   nama: 'Pulsa Indosat 25.000',       operator: 'Indosat',   hpp: 24_500,  jual: 25_250,  l1: 25_050, l2: 24_900, l3: 24_750, kategori: 'pulsa', status: 'aktif' },
-  { sku: 'PLN-TOK-100K',  nama: 'Token PLN 100.000',          operator: 'PLN',       hpp: 100_350, jual: 101_500, l1: 101_250, l2: 101_000, l3: 100_750, kategori: 'pln', status: 'aktif' },
-  { sku: 'XL-DATA-12GB',  nama: 'XL Hot Rod 12 GB 30 Hari',   operator: 'XL Axiata', hpp: 62_000,  jual: 65_000,  l1: 64_200, l2: 63_500, l3: 62_800, kategori: 'data', status: 'aktif' },
+  { sku: 'TSEL-PUL-10',   nama: 'Pulsa Telkomsel 10.000',     operator: 'Telkomsel', hpp: 9_850,   jual: 10_500,  l1: 10_300, l2: 10_100, l3: 9_950,  kategori: 'pulsa', status: 'aktif',
+    sumber: [
+      { biller: 'Digiflazz',     hpp: 9_850,  jual: 10_500, status: 'aktif' },
+      { biller: 'IAK',           hpp: 9_900,  jual: 10_600, status: 'standby' },
+      { biller: 'Ayoconnect',    hpp: 9_950,  jual: 10_650, status: 'standby' },
+    ] },
+  { sku: 'TSEL-PUL-25',   nama: 'Pulsa Telkomsel 25.000',     operator: 'Telkomsel', hpp: 24_625,  jual: 25_500,  l1: 25_250, l2: 25_100, l3: 24_900, kategori: 'pulsa', status: 'aktif',
+    sumber: [
+      { biller: 'IAK',           hpp: 24_625, jual: 25_500, status: 'aktif' },
+      { biller: 'Digiflazz',     hpp: 24_700, jual: 25_600, status: 'standby' },
+    ] },
+  { sku: 'ISAT-PUL-25',   nama: 'Pulsa Indosat 25.000',       operator: 'Indosat',   hpp: 24_500,  jual: 25_250,  l1: 25_050, l2: 24_900, l3: 24_750, kategori: 'pulsa', status: 'aktif',
+    sumber: [
+      { biller: 'Digiflazz',     hpp: 24_500, jual: 25_250, status: 'aktif' },
+      { biller: 'Tripay PPOB',   hpp: 24_650, jual: 25_400, status: 'standby' },
+      { biller: 'IAK',           hpp: 24_700, jual: 25_450, status: 'standby' },
+    ] },
+  { sku: 'PLN-TOK-100K',  nama: 'Token PLN 100.000',          operator: 'PLN',       hpp: 100_350, jual: 101_500, l1: 101_250, l2: 101_000, l3: 100_750, kategori: 'pln', status: 'aktif',
+    sumber: [
+      { biller: 'Ayoconnect',    hpp: 100_350, jual: 101_500, status: 'aktif' },
+      { biller: 'Digiflazz',     hpp: 100_450, jual: 101_600, status: 'standby' },
+    ] },
+  { sku: 'XL-DATA-12GB',  nama: 'XL Hot Rod 12 GB 30 Hari',   operator: 'XL Axiata', hpp: 62_000,  jual: 65_000,  l1: 64_200, l2: 63_500, l3: 62_800, kategori: 'data', status: 'aktif',
+    sumber: [
+      { biller: 'Tripay PPOB',   hpp: 62_000, jual: 65_000, status: 'aktif' },
+      { biller: 'IAK',           hpp: 62_400, jual: 65_400, status: 'standby' },
+    ] },
   { sku: 'MLBB-DM-86',    nama: 'Mobile Legends 86 Diamond',  operator: 'Moonton',   hpp: 20_500,  jual: 22_000,  l1: 21_700, l2: 21_400, l3: 21_000, kategori: 'game', status: 'nonaktif',
+    sumber: [
+      { biller: 'IAK',           hpp: 20_500, jual: 22_000, status: 'aktif' },
+      { biller: 'Digiflazz',     hpp: 20_650, jual: 22_150, status: 'standby' },
+      { biller: 'Ayoconnect',    hpp: 20_800, jual: 22_300, status: 'standby' },
+    ],
     gameConfig: {
       template: 'Mobile Legends',
       fields: [
@@ -17,6 +44,10 @@ const PRODUK_DATA = [
     },
   },
   { sku: 'FF-DM-100',     nama: 'Free Fire 100 Diamond',      operator: 'Garena',    hpp: 14_200,  jual: 15_500,  l1: 15_300, l2: 15_100, l3: 14_900, kategori: 'game', status: 'aktif',
+    sumber: [
+      { biller: 'Digiflazz',     hpp: 14_200, jual: 15_500, status: 'aktif' },
+      { biller: 'Tripay PPOB',   hpp: 14_350, jual: 15_650, status: 'standby' },
+    ],
     gameConfig: {
       template: 'Free Fire',
       fields: [
@@ -25,6 +56,10 @@ const PRODUK_DATA = [
     },
   },
   { sku: 'PDAM-SBY-50K',  nama: 'PDAM Surya Sembada Surabaya', operator: 'PDAM',     hpp: 0,       jual: 2_500,   l1: 2_500,  l2: 2_500,  l3: 2_500,  kategori: 'tagihan', status: 'aktif',
+    sumber: [
+      { biller: 'Ayoconnect',    hpp: 0, jual: 2_500, status: 'aktif' },
+      { biller: 'IAK',           hpp: 0, jual: 2_750, status: 'standby' },
+    ],
     wilayahConfig: {
       tipeLayanan: 'PDAM',
       provider: 'PDAM Surya Sembada Surabaya',
@@ -58,9 +93,11 @@ function Produk() {
   const [adding, setAdding] = useProdState(false);
   const [mappingOpen, setMappingOpen] = useProdState(false);
   const [view, setView] = useProdState('produk');
+  const [produkList, setProdukList] = useProdState(() => PRODUK_DATA.map(p => ({ ...p, sumber: p.sumber.map(s => ({ ...s })) })));
+  const [sumberTarget, setSumberTarget] = useProdState(null);
 
   const filtered = useProdMemo(() => {
-    return PRODUK_DATA.filter(p => {
+    return produkList.filter(p => {
       if (tab !== 'semua' && p.kategori !== tab) return false;
       if (operator !== 'semua' && p.operator !== operator) return false;
       if (statusF !== 'semua' && p.status !== statusF) return false;
@@ -71,7 +108,7 @@ function Produk() {
       }
       return true;
     });
-  }, [tab, query, operator, statusF]);
+  }, [produkList, tab, query, operator, statusF]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -248,6 +285,9 @@ function Produk() {
                   </td>
                   <td style={{ ...prTdStyle, textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: '#1A1228' }}>
                     Rp {p.jual.toLocaleString('id-ID')}
+                    <div style={{ fontSize: 10, fontWeight: 500, color: '#9085AE', fontFamily: 'inherit', marginTop: 2 }}>
+                      via {(p.sumber.find(s => s.status === 'aktif') || p.sumber[0]).biller}
+                    </div>
                   </td>
                   <td style={{ ...prTdStyle, textAlign: 'right' }}>
                     <span style={{
@@ -263,6 +303,7 @@ function Produk() {
                   <td style={{ ...prTdStyle, textAlign: 'right', paddingRight: 20 }}>
                     <div style={{ display: 'inline-flex', gap: 4 }}>
                       <button onClick={() => setEditing(p)} style={ghostBtn('#4A2D8C')}>Edit</button>
+                      <button onClick={() => setSumberTarget(p.sku)} style={ghostBtn('#4A2D8C')}>Sumber ({p.sumber.length})</button>
                       <button onClick={() => window.muurahConfirm({
                         title: (p.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan') + ' produk ' + p.sku + '?',
                         body: 'Produk "' + p.nama + '" akan ' + (p.status === 'aktif' ? 'disembunyikan' : 'ditampilkan kembali') + ' dari katalog reseller dan user.',
@@ -309,6 +350,56 @@ function Produk() {
       {/* Add Modal */}
       {adding && <AddProdukModal onClose={() => setAdding(false)} />}
       {mappingOpen && <OperatorMappingModal onClose={() => setMappingOpen(false)} />}
+      {sumberTarget && (
+        <SumberBillerModal
+          produk={produkList.find(p => p.sku === sumberTarget)}
+          onClose={() => setSumberTarget(null)}
+          onSwitch={(biller) => {
+            const produk = produkList.find(p => p.sku === sumberTarget);
+            const target = produk.sumber.find(s => s.biller === biller);
+            window.muurahConfirm({
+              title: 'Pindahkan sumber "' + produk.nama + '" ke ' + biller + '?',
+              body: 'HPP & harga jual produk ini akan langsung berubah ke nilai dari ' + biller + ' (HPP Rp ' + target.hpp.toLocaleString('id-ID') + ', Jual Rp ' + target.jual.toLocaleString('id-ID') + ') untuk transaksi selanjutnya.',
+              confirmLabel: 'Pindahkan',
+              onConfirm: () => {
+                setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : {
+                  ...p,
+                  hpp: target.hpp,
+                  jual: target.jual,
+                  sumber: p.sumber.map(s => ({ ...s, status: s.biller === biller ? 'aktif' : 'standby' })),
+                }));
+                window.muurahToast('Sumber "' + produk.nama + '" dipindah ke ' + biller, 'success');
+              },
+            });
+          }}
+          onToggleAutoSwitch={(v) => {
+            window.muurahConfirm({
+              title: (v ? 'Aktifkan' : 'Matikan') + ' auto-switch biller untuk produk ini?',
+              body: v
+                ? 'Kalau biller utama produk ini masuk status Danger/Blackout (lihat Saldo & Limit Biller), sistem akan otomatis pindah ke sumber lain yang statusnya Aman, sehingga pop-up "sedang gangguan" tidak perlu muncul ke user.'
+                : 'Produk ini tidak akan auto-switch lagi — kalau biller utamanya kritis, akan mengikuti aksi pop-up yang dikonfigurasi di Saldo & Limit Biller.',
+              confirmLabel: v ? 'Aktifkan' : 'Matikan',
+              danger: !v,
+              onConfirm: () => setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, autoSwitch: v })),
+            });
+          }}
+          onAddSumber={(data) => {
+            setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, sumber: [...p.sumber, { ...data, status: 'standby' }] }));
+            window.muurahToast('Sumber biller "' + data.biller + '" ditambahkan ke "' + produkList.find(p => p.sku === sumberTarget).nama + '"', 'success');
+          }}
+          onDeleteSumber={(biller) => {
+            window.muurahConfirm({
+              title: 'Hapus sumber "' + biller + '"?',
+              body: 'Sumber biller ini tidak akan lagi jadi opsi untuk produk ini.',
+              confirmLabel: 'Hapus', danger: true,
+              onConfirm: () => {
+                setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, sumber: p.sumber.filter(s => s.biller !== biller) }));
+                window.muurahToast('Sumber "' + biller + '" dihapus', 'success');
+              },
+            });
+          }}
+        />
+      )}
       </>
       )}
     </div>
@@ -1972,5 +2063,148 @@ function BulkPromoModal({ onClose, onSave }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//   SUMBER BILLER per produk — multi-source dengan switch aktif
+// ════════════════════════════════════════════════════════════════════════════
+const SUMBER_BILLER_OPTIONS = ['Digiflazz', 'IAK', 'Ayoconnect', 'Tripay PPOB'];
+
+function SumberBillerModal({ produk, onClose, onSwitch, onToggleAutoSwitch, onAddSumber, onDeleteSumber }) {
+  const [newBiller, setNewBiller] = useProdState(
+    SUMBER_BILLER_OPTIONS.find(b => !produk.sumber.some(s => s.biller === b)) || SUMBER_BILLER_OPTIONS[0]
+  );
+  const [newHpp, setNewHpp] = useProdState(produk.hpp);
+  const [newJual, setNewJual] = useProdState(produk.jual);
+
+  React.useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  const availableToAdd = SUMBER_BILLER_OPTIONS.filter(b => !produk.sumber.some(s => s.biller === b));
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(26,18,40,0.45)', animation: 'muurah-fade 180ms ease' }} />
+      <div style={{
+        position: 'relative', width: 560, maxHeight: 'calc(100vh - 80px)',
+        background: '#FFFFFF', borderRadius: 16,
+        boxShadow: '0 24px 60px rgba(26,18,40,0.25)',
+        display: 'flex', flexDirection: 'column',
+        animation: 'muurah-pop 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+      }}>
+        <div style={{
+          padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0,
+        }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{produk.sku}</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', marginTop: 4, letterSpacing: '-0.01em' }}>Sumber Biller — {produk.nama}</div>
+            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>Atur dari biller mana produk ini disuplai. Switch sumber kalau biller utama bermasalah.</div>
+          </div>
+          <button onClick={onClose} aria-label="Tutup" style={{
+            width: 32, height: 32, border: '1px solid #E0D9F5', borderRadius: 10,
+            background: '#FFFFFF', color: '#574872', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}><Icons.x size={16} /></button>
+        </div>
+
+        <div style={{ padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr>
+                <th style={{ ...phThStyle, paddingLeft: 4 }}>Biller</th>
+                <th style={{ ...phThStyle, textAlign: 'right' }}>HPP</th>
+                <th style={{ ...phThStyle, textAlign: 'right' }}>Jual</th>
+                <th style={phThStyle}>Status</th>
+                <th style={{ ...phThStyle, textAlign: 'right' }}>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {produk.sumber.map((s) => (
+                <tr key={s.biller} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}>
+                  <td style={{ ...phTdStyle, paddingLeft: 4, color: '#1A1228', fontWeight: 600 }}>{s.biller}</td>
+                  <td style={{ ...phTdStyle, textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', color: '#574872' }}>Rp {s.hpp.toLocaleString('id-ID')}</td>
+                  <td style={{ ...phTdStyle, textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#1A1228' }}>Rp {s.jual.toLocaleString('id-ID')}</td>
+                  <td style={phTdStyle}>
+                    {s.status === 'aktif' ? (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#16A34A', background: '#F0FDF4', padding: '4px 9px', borderRadius: 6 }}>Aktif</span>
+                    ) : (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9085AE', background: '#F0EBFF', padding: '4px 9px', borderRadius: 6 }}>Standby</span>
+                    )}
+                  </td>
+                  <td style={{ ...phTdStyle, textAlign: 'right' }}>
+                    {s.status === 'aktif' ? (
+                      <span style={{ fontSize: 11, color: '#9085AE' }}>—</span>
+                    ) : (
+                      <>
+                        <button onClick={() => onSwitch(s.biller)} style={phGhostBtn('#4A2D8C')}>Jadikan Aktif</button>
+                        <button onClick={() => onDeleteSumber(s.biller)} style={phGhostBtn('#C0001A')}>Hapus</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Tambah sumber baru */}
+          {availableToAdd.length > 0 && (
+            <div style={{ background: '#F0EBFF', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Tambah Sumber Biller</span>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr auto', gap: 8 }}>
+                <PsSelectLike value={newBiller} onChange={setNewBiller} options={availableToAdd.map(b => ({ value: b, label: b }))} />
+                <input type="number" value={newHpp} onChange={(e) => setNewHpp(parseInt(e.target.value) || 0)} placeholder="HPP"
+                  style={phInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+                <input type="number" value={newJual} onChange={(e) => setNewJual(parseInt(e.target.value) || 0)} placeholder="Jual"
+                  style={phInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+                <button onClick={() => onAddSumber({ biller: newBiller, hpp: newHpp, jual: newJual })} style={{ ...phPrimaryBtn(), padding: '0 14px' }}>
+                  <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> Tambah
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Auto-switch toggle */}
+          <div style={{ borderTop: '1px solid #F0EBFF', paddingTop: 12 }}>
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+              <Toggle2 checked={!!produk.autoSwitch} onChange={onToggleAutoSwitch} />
+              <span>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1228' }}>Auto-switch ke biller alternatif saat biller utama kritis</div>
+                <div style={{ fontSize: 11, color: '#9085AE', marginTop: 2 }}>Berkorelasi dengan status Danger/Blackout di Saldo & Limit Biller — kalau aktif, produk ini otomatis pindah ke sumber lain yang aman sebelum pop-up gangguan ditampilkan ke user.</div>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #E0D9F5', display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
+          <button onClick={onClose} style={phPrimaryBtn()}>
+            <Icons.check size={14} strokeWidth={2.5} /> Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Toggle2({ checked, onChange }) {
+  return (
+    <span onClick={() => onChange(!checked)} role="switch" aria-checked={checked} tabIndex={0}
+      style={{
+        position: 'relative', display: 'inline-block', marginTop: 2,
+        width: 36, height: 20, borderRadius: 20,
+        background: checked ? '#4A2D8C' : '#C5B8EF',
+        cursor: 'pointer', transition: 'background 130ms ease',
+        flexShrink: 0,
+      }}>
+      <span style={{
+        position: 'absolute', top: 2, left: checked ? 18 : 2,
+        width: 16, height: 16, borderRadius: '50%',
+        background: '#FFFFFF', transition: 'left 130ms ease',
+      }} />
+    </span>
   );
 }
