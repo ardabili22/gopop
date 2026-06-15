@@ -118,6 +118,36 @@ const USER_ROWS = [
 function Pengguna() {
   const { Card } = window.MuurahShell;
   const [selected, setSelected] = usePgState(null);
+  const [query, setQuery] = usePgState('');
+  const [statusF, setStatusF] = usePgState('Semua');
+
+  usePgEffect(() => {
+    function onOpenUser(e) {
+      const hp = e.detail && e.detail.hp;
+      if (!hp) return;
+      const found = USER_ROWS.find(u => u.hpMasked === hp || u.hp === hp);
+      if (found) {
+        setSelected(found);
+        setQuery('');
+      } else {
+        setQuery(hp);
+        window.muurahToast('User dengan No. HP ' + hp + ' tidak ditemukan di daftar — coba cari manual', 'info');
+      }
+    }
+    window.addEventListener('muurah-open-user', onOpenUser);
+    return () => window.removeEventListener('muurah-open-user', onOpenUser);
+  }, []);
+
+  const filtered = USER_ROWS.filter(u => {
+    if (statusF !== 'Semua') {
+      const map = { 'Aktif': 'aktif', 'Suspended': 'suspended', 'Belum Verifikasi': 'unverified' };
+      if (statusF === 'Belum Verifikasi') {
+        if (u.verified) return false;
+      } else if (u.status !== map[statusF]) return false;
+    }
+    if (query && !`${u.nama} ${u.hp} ${u.hpMasked} ${u.email}`.toLowerCase().includes(query.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -134,10 +164,10 @@ function Pengguna() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <div style={{ position: 'relative', width: 280 }}>
             <Icons.search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9085AE' }} />
-            <input placeholder="Cari nama, nomor HP, email…"
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cari nama, nomor HP, email…"
               style={pgInputStyle({ paddingLeft: 36, width: '100%' })} />
           </div>
-          <PgSelect prefix="Status:" defaultLabel="Semua"
+          <PgSelect prefix="Status:" value={statusF} onChange={setStatusF}
             options={['Semua', 'Aktif', 'Suspended', 'Belum Verifikasi']} />
           <button onClick={() => window.muurahToast('Mengekspor data pengguna…', 'info')} style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -170,7 +200,7 @@ function Pengguna() {
             </tr>
           </thead>
           <tbody>
-            {USER_ROWS.map((u) => {
+            {filtered.map((u) => {
               const muted = u.status === 'suspended';
               return (
                 <tr key={u.id} onClick={() => setSelected(u)}
@@ -222,6 +252,11 @@ function Pengguna() {
                 </tr>
               );
             })}
+            {filtered.length === 0 && (
+              <tr><td colSpan={8} style={{ padding: '60px 20px', textAlign: 'center', color: '#9085AE', fontSize: 13 }}>
+                Tidak ada user yang cocok dengan filter ini.
+              </td></tr>
+            )}
           </tbody>
         </table>
 
@@ -535,10 +570,10 @@ function pgInputStyle(over = {}) {
   };
 }
 
-function PgSelect({ defaultLabel, options, prefix }) {
+function PgSelect({ value, onChange, options, prefix }) {
   return (
     <div style={{ position: 'relative' }}>
-      <select defaultValue={defaultLabel} style={{
+      <select value={value} onChange={(e) => onChange(e.target.value)} style={{
         ...pgInputStyle({}), appearance: 'none',
         paddingLeft: prefix ? 60 : 12, paddingRight: 30,
         fontWeight: 500, cursor: 'pointer', minWidth: 160,

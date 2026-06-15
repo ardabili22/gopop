@@ -25,6 +25,10 @@ window.muurahConfirm = (opts) => {
 window.muurahGoTo = (screenId) => {
   window.dispatchEvent(new CustomEvent('muurah-goto', { detail: screenId }));
 };
+window.muurahOpenUserProfile = (hp) => {
+  window.dispatchEvent(new CustomEvent('muurah-open-user', { detail: { hp } }));
+  window.muurahGoTo('pengguna');
+};
 
 // ════════════════════════════════════════════════════════════════════════════
 //   TOAST CONTAINER

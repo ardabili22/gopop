@@ -3,7 +3,7 @@ const { useState: useKpState, useMemo: useKpMemo, useEffect: useKpEffect, useRef
 
 const TICKETS = [
   {
-    id: 'TKT-001', user: 'Budi Santoso',  inisial: 'BS', av: ['#4A2D8C','#B23A8E'],
+    id: 'TKT-001', user: 'Budi Raharjo',  inisial: 'BR', av: ['#4A2D8C','#B23A8E'],
     hp: '081234xxxx', kategori: 'Transaksi Gagal',
     deskripsiShort: 'Token PLN tidak diterima setelah pembayaran berhasil…',
     deskripsi: 'Token PLN 50.000 tidak diterima setelah pembayaran berhasil. Saldo sudah terpotong Rp 50.800 tapi token belum masuk ke meteran.',
@@ -430,7 +430,7 @@ function TicketDrawer({ ticket, onClose }) {
                 <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1228', letterSpacing: '-0.01em' }}>{ticket.user}</div>
                 <div style={{ fontSize: 12, color: '#574872', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{ticket.hp}</div>
               </div>
-              <button style={kpGhostBtn('#4A2D8C')}>Lihat profil</button>
+              <button onClick={() => window.muurahOpenUserProfile(ticket.hp)} style={kpGhostBtn('#4A2D8C')}>Lihat profil</button>
             </div>
             <div style={{
               marginTop: 12, padding: 12,
