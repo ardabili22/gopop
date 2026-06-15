@@ -282,6 +282,9 @@ function KpiCell({ label, value, icon, tone, badge, small, last }) {
 }
 
 // ─── Pills ───────────────────────────────────────────────────────────────────
+const STATUS_LABEL = { baru: 'Baru', diproses: 'Diproses', selesai: 'Selesai', ditutup: 'Ditutup' };
+const PRIO_LABEL = { rendah: 'Rendah', sedang: 'Sedang', tinggi: 'Tinggi' };
+
 function StatusPill({ status, large }) {
   const map = {
     baru:     { bg: '#EDE8FF', fg: '#4A2D8C', label: 'Baru' },
@@ -373,7 +376,12 @@ function MiniAvatar({ inisial, colors, size = 30 }) {
 // ─── Drawer ──────────────────────────────────────────────────────────────────
 function TicketDrawer({ ticket, onClose }) {
   const [statusEdit, setStatusEdit] = useKpState(ticket.status);
+  const [prioritasEdit, setPrioritasEdit] = useKpState(ticket.prioritas);
   const [note, setNote] = useKpState('');
+  const [, bump] = useKpState(0);
+  if (!ticket.logAktivitas) ticket.logAktivitas = [];
+
+  const hasChange = statusEdit !== ticket.status || prioritasEdit !== ticket.prioritas;
 
   useKpEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -501,12 +509,65 @@ function TicketDrawer({ ticket, onClose }) {
                 </div>
               </div>
 
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Ubah Prioritas
+                </div>
+                <div style={{ display: 'flex', gap: 6, padding: 3, background: '#F0EBFF', borderRadius: 10 }}>
+                  {[['rendah','Rendah'],['sedang','Sedang'],['tinggi','Tinggi']].map(([id, label]) => {
+                    const active = prioritasEdit === id;
+                    const tone = id === 'tinggi' ? '#C0001A' : id === 'sedang' ? '#D97706' : '#16A34A';
+                    return (
+                      <button key={id} onClick={() => setPrioritasEdit(id)} style={{
+                        flex: 1, border: 0, padding: '7px 8px', borderRadius: 8, cursor: 'pointer',
+                        background: active ? '#FFFFFF' : 'transparent',
+                        boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                        color: active ? tone : '#574872',
+                        fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                        transition: 'all 130ms ease',
+                      }}>{label}</button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div style={{ display: 'flex', gap: 8 }}>
-                <button style={{ ...kpPrimaryBtn(), flex: 1, height: 38 }}>
-                  <Icons.refresh size={14} /> Proses Refund
+                <button onClick={() => {
+                  if (!hasChange) return;
+                  const oldStatus = STATUS_LABEL[ticket.status], newStatus = STATUS_LABEL[statusEdit];
+                  const oldPrio = PRIO_LABEL[ticket.prioritas], newPrio = PRIO_LABEL[prioritasEdit];
+                  const changes = [];
+                  if (statusEdit !== ticket.status) changes.push('Status: ' + oldStatus + ' → ' + newStatus);
+                  if (prioritasEdit !== ticket.prioritas) changes.push('Prioritas: ' + oldPrio + ' → ' + newPrio);
+                  window.muurahConfirm({
+                    title: 'Terapkan perubahan pada ' + ticket.id + '?',
+                    body: changes.join(' · ') + (statusEdit === 'selesai' || statusEdit === 'ditutup' ? '. User akan menerima notifikasi bahwa tiketnya sudah ditangani.' : '.'),
+                    confirmLabel: 'Terapkan',
+                    onConfirm: () => {
+                      ticket.logAktivitas.unshift({ tipe: 'sistem', oleh: 'CS Admin', waktu: nowStr(), isi: changes.join(' · ') });
+                      ticket.status = statusEdit;
+                      ticket.prioritas = prioritasEdit;
+                      bump(x => x + 1);
+                      window.muurahToast('Perubahan pada ' + ticket.id + ' berhasil disimpan', 'success');
+                    },
+                  });
+                }} disabled={!hasChange} style={{
+                  ...kpPrimaryBtn(), flex: 1, height: 38, justifyContent: 'center',
+                  opacity: hasChange ? 1 : 0.45, cursor: hasChange ? 'pointer' : 'not-allowed',
+                }}>
+                  <Icons.check size={14} strokeWidth={2.5} /> Terapkan Perubahan
                 </button>
-                <button style={{ ...kpSecondaryBtn(), flex: 1, height: 38, justifyContent: 'center' }}>
-                  <Icons.users size={14} /> Eskalasi ke Admin
+                <button onClick={() => window.muurahConfirm({
+                  title: 'Proses refund untuk ' + ticket.id + '?',
+                  body: 'Dana akan dikembalikan ke saldo/metode pembayaran user' + (ticket.txTerkait ? ' untuk transaksi ' + ticket.txTerkait : '') + '. Tindakan ini akan tercatat di log tiket.',
+                  confirmLabel: 'Proses Refund',
+                  onConfirm: () => {
+                    ticket.logAktivitas.unshift({ tipe: 'sistem', oleh: 'CS Admin', waktu: nowStr(), isi: 'Refund diproses untuk ' + ticket.id + (ticket.txTerkait ? ' (' + ticket.txTerkait + ')' : '') });
+                    bump(x => x + 1);
+                    window.muurahToast('Refund untuk ' + ticket.id + ' sedang diproses', 'success');
+                  },
+                })} style={{ ...kpSecondaryBtn(), flex: 1, height: 38, justifyContent: 'center' }}>
+                  <Icons.refresh size={14} /> Proses Refund
                 </button>
               </div>
 
@@ -514,7 +575,7 @@ function TicketDrawer({ ticket, onClose }) {
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Icons.shieldlock size={11} /> Catatan Internal (tidak terlihat user)
                 </div>
-                <textarea value={note} onChange={(e) => setNote(e.target.value)}
+                <textarea value={note} onChange={(e) => setNote(e.target.value.slice(0, 500))}
                   placeholder="Tulis catatan untuk tim internal…"
                   style={{
                     width: '100%', minHeight: 72, resize: 'vertical',
@@ -526,11 +587,44 @@ function TicketDrawer({ ticket, onClose }) {
                   <span style={{ fontSize: 11, color: '#9085AE' }}>
                     {note.length}/500 karakter
                   </span>
-                  <button style={kpPrimaryBtn()}>
+                  <button onClick={() => {
+                    if (!note.trim()) return;
+                    ticket.logAktivitas.unshift({ tipe: 'catatan', oleh: 'CS Admin', waktu: nowStr(), isi: note.trim() });
+                    setNote('');
+                    bump(x => x + 1);
+                    window.muurahToast('Catatan internal disimpan', 'success');
+                  }} disabled={!note.trim()} style={{ ...kpPrimaryBtn(), opacity: note.trim() ? 1 : 0.45, cursor: note.trim() ? 'pointer' : 'not-allowed' }}>
                     Simpan Catatan
                   </button>
                 </div>
               </div>
+
+              {/* Log Aktivitas & Catatan */}
+              {ticket.logAktivitas.length > 0 && (
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
+                    Log Aktivitas & Catatan
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 220, overflowY: 'auto' }}>
+                    {ticket.logAktivitas.map((l, i) => (
+                      <div key={i} style={{
+                        display: 'flex', gap: 8, alignItems: 'flex-start',
+                        padding: '8px 10px', borderRadius: 8,
+                        background: l.tipe === 'catatan' ? '#FFFBEB' : '#F0EBFF',
+                        border: l.tipe === 'catatan' ? '1px solid #FCD34D' : '1px solid #E0D9F5',
+                      }}>
+                        {l.tipe === 'catatan'
+                          ? <Icons.shieldlock size={13} style={{ color: '#D97706', marginTop: 2, flexShrink: 0 }} />
+                          : <Icons.refresh size={13} style={{ color: '#4A2D8C', marginTop: 2, flexShrink: 0 }} />}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 12, color: '#1A1228', lineHeight: 1.5 }}>{l.isi}</div>
+                          <div style={{ fontSize: 10, color: '#9085AE', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{l.oleh} · {l.waktu}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </DrSection>
         </div>
