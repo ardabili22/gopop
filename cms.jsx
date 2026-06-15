@@ -132,6 +132,19 @@ function BannerPanel() {
   const [banners, setBanners] = useCmsState(BANNER_SEED);
   const [editing, setEditing] = useCmsState(null);
   const [adding, setAdding] = useCmsState(false);
+  const [targets, setTargets] = useCmsState(BANNER_LINK_TARGETS);
+
+  function addTarget(label) {
+    const v = label.trim();
+    if (!v) return false;
+    if (targets.some(t => t.toLowerCase() === v.toLowerCase())) {
+      window.muurahToast('Halaman "' + v + '" sudah ada di daftar', 'error');
+      return false;
+    }
+    setTargets(ts => [...ts, v]);
+    window.muurahToast('Halaman tujuan "' + v + '" ditambahkan ke daftar', 'success');
+    return true;
+  }
 
   function toggleStatus(id) {
     setBanners(bs => bs.map(b => b.id === id ? { ...b, status: b.status === 'aktif' ? 'nonaktif' : 'aktif' } : b));
@@ -232,15 +245,17 @@ function BannerPanel() {
       </div>
 
       {(adding || editing) && (
-        <BannerModal banner={editing} onClose={() => { setEditing(null); setAdding(false); }} onSave={saveBanner} />
+        <BannerModal banner={editing} targets={targets} onAddTarget={addTarget} onClose={() => { setEditing(null); setAdding(false); }} onSave={saveBanner} />
       )}
     </Card>
   );
 }
 
-function BannerModal({ banner, onClose, onSave }) {
-  const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: BANNER_LINK_TARGETS[0], tone: 'purple', status: 'aktif', gambar: null });
+function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
+  const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: targets[0], tone: 'purple', status: 'aktif', gambar: null });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const [addingTarget, setAddingTarget] = useCmsState(false);
+  const [newTarget, setNewTarget] = useCmsState('');
   const isValid = form.judul.trim() && form.subjudul.trim();
 
   useCmsEffect(() => {
@@ -295,14 +310,47 @@ function BannerModal({ banner, onClose, onSave }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <CmsField label="Menuju Halaman">
-              <div style={{ position: 'relative' }}>
-                <select value={form.target} onChange={(e) => u('target', e.target.value)} style={{
-                  ...cmsInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 32, cursor: 'pointer',
-                }}>
-                  {BANNER_LINK_TARGETS.map(o => <option key={o} value={o}>{o}</option>)}
-                </select>
-                <Icons.chevron size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
-              </div>
+              {addingTarget ? (
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <input autoFocus value={newTarget} onChange={(e) => setNewTarget(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (onAddTarget(newTarget)) { u('target', newTarget.trim()); setNewTarget(''); setAddingTarget(false); }
+                      }
+                      if (e.key === 'Escape') { setAddingTarget(false); setNewTarget(''); }
+                    }}
+                    placeholder="cth. Promo Tahun Baru"
+                    style={cmsInputStyle({ width: '100%' })} />
+                  <button onClick={() => {
+                    if (onAddTarget(newTarget)) { u('target', newTarget.trim()); setNewTarget(''); setAddingTarget(false); }
+                  }} style={{
+                    width: 38, height: 38, flexShrink: 0, border: 0, borderRadius: 10,
+                    background: '#4A2D8C', color: '#FFFFFF', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}><Icons.check size={14} strokeWidth={2.5} /></button>
+                  <button onClick={() => { setAddingTarget(false); setNewTarget(''); }} style={{
+                    width: 38, height: 38, flexShrink: 0, border: '1px solid #E0D9F5', borderRadius: 10,
+                    background: '#FFFFFF', color: '#574872', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}><Icons.x size={14} /></button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <select value={form.target} onChange={(e) => u('target', e.target.value)} style={{
+                      ...cmsInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 32, cursor: 'pointer',
+                    }}>
+                      {targets.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                    <Icons.chevron size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
+                  </div>
+                  <button onClick={() => setAddingTarget(true)} title="Tambah halaman tujuan baru" style={{
+                    width: 38, height: 38, flexShrink: 0, border: '1px solid #C5B8EF', borderRadius: 10,
+                    background: '#FFFFFF', color: '#4A2D8C', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+                  }}>+</button>
+                </div>
+              )}
             </CmsField>
             <CmsField label="Status">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 6 }}>

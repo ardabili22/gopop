@@ -1,15 +1,5 @@
-// role-akses.jsx — Role & Akses (permission matrix + role cards) screen
-
-const RA_PERMISSIONS_SEED = [
-  { perm: 'Lihat Dashboard',            sa: true,  ao: true,  fn: true,  cs: true  },
-  { perm: 'Edit Harga Produk',          sa: true,  ao: true,  fn: false, cs: false },
-  { perm: 'Edit HPP',                   sa: true,  ao: false, fn: true,  cs: false },
-  { perm: 'Proses Refund',              sa: true,  ao: true,  fn: false, cs: true  },
-  { perm: 'Suspend Akun User',          sa: true,  ao: true,  fn: false, cs: true  },
-  { perm: 'Export Laporan',             sa: true,  ao: true,  fn: true,  cs: false },
-  { perm: 'Kelola Supplier',            sa: true,  ao: false, fn: true,  cs: false },
-  { perm: 'Kelola Role & Akses',        sa: true,  ao: false, fn: false, cs: false },
-];
+// role-akses.jsx — Role & Akses (daftar role + anggota) screen
+// Permission matrix dipindah ke Pengaturan Sistem — halaman ini fokus ke daftar role & anggotanya.
 
 const RA_ROLES_SEED = [
   { id: 'sa', label: 'Super Admin',       tone: 'purple', members: 2, desc: 'Akses penuh ke seluruh modul & RBAC. Tidak bisa dihapus.', leads: ['Adi Rahmawan', 'Wira Sanjaya'] },
@@ -22,26 +12,19 @@ const RA_TONES = ['purple', 'lime', 'green', 'gold', 'coral', 'blue'];
 
 function RoleAkses() {
   const { Card } = window.MuurahShell;
-  const { useState: useRaState } = React;
+  const { useState: useRaState, useEffect: useRaEffect } = React;
   const [roles, setRoles] = useRaState(RA_ROLES_SEED);
-  const [permissions, setPermissions] = useRaState(RA_PERMISSIONS_SEED);
   const [creating, setCreating] = useRaState(false);
   const [managing, setManaging] = useRaState(false);
   const [configuring, setConfiguring] = useRaState(null);
 
-  function togglePermission(roleId, permIndex) {
-    const role = roles.find(r => r.id === roleId);
-    if (role.id === 'sa') {
-      window.muurahToast('Permission Super Admin tidak bisa diubah', 'warning');
-      return;
-    }
-    setPermissions(prev => prev.map((p, i) => i === permIndex ? { ...p, [roleId]: !p[roleId] } : p));
-    window.muurahToast('Permission "' + permissions[permIndex].perm + '" untuk ' + role.label + ' diperbarui', 'success');
-  }
+  // Publish roles to shared store so other screens (e.g. Tim & Admin) stay in sync.
+  useRaEffect(() => {
+    if (window.MuurahRolesStore) window.MuurahRolesStore.set(roles);
+  }, [roles]);
 
-  function handleCreateRole(newRole, checkedPerms) {
+  function handleCreateRole(newRole) {
     setRoles(prev => [...prev, newRole]);
-    setPermissions(prev => prev.map(p => ({ ...p, [newRole.id]: !!checkedPerms[p.perm] })));
     setCreating(false);
     window.muurahToast('Role "' + newRole.label + '" berhasil dibuat', 'success');
   }
@@ -55,7 +38,6 @@ function RoleAkses() {
       confirmLabel: 'Hapus Role', danger: true,
       onConfirm: () => {
         setRoles(prev => prev.filter(r => r.id !== roleId));
-        setPermissions(prev => prev.map(p => { const { [roleId]: _drop, ...rest } = p; return rest; }));
         window.muurahToast('Role "' + role.label + '" berhasil dihapus', 'success');
       },
     });
@@ -63,41 +45,6 @@ function RoleAkses() {
 
   function handleUpdateRole(roleId, patch) {
     setRoles(prev => prev.map(r => r.id === roleId ? { ...r, ...patch } : r));
-  }
-
-  const [newPermLabel, setNewPermLabel] = useRaState('');
-  const [renamingPerm, setRenamingPerm] = useRaState(null);
-
-  function addPermission() {
-    const label = newPermLabel.trim();
-    if (!label) return;
-    if (permissions.some(p => p.perm.toLowerCase() === label.toLowerCase())) {
-      window.muurahToast('Permission "' + label + '" sudah ada', 'error');
-      return;
-    }
-    const row = { perm: label, sa: true };
-    roles.forEach(r => { if (r.id !== 'sa') row[r.id] = false; });
-    setPermissions(prev => [...prev, row]);
-    setNewPermLabel('');
-    window.muurahToast('Permission "' + label + '" ditambahkan — default aktif untuk Super Admin', 'success');
-  }
-  function renamePermission(index, label) {
-    if (!label.trim()) { setRenamingPerm(null); return; }
-    setPermissions(prev => prev.map((p, i) => i === index ? { ...p, perm: label.trim() } : p));
-    setRenamingPerm(null);
-    window.muurahToast('Permission berhasil diperbarui', 'success');
-  }
-  function deletePermission(index) {
-    const label = permissions[index].perm;
-    window.muurahConfirm({
-      title: 'Hapus permission "' + label + '"?',
-      body: 'Permission ini akan dihapus dari matrix dan dari pilihan saat Buat Role Baru untuk semua role.',
-      confirmLabel: 'Hapus', danger: true,
-      onConfirm: () => {
-        setPermissions(prev => prev.filter((_, i) => i !== index));
-        window.muurahToast('Permission "' + label + '" dihapus', 'success');
-      },
-    });
   }
 
   return (
@@ -109,7 +56,7 @@ function RoleAkses() {
             Role & Akses
           </h1>
           <div style={{ fontSize: 14, color: '#574872', marginTop: 4 }}>
-            Atur permission tiap role, lihat anggota tiap role di satu tempat
+            Kelola role tim dan anggota di tiap role — atur permission detail di Pengaturan Sistem
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -122,111 +69,6 @@ function RoleAkses() {
         </div>
       </div>
 
-      {/* Permission matrix */}
-      <Card padding={0} style={{ overflow: 'hidden' }}>
-        <div style={{
-          padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        }}>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', letterSpacing: '-0.01em' }}>
-              Matrix Permission
-            </div>
-            <div style={{ fontSize: 12, color: '#9085AE', marginTop: 4 }}>
-              Centang untuk memberikan permission ke role · perubahan tercatat di audit log
-            </div>
-          </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontSize: 11, color: '#574872' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <span style={raChip(true)}><Icons.check size={11} strokeWidth={2.8} /></span>
-              Diizinkan
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <span style={raChip(false)}>—</span>
-              Tidak diizinkan
-            </span>
-          </div>
-        </div>
-
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr>
-              <th style={{ ...raThStyle, paddingLeft: 24, width: '40%' }}>Permission</th>
-              {roles.map((r) => <RaRoleHeader key={r.id} {...r} colWidth={(60 / roles.length) + '%'} />)}
-            </tr>
-          </thead>
-          <tbody>
-            {permissions.map((p, i) => (
-              <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52,
-                transition: 'background 130ms ease',
-              }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <td style={{ ...raTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500 }}>
-                  {renamingPerm === i ? (
-                    <input autoFocus defaultValue={p.perm}
-                      onBlur={(e) => renamePermission(i, e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') renamePermission(i, e.target.value); if (e.key === 'Escape') setRenamingPerm(null); }}
-                      style={{
-                        background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8,
-                        height: 30, padding: '0 8px', fontSize: 13, fontWeight: 500,
-                        color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '90%',
-                      }} />
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span>{p.perm}</span>
-                      <span style={{ display: 'inline-flex', gap: 2 }}>
-                        <button onClick={() => setRenamingPerm(i)} title="Ubah nama" style={raIconGhostBtn()}>
-                          <Icons.cog size={12} />
-                        </button>
-                        <button onClick={() => deletePermission(i)} title="Hapus permission" style={raIconGhostBtn('#C0001A')}>
-                          <Icons.x size={12} />
-                        </button>
-                      </span>
-                    </div>
-                  )}
-                </td>
-                {roles.map((r) => (
-                  <RaPermCell key={r.id} allowed={!!p[r.id]} onClick={() => togglePermission(r.id, i)} locked={r.id === 'sa'} />
-                ))}
-              </tr>
-            ))}
-            <tr style={{ borderTop: '1px solid #F0EBFF', height: 52 }}>
-              <td style={{ ...raTdStyle, paddingLeft: 24 }} colSpan={1 + roles.length}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <input value={newPermLabel} onChange={(e) => setNewPermLabel(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') addPermission(); }}
-                    placeholder="Nama permission baru… (cth. Kelola Banner Homepage)"
-                    style={{
-                      background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8,
-                      height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228',
-                      outline: 'none', fontFamily: 'inherit', width: 320,
-                    }} />
-                  <button onClick={addPermission} style={raSecondaryBtn()}>
-                    <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission Baru
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div style={{
-          padding: '14px 24px', borderTop: '1px solid #E0D9F5',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          background: '#FAF8FF',
-        }}>
-          <div style={{ fontSize: 12, color: '#574872', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-            <Icons.clock size={13} style={{ color: '#9085AE' }} />
-            Terakhir diubah <b style={{ color: '#1A1228' }}>13:55 WIB</b> oleh Dimas Pratama
-          </div>
-          <button style={raGhostBtn()}>
-            Lihat audit log lengkap <Icons.arrowR size={13} />
-          </button>
-        </div>
-      </Card>
-
       {/* Role management cards */}
       <div>
         <div style={{
@@ -234,16 +76,14 @@ function RoleAkses() {
           letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 10,
         }}>Daftar Role</div>
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(${roles.length}, 1fr)`, gap: 16 }}>
-          {roles.map((r) => {
-            const allowedCount = permissions.filter(p => p[r.id]).length;
-            return <RaRoleCard key={r.id} role={r} allowedCount={allowedCount} total={permissions.length} onConfigure={() => setConfiguring(r.id)} />;
-          })}
+          {roles.map((r) => (
+            <RaRoleCard key={r.id} role={r} onConfigure={() => setConfiguring(r.id)} />
+          ))}
         </div>
       </div>
 
       {creating && (
         <CreateRoleModal
-          permissions={permissions}
           existingIds={roles.map(r => r.id)}
           onClose={() => setCreating(false)}
           onCreate={handleCreateRole}
@@ -253,77 +93,17 @@ function RoleAkses() {
       {configuring && (
         <RoleDetailModal
           role={roles.find(r => r.id === configuring)}
-          permissions={permissions}
           onClose={() => setConfiguring(null)}
           onSave={(patch) => { handleUpdateRole(configuring, patch); setConfiguring(null); window.muurahToast('Role berhasil diperbarui', 'success'); }}
           onDelete={() => handleDeleteRole(configuring)}
-          onTogglePermission={(permIndex) => togglePermission(configuring, permIndex)}
         />
       )}
     </div>
   );
 }
 
-// ─── Role header ─────────────────────────────────────────────────────────────
-function RaRoleHeader({ label, tone, members, colWidth }) {
-  const tones = {
-    purple: { bg: '#EDE8FF', fg: '#4A2D8C' },
-    lime:   { bg: '#F4FCE3', fg: '#5B7C12' },
-    green:  { bg: '#F0FDF4', fg: '#16A34A' },
-    gold:   { bg: '#FEF9EC', fg: '#D4900A' },
-    coral:  { bg: '#FFF1ED', fg: '#FF6B4A' },
-    blue:   { bg: '#EFF6FF', fg: '#3B82F6' },
-  };
-  const t = tones[tone] || tones.purple;
-  return (
-    <th style={{ ...raThStyle, textAlign: 'center', width: colWidth }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
-        <span style={{
-          background: t.bg, color: t.fg,
-          padding: '2px 9px', borderRadius: 6,
-          fontWeight: 700, fontSize: 11, letterSpacing: '0.04em',
-        }}>{label}</span>
-        <span style={{
-          fontSize: 10, color: '#9085AE',
-          textTransform: 'none', letterSpacing: 0,
-          fontFamily: 'JetBrains Mono, monospace', fontWeight: 500,
-        }}>{members} user</span>
-      </div>
-    </th>
-  );
-}
-
-// ─── Permission cell ─────────────────────────────────────────────────────────
-function RaPermCell({ allowed, onClick, locked }) {
-  return (
-    <td style={{ ...raTdStyle, padding: '8px 14px', textAlign: 'center' }}>
-      <span onClick={onClick} title={locked ? 'Permission Super Admin terkunci' : (allowed ? 'Klik untuk cabut izin' : 'Klik untuk berikan izin')} style={{
-        ...raChip(allowed),
-        cursor: locked ? 'not-allowed' : 'pointer',
-        transition: 'transform 100ms ease',
-      }}
-        onMouseEnter={(e) => { if (!locked) e.currentTarget.style.transform = 'scale(1.12)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-      >
-        {allowed
-          ? <Icons.check size={15} strokeWidth={2.8} />
-          : <span style={{ fontWeight: 700, fontSize: 13, lineHeight: 1 }}>—</span>}
-      </span>
-    </td>
-  );
-}
-
-function raChip(allowed) {
-  return {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    width: 28, height: 28, borderRadius: 8,
-    background: allowed ? '#F0FDF4' : '#F0EBFF',
-    color: allowed ? '#16A34A' : '#9085AE',
-  };
-}
-
 // ─── Role card ───────────────────────────────────────────────────────────────
-function RaRoleCard({ role, allowedCount, total, onConfigure }) {
+function RaRoleCard({ role, onConfigure }) {
   const tones = {
     purple: { bg: '#EDE8FF', fg: '#4A2D8C', track: '#C5B8EF' },
     lime:   { bg: '#F4FCE3', fg: '#5B7C12', track: '#DBEFAE' },
@@ -333,7 +113,6 @@ function RaRoleCard({ role, allowedCount, total, onConfigure }) {
     blue:   { bg: '#EFF6FF', fg: '#3B82F6', track: '#BFDBFE' },
   };
   const t = tones[role.tone] || tones.purple;
-  const pct = (allowedCount / total) * 100;
   const isLocked = role.id === 'sa';
 
   return (
@@ -390,26 +169,6 @@ function RaRoleCard({ role, allowedCount, total, onConfigure }) {
         ))}
       </div>
 
-      {/* Permission progress */}
-      <div>
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-          fontSize: 11, color: '#574872', marginBottom: 6,
-        }}>
-          <span style={{ fontWeight: 600 }}>Permissions</span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#1A1228' }}>
-            {allowedCount}/{total}
-          </span>
-        </div>
-        <div style={{ height: 6, background: '#F0EBFF', borderRadius: 4, overflow: 'hidden' }}>
-          <div style={{
-            width: `${pct}%`, height: '100%',
-            background: t.fg, borderRadius: 4,
-            transition: 'width 300ms ease',
-          }} />
-        </div>
-      </div>
-
       <button onClick={onConfigure} style={{
         marginTop: 4, height: 32, borderRadius: 8,
         background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
@@ -441,14 +200,6 @@ function raSecondaryBtn() {
     background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
     height: 38, padding: '0 14px', borderRadius: 10,
     fontSize: 13, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer',
-  };
-}
-function raIconGhostBtn(color) {
-  return {
-    width: 20, height: 20, border: 0, borderRadius: 6,
-    background: 'transparent', color: color || '#9085AE', cursor: 'pointer',
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    opacity: 0.6, transition: 'opacity 100ms ease',
   };
 }
 
@@ -547,16 +298,11 @@ function RaModalShell({ onClose, eyebrow, title, subtitle, width = 560, children
 }
 
 // ─── Modal: Buat Role Baru ─────────────────────────────────────────────────────
-function CreateRoleModal({ permissions, existingIds, onClose, onCreate }) {
+function CreateRoleModal({ existingIds, onClose, onCreate }) {
   const { useState: useS } = React;
   const [label, setLabel] = useS('');
   const [desc, setDesc] = useS('');
   const [tone, setTone] = useS('blue');
-  const [checked, setChecked] = useS(() => {
-    const init = {};
-    permissions.forEach(p => init[p.perm] = false);
-    return init;
-  });
 
   const isValid = label.trim().length > 0;
 
@@ -569,12 +315,12 @@ function CreateRoleModal({ permissions, existingIds, onClose, onCreate }) {
     let suffix = 1;
     let finalId = id;
     while (existingIds.includes(finalId)) { finalId = id + suffix; suffix++; }
-    onCreate({ id: finalId, label: label.trim(), tone, members: 0, desc: desc.trim() || 'Role custom — atur permission sesuai kebutuhan.', leads: [] }, checked);
+    onCreate({ id: finalId, label: label.trim(), tone, members: 0, desc: desc.trim() || 'Role custom — atur permission sesuai kebutuhan di Pengaturan Sistem.', leads: [] });
   }
 
   return (
     <RaModalShell onClose={onClose} eyebrow="Role & Akses" title="Buat Role Baru"
-      subtitle="Tentukan nama, warna, dan permission awal untuk role ini"
+      subtitle="Tentukan nama, warna, dan deskripsi untuk role ini — permission diatur di Pengaturan Sistem"
       footer={<>
         <button onClick={onClose} style={raSecondaryBtn()}>Batal</button>
         <button onClick={handleCreate} style={{ ...raPrimaryBtn(), opacity: isValid ? 1 : 0.5 }}>
@@ -613,30 +359,12 @@ function CreateRoleModal({ permissions, existingIds, onClose, onCreate }) {
           rows={2}
           style={raInputStyle({ width: '100%', height: 'auto', padding: '10px 12px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit' })} />
       </RaField>
-
-      <RaField label="Permission Awal">
-        <div style={{ border: '1px solid #E0D9F5', borderRadius: 10, overflow: 'hidden' }}>
-          {permissions.map((p, i) => (
-            <label key={i} style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '10px 12px', fontSize: 13, color: '#1A1228',
-              borderTop: i === 0 ? 'none' : '1px solid #F0EBFF',
-              cursor: 'pointer', background: checked[p.perm] ? '#FAF8FF' : '#FFFFFF',
-            }}>
-              {p.perm}
-              <input type="checkbox" checked={!!checked[p.perm]}
-                onChange={(e) => setChecked(c => ({ ...c, [p.perm]: e.target.checked }))}
-                style={{ width: 16, height: 16, accentColor: '#4A2D8C', cursor: 'pointer' }} />
-            </label>
-          ))}
-        </div>
-      </RaField>
     </RaModalShell>
   );
 }
 
 // ─── Modal: Konfigurasi Role (detail/edit/delete) ──────────────────────────────
-function RoleDetailModal({ role, permissions, onClose, onSave, onDelete, onTogglePermission }) {
+function RoleDetailModal({ role, onClose, onSave, onDelete }) {
   const { useState: useS } = React;
   const [label, setLabel] = useS(role.label);
   const [desc, setDesc] = useS(role.desc);
@@ -645,7 +373,7 @@ function RoleDetailModal({ role, permissions, onClose, onSave, onDelete, onToggl
 
   return (
     <RaModalShell onClose={onClose} eyebrow={'Role & Akses · ' + role.id.toUpperCase()} title="Konfigurasi Role"
-      subtitle={isLocked ? 'Role bawaan sistem — beberapa hal tidak bisa diubah' : 'Edit detail role dan kelola permission'}
+      subtitle={isLocked ? 'Role bawaan sistem — beberapa hal tidak bisa diubah' : 'Edit nama, warna, dan deskripsi role — permission diatur di Pengaturan Sistem'}
       footer={<>
         {isLocked
           ? <span />
@@ -690,32 +418,11 @@ function RoleDetailModal({ role, permissions, onClose, onSave, onDelete, onToggl
           style={raInputStyle({ width: '100%', height: 'auto', padding: '10px 12px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit', opacity: isLocked ? 0.6 : 1, cursor: isLocked ? 'not-allowed' : 'text' })} />
       </RaField>
 
-      <RaField label={'Permission (' + permissions.filter(p => p[role.id]).length + '/' + permissions.length + ')'}>
-        <div style={{ border: '1px solid #E0D9F5', borderRadius: 10, overflow: 'hidden' }}>
-          {permissions.map((p, i) => {
-            const allowed = !!p[role.id];
-            return (
-              <div key={i} onClick={() => !isLocked && onTogglePermission(i)} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '10px 12px', fontSize: 13, color: '#1A1228',
-                borderTop: i === 0 ? 'none' : '1px solid #F0EBFF',
-                cursor: isLocked ? 'not-allowed' : 'pointer',
-                background: allowed ? '#FAF8FF' : '#FFFFFF',
-              }}>
-                {p.perm}
-                <span style={raChip(allowed)}>
-                  {allowed ? <Icons.check size={13} strokeWidth={2.8} /> : <span style={{ fontWeight: 700, fontSize: 12, lineHeight: 1 }}>—</span>}
-                </span>
-              </div>
-            );
-          })}
+      {isLocked && (
+        <div style={{ fontSize: 11, color: '#9085AE', lineHeight: 1.5 }}>
+          Role Super Admin selalu memiliki akses penuh ke seluruh permission dan tidak dapat diubah.
         </div>
-        {isLocked && (
-          <div style={{ fontSize: 11, color: '#9085AE', marginTop: 6, lineHeight: 1.5 }}>
-            Super Admin selalu memiliki akses penuh ke seluruh permission dan tidak dapat diubah.
-          </div>
-        )}
-      </RaField>
+      )}
     </RaModalShell>
   );
 }

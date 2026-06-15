@@ -1,7 +1,8 @@
 // tim-admin.jsx — Tim & Admin (internal staff accounts) screen
 const { useState: useTaState, useEffect: useTaEffect } = React;
 
-const TA_ROLES = [
+// Fallback role list — actual roles come from window.MuurahRolesStore (managed in Role & Akses)
+const TA_ROLES_FALLBACK = [
   { id: 'sa', label: 'Super Admin',       tone: 'purple' },
   { id: 'ao', label: 'Admin Operasional', tone: 'lime'   },
   { id: 'fn', label: 'Finance',           tone: 'green'  },
@@ -12,6 +13,8 @@ const TA_ROLE_TONES = {
   lime:   { bg: '#F4FCE3', fg: '#5B7C12' },
   green:  { bg: '#F0FDF4', fg: '#16A34A' },
   gold:   { bg: '#FEF9EC', fg: '#D4900A' },
+  coral:  { bg: '#FFF1ED', fg: '#FF6B4A' },
+  blue:   { bg: '#EFF6FF', fg: '#3B82F6' },
 };
 
 const ADMIN_SEED = [
@@ -33,6 +36,12 @@ function TimAdmin() {
   const [roleF, setRoleF] = useTaState('semua');
   const [query, setQuery] = useTaState('');
   const [adding, setAdding] = useTaState(false);
+  const [roles, setRoles] = useTaState(() => (window.MuurahRolesStore ? window.MuurahRolesStore.get() : TA_ROLES_FALLBACK));
+
+  useTaEffect(() => {
+    if (!window.MuurahRolesStore) return;
+    return window.MuurahRolesStore.subscribe(setRoles);
+  }, []);
   const [editing, setEditing] = useTaState(null);
 
   const filtered = admins.filter(a => {
@@ -107,7 +116,7 @@ function TimAdmin() {
       {/* Role summary chips */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <TaRoleChip label="Semua" count={admins.length} active={roleF === 'semua'} onClick={() => setRoleF('semua')} tone="purple" />
-        {TA_ROLES.map(r => (
+        {roles.map(r => (
           <TaRoleChip key={r.id} label={r.label} count={admins.filter(a => a.role === r.id).length} active={roleF === r.id} onClick={() => setRoleF(r.id)} tone={r.tone} />
         ))}
       </div>
@@ -137,7 +146,7 @@ function TimAdmin() {
           </thead>
           <tbody>
             {filtered.map((a) => {
-              const role = TA_ROLES.find(r => r.id === a.role) || TA_ROLES[1];
+              const role = roles.find(r => r.id === a.role) || roles[1];
               const t = TA_ROLE_TONES[role.tone];
               return (
                 <tr key={a.id} style={{ borderTop: '1px solid #F0EBFF', height: 64, opacity: a.status === 'suspended' ? 0.6 : 1 }}>
@@ -184,7 +193,7 @@ function TimAdmin() {
       </Card>
 
       {(adding || editing) && (
-        <AdminModal admin={editing} onClose={() => { setAdding(false); setEditing(null); }} onSave={saveAdmin} />
+        <AdminModal admin={editing} roles={roles} onClose={() => { setAdding(false); setEditing(null); }} onSave={saveAdmin} />
       )}
     </div>
   );
@@ -213,7 +222,7 @@ function TaRoleChip({ label, count, active, onClick, tone }) {
 }
 
 // ─── Modal: Tambah / Edit Admin ────────────────────────────────────────────────
-function AdminModal({ admin, onClose, onSave }) {
+function AdminModal({ admin, roles, onClose, onSave }) {
   const [form, setForm] = useTaState(admin ? { ...admin } : { nama: '', email: '', role: 'cs', authMethod: 'invite', password: '' });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const isValid = form.nama.trim() && /^\S+@\S+\.\S+$/.test(form.email) &&
@@ -268,7 +277,7 @@ function AdminModal({ admin, onClose, onSave }) {
 
           <TaField label="Role">
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {TA_ROLES.map(r => {
+              {roles.map(r => {
                 const t = TA_ROLE_TONES[r.tone];
                 const active = form.role === r.id;
                 return (

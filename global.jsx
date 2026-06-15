@@ -31,6 +31,34 @@ window.muurahOpenUserProfile = (hp) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
+//   ROLES STORE — shared role list (Role & Akses is the source of truth)
+//
+//   window.MuurahRolesStore.get()        -> current roles array
+//   window.MuurahRolesStore.set(roles)   -> publish new roles array
+//   window.MuurahRolesStore.subscribe(fn)-> fn(roles) on every update, returns unsubscribe
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahRolesStore = (() => {
+  let roles = [
+    { id: 'sa', label: 'Super Admin',       tone: 'purple' },
+    { id: 'ao', label: 'Admin Operasional', tone: 'lime'   },
+    { id: 'fn', label: 'Finance',           tone: 'green'  },
+    { id: 'cs', label: 'CS',                tone: 'gold'   },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => roles,
+    set: (next) => {
+      roles = next;
+      listeners.forEach(fn => fn(roles));
+    },
+    subscribe: (fn) => {
+      listeners.add(fn);
+      return () => listeners.delete(fn);
+    },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
 //   TOAST CONTAINER
 // ════════════════════════════════════════════════════════════════════════════
 function ToastContainer() {
