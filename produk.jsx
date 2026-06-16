@@ -94,7 +94,6 @@ function Produk() {
   const [mappingOpen, setMappingOpen] = useProdState(false);
   const [view, setView] = useProdState('produk');
   const [produkList, setProdukList] = useProdState(() => PRODUK_DATA.map(p => ({ ...p, sumber: p.sumber.map(s => ({ ...s })) })));
-  const [sumberTarget, setSumberTarget] = useProdState(null);
 
   const filtered = useProdMemo(() => {
     return produkList.filter(p => {
@@ -303,7 +302,6 @@ function Produk() {
                   <td style={{ ...prTdStyle, textAlign: 'right', paddingRight: 20 }}>
                     <div style={{ display: 'inline-flex', gap: 4 }}>
                       <button onClick={() => setEditing(p)} style={ghostBtn('#4A2D8C')}>Edit</button>
-                      <button onClick={() => setSumberTarget(p.sku)} style={ghostBtn('#4A2D8C')}>Sumber ({p.sumber.length})</button>
                       <button onClick={() => window.muurahConfirm({
                         title: (p.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan') + ' produk ' + p.sku + '?',
                         body: 'Produk "' + p.nama + '" akan ' + (p.status === 'aktif' ? 'disembunyikan' : 'ditampilkan kembali') + ' dari katalog reseller dan user.',
@@ -346,60 +344,10 @@ function Produk() {
       </Card>
 
       {/* Edit Modal */}
-      {editing && <EditProdukModal produk={editing} onClose={() => setEditing(null)} />}
+      {editing && <EditProdukModal produk={editing} produkList={produkList} onClose={() => setEditing(null)} onSave={(updated) => setProdukList(list => list.map(p => p.sku === updated.sku ? updated : p))} />}
       {/* Add Modal */}
       {adding && <AddProdukModal onClose={() => setAdding(false)} />}
       {mappingOpen && <OperatorMappingModal onClose={() => setMappingOpen(false)} />}
-      {sumberTarget && (
-        <SumberBillerModal
-          produk={produkList.find(p => p.sku === sumberTarget)}
-          onClose={() => setSumberTarget(null)}
-          onSwitch={(biller) => {
-            const produk = produkList.find(p => p.sku === sumberTarget);
-            const target = produk.sumber.find(s => s.biller === biller);
-            window.muurahConfirm({
-              title: 'Pindahkan sumber "' + produk.nama + '" ke ' + biller + '?',
-              body: 'HPP & harga jual produk ini akan langsung berubah ke nilai dari ' + biller + ' (HPP Rp ' + target.hpp.toLocaleString('id-ID') + ', Jual Rp ' + target.jual.toLocaleString('id-ID') + ') untuk transaksi selanjutnya.',
-              confirmLabel: 'Pindahkan',
-              onConfirm: () => {
-                setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : {
-                  ...p,
-                  hpp: target.hpp,
-                  jual: target.jual,
-                  sumber: p.sumber.map(s => ({ ...s, status: s.biller === biller ? 'aktif' : 'standby' })),
-                }));
-                window.muurahToast('Sumber "' + produk.nama + '" dipindah ke ' + biller, 'success');
-              },
-            });
-          }}
-          onToggleAutoSwitch={(v) => {
-            window.muurahConfirm({
-              title: (v ? 'Aktifkan' : 'Matikan') + ' auto-switch biller untuk produk ini?',
-              body: v
-                ? 'Kalau biller utama produk ini masuk status Danger/Blackout (lihat Saldo & Limit Biller), sistem akan otomatis pindah ke sumber lain yang statusnya Aman, sehingga pop-up "sedang gangguan" tidak perlu muncul ke user.'
-                : 'Produk ini tidak akan auto-switch lagi — kalau biller utamanya kritis, akan mengikuti aksi pop-up yang dikonfigurasi di Saldo & Limit Biller.',
-              confirmLabel: v ? 'Aktifkan' : 'Matikan',
-              danger: !v,
-              onConfirm: () => setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, autoSwitch: v })),
-            });
-          }}
-          onAddSumber={(data) => {
-            setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, sumber: [...p.sumber, { ...data, status: 'standby' }] }));
-            window.muurahToast('Sumber biller "' + data.biller + '" ditambahkan ke "' + produkList.find(p => p.sku === sumberTarget).nama + '"', 'success');
-          }}
-          onDeleteSumber={(biller) => {
-            window.muurahConfirm({
-              title: 'Hapus sumber "' + biller + '"?',
-              body: 'Sumber biller ini tidak akan lagi jadi opsi untuk produk ini.',
-              confirmLabel: 'Hapus', danger: true,
-              onConfirm: () => {
-                setProdukList(list => list.map(p => p.sku !== sumberTarget ? p : { ...p, sumber: p.sumber.filter(s => s.biller !== biller) }));
-                window.muurahToast('Sumber "' + biller + '" dihapus', 'success');
-              },
-            });
-          }}
-        />
-      )}
       </>
       )}
     </div>
@@ -407,12 +355,17 @@ function Produk() {
 }
 
 // ─── Modal ───────────────────────────────────────────────────────────────────
-function EditProdukModal({ produk, onClose }) {
+function EditProdukModal({ produk, produkList, onClose, onSave }) {
   const [form, setForm] = useProdState({
     ...produk,
+    sumber: produk.sumber ? produk.sumber.map(s => ({ ...s })) : [],
+    autoSwitch: produk.autoSwitch || false,
     gameConfig: produk.gameConfig || DEFAULT_GAME_CONFIG(),
     wilayahConfig: produk.wilayahConfig || DEFAULT_WILAYAH_CONFIG(),
   });
+  const [newBiller, setNewBiller] = useProdState('');
+  const [newHpp, setNewHpp] = useProdState(produk.hpp);
+  const [newJual, setNewJual] = useProdState(produk.jual);
 
   useProdEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -524,6 +477,104 @@ function EditProdukModal({ produk, onClose }) {
             <WilayahConfigEditor config={form.wilayahConfig} onChange={(c) => update('wilayahConfig', c)} />
           )}
 
+          {/* Sumber Biller */}
+          {form.sumber && form.sumber.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sumber Biller</div>
+              {form.sumber.map((s) => {
+                const isAktif = s.status === 'aktif';
+                return (
+                  <div key={s.biller} style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 12px', borderRadius: 10,
+                    background: isAktif ? '#EDE8FF' : '#FFFFFF',
+                    border: '1px solid ' + (isAktif ? '#4A2D8C' : '#E0D9F5'),
+                  }}>
+                    <span style={{ flex: 1, fontSize: 13, fontWeight: isAktif ? 700 : 500, color: isAktif ? '#4A2D8C' : '#574872' }}>{s.biller}</span>
+                    <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: '#9085AE' }}>
+                      HPP {s.hpp.toLocaleString('id-ID')} · Jual {s.jual.toLocaleString('id-ID')}
+                    </span>
+                    {isAktif ? (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#4A2D8C', background: '#FFFFFF', padding: '3px 8px', borderRadius: 6 }}>AKTIF</span>
+                    ) : (
+                      <button onClick={() => {
+                        window.muurahConfirm({
+                          title: 'Switch sumber ke ' + s.biller + '?',
+                          body: 'HPP & harga jual akan berubah ke Rp ' + s.hpp.toLocaleString('id-ID') + ' / Rp ' + s.jual.toLocaleString('id-ID') + ' untuk transaksi selanjutnya.',
+                          confirmLabel: 'Switch',
+                          onConfirm: () => setForm(f => ({
+                            ...f,
+                            hpp: s.hpp, jual: s.jual,
+                            sumber: f.sumber.map(x => ({ ...x, status: x.biller === s.biller ? 'aktif' : 'standby' })),
+                          })),
+                        });
+                      }} style={{
+                        fontSize: 11, fontWeight: 600, color: '#574872',
+                        background: '#F0EBFF', border: 0, borderRadius: 6,
+                        padding: '3px 8px', cursor: 'pointer', fontFamily: 'inherit',
+                      }}>Jadikan Aktif</button>
+                    )}
+                    {!isAktif && (
+                      <button onClick={() => setForm(f => ({ ...f, sumber: f.sumber.filter(x => x.biller !== s.biller) }))}
+                        style={{ width: 20, height: 20, border: 0, borderRadius: 5, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+                        <Icons.x size={12} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Tambah sumber */}
+              {(() => {
+                const available = SUMBER_BILLER_OPTIONS.filter(b => !form.sumber.some(s => s.biller === b));
+                if (available.length === 0) return null;
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr auto', gap: 6, alignItems: 'center' }}>
+                    <div style={{ position: 'relative' }}>
+                      <select value={newBiller || available[0]} onChange={(e) => setNewBiller(e.target.value)}
+                        style={{ ...prInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 28 }}>
+                        {available.map(b => <option key={b} value={b}>{b}</option>)}
+                      </select>
+                      <Icons.chevron size={12} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
+                    </div>
+                    <input type="number" value={newHpp} onChange={(e) => setNewHpp(parseInt(e.target.value) || 0)} placeholder="HPP"
+                      style={prInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+                    <input type="number" value={newJual} onChange={(e) => setNewJual(parseInt(e.target.value) || 0)} placeholder="Jual"
+                      style={prInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace' })} />
+                    <button onClick={() => {
+                      const biller = newBiller || available[0];
+                      setForm(f => ({ ...f, sumber: [...f.sumber, { biller, hpp: newHpp, jual: newJual, status: 'standby' }] }));
+                      setNewBiller('');
+                    }} style={{
+                      width: 34, height: 38, border: 0, borderRadius: 10,
+                      background: '#4A2D8C', color: '#FFFFFF', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+                    }}>+</button>
+                  </div>
+                );
+              })()}
+
+              {/* Auto-switch */}
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, cursor: 'pointer', paddingTop: 4 }}>
+                <Toggle2 checked={!!form.autoSwitch} onChange={(v) => {
+                  window.muurahConfirm({
+                    title: (v ? 'Aktifkan' : 'Matikan') + ' auto-switch biller untuk produk ini?',
+                    body: v
+                      ? 'Saat biller utama masuk Danger/Blackout di Saldo & Limit Biller, sistem otomatis pindah ke sumber lain yang aman sebelum pop-up muncul ke user.'
+                      : 'Produk ini tidak akan auto-switch — ikuti aksi pop-up di Saldo & Limit Biller.',
+                    confirmLabel: v ? 'Aktifkan' : 'Matikan',
+                    danger: !v,
+                    onConfirm: () => setForm(f => ({ ...f, autoSwitch: v })),
+                  });
+                }} />
+                <span>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1228' }}>Auto-switch ke biller alternatif saat kritis</div>
+                  <div style={{ fontSize: 11, color: '#9085AE', marginTop: 2 }}>Korelasi dengan status Saldo & Limit Biller</div>
+                </span>
+              </label>
+            </div>
+          )}
+
           {/* Preview margin */}
           <div style={{
             background: '#F0EBFF', borderRadius: 10, padding: 14,
@@ -551,7 +602,11 @@ function EditProdukModal({ produk, onClose }) {
             height: 38, padding: '0 18px', borderRadius: 10,
             fontSize: 13, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer',
           }}>Batal</button>
-          <button onClick={() => { onClose(); window.muurahToast('Produk ' + produk.sku + ' berhasil diperbarui', 'success'); }} style={{
+          <button onClick={() => {
+            if (onSave) onSave(form);
+            onClose();
+            window.muurahToast('Produk ' + produk.sku + ' berhasil diperbarui', 'success');
+          }} style={{
             background: '#4A2D8C', color: '#FFFFFF', border: 0,
             height: 38, padding: '0 20px', borderRadius: 10,
             fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
