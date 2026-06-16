@@ -72,7 +72,7 @@ const PRODUK_DATA = [
   },
 ];
 
-const TABS = [
+const TABS_SEED = [
   { id: 'semua',   label: 'Semua Produk' },
   { id: 'pulsa',   label: 'Pulsa' },
   { id: 'pln',     label: 'PLN' },
@@ -82,6 +82,14 @@ const TABS = [
   { id: 'emoney',  label: 'E-Money' },
   { id: 'tagihan', label: 'Tagihan' },
 ];
+// Runtime TABS — use store if available, fallback to seed
+function getTabsFromStore() {
+  if (!window.MuurahKategoriStore) return TABS_SEED;
+  const kat = window.MuurahKategoriStore.get().filter(k => k.aktif);
+  return [{ id: 'semua', label: 'Semua Produk' }, ...kat.map(k => ({ id: k.id, label: k.label }))];
+}
+// TABS used statically in PromoHargaPanel and PromoHargaModal (they read current value inline)
+let TABS = getTabsFromStore();
 
 function Produk() {
   const { Card } = window.MuurahShell;
@@ -93,6 +101,16 @@ function Produk() {
   const [adding, setAdding] = useProdState(false);
   const [mappingOpen, setMappingOpen] = useProdState(false);
   const [view, setView] = useProdState('produk');
+  const [tabs, setTabs] = useProdState(getTabsFromStore);
+
+  useProdEffect(() => {
+    if (!window.MuurahKategoriStore) return;
+    return window.MuurahKategoriStore.subscribe((kat) => {
+      const newTabs = [{ id: 'semua', label: 'Semua Produk' }, ...kat.filter(k => k.aktif).map(k => ({ id: k.id, label: k.label }))];
+      TABS = newTabs;
+      setTabs(newTabs);
+    });
+  }, []);
   const [produkList, setProdukList] = useProdState(() => PRODUK_DATA.map(p => ({ ...p, sumber: p.sumber.map(s => ({ ...s })) })));
 
   const filtered = useProdMemo(() => {
@@ -182,7 +200,7 @@ function Produk() {
           display: 'flex', borderBottom: '1px solid #E0D9F5',
           padding: '0 20px',
         }}>
-          {TABS.map((t) => {
+          {tabs.map((t) => {
             const isActive = tab === t.id;
             return (
               <button key={t.id} onClick={() => setTab(t.id)} style={{
@@ -1069,8 +1087,8 @@ function AddProdukModal({ onClose }) {
               <div style={{ position: 'relative' }}>
                 <select value={form.kategori} onChange={(e) => update('kategori', e.target.value)}
                   style={prInputStyle({ width: '100%', appearance: 'none', paddingRight: 32, cursor: 'pointer' })}>
-                  {['Pulsa','PLN','Paket Data','BPJS','Voucher Game','E-Money','PDAM','Multifinance'].map(o =>
-                    <option key={o} value={o}>{o}</option>
+                  {(window.MuurahKategoriStore ? window.MuurahKategoriStore.get().filter(k => k.aktif) : []).map(k =>
+                    <option key={k.id} value={k.id}>{k.label}</option>
                   )}
                 </select>
                 <Icons.chevron size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />

@@ -11,6 +11,7 @@ const PS_NAV = [
   { id: 'seo',      label: 'SEO',                 icon: 'search' },
   { id: 'limit',    label: 'Saldo & Limit Biller', icon: 'wallet' },
   { id: 'fee',      label: 'Fee & Biaya Admin',   icon: 'wallet' },
+  { id: 'kategori', label: 'Master Kategori',    icon: 'tag' },
   { id: 'rbac',     label: 'Role & Akses',        icon: 'shieldlock' },
   { id: 'audit',    label: 'Audit Log',           icon: 'clock' },
 ];
@@ -111,6 +112,7 @@ function Pengaturan() {
           {innerNav === 'seo'      && <SeoPanel />}
           {innerNav === 'limit'    && <SaldoLimitPanel />}
           {innerNav === 'fee'      && <FeePanel />}
+          {innerNav === 'kategori' && <KategoriPanel />}
           {innerNav === 'rbac'     && <RbacPanel perms={perms} onToggle={togglePerm} onAdd={addPerm} onRename={renamePerm} onDelete={deletePerm} />}
           {innerNav === 'audit'    && <AuditPanel />}
         </div>
@@ -2928,6 +2930,264 @@ function SeoPageModal({ page, domain, onClose, onSave }) {
           <button onClick={() => isValid ? onSave(form) : window.muurahToast('Lengkapi semua field yang wajib diisi', 'error')}
             style={{ ...primaryBtn(), opacity: isValid ? 1 : 0.5 }}>
             <Icons.check size={14} strokeWidth={2.5} /> {page ? 'Simpan' : 'Tambah Halaman'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//   MASTER KATEGORI PRODUK
+// ════════════════════════════════════════════════════════════════════════════
+const KAT_WARNA_META = {
+  purple: { bg: '#EDE8FF', fg: '#4A2D8C' },
+  gold:   { bg: '#FEF9EC', fg: '#D4900A' },
+  blue:   { bg: '#EFF6FF', fg: '#3B82F6' },
+  green:  { bg: '#F0FDF4', fg: '#16A34A' },
+  coral:  { bg: '#FFF1ED', fg: '#FF6B4A' },
+  lime:   { bg: '#F4FCE3', fg: '#5B7C12' },
+};
+const KAT_WARNA_OPTIONS = Object.keys(KAT_WARNA_META);
+const KAT_IKON_OPTIONS = ['phone','bolt','wifi','heart','game','card','receipt','tag','wallet','store','users','image','percent','chart','clock'];
+
+function KategoriPanel() {
+  const { useState: useKtState, useEffect: useKtEffect } = React;
+  const [list, setList] = useKtState(() => window.MuurahKategoriStore ? window.MuurahKategoriStore.get() : []);
+  const [editing, setEditing] = useKtState(null);
+  const [adding, setAdding] = useKtState(false);
+  const [drag, setDrag] = useKtState(null);
+
+  // Keep store in sync
+  useKtEffect(() => {
+    if (window.MuurahKategoriStore) window.MuurahKategoriStore.set(list);
+  }, [list]);
+
+  function saveKat(data) {
+    if (data.id && list.some(k => k.id === data.id)) {
+      setList(ls => ls.map(k => k.id === data.id ? { ...k, ...data } : k));
+      window.muurahToast('Kategori "' + data.label + '" berhasil diperbarui', 'success');
+    } else {
+      const newId = data.label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 12) || 'kat' + Date.now();
+      const urutan = list.length + 1;
+      setList(ls => [...ls, { ...data, id: newId, urutan, aktif: true }]);
+      window.muurahToast('Kategori "' + data.label + '" berhasil ditambahkan', 'success');
+    }
+    setEditing(null); setAdding(false);
+  }
+
+  function deleteKat(k) {
+    window.muurahConfirm({
+      title: 'Hapus kategori "' + k.label + '"?',
+      body: 'Kategori ini akan hilang dari filter produk, dropdown tambah produk, dan scope promo harga.',
+      confirmLabel: 'Hapus', danger: true,
+      onConfirm: () => {
+        setList(ls => ls.filter(x => x.id !== k.id).map((x, i) => ({ ...x, urutan: i + 1 })));
+        window.muurahToast('Kategori "' + k.label + '" dihapus', 'success');
+      },
+    });
+  }
+
+  function toggleAktif(k) {
+    window.muurahConfirm({
+      title: (k.aktif ? 'Nonaktifkan' : 'Aktifkan') + ' kategori "' + k.label + '"?',
+      body: k.aktif
+        ? 'Kategori ini tidak akan muncul di filter produk dan pilihan dropdown saat tambah produk baru.'
+        : 'Kategori ini akan kembali muncul di filter produk dan dropdown.',
+      confirmLabel: k.aktif ? 'Nonaktifkan' : 'Aktifkan',
+      danger: k.aktif,
+      onConfirm: () => setList(ls => ls.map(x => x.id === k.id ? { ...x, aktif: !x.aktif } : x)),
+    });
+  }
+
+  function moveUp(i) { if (i === 0) return; setList(ls => { const a = [...ls]; [a[i-1], a[i]] = [a[i], a[i-1]]; return a.map((x, j) => ({ ...x, urutan: j + 1 })); }); }
+  function moveDown(i) { if (i === list.length - 1) return; setList(ls => { const a = [...ls]; [a[i], a[i+1]] = [a[i+1], a[i]]; return a.map((x, j) => ({ ...x, urutan: j + 1 })); }); }
+
+  return (
+    <PanelCard title="Master Kategori Produk" subtitle="Kelola daftar kategori yang dipakai di produk, filter tab, dan scope promo harga — perubahan langsung berlaku di semua menu">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {list.map((k, i) => {
+          const t = KAT_WARNA_META[k.warna] || KAT_WARNA_META.purple;
+          const IconC = Icons[k.ikon] || Icons.tag;
+          return (
+            <div key={k.id} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+              borderRadius: 12, border: '1px solid ' + (k.aktif ? '#E0D9F5' : '#F0EBFF'),
+              background: k.aktif ? '#FFFFFF' : '#FAF8FF',
+              opacity: k.aktif ? 1 : 0.65,
+            }}>
+              {/* Drag handle / reorder */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <button onClick={() => moveUp(i)} disabled={i === 0} style={{
+                  width: 18, height: 18, border: 0, background: 'transparent', cursor: i === 0 ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: i === 0 ? '#D0C8E8' : '#9085AE',
+                }}><Icons.arrowUp size={11} /></button>
+                <button onClick={() => moveDown(i)} disabled={i === list.length - 1} style={{
+                  width: 18, height: 18, border: 0, background: 'transparent', cursor: i === list.length - 1 ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: i === list.length - 1 ? '#D0C8E8' : '#9085AE',
+                }}><Icons.arrowDown size={11} /></button>
+              </div>
+
+              {/* Icon badge */}
+              <div style={{
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                background: t.bg, color: t.fg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <IconC size={16} />
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1228' }}>{k.label}</div>
+                <div style={{ fontSize: 11, color: '#9085AE', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>id: {k.id} · urutan: {k.urutan}</div>
+              </div>
+
+              {/* Status badge */}
+              <span style={{
+                fontSize: 11, fontWeight: 700,
+                background: k.aktif ? '#F0FDF4' : '#F0EBFF',
+                color: k.aktif ? '#16A34A' : '#9085AE',
+                padding: '4px 9px', borderRadius: 6,
+              }}>{k.aktif ? 'Aktif' : 'Nonaktif'}</span>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button onClick={() => toggleAktif(k)} style={ghostBtn(k.aktif ? '#D97706' : '#16A34A')}>
+                  {k.aktif ? 'Nonaktifkan' : 'Aktifkan'}
+                </button>
+                <button onClick={() => setEditing(k)} style={ghostBtn('#4A2D8C')}>Edit</button>
+                <button onClick={() => deleteKat(k)} style={ghostBtn('#C0001A')}>Hapus</button>
+              </div>
+            </div>
+          );
+        })}
+
+        <button onClick={() => setAdding(true)} style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          height: 44, borderRadius: 12, border: '2px dashed #C5B8EF',
+          background: '#FFFFFF', color: '#574872',
+          fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
+          transition: 'all 130ms ease',
+        }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4A2D8C'; e.currentTarget.style.color = '#4A2D8C'; e.currentTarget.style.background = '#F0EBFF'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C5B8EF'; e.currentTarget.style.color = '#574872'; e.currentTarget.style.background = '#FFFFFF'; }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Tambah Kategori Baru
+        </button>
+      </div>
+
+      {(adding || editing) && (
+        <KategoriModal kat={editing} onClose={() => { setAdding(false); setEditing(null); }} onSave={saveKat} />
+      )}
+    </PanelCard>
+  );
+}
+
+function KategoriModal({ kat, onClose, onSave }) {
+  const { useState: useKmState, useEffect: useKmEffect } = React;
+  const [form, setForm] = useKmState(kat
+    ? { ...kat }
+    : { label: '', ikon: 'tag', warna: 'purple', aktif: true }
+  );
+  const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const isValid = form.label.trim().length > 0;
+
+  useKmEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  const t = KAT_WARNA_META[form.warna] || KAT_WARNA_META.purple;
+  const PreviewIcon = Icons[form.ikon] || Icons.tag;
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(26,18,40,0.45)', animation: 'muurah-fade 180ms ease' }} />
+      <div style={{
+        position: 'relative', width: 480,
+        background: '#FFFFFF', borderRadius: 16,
+        boxShadow: '0 24px 60px rgba(26,18,40,0.25)',
+        display: 'flex', flexDirection: 'column',
+        animation: 'muurah-pop 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+      }}>
+        <div style={{
+          padding: '20px 24px', borderBottom: '1px solid #E0D9F5',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Master Kategori</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', marginTop: 4, letterSpacing: '-0.01em' }}>
+              {kat ? 'Edit Kategori' : 'Tambah Kategori Baru'}
+            </div>
+          </div>
+          <button onClick={onClose} style={{ width: 32, height: 32, border: '1px solid #E0D9F5', borderRadius: 10, background: '#FFFFFF', color: '#574872', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icons.x size={16} />
+          </button>
+        </div>
+
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* Preview */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, background: '#F0EBFF' }}>
+            <div style={{ width: 40, height: 40, borderRadius: 11, background: t.bg, color: t.fg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <PreviewIcon size={18} />
+            </div>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1228' }}>{form.label || 'Nama Kategori'}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: t.fg, background: t.bg, padding: '4px 10px', borderRadius: 6 }}>Preview</span>
+          </div>
+
+          <PsField label="Nama Kategori">
+            <input value={form.label} onChange={(e) => u('label', e.target.value)} autoFocus
+              placeholder="cth. Internet & TV" style={psFieldInputStyle({ width: '100%' })} />
+          </PsField>
+
+          <PsField label="Warna">
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {KAT_WARNA_OPTIONS.map(w => {
+                const wt = KAT_WARNA_META[w]; const active = form.warna === w;
+                return (
+                  <button key={w} type="button" onClick={() => u('warna', w)} style={{
+                    width: 34, height: 34, borderRadius: 9, cursor: 'pointer',
+                    background: wt.bg, color: wt.fg,
+                    border: active ? '2.5px solid ' + wt.fg : '2px solid transparent',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {active && <Icons.check size={14} strokeWidth={2.8} />}
+                  </button>
+                );
+              })}
+            </div>
+          </PsField>
+
+          <PsField label="Ikon">
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {KAT_IKON_OPTIONS.map(ik => {
+                const IkIcon = Icons[ik] || Icons.tag; const active = form.ikon === ik;
+                return (
+                  <button key={ik} type="button" onClick={() => u('ikon', ik)} title={ik} style={{
+                    width: 34, height: 34, borderRadius: 9, cursor: 'pointer',
+                    background: active ? '#4A2D8C' : '#F0EBFF',
+                    color: active ? '#FFFFFF' : '#574872',
+                    border: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <IkIcon size={15} />
+                  </button>
+                );
+              })}
+            </div>
+          </PsField>
+        </div>
+
+        <div style={{
+          padding: '16px 24px', borderTop: '1px solid #E0D9F5',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <button onClick={onClose} style={secondaryBtn()}>Batal</button>
+          <button onClick={() => { if (!isValid) { window.muurahToast('Nama kategori wajib diisi', 'error'); return; } onSave(form); }}
+            style={{ ...primaryBtn(), opacity: isValid ? 1 : 0.5 }}>
+            <Icons.check size={14} strokeWidth={2.5} /> {kat ? 'Simpan Perubahan' : 'Tambah Kategori'}
           </button>
         </div>
       </div>

@@ -59,6 +59,37 @@ window.MuurahRolesStore = (() => {
 })();
 
 // ════════════════════════════════════════════════════════════════════════════
+//   KATEGORI STORE — master kategori produk (Pengaturan Sistem is source of truth)
+//
+//   window.MuurahKategoriStore.get()          -> current kategori array
+//   window.MuurahKategoriStore.set(list)      -> publish new list
+//   window.MuurahKategoriStore.subscribe(fn)  -> fn(list) on every update, returns unsubscribe
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahKategoriStore = (() => {
+  let kategori = [
+    { id: 'pulsa',   label: 'Pulsa',      ikon: 'phone',   warna: 'purple', urutan: 1, aktif: true },
+    { id: 'pln',     label: 'PLN',        ikon: 'bolt',    warna: 'gold',   urutan: 2, aktif: true },
+    { id: 'data',    label: 'Paket Data', ikon: 'wifi',    warna: 'blue',   urutan: 3, aktif: true },
+    { id: 'bpjs',    label: 'BPJS',       ikon: 'heart',   warna: 'green',  urutan: 4, aktif: true },
+    { id: 'game',    label: 'Game',       ikon: 'game',    warna: 'coral',  urutan: 5, aktif: true },
+    { id: 'emoney',  label: 'E-Money',    ikon: 'card',    warna: 'lime',   urutan: 6, aktif: true },
+    { id: 'tagihan', label: 'Tagihan',    ikon: 'receipt', warna: 'green',  urutan: 7, aktif: true },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => kategori,
+    set: (next) => {
+      kategori = next;
+      listeners.forEach(fn => fn(kategori));
+    },
+    subscribe: (fn) => {
+      listeners.add(fn);
+      return () => listeners.delete(fn);
+    },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
 //   TOAST CONTAINER
 // ════════════════════════════════════════════════════════════════════════════
 function ToastContainer() {
