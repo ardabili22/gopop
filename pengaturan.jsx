@@ -2949,17 +2949,18 @@ const KAT_WARNA_META = {
   lime:   { bg: '#F4FCE3', fg: '#5B7C12' },
 };
 const KAT_WARNA_OPTIONS = Object.keys(KAT_WARNA_META);
-const KAT_IKON_OPTIONS = ['phone','bolt','wifi','heart','game','card','receipt','tag','wallet','store','users','image','percent','chart','clock'];
+const KAT_IKON_OPTIONS = ['phone','bolt','wifi','shieldlock','game','card','receipt','tag','wallet','store','users','image','percent','chart','clock','bell','bank','shield'];
 
 function KategoriPanel() {
-  const { useState: useKtState, useEffect: useKtEffect } = React;
+  const { useState: useKtState, useEffect: useKtEffect, useRef: useKtRef } = React;
   const [list, setList] = useKtState(() => window.MuurahKategoriStore ? window.MuurahKategoriStore.get() : []);
   const [editing, setEditing] = useKtState(null);
   const [adding, setAdding] = useKtState(false);
-  const [drag, setDrag] = useKtState(null);
+  const isFirstRender = useKtRef(true);
 
-  // Keep store in sync
+  // Publish to store when list changes (skip initial mount to avoid loop)
   useKtEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
     if (window.MuurahKategoriStore) window.MuurahKategoriStore.set(list);
   }, [list]);
 
@@ -3139,7 +3140,7 @@ function KategoriModal({ kat, onClose, onSave }) {
 
           <PsField label="Nama Kategori">
             <input value={form.label} onChange={(e) => u('label', e.target.value)} autoFocus
-              placeholder="cth. Internet & TV" style={psFieldInputStyle({ width: '100%' })} />
+              placeholder="cth. Internet & TV" style={psInputStyle({ width: '100%' })} />
           </PsField>
 
           <PsField label="Warna">
