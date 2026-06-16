@@ -2,18 +2,16 @@
 const { useState: usePsState } = React;
 
 const PS_NAV = [
-  { id: 'umum',     label: 'Umum',                icon: 'cog' },
-  { id: 'supplier', label: 'Supplier & Biller',   icon: 'store' },
-  { id: 'pg',       label: 'Payment Gateway',     icon: 'card' },
-  { id: 'notif',    label: 'Notifikasi',          icon: 'bell' },
-  { id: 'faq',      label: 'FAQ & Bantuan',       icon: 'help' },
-  { id: 'promo',    label: 'Promo & Voucher',     icon: 'tag' },
-  { id: 'seo',      label: 'SEO',                 icon: 'search' },
+  { id: 'umum',     label: 'Umum',                 icon: 'cog' },
+  { id: 'pg',       label: 'Payment Gateway',      icon: 'card' },
+  { id: 'notif',    label: 'Notifikasi',           icon: 'bell' },
+  { id: 'faq',      label: 'FAQ & Bantuan',        icon: 'help' },
+  { id: 'promo',    label: 'Promo & Voucher',      icon: 'tag' },
+  { id: 'seo',      label: 'SEO',                  icon: 'search' },
   { id: 'limit',    label: 'Saldo & Limit Biller', icon: 'wallet' },
-  { id: 'fee',      label: 'Fee & Biaya Admin',   icon: 'wallet' },
-  { id: 'kategori', label: 'Master Kategori',    icon: 'tag' },
-  { id: 'rbac',     label: 'Role & Akses',        icon: 'shieldlock' },
-  { id: 'audit',    label: 'Audit Log',           icon: 'clock' },
+  { id: 'fee',      label: 'Fee & Biaya Admin',    icon: 'wallet' },
+  { id: 'rbac',     label: 'Role & Akses',         icon: 'shieldlock' },
+  { id: 'audit',    label: 'Audit Log',            icon: 'clock' },
 ];
 
 function Pengaturan() {
@@ -104,7 +102,6 @@ function Pengaturan() {
         {/* Right panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {innerNav === 'umum'     && <UmumPanel />}
-          {innerNav === 'supplier' && <SupplierPanel />}
           {innerNav === 'pg'       && <PaymentGatewayPanel />}
           {innerNav === 'notif'    && <NotifSubPanel />}
           {innerNav === 'faq'      && <FaqPanel />}
@@ -112,7 +109,6 @@ function Pengaturan() {
           {innerNav === 'seo'      && <SeoPanel />}
           {innerNav === 'limit'    && <SaldoLimitPanel />}
           {innerNav === 'fee'      && <FeePanel />}
-          {innerNav === 'kategori' && <KategoriPanel />}
           {innerNav === 'rbac'     && <RbacPanel perms={perms} onToggle={togglePerm} onAdd={addPerm} onRename={renamePerm} onDelete={deletePerm} />}
           {innerNav === 'audit'    && <AuditPanel />}
         </div>

@@ -4,7 +4,7 @@ const { useState: useKpState, useMemo: useKpMemo, useEffect: useKpEffect, useRef
 const TICKETS = [
   {
     id: 'TKT-001', user: 'Budi Raharjo',  inisial: 'BR', av: ['#4A2D8C','#B23A8E'],
-    hp: '081234xxxx', kategori: 'Transaksi Gagal',
+    hp: '081234xxxx', kategori: 'Transaksi Gagal', channel: 'whatsapp',
     deskripsiShort: 'Token PLN tidak diterima setelah pembayaran berhasil…',
     deskripsi: 'Token PLN 50.000 tidak diterima setelah pembayaran berhasil. Saldo sudah terpotong Rp 50.800 tapi token belum masuk ke meteran.',
     tgl: '19 Mei · 14:32', status: 'baru', prioritas: 'tinggi',
@@ -18,7 +18,7 @@ const TICKETS = [
   },
   {
     id: 'TKT-002', user: 'Siti Rahayu', inisial: 'SR', av: ['#C0001A','#F5793B'],
-    hp: '087654xxxx', kategori: 'Saldo Tidak Masuk',
+    hp: '087654xxxx', kategori: 'Saldo Tidak Masuk', channel: 'email',
     deskripsiShort: 'Top-up via BCA sudah 2 jam belum masuk ke saldo aplikasi…',
     deskripsi: 'Top-up via BCA VA sebesar Rp 200.000 sudah 2 jam belum masuk ke saldo aplikasi. Bukti transfer sudah terlampir.',
     tgl: '19 Mei · 13:15', status: 'diproses', prioritas: 'sedang',
@@ -31,7 +31,7 @@ const TICKETS = [
   },
   {
     id: 'TKT-003', user: 'Ahmad Fauzi', inisial: 'AF', av: ['#16A34A','#5B7C12'],
-    hp: '082345xxxx', kategori: 'Produk Tidak Terkirim',
+    hp: '082345xxxx', kategori: 'Produk Tidak Terkirim', channel: 'whatsapp',
     deskripsiShort: 'Pulsa Telkomsel 50rb sudah terpotong tapi tidak masuk ke nomor…',
     deskripsi: 'Pulsa Telkomsel 50rb sudah terpotong dari saldo tapi tidak masuk ke nomor tujuan 0812xxxxxxxx.',
     tgl: '19 Mei · 12:44', status: 'diproses', prioritas: 'tinggi',
@@ -41,7 +41,7 @@ const TICKETS = [
   },
   {
     id: 'TKT-004', user: 'Dewi Lestari', inisial: 'DL', av: ['#D4900A','#D97706'],
-    hp: '089123xxxx', kategori: 'Transaksi Gagal',
+    hp: '089123xxxx', kategori: 'Transaksi Gagal', channel: 'telegram',
     deskripsiShort: 'BPJS gagal tapi saldo berkurang Rp 100.000…',
     deskripsi: 'Pembayaran BPJS Kesehatan gagal tetapi saldo tetap berkurang Rp 100.500.',
     tgl: '19 Mei · 11:20', status: 'selesai', prioritas: 'sedang',
@@ -51,7 +51,7 @@ const TICKETS = [
   },
   {
     id: 'TKT-005', user: 'Rudi Hartono', inisial: 'RH', av: ['#9085AE','#574872'],
-    hp: '085678xxxx', kategori: 'Lainnya',
+    hp: '085678xxxx', kategori: 'Lainnya', channel: 'form-web',
     deskripsiShort: 'Ingin ganti nomor HP terdaftar di akun…',
     deskripsi: 'Mohon dibantu mengganti nomor HP terdaftar di akun karena nomor lama sudah tidak aktif.',
     tgl: '18 Mei · 16:05', status: 'selesai', prioritas: 'rendah',
@@ -61,7 +61,7 @@ const TICKETS = [
   },
   {
     id: 'TKT-006', user: 'Wati Susanti', inisial: 'WS', av: ['#7B5BC0','#4A2D8C'],
-    hp: '083456xxxx', kategori: 'Transaksi Gagal',
+    hp: '083456xxxx', kategori: 'Transaksi Gagal', channel: 'manual',
     deskripsiShort: 'Game voucher ML tidak masuk ke akun Mobile Legends…',
     deskripsi: 'Voucher Mobile Legends 172 diamond tidak masuk ke akun ID 12345678.',
     tgl: '18 Mei · 09:30', status: 'ditutup', prioritas: 'rendah',
@@ -168,6 +168,7 @@ function Komplain() {
               <th style={kpThStyle}>User</th>
               <th style={kpThStyle}>No. HP</th>
               <th style={kpThStyle}>Kategori</th>
+              <th style={kpThStyle}>Channel</th>
               <th style={kpThStyle}>Deskripsi</th>
               <th style={kpThStyle}>Tgl Masuk</th>
               <th style={kpThStyle}>Status</th>
@@ -199,6 +200,7 @@ function Komplain() {
                   </td>
                   <td style={{ ...kpTdStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#574872' }}>{t.hp}</td>
                   <td style={kpTdStyle}><KategoriChip kategori={t.kategori} /></td>
+                  <td style={kpTdStyle}><ChannelBadge channel={t.channel} /></td>
                   <td style={{ ...kpTdStyle, color: '#574872', maxWidth: 240 }}>
                     <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {t.deskripsiShort}
@@ -341,6 +343,19 @@ function PrioFlame({ fg, prio }) {
   return <span style={{ width: 6, height: 6, borderRadius: '50%', background: fg }} />;
 }
 
+function ChannelBadge({ channel }) {
+  const channels = window.MuurahChannelStore ? window.MuurahChannelStore.get() : [];
+  const ch = channels.find(c => c.id === channel);
+  const label = ch ? ch.nama : (channel || '—');
+  const color = ch ? ch.warna : '#9085AE';
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: color + '18', color }}>
+      <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, flexShrink: 0 }} />
+      {label}
+    </span>
+  );
+}
+
 function KategoriChip({ kategori }) {
   const map = {
     'Transaksi Gagal':         { bg: '#FCE7E9', fg: '#C0001A' },
@@ -472,6 +487,7 @@ function TicketDrawer({ ticket, onClose }) {
                 </a>
               } />
             )}
+            <KV k="Channel" v={<ChannelBadge channel={ticket.channel} />} />
             <KV k="Dibuka" v={ticket.tgl} mono />
             <KV k="SLA Respon" v={
               <span style={{ color: ticket.status === 'baru' ? '#D97706' : '#16A34A', fontWeight: 700 }}>

@@ -47,6 +47,7 @@ const NAV_GROUPS = [
   { id: 'settlement', label: 'Settlement', icon: 'bank' }]
 },
 { label: 'Konfigurasi', items: [
+  { id: 'master',     label: 'Master Data',      icon: 'store' },
   { id: 'pengaturan', label: 'Pengaturan Sistem', icon: 'cog' },
   { id: 'notifikasi', label: 'Notifikasi', icon: 'bell' },
   { id: 'role-tim', label: 'Role & Tim', icon: 'shieldlock' },

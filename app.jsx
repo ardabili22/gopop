@@ -51,6 +51,7 @@ function App() {
            active === 'laporan'    ? <window.MuurahLaporan /> :
            active === 'rekon'      ? <window.MuurahRekon /> :
            active === 'settlement' ? <window.MuurahSettlement /> :
+           active === 'master'     ? <window.MuurahMasterData /> :
            active === 'pengaturan' ? <window.MuurahPengaturan /> :
            active === 'notifikasi' ? <window.MuurahNotifikasi /> :
            active === 'role-tim'   ? <window.MuurahRoleTim /> :
