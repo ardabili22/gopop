@@ -7,6 +7,7 @@ const MD_NAV = [
   { id: 'operator',  label: 'Master Operator',     icon: 'phone' },
   { id: 'supplier',  label: 'Supplier & Biller',   icon: 'store' },
   { id: 'channel',   label: 'Channel Komplain',    icon: 'megaphone' },
+  { id: 'bank',      label: 'Master Bank',         icon: 'bank' },
 ];
 
 // ─── Shared helpers (isolated to avoid conflict with pengaturan.jsx) ─────────
@@ -114,6 +115,7 @@ function MasterData() {
           {innerNav === 'operator' && <MdOperatorPanel />}
           {innerNav === 'supplier' && <MdSupplierPanel />}
           {innerNav === 'channel'  && <MdChannelPanel />}
+          {innerNav === 'bank'     && <MdBankPanel />}
         </div>
       </div>
     </div>
@@ -565,5 +567,99 @@ window.MuurahChannelStore = (() => {
     subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
   };
 })();
+
+// ════════════════════════════════════════════════════════════════════════════
+//   5. MASTER BANK
+// ════════════════════════════════════════════════════════════════════════════
+const BANK_SEED = [
+  { id: 'bca',     nama: 'Bank Central Asia (BCA)',        kode: '014', logo: '🔵', aktif: true },
+  { id: 'bni',     nama: 'Bank Negara Indonesia (BNI)',     kode: '009', logo: '🟠', aktif: true },
+  { id: 'bri',     nama: 'Bank Rakyat Indonesia (BRI)',     kode: '002', logo: '🔵', aktif: true },
+  { id: 'mandiri', nama: 'Bank Mandiri',                   kode: '008', logo: '🟡', aktif: true },
+  { id: 'cimb',    nama: 'CIMB Niaga',                     kode: '022', logo: '🔴', aktif: true },
+  { id: 'permata', nama: 'Bank Permata',                   kode: '013', logo: '🟢', aktif: true },
+  { id: 'bsi',     nama: 'Bank Syariah Indonesia (BSI)',   kode: '451', logo: '⚫', aktif: true },
+  { id: 'danamon', nama: 'Bank Danamon',                   kode: '011', logo: '🔴', aktif: false },
+];
+
+function MdBankPanel() {
+  const [list, setList] = useMdState(BANK_SEED);
+  const [editing, setEditing] = useMdState(null);
+  const [adding, setAdding] = useMdState(false);
+
+  function save(data) {
+    if (data.id && list.some(b => b.id === data.id)) {
+      setList(ls => ls.map(b => b.id === data.id ? { ...b, ...data } : b));
+      window.muurahToast('Bank "' + data.nama + '" diperbarui', 'success');
+    } else {
+      const id = data.nama.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 16) || 'bank' + Date.now();
+      setList(ls => [...ls, { ...data, id, aktif: true }]);
+      window.muurahToast('Bank "' + data.nama + '" ditambahkan', 'success');
+    }
+    setEditing(null); setAdding(false);
+  }
+  function del(b) {
+    window.muurahConfirm({ title: 'Hapus bank "' + b.nama + '"?', body: 'Bank ini tidak bisa dipilih lagi sebagai rekening tujuan.', confirmLabel: 'Hapus', danger: true, onConfirm: () => { setList(ls => ls.filter(x => x.id !== b.id)); window.muurahToast('Bank dihapus', 'success'); } });
+  }
+  function toggle(b) {
+    window.muurahConfirm({ title: (b.aktif ? 'Nonaktifkan' : 'Aktifkan') + ' "' + b.nama + '"?', body: b.aktif ? 'Tidak muncul sebagai pilihan bank.' : 'Kembali tampil sebagai pilihan bank.', confirmLabel: b.aktif ? 'Nonaktifkan' : 'Aktifkan', danger: b.aktif, onConfirm: () => setList(ls => ls.map(x => x.id === b.id ? { ...x, aktif: !x.aktif } : x)) });
+  }
+
+  return (
+    <MdCard title="Master Bank" subtitle="Daftar bank yang tersedia untuk rekening reseller, payout komisi, dan metode transfer" action={<button onClick={() => setAdding(true)} style={mdBtn()}><span style={{ fontSize: 15 }}>+</span> Tambah Bank</button>} padded={false}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <thead>
+          <tr>
+            <th style={{ ...mdTh, paddingLeft: 24 }}>Bank</th>
+            <th style={mdTh}>Kode Bank</th>
+            <th style={mdTh}>Status</th>
+            <th style={{ ...mdTh, paddingRight: 24, textAlign: 'right' }}>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {list.map(b => (
+            <tr key={b.id} style={{ borderTop: '1px solid #F0EBFF', height: 52, opacity: b.aktif ? 1 : 0.65 }}>
+              <td style={{ ...mdTd, paddingLeft: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 20 }}>{b.logo}</span>
+                  <span style={{ fontWeight: 600, color: '#1A1228' }}>{b.nama}</span>
+                </div>
+              </td>
+              <td style={{ ...mdTd, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#574872' }}>{b.kode}</td>
+              <td style={mdTd}><span style={{ fontSize: 11, fontWeight: 700, background: b.aktif ? '#F0FDF4' : '#F0EBFF', color: b.aktif ? '#16A34A' : '#9085AE', padding: '4px 9px', borderRadius: 6 }}>{b.aktif ? 'Aktif' : 'Nonaktif'}</span></td>
+              <td style={{ ...mdTd, paddingRight: 24, textAlign: 'right' }}>
+                <button onClick={() => toggle(b)} style={mdGhost(b.aktif ? '#D97706' : '#16A34A')}>{b.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button>
+                <button onClick={() => setEditing(b)} style={mdGhost('#4A2D8C')}>Edit</button>
+                <button onClick={() => del(b)} style={mdGhost('#C0001A')}>Hapus</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {(adding || editing) && <BankModal bank={editing} onClose={() => { setAdding(false); setEditing(null); }} onSave={save} />}
+    </MdCard>
+  );
+}
+
+function BankModal({ bank, onClose, onSave }) {
+  const [form, setForm] = useMdState(bank ? { ...bank } : { nama: '', kode: '', logo: '🏦' });
+  const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const isValid = form.nama.trim() && form.kode.trim();
+  return (
+    <MdModal onClose={onClose} eyebrow="Master Bank" title={bank ? 'Edit Bank' : 'Tambah Bank'}
+      footer={<><button onClick={onClose} style={mdSecBtn()}>Batal</button><button onClick={() => { if (!isValid) { window.muurahToast('Nama dan kode bank wajib diisi', 'error'); return; } onSave(form); }} style={{ ...mdBtn(), opacity: isValid ? 1 : 0.5 }}>
+        <Icons.check size={14} strokeWidth={2.5} /> {bank ? 'Simpan' : 'Tambah'}
+      </button></>}>
+      <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: 12 }}>
+        <MdField label="Logo/Emoji"><input value={form.logo} onChange={(e) => u('logo', e.target.value)} style={mdInput({ width: '100%', fontSize: 20, textAlign: 'center' })} maxLength={2} /></MdField>
+        <MdField label="Nama Bank"><input value={form.nama} onChange={(e) => u('nama', e.target.value)} autoFocus placeholder="cth. Bank Central Asia (BCA)" style={mdInput({ width: '100%' })} /></MdField>
+      </div>
+      <MdField label="Kode Bank (3 digit)">
+        <input value={form.kode} onChange={(e) => u('kode', e.target.value)} placeholder="cth. 014" maxLength={3}
+          style={mdInput({ width: 120, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.1em' })} />
+      </MdField>
+    </MdModal>
+  );
+}
 
 window.MuurahMasterData = MasterData;

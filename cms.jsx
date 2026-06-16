@@ -2,8 +2,10 @@
 const { useState: useCmsState, useEffect: useCmsEffect } = React;
 
 const CMS_TABS = [
-  { id: 'banner',  label: 'Banner Homepage', icon: 'image' },
-  { id: 'artikel', label: 'Tips & Promo',    icon: 'chart' },
+  { id: 'banner-web',    label: 'Banner Web',       icon: 'image',  platform: 'web',    type: 'banner' },
+  { id: 'banner-app',   label: 'Banner Mobile App', icon: 'phone',  platform: 'app',    type: 'banner' },
+  { id: 'artikel-web',  label: 'Tips & Promo Web',  icon: 'chart',  platform: 'web',    type: 'artikel' },
+  { id: 'artikel-app',  label: 'Tips & Promo App',  icon: 'chart',  platform: 'app',    type: 'artikel' },
 ];
 
 const BANNER_LINK_TARGETS = [
@@ -21,11 +23,16 @@ const BANNER_TONE_META = {
   green:  { bg: '#F0FDF4', fg: '#16A34A' },
 };
 
-const BANNER_SEED = [
-  { id: 1, judul: 'Transfer E-Wallet Tanpa Ribet', subjudul: 'GoPay, OVO, Dana, ShopeePay — flat fee mulai Rp 1.000', target: 'Transfer E-Wallet', tone: 'purple', status: 'aktif' },
-  { id: 2, judul: 'Top Up Voucher Game Favorit', subjudul: 'Mobile Legends, Free Fire, dan lainnya — proses instan', target: 'Voucher Game', tone: 'coral', status: 'aktif' },
-  { id: 3, judul: 'Bayar Pulsa & Paket Data', subjudul: 'Semua operator, harga bersahabat', target: 'Bayar Pulsa', tone: 'lime', status: 'aktif' },
-  { id: 4, judul: 'Token PLN 24 Jam', subjudul: 'Isi token listrik kapan saja, langsung masuk', target: 'Token PLN', tone: 'gold', status: 'nonaktif' },
+const BANNER_SEED_WEB = [
+  { id: 'w1', judul: 'Transfer E-Wallet Tanpa Ribet', subjudul: 'GoPay, OVO, Dana, ShopeePay — flat fee mulai Rp 1.000', target: '/transfer-ewallet', tone: 'purple', status: 'aktif',   imgDesktop: null, imgMobile: null },
+  { id: 'w2', judul: 'Top Up Voucher Game Favorit',   subjudul: 'Mobile Legends, Free Fire, dan lainnya — proses instan',  target: '/voucher-game',       tone: 'coral',  status: 'aktif',   imgDesktop: null, imgMobile: null },
+  { id: 'w3', judul: 'Bayar Pulsa & Paket Data',      subjudul: 'Semua operator, harga bersahabat',                         target: '/pulsa',               tone: 'lime',   status: 'aktif',   imgDesktop: null, imgMobile: null },
+  { id: 'w4', judul: 'Token PLN 24 Jam',              subjudul: 'Isi token listrik kapan saja, langsung masuk',             target: '/pln',                 tone: 'gold',   status: 'nonaktif', imgDesktop: null, imgMobile: null },
+];
+
+const BANNER_SEED_APP = [
+  { id: 'a1', judul: 'Transfer E-Wallet Muurah',      subjudul: 'Flat fee Rp 1.000 ke semua e-wallet populer',             target: 'transfer_ewallet',    tone: 'purple', status: 'aktif',   imgDesktop: null, imgMobile: null },
+  { id: 'a2', judul: 'Game On! Voucher Instan',        subjudul: 'Top-up ML Diamond, FF, PUBG — langsung masuk',            target: 'game_voucher',        tone: 'coral',  status: 'aktif',   imgDesktop: null, imgMobile: null },
 ];
 
 const ARTIKEL_KATEGORI = ['Tips', 'Promo', 'Pengumuman'];
@@ -84,7 +91,8 @@ function ImageUploadField({ value, onChange, aspect = '16/9' }) {
 }
 
 function Cms() {
-  const [tab, setTab] = useCmsState('banner');
+  const [tab, setTab] = useCmsState('banner-web');
+  const cur = CMS_TABS.find(t => t.id === tab) || CMS_TABS[0];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -93,46 +101,54 @@ function Cms() {
           Konten Homepage
         </h1>
         <div style={{ fontSize: 14, color: '#574872', marginTop: 4 }}>
-          Kelola banner hero dan artikel Tips & Promo yang tampil di aplikasi end-user
+          Kelola banner dan artikel untuk tampilan Web dan Mobile App secara terpisah
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={{
-        background: '#FFFFFF', border: '1px solid #E0D9F5',
-        borderRadius: 12, padding: 4, display: 'inline-flex', gap: 4,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-      }}>
-        {CMS_TABS.map((t) => {
-          const IconC = Icons[t.icon] || Icons.image;
-          const active = tab === t.id;
-          return (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '9px 16px', borderRadius: 9, border: 0, cursor: 'pointer',
-              background: active ? '#4A2D8C' : 'transparent',
-              color: active ? '#FFFFFF' : '#574872',
-              fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
-              transition: 'all 130ms ease',
-            }}>
-              <IconC size={14} /> {t.label}
-            </button>
-          );
-        })}
+      {/* Platform group tabs */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {/* Web group */}
+        <div style={{ background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 12, padding: 4, display: 'inline-flex', gap: 4, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0 8px', fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Web</span>
+          {CMS_TABS.filter(t => t.platform === 'web').map(t => {
+            const IconC = Icons[t.icon] || Icons.image;
+            const active = tab === t.id;
+            return (
+              <button key={t.id} onClick={() => setTab(t.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 14px', borderRadius: 9, border: 0, cursor: 'pointer', background: active ? '#4A2D8C' : 'transparent', color: active ? '#FFFFFF' : '#574872', fontSize: 13, fontWeight: 600, fontFamily: 'inherit' }}>
+                <IconC size={14} /> {t.label.replace(' Web', '')}
+              </button>
+            );
+          })}
+        </div>
+        {/* Mobile App group */}
+        <div style={{ background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 12, padding: 4, display: 'inline-flex', gap: 4, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0 8px', fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Mobile App</span>
+          {CMS_TABS.filter(t => t.platform === 'app').map(t => {
+            const IconC = Icons[t.icon] || Icons.image;
+            const active = tab === t.id;
+            return (
+              <button key={t.id} onClick={() => setTab(t.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 14px', borderRadius: 9, border: 0, cursor: 'pointer', background: active ? '#4A2D8C' : 'transparent', color: active ? '#FFFFFF' : '#574872', fontSize: 13, fontWeight: 600, fontFamily: 'inherit' }}>
+                <IconC size={14} /> {t.label.replace(' Mobile App', '')}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {tab === 'banner' ? <BannerPanel /> : <ArtikelPanel />}
+      {cur.type === 'banner'  && <BannerPanel platform={cur.platform} />}
+      {cur.type === 'artikel' && <ArtikelPanel platform={cur.platform} />}
     </div>
   );
 }
 
 // ─── Banner Homepage ────────────────────────────────────────────────────────
-function BannerPanel() {
+function BannerPanel({ platform }) {
   const { Card } = window.MuurahShell;
-  const [banners, setBanners] = useCmsState(BANNER_SEED);
+  const seed = platform === 'app' ? BANNER_SEED_APP : BANNER_SEED_WEB;
+  const [banners, setBanners] = useCmsState(seed);
   const [editing, setEditing] = useCmsState(null);
   const [adding, setAdding] = useCmsState(false);
-  const [targets, setTargets] = useCmsState(BANNER_LINK_TARGETS);
+  const platformLabel = platform === 'app' ? 'Mobile App' : 'Web';
 
   function addTarget(label) {
     const v = label.trim();
@@ -184,14 +200,11 @@ function BannerPanel() {
 
   return (
     <Card padding={0} style={{ overflow: 'hidden' }}>
-      <div style={{
-        padding: '20px 24px', borderBottom: '1px solid #F0EBFF',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 14,
-      }}>
+      <div style={{ padding: '20px 24px', borderBottom: '1px solid #F0EBFF', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 14 }}>
         <div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', letterSpacing: '-0.01em' }}>Banner Homepage</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', letterSpacing: '-0.01em' }}>Banner {platformLabel}</div>
           <div style={{ fontSize: 13, color: '#574872', marginTop: 4 }}>
-            Urutan di sini = urutan tampil di carousel homepage. {banners.filter(b => b.status === 'aktif').length} aktif dari {banners.length} banner.
+            {banners.filter(b => b.status === 'aktif').length} aktif dari {banners.length} banner · urutan = urutan tampil di carousel
           </div>
         </div>
         <button onClick={() => setAdding(true)} style={cmsPrimaryBtn()}>
@@ -202,35 +215,32 @@ function BannerPanel() {
       <div>
         {banners.map((b, idx) => {
           const t = BANNER_TONE_META[b.tone] || BANNER_TONE_META.purple;
+          const hasImg = b.imgDesktop || b.imgMobile;
           return (
-            <div key={b.id} style={{
-              padding: '16px 24px', borderTop: idx === 0 ? 0 : '1px solid #F0EBFF',
-              display: 'flex', gap: 14, alignItems: 'center',
-            }}>
-              {/* order controls */}
+            <div key={b.id} style={{ padding: '16px 24px', borderTop: idx === 0 ? 0 : '1px solid #F0EBFF', display: 'flex', gap: 14, alignItems: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <button onClick={() => move(b.id, -1)} disabled={idx === 0} style={cmsIconBtn(idx === 0)}>
-                  <Icons.arrowUp size={12} />
-                </button>
-                <button onClick={() => move(b.id, 1)} disabled={idx === banners.length - 1} style={cmsIconBtn(idx === banners.length - 1)}>
-                  <Icons.arrowDown size={12} />
-                </button>
+                <button onClick={() => move(b.id, -1)} disabled={idx === 0} style={cmsIconBtn(idx === 0)}><Icons.arrowUp size={12} /></button>
+                <button onClick={() => move(b.id, 1)} disabled={idx === banners.length - 1} style={cmsIconBtn(idx === banners.length - 1)}><Icons.arrowDown size={12} /></button>
               </div>
 
-              {/* preview swatch */}
-              <div style={{
-                width: 64, height: 64, borderRadius: 12, flexShrink: 0,
-                background: t.bg, color: t.fg, overflow: 'hidden',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                {b.gambar ? <img src={b.gambar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Icons.image size={22} />}
+              {/* preview swatch — shows desktop image if available */}
+              <div style={{ width: 64, height: 64, borderRadius: 12, flexShrink: 0, background: t.bg, color: t.fg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                {b.imgDesktop ? <img src={b.imgDesktop} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Icons.image size={22} />}
+                {b.imgMobile && !b.imgDesktop && <img src={b.imgMobile} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />}
               </div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1228' }}>{b.judul}</div>
                 <div style={{ fontSize: 12, color: '#574872', marginTop: 3 }}>{b.subjudul}</div>
-                <div style={{ fontSize: 11, color: '#9085AE', marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <Icons.arrowR size={11} /> menuju <b style={{ color: '#574872' }}>{b.target}</b>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 5 }}>
+                  <span style={{ fontSize: 11, color: '#9085AE', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <Icons.arrowR size={11} /> <span style={{ fontFamily: 'JetBrains Mono, monospace', color: '#574872', fontWeight: 600 }}>{b.target || '—'}</span>
+                  </span>
+                  {(b.imgDesktop || b.imgMobile) && (
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#16A34A', background: '#F0FDF4', padding: '2px 6px', borderRadius: 5 }}>
+                      {[b.imgDesktop && 'Desktop', b.imgMobile && 'Mobile'].filter(Boolean).join(' + ')} ✓
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -245,18 +255,17 @@ function BannerPanel() {
       </div>
 
       {(adding || editing) && (
-        <BannerModal banner={editing} targets={targets} onAddTarget={addTarget} onClose={() => { setEditing(null); setAdding(false); }} onSave={saveBanner} />
+        <BannerModal banner={editing} onClose={() => { setEditing(null); setAdding(false); }} onSave={saveBanner} platform={platform} />
       )}
     </Card>
   );
 }
 
-function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
-  const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: targets[0], tone: 'purple', status: 'aktif', gambar: null });
+function BannerModal({ banner, onClose, onSave, platform }) {
+  const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: '', tone: 'purple', status: 'aktif', imgDesktop: null, imgMobile: null });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const [addingTarget, setAddingTarget] = useCmsState(false);
-  const [newTarget, setNewTarget] = useCmsState('');
   const isValid = form.judul.trim() && form.subjudul.trim();
+  const platformHint = platform === 'app' ? 'deep link atau screen name (cth. transfer_ewallet)' : 'path URL (cth. /promo atau /pulsa)';
 
   useCmsEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -294,9 +303,6 @@ function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
         </div>
 
         <div style={{ padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <CmsField label="Gambar Banner">
-            <ImageUploadField value={form.gambar} onChange={(v) => u('gambar', v)} aspect="16/9" />
-          </CmsField>
           <CmsField label="Judul Banner">
             <input value={form.judul} onChange={(e) => u('judul', e.target.value)}
               placeholder="cth. Transfer E-Wallet Tanpa Ribet"
@@ -309,54 +315,25 @@ function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
           </CmsField>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <CmsField label="Menuju Halaman">
-              {addingTarget ? (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <input autoFocus value={newTarget} onChange={(e) => setNewTarget(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        if (onAddTarget(newTarget)) { u('target', newTarget.trim()); setNewTarget(''); setAddingTarget(false); }
-                      }
-                      if (e.key === 'Escape') { setAddingTarget(false); setNewTarget(''); }
-                    }}
-                    placeholder="cth. Promo Tahun Baru"
-                    style={cmsInputStyle({ width: '100%' })} />
-                  <button onClick={() => {
-                    if (onAddTarget(newTarget)) { u('target', newTarget.trim()); setNewTarget(''); setAddingTarget(false); }
-                  }} style={{
-                    width: 38, height: 38, flexShrink: 0, border: 0, borderRadius: 10,
-                    background: '#4A2D8C', color: '#FFFFFF', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}><Icons.check size={14} strokeWidth={2.5} /></button>
-                  <button onClick={() => { setAddingTarget(false); setNewTarget(''); }} style={{
-                    width: 38, height: 38, flexShrink: 0, border: '1px solid #E0D9F5', borderRadius: 10,
-                    background: '#FFFFFF', color: '#574872', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}><Icons.x size={14} /></button>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <select value={form.target} onChange={(e) => u('target', e.target.value)} style={{
-                      ...cmsInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 32, cursor: 'pointer',
-                    }}>
-                      {targets.map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                    <Icons.chevron size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
-                  </div>
-                  <button onClick={() => setAddingTarget(true)} title="Tambah halaman tujuan baru" style={{
-                    width: 38, height: 38, flexShrink: 0, border: '1px solid #C5B8EF', borderRadius: 10,
-                    background: '#FFFFFF', color: '#4A2D8C', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-                  }}>+</button>
-                </div>
-              )}
+            <CmsField label={'Menuju Halaman (' + platformHint + ')'}>
+              <input value={form.target} onChange={(e) => u('target', e.target.value)}
+                placeholder={platform === 'app' ? 'cth. transfer_ewallet' : 'cth. /transfer-ewallet'}
+                style={cmsInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 })} />
             </CmsField>
             <CmsField label="Status">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 6 }}>
                 <Toggle checked={form.status === 'aktif'} onChange={() => u('status', form.status === 'aktif' ? 'nonaktif' : 'aktif')} />
                 <span style={{ fontSize: 13, color: '#574872' }}>{form.status === 'aktif' ? 'Aktif' : 'Nonaktif'}</span>
               </div>
+            </CmsField>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <CmsField label="Gambar Desktop (16:9 · min 1280×720px)">
+              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/9" />
+            </CmsField>
+            <CmsField label="Gambar Mobile (3:4 · min 360×480px)">
+              <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="3/4" />
             </CmsField>
           </div>
 
@@ -384,8 +361,8 @@ function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
             borderRadius: 14, padding: 18, overflow: 'hidden', position: 'relative',
             background: (BANNER_TONE_META[form.tone] || BANNER_TONE_META.purple).bg,
           }}>
-            {form.gambar && (
-              <img src={form.gambar} alt="" style={{
+            {form.imgDesktop && (
+              <img src={form.imgDesktop} alt="" style={{
                 position: 'absolute', inset: 0, width: '100%', height: '100%',
                 objectFit: 'cover', opacity: 0.35,
               }} />
@@ -420,9 +397,10 @@ function BannerModal({ banner, targets, onAddTarget, onClose, onSave }) {
   );
 }
 
-// ─── Artikel Tips & Promo ───────────────────────────────────────────────────
-function ArtikelPanel() {
+// ─── Artikel Tips & Promo  ───────────────────────────────────────────────────
+function ArtikelPanel({ platform }) {
   const { Card } = window.MuurahShell;
+  const platformLabel = platform === 'app' ? 'Mobile App' : 'Web';
   const [articles, setArticles] = useCmsState(ARTIKEL_SEED);
   const [katF, setKatF] = useCmsState('semua');
   const [editing, setEditing] = useCmsState(null);
@@ -463,7 +441,7 @@ function ArtikelPanel() {
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 14,
       }}>
         <div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', letterSpacing: '-0.01em' }}>Artikel Tips & Promo</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#1A1228', letterSpacing: '-0.01em' }}>Artikel Tips & Promo {platformLabel}</div>
           <div style={{ fontSize: 13, color: '#574872', marginTop: 4 }}>
             Tampil di menu Tips & Promo aplikasi end-user
           </div>
