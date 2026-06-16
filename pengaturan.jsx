@@ -35,6 +35,31 @@ function Pengaturan() {
     }
     setPerms(ps => ps.map((p, idx) => idx === i ? { ...p, [role]: !p[role] } : p));
   };
+  const addPerm = (label) => {
+    if (!label.trim()) return;
+    if (perms.some(p => p.perm.toLowerCase() === label.toLowerCase())) {
+      window.muurahToast('Permission "' + label + '" sudah ada', 'error'); return;
+    }
+    setPerms(ps => [...ps, { perm: label.trim(), sa: true, ao: false, fn: false, cs: false }]);
+    window.muurahToast('Permission "' + label.trim() + '" ditambahkan — aktif untuk Super Admin', 'success');
+  };
+  const renamePerm = (i, label) => {
+    if (!label.trim()) return;
+    setPerms(ps => ps.map((p, idx) => idx === i ? { ...p, perm: label.trim() } : p));
+    window.muurahToast('Permission diperbarui', 'success');
+  };
+  const deletePerm = (i) => {
+    const label = perms[i].perm;
+    window.muurahConfirm({
+      title: 'Hapus permission "' + label + '"?',
+      body: 'Permission ini akan dihapus dari matrix dan tidak bisa digunakan lagi.',
+      confirmLabel: 'Hapus', danger: true,
+      onConfirm: () => {
+        setPerms(ps => ps.filter((_, idx) => idx !== i));
+        window.muurahToast('Permission "' + label + '" dihapus', 'success');
+      },
+    });
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -86,7 +111,7 @@ function Pengaturan() {
           {innerNav === 'seo'      && <SeoPanel />}
           {innerNav === 'limit'    && <SaldoLimitPanel />}
           {innerNav === 'fee'      && <FeePanel />}
-          {innerNav === 'rbac'     && <RbacPanel perms={perms} onToggle={togglePerm} />}
+          {innerNav === 'rbac'     && <RbacPanel perms={perms} onToggle={togglePerm} onAdd={addPerm} onRename={renamePerm} onDelete={deletePerm} />}
           {innerNav === 'audit'    && <AuditPanel />}
         </div>
       </div>
@@ -1653,34 +1678,79 @@ function FeeModal({ fee, existingKategori, onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   ROLE & AKSES (sub-panel: permission matrix)
 // ════════════════════════════════════════════════════════════════════════════
-function RbacPanel({ perms, onToggle }) {
-  const PERMS = perms;
+function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
+  const { useState: usePsLocal, useEffect: usePsLocalEffect } = React;
+  const [roles, setRoles] = usePsLocal(() => window.MuurahRolesStore ? window.MuurahRolesStore.get() : [
+    { id: 'sa', label: 'Super Admin', tone: 'purple', members: 2 },
+    { id: 'ao', label: 'Admin Ops',   tone: 'lime',   members: 5 },
+    { id: 'fn', label: 'Finance',     tone: 'green',  members: 3 },
+    { id: 'cs', label: 'CS',          tone: 'gold',   members: 8 },
+  ]);
+  const [newPerm, setNewPerm] = usePsLocal('');
+  const [renamingIdx, setRenamingIdx] = usePsLocal(null);
+
+  usePsLocalEffect(() => {
+    if (!window.MuurahRolesStore) return;
+    return window.MuurahRolesStore.subscribe(setRoles);
+  }, []);
+
   return (
-    <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Tentukan permission yang berlaku untuk setiap role internal" padded={false}>
+    <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Centang untuk memberikan permission ke role — kolom role otomatis sync dari menu Role & Tim" padded={false}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
           <tr>
-            <th style={{ ...psThStyle, paddingLeft: 24, width: '40%' }}>Permission</th>
-            <RoleHeader label="Super Admin" count={2} tone="purple" />
-            <RoleHeader label="Admin Ops"   count={5} tone="lime" />
-            <RoleHeader label="Finance"     count={3} tone="green" />
-            <RoleHeader label="CS"          count={8} tone="gold" />
+            <th style={{ ...psThStyle, paddingLeft: 24, width: '35%' }}>Permission</th>
+            {roles.map(r => <RbacRoleHeader key={r.id} role={r} />)}
+            <th style={{ ...psThStyle, width: 44 }}></th>
           </tr>
         </thead>
         <tbody>
-          {PERMS.map((p, i) => (
-            <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}>
-              <td style={{ ...psTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500 }}>{p.perm}</td>
-              <PermCell allowed={p.sa} onClick={() => onToggle(i, 'sa')} locked />
-              <PermCell allowed={p.ao} onClick={() => onToggle(i, 'ao')} />
-              <PermCell allowed={p.fn} onClick={() => onToggle(i, 'fn')} />
-              <PermCell allowed={p.cs} onClick={() => onToggle(i, 'cs')} />
+          {perms.map((p, i) => (
+            <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+            >
+              <td style={{ ...psTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500 }}>
+                {renamingIdx === i ? (
+                  <input autoFocus defaultValue={p.perm}
+                    onBlur={(e) => { onRename(i, e.target.value); setRenamingIdx(null); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { onRename(i, e.target.value); setRenamingIdx(null); } if (e.key === 'Escape') setRenamingIdx(null); }}
+                    style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '90%' }} />
+                ) : p.perm}
+              </td>
+              {roles.map(r => (
+                <PermCell key={r.id} allowed={!!p[r.id]} onClick={() => onToggle(i, r.id)} locked={r.id === 'sa'} />
+              ))}
+              <td style={{ ...psTdStyle, textAlign: 'center' }}>
+                <div style={{ display: 'inline-flex', gap: 2 }}>
+                  <button onClick={() => setRenamingIdx(i)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icons.cog size={12} />
+                  </button>
+                  <button onClick={() => onDelete(i)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icons.x size={12} />
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
+          {/* Add permission row */}
+          <tr style={{ borderTop: '1px solid #F0EBFF', height: 52 }}>
+            <td style={{ ...psTdStyle, paddingLeft: 24 }} colSpan={2 + roles.length}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input value={newPerm} onChange={(e) => setNewPerm(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { onAdd(newPerm); setNewPerm(''); } }}
+                  placeholder="Nama permission baru… (cth. Kelola Banner Homepage)"
+                  style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 340 }} />
+                <button onClick={() => { onAdd(newPerm); setNewPerm(''); }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
+                  <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission
+                </button>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
-      <div style={{ padding: '14px 24px', borderTop: '1px solid #E0D9F5', display: 'flex',
-        justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#574872' }}>
+      <div style={{ padding: '14px 24px', borderTop: '1px solid #E0D9F5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#574872' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14 }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={permChip(true)}>✓</span> Diizinkan
@@ -1689,21 +1759,26 @@ function RbacPanel({ perms, onToggle }) {
             <span style={permChip(false)}>—</span> Tidak diizinkan
           </span>
         </div>
-        <button style={ghostBtn('#4A2D8C')}>Kelola Role</button>
+        <button onClick={() => window.muurahGoTo('role-tim')} style={ghostBtn('#4A2D8C')}>
+          Kelola Role & Tim <Icons.arrowR size={13} />
+        </button>
       </div>
     </PanelCard>
   );
 }
 
-function RoleHeader({ label, count, tone }) {
-  const tones = { purple:{bg:'#EDE8FF',fg:'#4A2D8C'}, lime:{bg:'#F4FCE3',fg:'#5B7C12'},
-    green:{bg:'#F0FDF4',fg:'#16A34A'}, gold:{bg:'#FEF9EC',fg:'#D4900A'} };
-  const t = tones[tone] || tones.purple;
+function RbacRoleHeader({ role }) {
+  const tones = {
+    purple:{bg:'#EDE8FF',fg:'#4A2D8C'}, lime:{bg:'#F4FCE3',fg:'#5B7C12'},
+    green:{bg:'#F0FDF4',fg:'#16A34A'}, gold:{bg:'#FEF9EC',fg:'#D4900A'},
+    coral:{bg:'#FFF1ED',fg:'#FF6B4A'}, blue:{bg:'#EFF6FF',fg:'#3B82F6'},
+  };
+  const t = tones[role.tone] || tones.purple;
   return (
-    <th style={{ ...psThStyle, textAlign: 'center', width: '15%' }}>
+    <th style={{ ...psThStyle, textAlign: 'center' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
-        <span style={{ background: t.bg, color: t.fg, padding: '2px 9px', borderRadius: 6, fontWeight: 700, fontSize: 11, letterSpacing: '0.04em' }}>{label}</span>
-        <span style={{ fontSize: 10, color: '#9085AE', textTransform: 'none', letterSpacing: 0, fontFamily: 'JetBrains Mono, monospace' }}>{count} user</span>
+        <span style={{ background: t.bg, color: t.fg, padding: '2px 9px', borderRadius: 6, fontWeight: 700, fontSize: 11, letterSpacing: '0.04em' }}>{role.label}</span>
+        <span style={{ fontSize: 10, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace', textTransform: 'none', letterSpacing: 0 }}>{role.members} user</span>
       </div>
     </th>
   );

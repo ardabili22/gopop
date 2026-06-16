@@ -49,8 +49,7 @@ const NAV_GROUPS = [
 { label: 'Konfigurasi', items: [
   { id: 'pengaturan', label: 'Pengaturan Sistem', icon: 'cog' },
   { id: 'notifikasi', label: 'Notifikasi', icon: 'bell' },
-  { id: 'akses', label: 'Role & Akses', icon: 'shieldlock' },
-  { id: 'tim-admin', label: 'Tim & Admin', icon: 'users' },
+  { id: 'role-tim', label: 'Role & Tim', icon: 'shieldlock' },
   { id: 'audit', label: 'Audit Log', icon: 'clock' }]
 }];
 

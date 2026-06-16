@@ -53,8 +53,7 @@ function App() {
            active === 'settlement' ? <window.MuurahSettlement /> :
            active === 'pengaturan' ? <window.MuurahPengaturan /> :
            active === 'notifikasi' ? <window.MuurahNotifikasi /> :
-           active === 'akses'      ? <window.MuurahRoleAkses /> :
-           active === 'tim-admin'  ? <window.MuurahTimAdmin /> :
+           active === 'role-tim'   ? <window.MuurahRoleTim /> :
            active === 'audit'      ? <window.MuurahAudit /> :
            active === 'profil'     ? <window.MuurahProfil /> :
            <Placeholder current={current} />}
