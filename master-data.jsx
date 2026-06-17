@@ -138,7 +138,6 @@ function MdKategoriPanel() {
   const [editing, setEditing] = useMdState(null);
   const [adding, setAdding] = useMdState(false);
   const isFirst = useMdRef(true);
-
   useMdEffect(() => {
     if (isFirst.current) { isFirst.current = false; return; }
     if (window.MuurahKategoriStore) window.MuurahKategoriStore.set(list);
@@ -257,9 +256,15 @@ const OPERATOR_SEED = [
 ];
 
 function MdOperatorPanel() {
-  const [list, setList] = useMdState(OPERATOR_SEED);
+  const [list, setList] = useMdState(() => window.MuurahOperatorStore ? window.MuurahOperatorStore.get() : OPERATOR_SEED);
   const [editing, setEditing] = useMdState(null);
   const [adding, setAdding] = useMdState(false);
+  const isFirst = useMdRef(true);
+
+  useMdEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    if (window.MuurahOperatorStore) window.MuurahOperatorStore.set(list);
+  }, [list]);
 
   function save(data) {
     if (data.id && list.some(o => o.id === data.id)) {
@@ -357,7 +362,6 @@ const SUPPLIER_SEED = [
   { id: 'ayoconnect', name: 'Ayoconnect',   kat: ['BPJS', 'PDAM', 'Token PLN'],       status: 'aktif',       sr: 98.7, endpoint: 'https://api.ayoconnect.id/v1',  apiKey: 'sk_live_k1l2m3n4o5' },
   { id: 'tripay',     name: 'Tripay PPOB',  kat: ['Paket Data', 'E-Wallet'],           status: 'gangguan',    sr: 84.5, endpoint: 'https://api.tripay.co.id/v1',   apiKey: 'sk_live_p6q7r8s9t0' },
 ];
-const SUPPLIER_KAT = ['Pulsa', 'Token PLN', 'Paket Data', 'Voucher Game', 'E-Wallet', 'BPJS', 'PDAM', 'Multifinance'];
 const SUPPLIER_STATUS_MAP = {
   aktif:       { bg: '#F0FDF4', fg: '#16A34A', label: 'Aktif' },
   gangguan:    { bg: '#FCE7E9', fg: '#C0001A', label: 'Gangguan' },
@@ -365,9 +369,25 @@ const SUPPLIER_STATUS_MAP = {
 };
 
 function MdSupplierPanel() {
-  const [suppliers, setSuppliers] = useMdState(SUPPLIER_SEED);
+  const [suppliers, setSuppliers] = useMdState(() => window.MuurahSupplierStore ? window.MuurahSupplierStore.get() : SUPPLIER_SEED);
   const [editing, setEditing] = useMdState(null);
   const [adding, setAdding] = useMdState(false);
+  const isFirstSup = useMdRef(true);
+
+  useMdEffect(() => {
+    if (isFirstSup.current) { isFirstSup.current = false; return; }
+    if (window.MuurahSupplierStore) window.MuurahSupplierStore.set(suppliers);
+  }, [suppliers]);
+
+  // Kategori options from store
+  const [katOptions, setKatOptions] = useMdState(() =>
+    window.MuurahKategoriStore ? window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label) : SUPPLIER_KAT
+  );
+
+  useMdEffect(() => {
+    if (!window.MuurahKategoriStore) return;
+    return window.MuurahKategoriStore.subscribe(kat => setKatOptions(kat.filter(k => k.aktif).map(k => k.label)));
+  }, []);
 
   function save(data) {
     if (data.id && suppliers.some(s => s.id === data.id)) {
@@ -427,7 +447,7 @@ function MdSupplierPanel() {
           })}
         </tbody>
       </table>
-      {(adding || editing) && <SupplierModal2 sup={editing} katOptions={SUPPLIER_KAT} onClose={() => { setAdding(false); setEditing(null); }} onSave={save} />}
+      {(adding || editing) && <SupplierModal2 sup={editing} katOptions={katOptions} onClose={() => { setAdding(false); setEditing(null); }} onSave={save} />}
     </MdCard>
   );
 }
@@ -474,9 +494,14 @@ const CHANNEL_SEED = [
 ];
 
 function MdChannelPanel() {
-  const [list, setList] = useMdState(CHANNEL_SEED);
+  const [list, setList] = useMdState(() => window.MuurahChannelStore ? window.MuurahChannelStore.get() : CHANNEL_SEED);
   const [editing, setEditing] = useMdState(null);
   const [adding, setAdding] = useMdState(false);
+  const isFirstCh = useMdRef(true);
+  useMdEffect(() => {
+    if (isFirstCh.current) { isFirstCh.current = false; return; }
+    if (window.MuurahChannelStore) window.MuurahChannelStore.set(list);
+  }, [list]);
 
   function save(data) {
     if (data.id && list.some(c => c.id === data.id)) {
@@ -583,9 +608,14 @@ const BANK_SEED = [
 ];
 
 function MdBankPanel() {
-  const [list, setList] = useMdState(BANK_SEED);
+  const [list, setList] = useMdState(() => window.MuurahBankStore ? window.MuurahBankStore.get() : BANK_SEED);
   const [editing, setEditing] = useMdState(null);
   const [adding, setAdding] = useMdState(false);
+  const isFirstBank = useMdRef(true);
+  useMdEffect(() => {
+    if (isFirstBank.current) { isFirstBank.current = false; return; }
+    if (window.MuurahBankStore) window.MuurahBankStore.set(list);
+  }, [list]);
 
   function save(data) {
     if (data.id && list.some(b => b.id === data.id)) {

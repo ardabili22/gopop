@@ -544,7 +544,7 @@ function EditProdukModal({ produk, produkList, onClose, onSave }) {
 
               {/* Tambah sumber */}
               {(() => {
-                const available = SUMBER_BILLER_OPTIONS.filter(b => !form.sumber.some(s => s.biller === b));
+                const available = getSumberBillerOptions().filter(b => !form.sumber.some(s => s.biller === b));
                 if (available.length === 0) return null;
                 return (
                   <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr auto', gap: 6, alignItems: 'center' }}>
@@ -848,7 +848,15 @@ function GameConfigEditor({ config, onChange }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   WILAYAH / KODE TARIF EDITOR (form input untuk PDAM, PBB, Internet & TV, PGN)
 // ════════════════════════════════════════════════════════════════════════════
-const TIPE_LAYANAN_OPTIONS = ['PDAM', 'PBB', 'Internet & TV', 'PGN'];
+// TIPE_LAYANAN_OPTIONS reads from MuurahKategoriStore (tagihan sub-types)
+// Falls back to hardcoded list if store not ready
+function getTipeLayananOptions() {
+  const defaults = ['PDAM', 'PBB', 'Internet & TV', 'PGN'];
+  if (!window.MuurahKategoriStore) return defaults;
+  const tagihanKat = window.MuurahKategoriStore.get().filter(k => k.aktif && (k.id === 'tagihan' || ['PDAM','PBB','Internet & TV','PGN'].includes(k.label)));
+  if (tagihanKat.length === 0) return defaults;
+  return tagihanKat.map(k => k.label).length > 0 ? tagihanKat.map(k => k.label) : defaults;
+}
 
 function WilayahConfigEditor({ config, onChange }) {
   const c = config || DEFAULT_WILAYAH_CONFIG();
@@ -876,7 +884,7 @@ function WilayahConfigEditor({ config, onChange }) {
           <div style={{ position: 'relative' }}>
             <select value={c.tipeLayanan} onChange={(e) => onChange({ ...c, tipeLayanan: e.target.value })}
               style={{ ...prInputStyle({ width: '100%', appearance: 'none', paddingRight: 30 }), cursor: 'pointer' }}>
-              {TIPE_LAYANAN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+              {getTipeLayananOptions().map(o => <option key={o} value={o}>{o}</option>)}
             </select>
             <Icons.chevron size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
           </div>
@@ -1207,7 +1215,20 @@ function AddProdukModal({ onClose }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   OPERATOR MAPPING (auto-detect prefix nomor → operator)
 // ════════════════════════════════════════════════════════════════════════════
-const OPERATOR_LIST = ['Telkomsel', 'Indosat', 'XL Axiata', 'Tri', 'Smartfren', 'Axis'];
+// Runtime helpers — read from stores, fall back to defaults
+const OPERATOR_LIST = ['Telkomsel', 'Indosat', 'XL Axiata', 'Tri', 'Smartfren', 'Axis']; // fallback
+function getOperatorNames() {
+  if (window.MuurahOperatorStore) return window.MuurahOperatorStore.getAktif().map(o => o.nama);
+  return OPERATOR_LIST;
+}
+function getSupplierNames() {
+  if (window.MuurahSupplierStore) return window.MuurahSupplierStore.getAktif().map(s => s.name);
+  return ['Digiflazz', 'IAK', 'Ayoconnect', 'Tripay PPOB'];
+}
+// Dynamic — always read from MuurahSupplierStore
+function getSumberBillerOptions() {
+  return window.MuurahSupplierStore ? window.MuurahSupplierStore.getAktif().map(s => s.name) : ['Digiflazz', 'IAK', 'Ayoconnect', 'Tripay PPOB'];
+}
 
 const OPERATOR_TONES = {
   'Telkomsel': { bg: '#FCE7E9', fg: '#C0001A' },
@@ -2142,11 +2163,12 @@ function BulkPromoModal({ onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   SUMBER BILLER per produk — multi-source dengan switch aktif
 // ════════════════════════════════════════════════════════════════════════════
-const SUMBER_BILLER_OPTIONS = ['Digiflazz', 'IAK', 'Ayoconnect', 'Tripay PPOB'];
+// No longer hardcoded — read from MuurahSupplierStore via getSumberBillerOptions()
 
 function SumberBillerModal({ produk, onClose, onSwitch, onToggleAutoSwitch, onAddSumber, onDeleteSumber }) {
+  const billerOpts = getSumberBillerOptions();
   const [newBiller, setNewBiller] = useProdState(
-    SUMBER_BILLER_OPTIONS.find(b => !produk.sumber.some(s => s.biller === b)) || SUMBER_BILLER_OPTIONS[0]
+    billerOpts.find(b => !produk.sumber.some(s => s.biller === b)) || billerOpts[0] || ''
   );
   const [newHpp, setNewHpp] = useProdState(produk.hpp);
   const [newJual, setNewJual] = useProdState(produk.jual);
@@ -2157,7 +2179,7 @@ function SumberBillerModal({ produk, onClose, onSwitch, onToggleAutoSwitch, onAd
     return () => window.removeEventListener('keydown', h);
   }, [onClose]);
 
-  const availableToAdd = SUMBER_BILLER_OPTIONS.filter(b => !produk.sumber.some(s => s.biller === b));
+  const availableToAdd = billerOpts.filter(b => !produk.sumber.some(s => s.biller === b));
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -1166,7 +1166,12 @@ function BillerSaldoCard({ biller: b, onUpdate, onTopUp, onOpenProdukModal }) {
   );
 }
 
-const PRODUK_CATALOG_KATEGORI = ['Semua', 'Pulsa', 'Paket Data', 'Token PLN', 'Voucher Game', 'E-Wallet', 'BPJS', 'PDAM', 'Internet & TV', 'Kartu Kredit'];
+// PRODUK_CATALOG_KATEGORI is now dynamic — reads from MuurahKategoriStore
+function getProdukCatalogKategori() {
+  const base = ['Semua'];
+  if (window.MuurahKategoriStore) return [...base, ...window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label)];
+  return [...base, 'Pulsa', 'Paket Data', 'Token PLN', 'Voucher Game', 'E-Wallet', 'BPJS', 'PDAM', 'Internet & TV', 'Kartu Kredit'];
+}
 const PRODUK_CATALOG = [
   { nama: 'Pulsa Telkomsel 10.000', kategori: 'Pulsa' },
   { nama: 'Pulsa Telkomsel 25.000', kategori: 'Pulsa' },
@@ -1265,7 +1270,7 @@ function ProdukTerdampakModal({ biller, onClose, onChange }) {
               }} />
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {PRODUK_CATALOG_KATEGORI.map(k => {
+            {getProdukCatalogKategori().map(k => {
               const active = katFilter === k;
               return (
                 <button key={k} type="button" onClick={() => setKatFilter(k)} style={{
@@ -1475,7 +1480,18 @@ function BillerTopUpModal({ biller, onClose, onSave }) {
 //   FEE & BIAYA ADMIN
 // ════════════════════════════════════════════════════════════════════════════
 const FEE_CHANNELS = ['Semua Channel', 'Hanya Aplikasi', 'Hanya Reseller API'];
-const FEE_KATEGORI_OPTIONS = ['Pulsa', 'Token PLN', 'Paket Data', 'BPJS Kesehatan', 'BPJS Ketenagakerjaan', 'Voucher Game', 'E-Wallet', 'PDAM', 'PBB', 'Internet & TV', 'Kartu Kredit', 'Cicilan', 'eSIM'];
+// FEE_KATEGORI_OPTIONS reads from MuurahKategoriStore — includes tagihan sub-types too
+function getFeeKategoriOptions() {
+  if (window.MuurahKategoriStore) {
+    const kat = window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label);
+    // Add granular BPJS/tagihan sub-types that are billing-specific
+    const extra = ['BPJS Ketenagakerjaan', 'PBB', 'Cicilan', 'eSIM', 'PGN'];
+    const all = [...kat];
+    extra.forEach(e => { if (!all.includes(e)) all.push(e); });
+    return all;
+  }
+  return ['Pulsa', 'Token PLN', 'Paket Data', 'BPJS Kesehatan', 'BPJS Ketenagakerjaan', 'Voucher Game', 'E-Wallet', 'PDAM', 'PBB', 'Internet & TV', 'Kartu Kredit', 'Cicilan', 'eSIM'];
+}
 
 const FEES_SEED = [
   { kat: 'Pulsa',          fixed: 500,   pct: 0.5, channel: 'Semua Channel' },
@@ -1596,7 +1612,7 @@ function FeePanel() {
 function FeeModal({ fee, existingKategori, onClose, onSave }) {
   const [form, setForm] = usePsState(fee ? { ...fee, pct: fee.pct === null ? '' : fee.pct } : { kat: '', fixed: 0, pct: '', channel: FEE_CHANNELS[0] });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const availableKategori = FEE_KATEGORI_OPTIONS.filter(k => k === form.kat || !existingKategori.includes(k));
+  const availableKategori = getFeeKategoriOptions().filter(k => k === form.kat || !existingKategori.includes(k));
   const isValid = form.kat;
 
   React.useEffect(() => {

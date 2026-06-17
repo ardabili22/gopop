@@ -366,3 +366,68 @@ function DatePickerButton({ value, onChange, style = {} }) {
 }
 
 window.MuurahGlobal = { ToastContainer, ConfirmHost, BellDropdown, DatePickerButton, formatTglID };
+
+// ════════════════════════════════════════════════════════════════════════════
+//   OPERATOR STORE — list operator dari Master Data
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahOperatorStore = (() => {
+  let data = [
+    { id: 'telkomsel', nama: 'Telkomsel',  prefix: ['0811','0812','0813','0821','0822','0823','0852','0853','0851'], logo: '🔴', aktif: true },
+    { id: 'indosat',   nama: 'Indosat',    prefix: ['0814','0815','0816','0855','0856','0857','0858'], logo: '🟡', aktif: true },
+    { id: 'xl',        nama: 'XL Axiata',  prefix: ['0817','0818','0819','0859','0877','0878'], logo: '🔵', aktif: true },
+    { id: 'tri',       nama: 'Tri',        prefix: ['0895','0896','0897','0898','0899'], logo: '⚫', aktif: true },
+    { id: 'smartfren', nama: 'Smartfren',  prefix: ['0881','0882','0883','0884','0885','0886','0887','0888','0889'], logo: '🟢', aktif: true },
+    { id: 'axis',      nama: 'Axis',       prefix: ['0831','0832','0833','0838'], logo: '🟣', aktif: true },
+    { id: 'pln',       nama: 'PLN',        prefix: [], logo: '⚡', aktif: true },
+    { id: 'bpjs',      nama: 'BPJS',       prefix: [], logo: '🩺', aktif: true },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => data,
+    getAktif: () => data.filter(o => o.aktif),
+    set: (next) => { data = next; listeners.forEach(fn => fn(data)); },
+    subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
+//   SUPPLIER STORE — list supplier/biller dari Master Data
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahSupplierStore = (() => {
+  let data = [
+    { id: 'digiflazz', name: 'Digiflazz',   kat: ['Pulsa', 'Token PLN', 'Paket Data'], status: 'aktif', sr: 99.1, endpoint: 'https://api.digiflazz.com/v1',  apiKey: 'sk_live_a1b2c3' },
+    { id: 'iak',        name: 'IAK',          kat: ['Voucher Game', 'Pulsa'],            status: 'aktif', sr: 97.2, endpoint: 'https://api.iak.id/v2',          apiKey: 'sk_live_f6g7h8' },
+    { id: 'ayoconnect', name: 'Ayoconnect',   kat: ['BPJS', 'PDAM', 'Token PLN'],       status: 'aktif', sr: 98.7, endpoint: 'https://api.ayoconnect.id/v1',  apiKey: 'sk_live_k1l2m3' },
+    { id: 'tripay',     name: 'Tripay PPOB',  kat: ['Paket Data', 'E-Wallet'],           status: 'gangguan', sr: 84.5, endpoint: 'https://api.tripay.co.id/v1', apiKey: 'sk_live_p6q7r8' },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => data,
+    getAktif: () => data.filter(s => s.status === 'aktif'),
+    set: (next) => { data = next; listeners.forEach(fn => fn(data)); },
+    subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
+//   BANK STORE
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahBankStore = (() => {
+  let data = [
+    { id: 'bca',     nama: 'BCA',     kode: '014', logo: '🔵', aktif: true },
+    { id: 'bni',     nama: 'BNI',     kode: '009', logo: '🟠', aktif: true },
+    { id: 'bri',     nama: 'BRI',     kode: '002', logo: '🔵', aktif: true },
+    { id: 'mandiri', nama: 'Mandiri', kode: '008', logo: '🟡', aktif: true },
+    { id: 'cimb',    nama: 'CIMB Niaga', kode: '022', logo: '🔴', aktif: true },
+    { id: 'permata', nama: 'Permata', kode: '013', logo: '🟢', aktif: true },
+    { id: 'bsi',     nama: 'BSI',     kode: '451', logo: '⚫', aktif: true },
+    { id: 'danamon', nama: 'Danamon', kode: '011', logo: '🔴', aktif: false },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => data,
+    getAktif: () => data.filter(b => b.aktif),
+    set: (next) => { data = next; listeners.forEach(fn => fn(data)); },
+    subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
+  };
+})();
