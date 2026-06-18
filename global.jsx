@@ -431,3 +431,45 @@ window.MuurahBankStore = (() => {
     subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
   };
 })();
+
+// ════════════════════════════════════════════════════════════════════════════
+//   ARTIKEL KATEGORI STORE
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahArtikelKategoriStore = (() => {
+  let data = [
+    { id: 'tips',          label: 'Tips',          aktif: true },
+    { id: 'promo',         label: 'Promo',         aktif: true },
+    { id: 'pengumuman',    label: 'Pengumuman',    aktif: true },
+    { id: 'tutorial',      label: 'Tutorial',      aktif: true },
+    { id: 'update-fitur',  label: 'Update Fitur',  aktif: true },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => data,
+    getAktif: () => data.filter(k => k.aktif),
+    set: (next) => { data = next; listeners.forEach(fn => fn(data)); },
+    subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
+//   FAQ KATEGORI STORE
+// ════════════════════════════════════════════════════════════════════════════
+window.MuurahFaqKategoriStore = (() => {
+  let data = [
+    { id: 'umum',        label: 'Umum',               aktif: true },
+    { id: 'pembayaran',  label: 'Pembayaran',          aktif: true },
+    { id: 'pulsa-data',  label: 'Pulsa & Data',        aktif: true },
+    { id: 'game',        label: 'Game & Voucher',      aktif: true },
+    { id: 'bpjs',        label: 'BPJS & Tagihan',      aktif: true },
+    { id: 'reseller',    label: 'Reseller',            aktif: true },
+    { id: 'akun',        label: 'Akun & Keamanan',     aktif: true },
+  ];
+  const listeners = new Set();
+  return {
+    get: () => data,
+    getAktif: () => data.filter(k => k.aktif),
+    set: (next) => { data = next; listeners.forEach(fn => fn(data)); },
+    subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
+  };
+})();

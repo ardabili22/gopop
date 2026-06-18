@@ -188,7 +188,10 @@ function UmumPanel() {
 // ════════════════════════════════════════════════════════════════════════════
 function SupplierPanel() {
   const { Card } = window.MuurahShell;
-  const SUPPLIER_KATEGORI = ['Pulsa', 'Token PLN', 'Paket Data', 'Voucher Game', 'E-Wallet', 'BPJS', 'Multifinance', 'PDAM'];
+  const getSupplierKat = () => {
+    if (window.MuurahKategoriStore) return window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label);
+    return ['Pulsa', 'Token PLN', 'Paket Data', 'Voucher Game', 'E-Wallet', 'BPJS', 'PDAM'];
+  };
   const [suppliers, setSuppliers] = usePsState([
     { name: 'Supplier A — Mobile Pulsa', kat: ['Pulsa', 'Token PLN'],          status: 'aktif',       sr: 98.7, endpoint: 'https://api.mobilepulsa.id/v1', apiKey: 'sk_live_a1b2c3d4e5f6' },
     { name: 'Supplier B — IAK',          kat: ['Voucher Game', 'E-Wallet'],    status: 'aktif',       sr: 97.2, endpoint: 'https://api.iak.id/v2', apiKey: 'sk_live_g7h8i9j0k1l2' },
@@ -290,7 +293,7 @@ function SupplierPanel() {
       {(adding || editing) && (
         <SupplierModal
           supplier={editing}
-          kategoriOptions={SUPPLIER_KATEGORI}
+          kategoriOptions={getSupplierKat()}
           onClose={() => { setAdding(false); setEditing(null); }}
           onSave={saveSupplier}
         />
@@ -2168,7 +2171,10 @@ const psTdStyle = { padding: '12px 14px', verticalAlign: 'middle' };
 // ════════════════════════════════════════════════════════════════════════════
 //   FAQ & BANTUAN
 // ════════════════════════════════════════════════════════════════════════════
-const FAQ_CATEGORIES = ['Umum', 'Pembayaran', 'Pulsa & Data', 'Game & Voucher', 'BPJS & Tagihan', 'Reseller', 'Akun & Keamanan'];
+function getFaqKategori() {
+  if (window.MuurahFaqKategoriStore) return window.MuurahFaqKategoriStore.getAktif().map(k => k.label);
+  return ['Umum', 'Pembayaran', 'Pulsa & Data', 'Game & Voucher', 'BPJS & Tagihan', 'Reseller', 'Akun & Keamanan'];
+}
 
 const FAQ_SEED = [
   { id: 1, kategori: 'Umum', pertanyaan: 'Apa itu Muurah?', jawaban: 'Muurah adalah platform PPOB (Payment Point Online Bank) yang memudahkan kamu membeli pulsa, paket data, token listrik, voucher game, transfer e-wallet, dan membayar berbagai tagihan langsung dari HP.', status: 'published' },
@@ -2243,7 +2249,7 @@ function FaqPanel() {
             ...psInputStyle({}), appearance: 'none', paddingRight: 30, cursor: 'pointer', minWidth: 170, fontWeight: 500,
           }}>
             <option value="semua">Semua Kategori</option>
-            {FAQ_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            {getFaqKategori().map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <Icons.chevron size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
         </div>
@@ -2300,7 +2306,7 @@ function FaqPanel() {
 }
 
 function FaqModal({ faq, onClose, onSave }) {
-  const [form, setForm] = usePsState(faq || { kategori: FAQ_CATEGORIES[0], pertanyaan: '', jawaban: '', status: 'published' });
+  const [form, setForm] = usePsState(faq || { kategori: getFaqKategori()[0] || "Umum", pertanyaan: '', jawaban: '', status: 'published' });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const isValid = form.pertanyaan.trim() && form.jawaban.trim();
 
@@ -2341,7 +2347,7 @@ function FaqModal({ faq, onClose, onSave }) {
 
         <div style={{ padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
           <PsField label="Kategori">
-            <PsSelect value={form.kategori} onChange={(v) => u('kategori', v)} options={FAQ_CATEGORIES} />
+            <PsSelect value={form.kategori} onChange={(v) => u('kategori', v)} options={getFaqKategori()} />
           </PsField>
           <PsField label="Pertanyaan">
             <PsTextInput value={form.pertanyaan} onChange={(v) => u('pertanyaan', v)} />
@@ -2379,7 +2385,14 @@ function FaqModal({ faq, onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   PROMO & VOUCHER
 // ════════════════════════════════════════════════════════════════════════════
-const PROMO_SCOPES = ['Semua Produk', 'Pulsa', 'Paket Data', 'Token PLN', 'BPJS', 'Game & Voucher', 'E-Money', 'Transfer E-Wallet', 'Tagihan (PDAM/PBB/Internet&TV)'];
+function getPromoScopes() {
+  const base = ['Semua Produk', 'Transfer E-Wallet', 'eSIM'];
+  if (window.MuurahKategoriStore) {
+    const kat = window.MuurahKategoriStore.getAktif ? window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label) : [];
+    return ['Semua Produk', ...kat, 'Transfer E-Wallet', 'eSIM'];
+  }
+  return ['Semua Produk', 'Pulsa', 'Paket Data', 'Token PLN', 'BPJS', 'Game & Voucher', 'E-Money', 'Transfer E-Wallet', 'Tagihan (PDAM/PBB/Internet&TV)'];
+}
 
 const PROMO_SEED = [
   { id: 1, kode: 'CASHBACK5EW', nama: 'Cashback 5% Transfer E-Wallet', tipe: 'percent', nilai: 5, maksDiskon: 5_000, minTransaksi: 50_000, scope: ['Transfer E-Wallet'], mulai: '2026-05-15', akhir: '2026-05-31', kuota: 5000, terpakai: 1842, perUser: 3, status: 'aktif' },
@@ -2662,7 +2675,7 @@ function PromoModal({ promo, onClose, onSave }) {
 
           <PsField label="Berlaku untuk Produk">
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {PROMO_SCOPES.map((s) => {
+              {getPromoScopes().map((s) => {
                 const active = form.scope.includes(s);
                 return (
                   <button key={s} type="button" onClick={() => toggleScope(s)} style={{

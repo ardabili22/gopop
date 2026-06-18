@@ -35,7 +35,10 @@ const BANNER_SEED_APP = [
   { id: 'a2', judul: 'Game On! Voucher Instan',        subjudul: 'Top-up ML Diamond, FF, PUBG — langsung masuk',            target: 'game_voucher',        tone: 'coral',  status: 'aktif',   imgDesktop: null, imgMobile: null },
 ];
 
-const ARTIKEL_KATEGORI = ['Tips', 'Promo', 'Pengumuman'];
+function getArtikelKategori() {
+  if (window.MuurahArtikelKategoriStore) return window.MuurahArtikelKategoriStore.getAktif().map(k => k.label);
+  return ['Tips', 'Promo', 'Pengumuman'];
+}
 
 const ARTIKEL_SEED = [
   { id: 1, judul: 'Cashback 5% Setiap Transfer E-Wallet Bulan Ini', kategori: 'Promo', excerpt: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet minimal Rp 50.000 selama periode promo.', konten: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet (GoPay, OVO, Dana, ShopeePay) dengan minimal transaksi Rp 50.000. Cashback otomatis masuk ke saldo dalam 24 jam. Berlaku selama periode promo dan kuota tersedia.', tone: 'coral', status: 'published', tgl: '2026-05-15' },
@@ -452,7 +455,7 @@ function ArtikelPanel({ platform }) {
       </div>
 
       <div style={{ padding: '14px 24px', borderBottom: '1px solid #F0EBFF', display: 'flex', gap: 8 }}>
-        {['semua', ...ARTIKEL_KATEGORI].map(k => {
+        {['semua', ...getArtikelKategori()].map(k => {
           const active = katF === k;
           return (
             <button key={k} onClick={() => setKatF(k)} style={{
@@ -531,7 +534,7 @@ function ArtikelStatusPill({ status }) {
 
 function ArtikelModal({ artikel, onClose, onSave }) {
   const [form, setForm] = useCmsState(artikel || {
-    judul: '', kategori: ARTIKEL_KATEGORI[0], excerpt: '', konten: '',
+    judul: '', kategori: getArtikelKategori()[0] || 'Tips', excerpt: '', konten: '',
     tone: 'purple', status: 'draft', tgl: '2026-06-12', gambar: null,
   });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -582,7 +585,7 @@ function ArtikelModal({ artikel, onClose, onSave }) {
                 <select value={form.kategori} onChange={(e) => u('kategori', e.target.value)} style={{
                   ...cmsInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 30, cursor: 'pointer',
                 }}>
-                  {ARTIKEL_KATEGORI.map(o => <option key={o} value={o}>{o}</option>)}
+                  {getArtikelKategori().map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
                 <Icons.chevron size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
               </div>

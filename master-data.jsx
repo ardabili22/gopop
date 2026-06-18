@@ -3,11 +3,13 @@
 const { useState: useMdState, useEffect: useMdEffect, useRef: useMdRef } = React;
 
 const MD_NAV = [
-  { id: 'kategori',  label: 'Kategori Produk',    icon: 'tag' },
-  { id: 'operator',  label: 'Master Operator',     icon: 'phone' },
-  { id: 'supplier',  label: 'Supplier & Biller',   icon: 'store' },
-  { id: 'channel',   label: 'Channel Komplain',    icon: 'megaphone' },
-  { id: 'bank',      label: 'Master Bank',         icon: 'bank' },
+  { id: 'kategori',         label: 'Kategori Produk',    icon: 'tag' },
+  { id: 'operator',         label: 'Master Operator',     icon: 'phone' },
+  { id: 'supplier',         label: 'Supplier & Biller',   icon: 'store' },
+  { id: 'channel',          label: 'Channel Komplain',    icon: 'megaphone' },
+  { id: 'bank',             label: 'Master Bank',         icon: 'bank' },
+  { id: 'kat-artikel',      label: 'Kategori Artikel',    icon: 'chart' },
+  { id: 'kat-faq',          label: 'Kategori FAQ',        icon: 'help' },
 ];
 
 // ─── Shared helpers (isolated to avoid conflict with pengaturan.jsx) ─────────
@@ -111,11 +113,13 @@ function MasterData() {
 
         {/* Content */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          {innerNav === 'kategori' && <MdKategoriPanel />}
-          {innerNav === 'operator' && <MdOperatorPanel />}
-          {innerNav === 'supplier' && <MdSupplierPanel />}
-          {innerNav === 'channel'  && <MdChannelPanel />}
-          {innerNav === 'bank'     && <MdBankPanel />}
+          {innerNav === 'kategori'    && <MdKategoriPanel />}
+          {innerNav === 'operator'    && <MdOperatorPanel />}
+          {innerNav === 'supplier'    && <MdSupplierPanel />}
+          {innerNav === 'channel'     && <MdChannelPanel />}
+          {innerNav === 'bank'        && <MdBankPanel />}
+          {innerNav === 'kat-artikel' && <MdKatArtikelPanel />}
+          {innerNav === 'kat-faq'     && <MdKatFaqPanel />}
         </div>
       </div>
     </div>
@@ -689,6 +693,108 @@ function BankModal({ bank, onClose, onSave }) {
           style={mdInput({ width: 120, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.1em' })} />
       </MdField>
     </MdModal>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//   REUSABLE SIMPLE KATEGORI PANEL (Artikel & FAQ)
+// ════════════════════════════════════════════════════════════════════════════
+function MdSimpleKategoriPanel({ title, subtitle, store }) {
+  const [list, setList] = useMdState(() => store ? store.get() : []);
+  const [editing, setEditing] = useMdState(null);
+  const [adding, setAdding] = useMdState(false);
+  const [newLabel, setNewLabel] = useMdState('');
+  const isFirst = useMdRef(true);
+
+  useMdEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    if (store) store.set(list);
+  }, [list]);
+
+  function save(data) {
+    if (data.id && list.some(k => k.id === data.id)) {
+      setList(ls => ls.map(k => k.id === data.id ? { ...k, ...data } : k));
+      window.muurahToast('Kategori "' + data.label + '" diperbarui', 'success');
+    } else {
+      const id = data.label.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24) || 'kat' + Date.now();
+      setList(ls => [...ls, { ...data, id, aktif: true }]);
+      window.muurahToast('Kategori "' + data.label + '" ditambahkan', 'success');
+    }
+    setEditing(null); setAdding(false);
+  }
+  function del(k) {
+    window.muurahConfirm({ title: 'Hapus kategori "' + k.label + '"?', body: 'Kategori ini akan dihapus dan tidak bisa dipilih lagi.', confirmLabel: 'Hapus', danger: true, onConfirm: () => { setList(ls => ls.filter(x => x.id !== k.id)); window.muurahToast('Kategori dihapus', 'success'); } });
+  }
+  function toggle(k) {
+    window.muurahConfirm({ title: (k.aktif ? 'Nonaktifkan' : 'Aktifkan') + ' "' + k.label + '"?', body: k.aktif ? 'Tidak muncul sebagai pilihan kategori.' : 'Kembali tampil.', confirmLabel: k.aktif ? 'Nonaktifkan' : 'Aktifkan', danger: k.aktif, onConfirm: () => setList(ls => ls.map(x => x.id === k.id ? { ...x, aktif: !x.aktif } : x)) });
+  }
+
+  return (
+    <MdCard title={title} subtitle={subtitle}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {list.map(k => (
+          <div key={k.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, border: '1px solid ' + (k.aktif ? '#E0D9F5' : '#F0EBFF'), background: k.aktif ? '#FFFFFF' : '#FAF8FF', opacity: k.aktif ? 1 : 0.65 }}>
+            <div style={{ flex: 1 }}>
+              {editing === k.id ? (
+                <input autoFocus defaultValue={k.label}
+                  onBlur={(e) => { if (e.target.value.trim()) save({ ...k, label: e.target.value.trim() }); else setEditing(null); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value.trim()) { save({ ...k, label: e.target.value.trim() }); } if (e.key === 'Escape') setEditing(null); }}
+                  style={mdInput({ width: '100%' })} />
+              ) : (
+                <>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1228' }}>{k.label}</div>
+                  <div style={{ fontSize: 10, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace', marginTop: 1 }}>id: {k.id}</div>
+                </>
+              )}
+            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, background: k.aktif ? '#F0FDF4' : '#F0EBFF', color: k.aktif ? '#16A34A' : '#9085AE', padding: '3px 8px', borderRadius: 5 }}>{k.aktif ? 'Aktif' : 'Nonaktif'}</span>
+            <button onClick={() => toggle(k)} style={mdGhost(k.aktif ? '#D97706' : '#16A34A')}>{k.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button>
+            <button onClick={() => setEditing(k.id)} style={mdGhost('#4A2D8C')}>Edit</button>
+            <button onClick={() => del(k)} style={mdGhost('#C0001A')}>Hapus</button>
+          </div>
+        ))}
+
+        {/* Tambah inline */}
+        {adding ? (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input autoFocus value={newLabel} onChange={(e) => setNewLabel(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && newLabel.trim()) { save({ label: newLabel.trim() }); setNewLabel(''); } if (e.key === 'Escape') { setAdding(false); setNewLabel(''); } }}
+              placeholder="Nama kategori baru…"
+              style={mdInput({ flex: 1 })} />
+            <button onClick={() => { if (newLabel.trim()) { save({ label: newLabel.trim() }); setNewLabel(''); } }} style={mdBtn()}>
+              <Icons.check size={14} strokeWidth={2.5} /> Tambah
+            </button>
+            <button onClick={() => { setAdding(false); setNewLabel(''); }} style={mdSecBtn()}>Batal</button>
+          </div>
+        ) : (
+          <button onClick={() => setAdding(true)} style={{ height: 40, borderRadius: 10, border: '2px dashed #C5B8EF', background: 'transparent', color: '#574872', fontSize: 13, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4A2D8C'; e.currentTarget.style.color = '#4A2D8C'; e.currentTarget.style.background = '#F0EBFF'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C5B8EF'; e.currentTarget.style.color = '#574872'; e.currentTarget.style.background = 'transparent'; }}>
+            + Tambah Kategori
+          </button>
+        )}
+      </div>
+    </MdCard>
+  );
+}
+
+function MdKatArtikelPanel() {
+  return (
+    <MdSimpleKategoriPanel
+      title="Kategori Artikel"
+      subtitle="Dipakai sebagai kategori di Tips & Promo CMS — perubahan langsung berlaku di filter dan dropdown artikel"
+      store={window.MuurahArtikelKategoriStore}
+    />
+  );
+}
+
+function MdKatFaqPanel() {
+  return (
+    <MdSimpleKategoriPanel
+      title="Kategori FAQ"
+      subtitle="Dipakai sebagai kategori di panel FAQ & Bantuan (Pengaturan Sistem) — perubahan langsung berlaku di filter dan form FAQ"
+      store={window.MuurahFaqKategoriStore}
+    />
   );
 }
 
