@@ -245,18 +245,55 @@ function KatModal({ kat, onClose, onSave }) {
   );
 }
 
+// ─── Image Upload Field (same as cms.jsx) ────────────────────────────────────
+function MdImageUploadField({ value, onChange, aspect = '1/1', label = 'Upload Gambar' }) {
+  const inputRef = React.useRef(null);
+  function handleFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { window.muurahToast('File harus berupa gambar (PNG/JPG/SVG)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = () => onChange(reader.result);
+    reader.readAsDataURL(file);
+  }
+  return (
+    <div>
+      <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+      {value ? (
+        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: aspect, background: '#F0EBFF', maxWidth: 200 }}>
+          <img src={value} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: 8 }} />
+          <div style={{ position: 'absolute', top: 6, right: 6, display: 'flex', gap: 4 }}>
+            <button type="button" onClick={() => inputRef.current.click()} style={{ background: 'rgba(26,18,40,0.65)', color: '#FFFFFF', border: 0, borderRadius: 7, padding: '4px 8px', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Ganti</button>
+            <button type="button" onClick={() => onChange(null)} style={{ width: 26, height: 26, background: 'rgba(26,18,40,0.65)', color: '#FFFFFF', border: 0, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><Icons.x size={12} /></button>
+          </div>
+        </div>
+      ) : (
+        <button type="button" onClick={() => inputRef.current.click()} style={{
+          width: 140, height: 80, borderRadius: 12,
+          border: '1.5px dashed #C5B8EF', background: '#FAF8FF', color: '#9085AE',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5,
+          cursor: 'pointer', fontFamily: 'inherit',
+        }}>
+          <Icons.image size={20} style={{ color: '#C5B8EF' }} />
+          <span style={{ fontSize: 11, fontWeight: 600 }}>{label}</span>
+          <span style={{ fontSize: 10 }}>PNG / JPG / SVG</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════════
-//   2. MASTER OPERATOR
 // ════════════════════════════════════════════════════════════════════════════
 const OPERATOR_SEED = [
-  { id: 'telkomsel', nama: 'Telkomsel',  prefix: ['0811','0812','0813','0821','0822','0823','0852','0853','0851'], logo: '🔴', aktif: true },
-  { id: 'indosat',   nama: 'Indosat',    prefix: ['0814','0815','0816','0855','0856','0857','0858'], logo: '🟡', aktif: true },
-  { id: 'xl',        nama: 'XL Axiata',  prefix: ['0817','0818','0819','0859','0877','0878'], logo: '🔵', aktif: true },
-  { id: 'tri',       nama: 'Tri',        prefix: ['0895','0896','0897','0898','0899'], logo: '⚫', aktif: true },
-  { id: 'smartfren', nama: 'Smartfren',  prefix: ['0881','0882','0883','0884','0885','0886','0887','0888','0889'], logo: '🟢', aktif: true },
-  { id: 'axis',      nama: 'Axis',       prefix: ['0831','0832','0833','0838'], logo: '🟣', aktif: true },
-  { id: 'pln',       nama: 'PLN',        prefix: [], logo: '⚡', aktif: true },
-  { id: 'bpjs',      nama: 'BPJS',       prefix: [], logo: '🩺', aktif: true },
+  { id: 'telkomsel', nama: 'Telkomsel',  prefix: ['0811','0812','0813','0821','0822','0823','0852','0853','0851'], logo: '🔴', image: null, aktif: true },
+  { id: 'indosat',   nama: 'Indosat',    prefix: ['0814','0815','0816','0855','0856','0857','0858'], logo: '🟡', image: null, aktif: true },
+  { id: 'xl',        nama: 'XL Axiata',  prefix: ['0817','0818','0819','0859','0877','0878'], logo: '🔵', image: null, aktif: true },
+  { id: 'tri',       nama: 'Tri',        prefix: ['0895','0896','0897','0898','0899'], logo: '⚫', image: null, aktif: true },
+  { id: 'smartfren', nama: 'Smartfren',  prefix: ['0881','0882','0883','0884','0885','0886','0887','0888','0889'], logo: '🟢', image: null, aktif: true },
+  { id: 'axis',      nama: 'Axis',       prefix: ['0831','0832','0833','0838'], logo: '🟣', image: null, aktif: true },
+  { id: 'pln',       nama: 'PLN',        prefix: [], logo: '⚡', image: null, aktif: true },
+  { id: 'bpjs',      nama: 'BPJS',       prefix: [], logo: '🩺', image: null, aktif: true },
 ];
 
 function MdOperatorPanel() {
@@ -304,7 +341,11 @@ function MdOperatorPanel() {
             <tr key={o.id} style={{ borderTop: '1px solid #F0EBFF', height: 56, opacity: o.aktif ? 1 : 0.65 }}>
               <td style={{ ...mdTd, paddingLeft: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20 }}>{o.logo}</span>
+                  <div style={{ width: 36, height: 36, borderRadius: 9, background: '#F0EBFF', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                    {o.image
+                      ? <img src={o.image} alt={o.nama} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} />
+                      : <span style={{ fontSize: 20 }}>{o.logo}</span>}
+                  </div>
                   <span style={{ fontWeight: 600, color: '#1A1228' }}>{o.nama}</span>
                 </div>
               </td>
@@ -335,7 +376,7 @@ function MdOperatorPanel() {
 }
 
 function OperatorModal({ op, onClose, onSave }) {
-  const [form, setForm] = useMdState(op ? { ...op, prefixStr: (op.prefix || []).join(', ') } : { nama: '', logo: '📱', prefixStr: '', aktif: true });
+  const [form, setForm] = useMdState(op ? { ...op, prefixStr: (op.prefix || []).join(', ') } : { nama: '', logo: '📱', image: null, prefixStr: '', aktif: true });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const isValid = form.nama.trim();
   return (
@@ -343,16 +384,35 @@ function OperatorModal({ op, onClose, onSave }) {
       footer={<><button onClick={onClose} style={mdSecBtn()}>Batal</button><button onClick={() => { if (!isValid) { window.muurahToast('Nama wajib diisi', 'error'); return; } onSave({ ...form, prefix: form.prefixStr.split(',').map(s => s.trim()).filter(Boolean) }); }} style={{ ...mdBtn(), opacity: isValid ? 1 : 0.5 }}>
         <Icons.check size={14} strokeWidth={2.5} /> {op ? 'Simpan' : 'Tambah'}
       </button></>}>
-      <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: 12 }}>
-        <MdField label="Logo/Emoji"><input value={form.logo} onChange={(e) => u('logo', e.target.value)} style={mdInput({ width: '100%', fontSize: 20, textAlign: 'center' })} maxLength={2} /></MdField>
-        <MdField label="Nama Operator"><input value={form.nama} onChange={(e) => u('nama', e.target.value)} autoFocus placeholder="cth. Telkomsel" style={mdInput({ width: '100%' })} /></MdField>
+
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+        {/* Image upload */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Logo / Gambar</label>
+          <MdImageUploadField value={form.image} onChange={(v) => u('image', v)} aspect="1/1" label="Upload Logo" />
+          {!form.image && (
+            <div style={{ display: 'flex', flex: 1 }}>
+              <input value={form.logo} onChange={(e) => u('logo', e.target.value)}
+                style={mdInput({ width: 56, fontSize: 22, textAlign: 'center' })} maxLength={2}
+                title="Atau pakai emoji sebagai fallback" />
+            </div>
+          )}
+          <div style={{ fontSize: 10, color: '#9085AE', maxWidth: 140 }}>Upload gambar, atau isi emoji sebagai fallback</div>
+        </div>
+
+        {/* Info fields */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <MdField label="Nama Operator">
+            <input value={form.nama} onChange={(e) => u('nama', e.target.value)} autoFocus placeholder="cth. Telkomsel" style={mdInput({ width: '100%' })} />
+          </MdField>
+          <MdField label="Prefix Nomor (pisahkan dengan koma)">
+            <textarea value={form.prefixStr} onChange={(e) => u('prefixStr', e.target.value)}
+              placeholder="cth. 0811, 0812, 0813, 0821"
+              rows={3} style={{ ...mdInput({ width: '100%', height: 'auto', padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace', resize: 'vertical', lineHeight: 1.6 }) }} />
+            <div style={{ fontSize: 11, color: '#9085AE' }}>Kosongkan untuk operator non-GSM (PLN, BPJS, dll)</div>
+          </MdField>
+        </div>
       </div>
-      <MdField label="Prefix Nomor (pisahkan dengan koma)">
-        <textarea value={form.prefixStr} onChange={(e) => u('prefixStr', e.target.value)}
-          placeholder="cth. 0811, 0812, 0813, 0821"
-          rows={2} style={{ ...mdInput({ width: '100%', height: 'auto', padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace', resize: 'vertical', lineHeight: 1.6 }) }} />
-        <div style={{ fontSize: 11, color: '#9085AE' }}>Kosongkan untuk operator non-GSM (PLN, BPJS, dll)</div>
-      </MdField>
     </MdModal>
   );
 }
@@ -601,14 +661,14 @@ window.MuurahChannelStore = (() => {
 //   5. MASTER BANK
 // ════════════════════════════════════════════════════════════════════════════
 const BANK_SEED = [
-  { id: 'bca',     nama: 'Bank Central Asia (BCA)',        kode: '014', logo: '🔵', aktif: true },
-  { id: 'bni',     nama: 'Bank Negara Indonesia (BNI)',     kode: '009', logo: '🟠', aktif: true },
-  { id: 'bri',     nama: 'Bank Rakyat Indonesia (BRI)',     kode: '002', logo: '🔵', aktif: true },
-  { id: 'mandiri', nama: 'Bank Mandiri',                   kode: '008', logo: '🟡', aktif: true },
-  { id: 'cimb',    nama: 'CIMB Niaga',                     kode: '022', logo: '🔴', aktif: true },
-  { id: 'permata', nama: 'Bank Permata',                   kode: '013', logo: '🟢', aktif: true },
-  { id: 'bsi',     nama: 'Bank Syariah Indonesia (BSI)',   kode: '451', logo: '⚫', aktif: true },
-  { id: 'danamon', nama: 'Bank Danamon',                   kode: '011', logo: '🔴', aktif: false },
+  { id: 'bca',     nama: 'Bank Central Asia (BCA)',        kode: '014', logo: '🔵', image: null, aktif: true },
+  { id: 'bni',     nama: 'Bank Negara Indonesia (BNI)',     kode: '009', logo: '🟠', image: null, aktif: true },
+  { id: 'bri',     nama: 'Bank Rakyat Indonesia (BRI)',     kode: '002', logo: '🔵', image: null, aktif: true },
+  { id: 'mandiri', nama: 'Bank Mandiri',                   kode: '008', logo: '🟡', image: null, aktif: true },
+  { id: 'cimb',    nama: 'CIMB Niaga',                     kode: '022', logo: '🔴', image: null, aktif: true },
+  { id: 'permata', nama: 'Bank Permata',                   kode: '013', logo: '🟢', image: null, aktif: true },
+  { id: 'bsi',     nama: 'Bank Syariah Indonesia (BSI)',   kode: '451', logo: '⚫', image: null, aktif: true },
+  { id: 'danamon', nama: 'Bank Danamon',                   kode: '011', logo: '🔴', image: null, aktif: false },
 ];
 
 function MdBankPanel() {
@@ -655,7 +715,11 @@ function MdBankPanel() {
             <tr key={b.id} style={{ borderTop: '1px solid #F0EBFF', height: 52, opacity: b.aktif ? 1 : 0.65 }}>
               <td style={{ ...mdTd, paddingLeft: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20 }}>{b.logo}</span>
+                  <div style={{ width: 36, height: 36, borderRadius: 9, background: '#F0EBFF', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                    {b.image
+                      ? <img src={b.image} alt={b.nama} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} />
+                      : <span style={{ fontSize: 20 }}>{b.logo}</span>}
+                  </div>
                   <span style={{ fontWeight: 600, color: '#1A1228' }}>{b.nama}</span>
                 </div>
               </td>
@@ -676,7 +740,7 @@ function MdBankPanel() {
 }
 
 function BankModal({ bank, onClose, onSave }) {
-  const [form, setForm] = useMdState(bank ? { ...bank } : { nama: '', kode: '', logo: '🏦' });
+  const [form, setForm] = useMdState(bank ? { ...bank } : { nama: '', kode: '', logo: '🏦', image: null });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const isValid = form.nama.trim() && form.kode.trim();
   return (
@@ -684,14 +748,31 @@ function BankModal({ bank, onClose, onSave }) {
       footer={<><button onClick={onClose} style={mdSecBtn()}>Batal</button><button onClick={() => { if (!isValid) { window.muurahToast('Nama dan kode bank wajib diisi', 'error'); return; } onSave(form); }} style={{ ...mdBtn(), opacity: isValid ? 1 : 0.5 }}>
         <Icons.check size={14} strokeWidth={2.5} /> {bank ? 'Simpan' : 'Tambah'}
       </button></>}>
-      <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: 12 }}>
-        <MdField label="Logo/Emoji"><input value={form.logo} onChange={(e) => u('logo', e.target.value)} style={mdInput({ width: '100%', fontSize: 20, textAlign: 'center' })} maxLength={2} /></MdField>
-        <MdField label="Nama Bank"><input value={form.nama} onChange={(e) => u('nama', e.target.value)} autoFocus placeholder="cth. Bank Central Asia (BCA)" style={mdInput({ width: '100%' })} /></MdField>
+
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+        {/* Image upload */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: '#574872', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Logo / Gambar</label>
+          <MdImageUploadField value={form.image} onChange={(v) => u('image', v)} aspect="1/1" label="Upload Logo" />
+          {!form.image && (
+            <input value={form.logo} onChange={(e) => u('logo', e.target.value)}
+              style={mdInput({ width: 56, fontSize: 22, textAlign: 'center' })} maxLength={2}
+              title="Atau pakai emoji sebagai fallback" />
+          )}
+          <div style={{ fontSize: 10, color: '#9085AE', maxWidth: 140 }}>Upload gambar, atau isi emoji sebagai fallback</div>
+        </div>
+
+        {/* Info fields */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <MdField label="Nama Bank">
+            <input value={form.nama} onChange={(e) => u('nama', e.target.value)} autoFocus placeholder="cth. Bank Central Asia (BCA)" style={mdInput({ width: '100%' })} />
+          </MdField>
+          <MdField label="Kode Bank (3 digit)">
+            <input value={form.kode} onChange={(e) => u('kode', e.target.value)} placeholder="cth. 014" maxLength={3}
+              style={mdInput({ width: 120, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.1em' })} />
+          </MdField>
+        </div>
       </div>
-      <MdField label="Kode Bank (3 digit)">
-        <input value={form.kode} onChange={(e) => u('kode', e.target.value)} placeholder="cth. 014" maxLength={3}
-          style={mdInput({ width: 120, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, letterSpacing: '0.1em' })} />
-      </MdField>
     </MdModal>
   );
 }
