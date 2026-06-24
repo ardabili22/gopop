@@ -244,6 +244,7 @@ body.hide-dash .layer.dash{display:none;}
   <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Backlog</button>
   <button class="nav-btn" onclick="showTab('journey',this)">🔗 Journey Map</button>
   <button class="nav-btn" onclick="showTab('errors',this)">🔴 Error Codes</button>
+  <button class="nav-btn" onclick="showTab('priority',this)">🎯 Prioritas</button>
   <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Decisions</button>
 </nav>
 
@@ -404,11 +405,30 @@ body.hide-dash .layer.dash{display:none;}
     </div>
     <div class="case-body open">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-        <span class="pbadge designed">🟡 Designed — Figma ada, belum dev</span>
-        <span class="pbadge in-dev">🔵 In Dev — Sedang dikerjakan</span>
-        <span class="pbadge done">🟢 Done — Selesai</span>
-        <span class="pbadge not-started">⚪ Belum Mulai</span>
-        <span class="pbadge blocked">🔴 Blocked — Ada dependency yang belum selesai</span>
+        <div style="display:flex;align-items:center;gap:6px;background:#1A1035;border:1px solid #CEF17B44;border-radius:8px;padding:6px 10px;">
+          <span style="width:10px;height:10px;background:#CEF17B;border-radius:50%;flex-shrink:0;"></span>
+          <span style="font-size:11px;color:#CEF17B;font-weight:700;">Designed</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.4);">Figma ada, belum dev</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1A1035;border:1px solid #3B82F644;border-radius:8px;padding:6px 10px;">
+          <span style="width:10px;height:10px;background:#3B82F6;border-radius:50%;flex-shrink:0;"></span>
+          <span style="font-size:11px;color:#93c5fd;font-weight:700;">In Dev</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.4);">Sedang dikerjakan</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1A1035;border:1px solid #16A34A44;border-radius:8px;padding:6px 10px;">
+          <span style="width:10px;height:10px;background:#16A34A;border-radius:50%;flex-shrink:0;"></span>
+          <span style="font-size:11px;color:#4ade80;font-weight:700;">Done</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.4);">Selesai</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1A1035;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 10px;">
+          <span style="width:10px;height:10px;background:#6B7280;border-radius:50%;flex-shrink:0;"></span>
+          <span style="font-size:11px;color:rgba(255,255,255,.5);font-weight:700;">Belum Mulai</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1A1035;border:1px solid #DC262644;border-radius:8px;padding:6px 10px;">
+          <span style="width:10px;height:10px;background:#DC2626;border-radius:50%;flex-shrink:0;"></span>
+          <span style="font-size:11px;color:#f87171;font-weight:700;">Blocked</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.4);">Ada dependency</span>
+        </div>
       </div>
       <table class="ftable">
         <tr><th>Flow</th><th>Design</th><th>BE</th><th>FE Consumer</th><th>FE Reseller</th><th>Dashboard</th></tr>
@@ -2484,6 +2504,293 @@ GoPop — Tumbuh Bersama Kamu</div>
 </div>
 
 </div><!-- end tab-errors -->
+
+<!-- ═══════════════════════════════════════════════════════ PRIORITY TAB -->
+<div id="tab-priority" class="tab-panel">
+
+<div class="val-banner">
+  <div class="val-icon">🎯</div>
+  <div>
+    <div class="val-title">Urutan Prioritas Pengerjaan</div>
+    <div class="val-desc">Berdasarkan: (1) blocking dependency — tidak bisa lanjut kalau belum selesai, (2) risiko bisnis — kalau salah implement dampaknya besar, (3) user impact. Acoy pakai ini sebagai acuan sprint planning.</div>
+  </div>
+</div>
+
+<!-- P1 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">P1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Kerjakan Duluan — Blocker untuk Semua Flow Lain</div>
+      <div class="flow-sub">Kalau ini belum beres, semua flow lain tidak bisa jalan</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">P1-A</span>
+      <span class="case-title">Jawab Gap Decisions yang blocking implementasi</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Kenapa harus duluan</div><div class="layer-content">Dev tidak bisa implement dengan benar kalau keputusan bisnis belum ada. Coding dulu baru ada keputusan = wasted effort atau harus refactor.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>Gap paling blocking</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Gap</th><th>Kenapa blocking</th><th>PIC</th></tr>
+          <tr><td><code>R-G1</code></td><td>Threshold tier — tanpa ini tier system tidak bisa di-build</td><td>Bili</td></tr>
+          <tr><td><code>R-G2</code></td><td>% Bonus rate — tanpa ini bonus ledger tidak bisa dihitung</td><td>Bili + Agung</td></tr>
+          <tr><td><code>T-G1</code></td><td>SLA refund — ini yang tercetak di semua WA notif user</td><td>Bili + Agung</td></tr>
+          <tr><td><code>A-G1</code></td><td>1 nomor = 2 akun? — menentukan DB schema user</td><td>Bili</td></tr>
+          <tr><td><code>AC-G7</code></td><td>Berapa menit PROCESSING stuck — menentukan scheduler interval</td><td>Rifky + Acoy</td></tr>
+        </table>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Action</div><div class="layer-content">Buka tab <strong>⚠️ Gap Decisions</strong> → filter "Belum Dijawab" → prioritaskan 5 gap di atas. Jadwalkan sesi 1 jam dengan Bili untuk jawab semuanya sekaligus.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">P1-B</span>
+      <span class="case-title">Fix dashboard: rename muurah→gopop + status enum + source_channel</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Kenapa harus duluan</div><div class="layer-content">Technical debt yang kalau tidak difix sekarang akan makin susah — semakin banyak kode yang depend ke nama/status yang salah.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>3 hal yang harus difix</div><div class="layer-content">
+        <ul style="padding-left:16px;font-size:13px;color:#374151;line-height:2;">
+          <li><strong>Rename muurah → gopop</strong> di <code>index.html</code> title + semua string (Isal + Ipong)</li>
+          <li><strong>Status enum</strong> — ganti <code>sukses/gagal/processing</code> ke <code>SUCCESS/FAILED/PROCESSING</code> + tambah <code>EXPIRED, CANCELLED, REFUNDED</code> (Irwan + Rifky + Isal + Ipong)</li>
+          <li><strong>Field source_channel</strong> — tambah ke semua transaksi (Irwan + Rifky)</li>
+        </ul>
+      </div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) · Isal + Ipong (Dashboard) · Agung + Fikly + Dileh (FE masing-masing)</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">P1-C</span>
+      <span class="case-title">Bili: Lock versi final Homepage Figma + buat Payment Instruction screen</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Kenapa blocking</div><div class="layer-content">Ada 13 iterasi Homepage — Agung dan Fikly tidak tahu mana yang diimplementasi. Payment Instruction screen belum ada di Figma padahal ini screen yang paling sering dilihat user saat transaksi.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>Action untuk Bili</div><div class="layer-content">
+        <ul style="padding-left:16px;font-size:13px;color:#374151;line-height:1.8;">
+          <li>Pilih 1 frame Homepage yang final → rename "00 - Homepage [FINAL]" → arsipkan sisanya</li>
+          <li>Buat screen Payment Instruction (QRIS + VA + e-wallet redirect)</li>
+          <li>Buat screen Tier Saya untuk Reseller App</li>
+          <li>Buat screen Refund Status</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P2 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">P2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Core Transaction Flow — Revenue Generator Utama</div>
+      <div class="flow-sub">Setelah P1 selesai — ini yang langsung menghasilkan uang</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">P2-A</span>
+      <span class="case-title">BE: Transaction Engine — T1 happy path semua produk</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Urutan build</div><div class="layer-content">
+        <ol style="padding-left:16px;font-size:13px;color:#374151;line-height:2;">
+          <li>Integrasi Xendit (payment gateway) — buat, bayar, terima callback</li>
+          <li>Integrasi Ayoconnect (biller) — kirim transaksi, terima callback</li>
+          <li>Status lifecycle: PENDING → PAID → PROCESSING → SUCCESS/FAILED</li>
+          <li>WA notif sukses/gagal (basic)</li>
+          <li>Auto-refund saat FAILED</li>
+        </ol>
+      </div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) → setelah done: Agung + Fikly implement FE checkout flow</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">P2-B</span>
+      <span class="case-title">BE: Error handling — retry, fallback, stuck scheduler, auto-refund</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Kenapa segera setelah P2-A</div><div class="layer-content">Tanpa ini, kalau ada 1 transaksi gagal = uang floating selamanya. Paling kritis dari sisi bisnis dan reputasi GoPop.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Yang harus dibangun</div><div class="layer-content">Retry logic ke Ayoconnect (2x, exponential backoff) · Fallback ke biller backup · Scheduler cek PROCESSING stuck · Scheduler pull Xendit kalau tidak ada callback · Auto-refund via Xendit</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) · Isal + Ipong: tambah tab "Perlu Perhatian" di Monitoring Dashboard</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">P2-C</span>
+      <span class="case-title">FE Consumer: Checkout → Payment → Status (App + Desktop)</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>Dependency</div><div class="layer-content">Butuh: (1) BE P2-A done, (2) Figma Payment Instruction screen dari Bili (P1-C), (3) Homepage final dikunci.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Agung (App) · Fikly (Desktop) · Bisa paralel setelah BE P2-A done</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P3 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">P3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Auth Flow — Bisa paralel dengan P2</div>
+      <div class="flow-sub">Tidak blocking transaksi karena guest-first — bisa dikerjakan bersamaan</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">P3-A</span>
+      <span class="case-title">BE: Auth service — register, login, OTP, token refresh</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Scope</div><div class="layer-content">POST /auth/register → OTP via WA → verify → login → JWT access + refresh token → interceptor 401 auto-refresh. Semua error cases A1-A5 ter-cover.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) → setelah done: Agung (App), Fikly (Desktop), Dileh (Reseller login + PIN) · Isal + Ipong (Dashboard: lock/unlock/suspend user)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P4 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">P4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Reseller Core — Setelah P2 BE done</div>
+      <div class="flow-sub">Reseller pakai transaction engine yang sama dengan consumer</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">P4-A</span>
+      <span class="case-title">BE: Wallet service — top up, saldo, potong, race condition lock</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Scope</div><div class="layer-content">Wallet model (balance, balance_hold, total_omzet) · top up via Xendit · debit saldo dengan pessimistic lock · rollback saldo saat gagal · semua atomic di DB.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) → setelah done: Dileh (Reseller App FE) · Isal + Ipong (Dashboard modul reseller)</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">P4-B</span>
+      <span class="case-title">BE: Tier system + Bonus jaringan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Dependency</div><div class="layer-content">Butuh keputusan R-G1 (threshold tier) dan R-G2 (bonus rate) dari Bili dulu — jangan build sampai angkanya fix. Juga butuh P4-A selesai.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Scope</div><div class="layer-content">Update total_omzet setiap SUCCESS → cek threshold → naik tier → update HPP di GET /products · bonus_ledger table · kredit upline · reversal saat downline REFUNDED · WA summary batch harian.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Irwan + Rifky (BE) · Dileh (screen Tier Saya — butuh Figma dari Bili dulu) · Isal + Ipong (bonus ledger di Dashboard)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P5 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">P5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Dashboard Critical — Ops butuh ini saat launch</div>
+      <div class="flow-sub">Bisa dikerjakan paralel dengan P2-P4 oleh Isal + Ipong</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">P5</span>
+      <span class="case-title">Tab "Perlu Perhatian" + tombol aksi manual + komplain fix + audit log</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>3 hal paralel untuk Isal + Ipong</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Item</th><th>Detail</th></tr>
+          <tr><td>Tab "Perlu Perhatian"</td><td>Filter PROCESSING stuck + FAILED belum refund. Tombol: Retry, Override, Refund. RBAC + activity log.</td></tr>
+          <tr><td>Fix komplain module</td><td>Ganti channel email/telegram → WA. Tambah eskalasi flow + auto-assign priority.</td></tr>
+          <tr><td>Activity log / audit trail</td><td>Table activity_log di BE. Timeline UI di detail transaksi + profil reseller.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Owner</div><div class="layer-content">Isal + Ipong (Dashboard FE) · Irwan + Rifky (BE endpoints AC3 + activity_log)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P6 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">P6</div>
+    <div class="flow-meta">
+      <div class="flow-title">Post-Launch — Setelah core system live</div>
+      <div class="flow-sub">Penting tapi tidak blocking launch</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Post-Launch</span>
+      <span class="case-title">Notifikasi system, Splash screen, Rekon otomatis, Alert biller</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Item + Dependency</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Item</th><th>Owner</th><th>Butuh dulu</th></tr>
+          <tr><td>WA Business API integration</td><td>Irwan + Rifky</td><td>Keputusan N-G4 (BSP vs self)</td></tr>
+          <tr><td>Push notification system</td><td>Irwan + Rifky + semua FE</td><td>WA integration selesai</td></tr>
+          <tr><td>Batched bonus summary WA harian</td><td>Irwan + Rifky</td><td>P4-B (bonus ledger) selesai</td></tr>
+          <tr><td>Splash screen / onboarding</td><td>Bili (design) + Agung + Fikly</td><td>Design Figma dari Bili</td></tr>
+          <tr><td>Notification center in-app</td><td>Bili + semua FE</td><td>Notif system selesai</td></tr>
+          <tr><td>Pengaturan notif (opt-out)</td><td>Bili + semua FE</td><td>Notif system selesai</td></tr>
+          <tr><td>Rekonsiliasi otomatis via API</td><td>Irwan + Rifky + Isal + Ipong</td><td>Keputusan AC-G5</td></tr>
+          <tr><td>Alert biller down otomatis</td><td>Irwan + Rifky + Isal + Ipong</td><td>Keputusan AC-G4 (threshold)</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DEPENDENCY CHAIN -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#111827">📎</div>
+    <div class="flow-meta">
+      <div class="flow-title">Dependency Chain — Urutan yang tidak boleh dibalik</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Chains</span>
+      <span class="case-title">Rantai dependency per area</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Transaction</div><div class="layer-content">Gap Decisions → BE Transaction Engine (P2-A) → BE Error Handler (P2-B) → FE Consumer (P2-C) → FE Reseller Transaksi</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>Reseller</div><div class="layer-content">Gap Decisions (R-G1, R-G2) → BE Wallet (P4-A) → BE Tier + Bonus (P4-B) → Dileh FE Reseller → Isal + Ipong Dashboard</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Auth</div><div class="layer-content">Gap Decision (A-G1) → BE Auth (P3-A) → semua FE → Dashboard CS tools</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Design (Bili)</div><div class="layer-content">Lock Homepage → Agung + Fikly mulai FE &nbsp;|&nbsp; Buat Payment Instruction → checkout flow bisa complete &nbsp;|&nbsp; Buat Tier Saya → Dileh bisa implement tier di Reseller App</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-priority -->
+
+<div id="tab-gaps"
 
 <div id="tab-gaps" class="tab-panel">
 
