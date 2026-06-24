@@ -233,6 +233,7 @@ body.hide-dash .layer.dash{display:none;}
   <button class="nav-btn" onclick="showTab('validation',this)">✅ Validasi</button>
   <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Backlog</button>
   <button class="nav-btn" onclick="showTab('journey',this)">🔗 Journey Map</button>
+  <button class="nav-btn" onclick="showTab('errors',this)">🔴 Error Codes</button>
   <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Decisions</button>
 </nav>
 
@@ -2123,6 +2124,290 @@ GoPop — Tumbuh Bersama Kamu</div>
 </div>
 
 </div><!-- end tab-journey -->
+
+<!-- ═══════════════════════════════════════════════════════ ERROR CODES TAB -->
+<div id="tab-errors" class="tab-panel">
+
+<div class="val-banner">
+  <div class="val-icon">🔴</div>
+  <div>
+    <div class="val-title">Standarisasi API Error Codes</div>
+    <div class="val-desc">Referensi tunggal semua error codes yang dipakai di sistem GoPop. Wajib konsisten antara backend (Irwan + Rifky), frontend (Agung, Fikly, Dileh, Isal + Ipong), dan copy UX (Bili). Jangan ada error code yang tidak terdokumentasi di sini.</div>
+  </div>
+</div>
+
+<!-- HTTP STATUS GUIDE -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">HTTP</div>
+    <div class="flow-meta">
+      <div class="flow-title">HTTP Status Codes yang Dipakai</div>
+      <div class="flow-sub">Standard HTTP — frontend harus handle semua status ini</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Agung + Fikly + Dileh + Isal + Ipong (FE)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Reference</span>
+      <span class="case-title">HTTP Status → Arti → Handling di Frontend</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Status Code Matrix</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>HTTP Status</th><th>Arti</th><th>Frontend Handle</th></tr>
+          <tr><td><code>200 OK</code></td><td>Sukses</td><td>Proses response body</td></tr>
+          <tr><td><code>201 Created</code></td><td>Resource berhasil dibuat</td><td>Redirect atau tampil success state</td></tr>
+          <tr><td><code>400 Bad Request</code></td><td>Input tidak valid / ada field yang salah</td><td>Tampil pesan error dari field <code>message</code></td></tr>
+          <tr><td><code>401 Unauthorized</code></td><td>Token tidak ada atau expired</td><td>Interceptor: auto-refresh token → retry request</td></tr>
+          <tr><td><code>403 Forbidden</code></td><td>Token valid tapi tidak punya akses</td><td>Tampil pesan sesuai <code>error_code</code> — lihat tabel di bawah</td></tr>
+          <tr><td><code>404 Not Found</code></td><td>Resource tidak ada</td><td>Tampil empty state atau "tidak ditemukan"</td></tr>
+          <tr><td><code>409 Conflict</code></td><td>Data sudah ada / duplikat</td><td>Tampil pesan sesuai <code>error_code</code></td></tr>
+          <tr><td><code>422 Unprocessable</code></td><td>Format valid tapi logic gagal</td><td>Tampil pesan dari <code>message</code></td></tr>
+          <tr><td><code>423 Locked</code></td><td>Resource terkunci sementara</td><td>Tampil countdown atau instruksi unlock</td></tr>
+          <tr><td><code>429 Too Many Requests</code></td><td>Rate limit tercapai</td><td>Tampil cooldown timer dari field <code>retry_after</code></td></tr>
+          <tr><td><code>500 Internal Server Error</code></td><td>Error tidak terduga di backend</td><td>Tampil generic error: "Terjadi kesalahan. Coba lagi." + tombol retry</td></tr>
+          <tr><td><code>503 Service Unavailable</code></td><td>Server sedang maintenance</td><td>Tampil halaman maintenance</td></tr>
+        </table>
+      </div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>Format Response Error (Standard)</div><div class="layer-content">
+        Semua error response harus mengikuti format ini:<br><br>
+        <code style="display:block;background:#f5f5f5;padding:12px;border-radius:8px;font-size:11px;line-height:1.8;">{<br>
+&nbsp;&nbsp;"success": false,<br>
+&nbsp;&nbsp;"error_code": "PHONE_ALREADY_EXISTS",<br>
+&nbsp;&nbsp;"message": "Nomor ini sudah terdaftar.",<br>
+&nbsp;&nbsp;"retry_after": 1719331200 // timestamp Unix, opsional<br>
+}</code>
+        <br>Frontend selalu baca <code>error_code</code> untuk logic, baca <code>message</code> untuk ditampilkan ke user.
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH ERRORS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">A</div>
+    <div class="flow-meta">
+      <div class="flow-title">Auth Error Codes</div>
+      <div class="flow-sub">Login, Register, OTP, PIN, Password</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Agung (App)</span><span class="owner-pill dev">⚙️ Fikly (Desktop)</span><span class="owner-pill dev">⚙️ Dileh (Reseller)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">Auth</span>
+      <span class="case-title">Semua error codes untuk auth flow</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Error Code Reference</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Error Code</th><th>HTTP</th><th>Trigger</th><th>Copy UX ke User</th></tr>
+          <tr><td><code>PHONE_ALREADY_EXISTS</code></td><td>409</td><td>Register dengan nomor yang sudah terdaftar</td><td>"Nomor ini sudah terdaftar. Masuk sekarang?"</td></tr>
+          <tr><td><code>PHONE_NOT_FOUND</code></td><td>200*</td><td>Forgot password — nomor tidak ada di DB</td><td>"Kalau nomor ini terdaftar, kamu akan menerima kode via WhatsApp." (*200 untuk cegah enumeration attack)</td></tr>
+          <tr><td><code>INVALID_CREDENTIALS</code></td><td>401</td><td>Password salah saat login</td><td>"Kata sandi salah, sisa X percobaan."</td></tr>
+          <tr><td><code>ACCOUNT_LOCKED</code></td><td>423</td><td>Salah password 5x dalam 15 menit</td><td>"Akun dikunci sementara. Coba lagi dalam 30 menit atau reset kata sandi."</td></tr>
+          <tr><td><code>ACCOUNT_SUSPENDED</code></td><td>403</td><td>Akun di-suspend admin</td><td>"Akun kamu sementara dinonaktifkan. Hubungi CS GoPop."</td></tr>
+          <tr><td><code>ACCOUNT_PENDING</code></td><td>403</td><td>Reseller login saat masih PENDING_APPROVAL</td><td>"Pendaftaran kamu masih diproses. Tim kami akan menghubungi kamu."</td></tr>
+          <tr><td><code>ACCOUNT_UNVERIFIED</code></td><td>200*</td><td>Login berhasil tapi OTP belum diverifikasi</td><td>"Akun belum diverifikasi. Kirim ulang kode ke nomor HP kamu?" (*200 + flag verified: false)</td></tr>
+          <tr><td><code>OTP_INVALID</code></td><td>400</td><td>OTP yang diinput salah</td><td>"Kode salah, sisa X percobaan."</td></tr>
+          <tr><td><code>OTP_EXPIRED</code></td><td>400</td><td>OTP sudah lewat 5 menit</td><td>"Kode sudah kedaluwarsa. Kirim ulang kode."</td></tr>
+          <tr><td><code>OTP_MAX_ATTEMPT</code></td><td>429</td><td>Salah OTP 5x</td><td>"Sesi habis, mohon daftar ulang."</td></tr>
+          <tr><td><code>OTP_RESEND_LIMIT</code></td><td>429</td><td>Resend OTP lebih dari 3x</td><td>"Coba lagi dalam 10 menit."</td></tr>
+          <tr><td><code>PIN_INVALID</code></td><td>400</td><td>PIN reseller salah</td><td>"PIN salah, sisa X percobaan."</td></tr>
+          <tr><td><code>PIN_LOCKED</code></td><td>423</td><td>Salah PIN 3x</td><td>"PIN dikunci. Gunakan kata sandi untuk masuk dan atur ulang PIN."</td></tr>
+          <tr><td><code>TOKEN_EXPIRED</code></td><td>401</td><td>Access token expired</td><td>Silent — interceptor auto-refresh. Kalau refresh juga gagal → redirect login.</td></tr>
+          <tr><td><code>REFRESH_TOKEN_EXPIRED</code></td><td>401</td><td>Refresh token expired (30 hari)</td><td>"Sesi kamu habis, silakan masuk lagi. Progress kamu tersimpan."</td></tr>
+          <tr><td><code>PHONE_EXISTS_AS_CONSUMER</code></td><td>409</td><td>Daftar reseller dengan nomor yang sudah jadi consumer</td><td>"Nomor ini sudah terdaftar sebagai pengguna GoPop. Hubungi CS untuk upgrade."</td></tr>
+          <tr><td><code>PASSWORD_TOO_WEAK</code></td><td>400</td><td>Password kurang dari 8 karakter / tidak ada angka</td><td>"Password minimal 8 karakter, kombinasikan huruf dan angka."</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTION ERRORS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">T</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaction Error Codes</div>
+      <div class="flow-sub">Semua error yang bisa terjadi dalam flow transaksi</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Agung + Fikly (FE Consumer)</span><span class="owner-pill dev">⚙️ Dileh (FE Reseller)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">Transaksi</span>
+      <span class="case-title">Semua error codes untuk transaction flow</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Error Code Reference</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Error Code</th><th>HTTP</th><th>Trigger</th><th>Copy UX ke User</th></tr>
+          <tr><td><code>PRODUCT_NOT_FOUND</code></td><td>404</td><td>Produk tidak ada atau sudah dihapus</td><td>"Produk tidak tersedia saat ini."</td></tr>
+          <tr><td><code>PRODUCT_INACTIVE</code></td><td>422</td><td>Produk di-nonaktifkan admin</td><td>"Layanan ini sedang tidak tersedia. Coba lagi nanti."</td></tr>
+          <tr><td><code>PRICE_CHANGED</code></td><td>409</td><td>Harga berubah antara GET catalog dan POST transaction</td><td>"Harga produk telah berubah. Silakan cek ulang." — refresh catalog otomatis</td></tr>
+          <tr><td><code>INVALID_DESTINATION</code></td><td>422</td><td>Nomor tujuan tidak valid / tidak ditemukan di biller</td><td>"Nomor yang kamu masukkan tidak dapat diproses. Cek kembali nomor tujuan kamu."</td></tr>
+          <tr><td><code>INQUIRY_FAILED</code></td><td>422</td><td>Gagal cek tagihan saat inquiry</td><td>"Tidak dapat mengambil data tagihan. Coba lagi."</td></tr>
+          <tr><td><code>PAYMENT_EXPIRED</code></td><td>422</td><td>VA/QRIS tidak dibayar dalam batas waktu</td><td>"Waktu pembayaran habis. Transaksi dibatalkan."</td></tr>
+          <tr><td><code>PAYMENT_CANCELLED</code></td><td>422</td><td>User batalkan pembayaran</td><td>"Pembayaran dibatalkan."</td></tr>
+          <tr><td><code>BILLER_TIMEOUT</code></td><td>504</td><td>Biller tidak response dalam 30 detik</td><td>Tidak tampil ke user — trigger retry internal</td></tr>
+          <tr><td><code>BILLER_ERROR</code></td><td>502</td><td>Biller return error (bukan timeout)</td><td>Tidak tampil ke user — trigger retry / fallback</td></tr>
+          <tr><td><code>BILLER_UNAVAILABLE</code></td><td>503</td><td>Semua biller (primary + backup) gagal</td><td>"Layanan sedang gangguan. Dana kamu akan dikembalikan dalam 1×24 jam."</td></tr>
+          <tr><td><code>OPERATOR_DOWN</code></td><td>503</td><td>Operator/provider spesifik sedang down</td><td>"Layanan [nama operator] sedang gangguan. Dana kamu akan dikembalikan otomatis."</td></tr>
+          <tr><td><code>TRANSACTION_NOT_FOUND</code></td><td>404</td><td>Polling status transaksi yang tidak ada</td><td>"Transaksi tidak ditemukan."</td></tr>
+          <tr><td><code>TRANSACTION_PROCESSING</code></td><td>200*</td><td>Transaksi masih diproses (*bukan error, tapi perlu handling)</td><td>"Transaksi sedang diproses..." — lanjutkan polling</td></tr>
+          <tr><td><code>DUPLICATE_TRANSACTION</code></td><td>409</td><td>Request transaksi identik dalam waktu singkat (double-tap)</td><td>"Transaksi serupa sedang diproses. Mohon tunggu."</td></tr>
+          <tr><td><code>REFUND_ALREADY_PROCESSED</code></td><td>409</td><td>Refund di-trigger dua kali untuk transaksi yang sama</td><td>Tidak tampil ke user — backend block silently</td></tr>
+          <tr><td><code>REFUND_NOT_ELIGIBLE</code></td><td>422</td><td>Transaksi tidak eligible untuk refund (misal sudah SUCCESS)</td><td>Hanya untuk admin dashboard — "Transaksi ini tidak dapat di-refund."</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTION STATUS ENUM -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">📊</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaction Status Enum — Wajib Konsisten</div>
+      <div class="flow-sub">Ini yang harus dipakai di backend DB, API response, dashboard, dan frontend — tidak boleh beda</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Semua FE</span><span class="owner-pill dev">⚙️ Isal + Ipong (Dashboard)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Enum</span>
+      <span class="case-title">Status transaksi yang valid — jangan pakai selain ini</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Status Enum</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Status (Enum)</th><th>Label ke User</th><th>Warna</th><th>Arti</th><th>Next State</th></tr>
+          <tr><td><code>PENDING</code></td><td>Menunggu Pembayaran</td><td>⚪ Abu</td><td>Transaksi dibuat, belum ada pembayaran</td><td>PAID / EXPIRED / CANCELLED</td></tr>
+          <tr><td><code>PAID</code></td><td>Pembayaran Diterima</td><td>🔵 Biru</td><td>Payment gateway konfirmasi bayar, belum kirim ke biller</td><td>PROCESSING</td></tr>
+          <tr><td><code>PROCESSING</code></td><td>Sedang Diproses</td><td>🟡 Kuning</td><td>Sudah dikirim ke biller, menunggu konfirmasi</td><td>SUCCESS / FAILED</td></tr>
+          <tr><td><code>SUCCESS</code></td><td>Berhasil</td><td>🟢 Hijau</td><td>Biller konfirmasi produk terkirim</td><td>— (final)</td></tr>
+          <tr><td><code>FAILED</code></td><td>Gagal</td><td>🔴 Merah</td><td>Biller gagal setelah semua retry habis</td><td>REFUNDED</td></tr>
+          <tr><td><code>EXPIRED</code></td><td>Kedaluwarsa</td><td>⚫ Gelap</td><td>VA/QRIS tidak dibayar dalam batas waktu</td><td>— (final, tidak ada refund)</td></tr>
+          <tr><td><code>CANCELLED</code></td><td>Dibatalkan</td><td>⚫ Gelap</td><td>User batalkan sebelum bayar</td><td>— (final, tidak ada refund)</td></tr>
+          <tr><td><code>REFUNDED</code></td><td>Dikembalikan</td><td>🟣 Ungu</td><td>Refund sudah diproses ke payment method asal</td><td>— (final)</td></tr>
+          <tr><td><code>PROCESSING_STUCK</code></td><td>Sedang Diproses</td><td>🟡 Kuning</td><td>PROCESSING &gt;15 menit tanpa response — internal flag, tidak tampil ke user</td><td>SUCCESS / FAILED / manual</td></tr>
+        </table>
+        <div class="note" style="margin-top:8px">⚠️ <strong>Yang harus difix di dashboard:</strong> Saat ini dashboard pakai <code>sukses</code>, <code>gagal</code>, <code>processing</code> (lowercase Indonesian). Harus diganti ke enum di atas. PIC: <strong>Isal + Ipong</strong> (FE) + <strong>Irwan + Rifky</strong> (BE).</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESELLER ERRORS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">R</div>
+    <div class="flow-meta">
+      <div class="flow-title">Reseller Error Codes</div>
+      <div class="flow-sub">Saldo, top up, tier, bonus, downline</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Dileh (Reseller App)</span><span class="owner-pill dev">⚙️ Isal + Ipong (Dashboard)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">Reseller</span>
+      <span class="case-title">Semua error codes untuk reseller flow</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Error Code Reference</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Error Code</th><th>HTTP</th><th>Trigger</th><th>Copy UX ke User</th></tr>
+          <tr><td><code>INSUFFICIENT_BALANCE</code></td><td>400</td><td>Saldo reseller kurang dari HPP produk</td><td>"Saldo tidak cukup. Saldo kamu: Rp X, dibutuhkan: Rp Y."</td></tr>
+          <tr><td><code>BELOW_MINIMUM_TOPUP</code></td><td>400</td><td>Nominal top up di bawah minimum</td><td>"Top up minimum Rp [jumlah]."</td></tr>
+          <tr><td><code>REFERRAL_NOT_FOUND</code></td><td>404</td><td>Kode referral tidak valid</td><td>"Kode referral tidak ditemukan. Cek kembali kode yang kamu masukkan."</td></tr>
+          <tr><td><code>REFERRAL_SELF_USE</code></td><td>400</td><td>Reseller pakai kode referral sendiri</td><td>"Kamu tidak bisa menggunakan kode referral sendiri."</td></tr>
+          <tr><td><code>UPLINE_NOT_FOUND</code></td><td>404</td><td>Upline ID tidak valid saat approve reseller</td><td>Hanya di dashboard admin — "Upline tidak ditemukan."</td></tr>
+          <tr><td><code>RESELLER_PENDING</code></td><td>403</td><td>Reseller akses fitur sebelum approved</td><td>"Pendaftaran kamu masih diproses."</td></tr>
+          <tr><td><code>RESELLER_REJECTED</code></td><td>403</td><td>Reseller yang sudah direject coba login</td><td>"Pendaftaran kamu tidak dapat diproses. Hubungi CS untuk informasi lebih lanjut."</td></tr>
+          <tr><td><code>WALLET_LOCKED</code></td><td>423</td><td>Wallet sedang dalam proses transaksi (race condition lock)</td><td>Tidak tampil ke user — retry otomatis setelah lock release</td></tr>
+          <tr><td><code>TOPUP_PENDING_EXISTS</code></td><td>409</td><td>Ada top up yang masih pending untuk reseller yang sama</td><td>"Ada top up yang sedang diproses. Selesaikan dulu sebelum top up baru."</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN / DASHBOARD ERRORS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#FF6B4A">AC</div>
+    <div class="flow-meta">
+      <div class="flow-title">Admin & Dashboard Error Codes</div>
+      <div class="flow-sub">Override manual, RBAC, rekonsiliasi</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Isal + Ipong (Dashboard)</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">Admin</span>
+      <span class="case-title">Error codes untuk admin dashboard</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Error Code Reference</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Error Code</th><th>HTTP</th><th>Trigger</th><th>Tampil di Dashboard</th></tr>
+          <tr><td><code>UNAUTHORIZED_ROLE</code></td><td>403</td><td>Admin akses endpoint di luar role-nya</td><td>"Kamu tidak punya akses untuk melakukan aksi ini."</td></tr>
+          <tr><td><code>TRANSACTION_NOT_REFUNDABLE</code></td><td>422</td><td>Coba refund transaksi yang sudah SUCCESS atau sudah di-refund</td><td>"Transaksi ini tidak dapat di-refund."</td></tr>
+          <tr><td><code>DUPLICATE_REFUND</code></td><td>409</td><td>Refund dua kali untuk transaksi yang sama</td><td>"Refund untuk transaksi ini sudah pernah diproses."</td></tr>
+          <tr><td><code>RETRY_RATE_LIMITED</code></td><td>429</td><td>Retry ke biller dalam 5 menit dari retry sebelumnya</td><td>"Tunggu 5 menit sebelum retry lagi."</td></tr>
+          <tr><td><code>MANUAL_OVERRIDE_BLOCKED</code></td><td>422</td><td>Override status ke SUCCESS saat biller_ref sudah ada (cegah double delivery)</td><td>"Tidak bisa diubah — produk kemungkinan sudah terkirim. Cek ke biller dulu."</td></tr>
+          <tr><td><code>BILLER_SWITCH_FAILED</code></td><td>502</td><td>Gagal switch ke biller backup</td><td>"Gagal switch ke biller backup. Coba lagi atau nonaktifkan produk sementara."</td></tr>
+          <tr><td><code>RECON_FILE_INVALID</code></td><td>400</td><td>Upload CSV rekonsiliasi format tidak valid</td><td>"Format file tidak valid. Pastikan file CSV sesuai format laporan [nama biller]."</td></tr>
+          <tr><td><code>TICKET_ALREADY_RESOLVED</code></td><td>409</td><td>Update tiket yang sudah closed</td><td>"Tiket ini sudah diselesaikan."</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SOURCE CHANNEL ENUM -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">📡</div>
+    <div class="flow-meta">
+      <div class="flow-title">Source Channel Enum</div>
+      <div class="flow-sub">Wajib ada di setiap transaksi — untuk rekonsiliasi dan analytics</div>
+      <div class="owner-row"><span class="owner-pill dev">⚙️ Irwan + Rifky (BE)</span><span class="owner-pill dev">⚙️ Semua FE</span></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Enum</span>
+      <span class="case-title">Nilai valid untuk field source_channel di tabel transactions</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Source Channel Values</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Value</th><th>Dari mana</th><th>PIC yang set</th></tr>
+          <tr><td><code>web_consumer</code></td><td>gopop.id versi desktop browser</td><td>Fikly (FE Desktop)</td></tr>
+          <tr><td><code>app_consumer</code></td><td>gopop.id versi mobile app</td><td>Agung (FE App)</td></tr>
+          <tr><td><code>app_guest</code></td><td>gopop.id mobile — transaksi tanpa login</td><td>Agung (FE App)</td></tr>
+          <tr><td><code>web_guest</code></td><td>gopop.id desktop — transaksi tanpa login</td><td>Fikly (FE Desktop)</td></tr>
+          <tr><td><code>seller_app</code></td><td>Reseller App (Dileh)</td><td>Dileh (FE Reseller)</td></tr>
+          <tr><td><code>admin_manual</code></td><td>Transaksi yang dibuat manual dari dashboard</td><td>Isal + Ipong (Dashboard)</td></tr>
+        </table>
+        <div class="note" style="margin-top:8px">Field ini dikirim dari frontend sebagai header atau body parameter, lalu disimpan di backend. <strong>Wajib ada di semua POST /transactions request.</strong></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-errors -->
 
 <div id="tab-gaps" class="tab-panel">
 
