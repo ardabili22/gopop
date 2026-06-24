@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · Case Flow Playbook v1.1</title>
+<style>
+:root {
+  --purple:#4A2D8C; --purple-dark:#331075; --purple-light:#7C5CBF;
+  --lime:#CEF17B; --coral:#FF6B4A; --amber:#F59E0B;
+  --blue:#3B82F6; --green:#16A34A; --red:#DC2626;
+  --g50:#F9FAFB; --g100:#F3F4F6; --g200:#E5E7EB;
+  --g300:#D1D5DB; --g400:#9CA3AF; --g500:#6B7280;
+  --g600:#4B5563; --g700:#374151; --g800:#1F2937; --g900:#111827;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',sans-serif;background:#0F0A1E;color:var(--g800);min-height:100vh;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--purple-dark) 0%,var(--purple) 60%,#6B3FA0 100%);padding:48px 32px 36px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(206,241,123,.08);border-radius:50%;}
+.header::after{content:'';position:absolute;bottom:-60px;left:-20px;width:160px;height:160px;background:rgba(255,107,74,.07);border-radius:50%;}
+.hbadge{display:inline-block;background:rgba(206,241,123,.15);border:1px solid rgba(206,241,123,.3);color:var(--lime);font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 12px;border-radius:100px;margin-bottom:16px;text-transform:uppercase;}
+.header h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px;}
+.header h1 span{color:var(--lime);}
+.header p{color:rgba(255,255,255,.65);font-size:14px;max-width:600px;margin:0 auto 24px;line-height:1.6;}
+.hlegend{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+.hleg{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;}
+.hleg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* NAV TABS */
+.nav{background:#1A1033;padding:0 24px;display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-btn{padding:14px 18px;font-size:12px;font-weight:700;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
+.nav-btn:hover{color:rgba(255,255,255,.7);}
+.nav-btn.active{color:var(--lime);border-bottom-color:var(--lime);}
+
+/* FILTER BAR */
+.filterbar{background:#1A1033;padding:12px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);}
+.filter-label{font-size:11px;color:rgba(255,255,255,.4);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.filter-btn{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);transition:all .2s;}
+.filter-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);}
+.filter-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+.filter-btn.biz{border-color:#F59E0B44;color:#F59E0B;}
+.filter-btn.biz.active{background:#F59E0B;color:#000;}
+.filter-btn.ux{border-color:#3B82F644;color:#93c5fd;}
+.filter-btn.ux.active{background:#3B82F6;color:#fff;}
+.filter-btn.be{border-color:#16A34A44;color:#4ade80;}
+.filter-btn.be.active{background:#16A34A;color:#fff;}
+
+/* CONTENT */
+.content{max-width:1200px;margin:0 auto;padding:32px 24px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* SECTION */
+.flow-section{margin-bottom:32px;}
+.flow-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;}
+.flow-code{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;color:#fff;}
+.flow-meta .flow-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
+.flow-meta .flow-sub{font-size:13px;color:rgba(255,255,255,.45);}
+
+/* CASE CARD */
+.case-card{background:#fff;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.case-header{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.case-badge{padding:4px 10px;border-radius:100px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+.badge-happy{background:#DCFCE7;color:#166534;}
+.badge-error{background:#FEE2E2;color:#DC2626;}
+.badge-warn{background:#FEF3C7;color:#92400E;}
+.case-title{font-size:14px;font-weight:700;color:var(--g800);flex:1;}
+.case-toggle{font-size:18px;color:var(--g400);transition:transform .2s;flex-shrink:0;}
+.case-toggle.open{transform:rotate(180deg);}
+.case-body{display:none;padding:0 20px 20px;}
+.case-body.open{display:block;}
+
+/* LAYERS */
+.layer{border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.layer-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.layer-title .dot{width:8px;height:8px;border-radius:50%;}
+.layer-content{font-size:13px;color:var(--g700);line-height:1.7;}
+.layer-content ul{padding-left:18px;margin-top:4px;}
+.layer-content ul li{margin-bottom:3px;}
+.layer-content code{font-family:'SF Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;color:var(--purple);}
+.layer-content strong{color:var(--g900);}
+
+.layer.biz{background:#FFFBEB;border:1px solid #FDE68A;}
+.layer.biz .layer-title{color:#92400E;}
+.layer.biz .dot{background:#F59E0B;}
+.layer.ux{background:#EFF6FF;border:1px solid #BFDBFE;}
+.layer.ux .layer-title{color:#1E40AF;}
+.layer.ux .dot{background:#3B82F6;}
+.layer.be{background:#F0FDF4;border:1px solid #BBF7D0;}
+.layer.be .layer-title{color:#166534;}
+.layer.be .dot{background:#16A34A;}
+.layer.dash{background:#F5F3FF;border:1px solid #DDD6FE;}
+.layer.dash .layer-title{color:#4A2D8C;}
+.layer.dash .dot{background:#7C5CBF;}
+
+/* layer visibility */
+.layer.biz{} .layer.ux{} .layer.be{} .layer.dash{}
+body.hide-biz .layer.biz{display:none;}
+body.hide-ux .layer.ux{display:none;}
+body.hide-be .layer.be{display:none;}
+body.hide-dash .layer.dash{display:none;}
+
+/* STEP LIST */
+.steps{list-style:none;position:relative;padding-left:0;}
+.steps::before{content:'';position:absolute;left:13px;top:20px;bottom:20px;width:2px;background:var(--g200);}
+.step{display:flex;gap:12px;margin-bottom:8px;position:relative;}
+.step-n{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;position:relative;z-index:1;}
+.step-body{flex:1;padding-top:4px;}
+.step-body .t{font-size:13px;font-weight:700;color:var(--g800);margin-bottom:2px;}
+.step-body .d{font-size:11px;color:var(--g600);line-height:1.5;}
+.step-body code{font-size:10px;background:var(--g100);padding:2px 6px;border-radius:4px;color:var(--purple);font-family:monospace;}
+
+/* HAPPY PATH step colors */
+.happy .step-n{background:#DCFCE7;color:#166534;}
+/* ERROR step colors */
+.error .step-n{background:#FEE2E2;color:#DC2626;}
+
+/* TABLE */
+.ftable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.ftable th{text-align:left;padding:8px 10px;background:var(--g50);color:var(--g500);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--g200);}
+.ftable td{padding:8px 10px;border-bottom:1px solid var(--g100);color:var(--g700);vertical-align:top;line-height:1.5;}
+.ftable tr:last-child td{border-bottom:none;}
+.ftable td code{font-family:monospace;font-size:10px;background:var(--g100);padding:2px 5px;border-radius:3px;color:var(--purple);}
+.tag-urgent{display:inline-block;background:#FEE2E2;color:#DC2626;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-high{display:inline-block;background:#FFE4DB;color:#C2410C;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-med{display:inline-block;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-low{display:inline-block;background:var(--g100);color:var(--g600);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-yes{color:#16A34A;font-weight:700;}
+.tag-no{color:var(--g400);}
+
+/* WA TEMPLATE */
+.wa-template{background:#ECF8F1;border:1px solid #C3E6CB;border-radius:10px;padding:14px 16px;font-family:'SF Mono',Courier,monospace;font-size:12px;color:#1a3a1a;line-height:1.8;white-space:pre-wrap;margin-top:8px;}
+
+/* GAP TABLE */
+.gap-section{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.12);margin-bottom:24px;}
+.gap-section-header{background:var(--purple);padding:14px 20px;display:flex;align-items:center;gap:10px;}
+.gap-section-header .title{font-size:14px;font-weight:800;color:#fff;}
+.gap-section-header .sub{font-size:12px;color:rgba(255,255,255,.6);}
+.gap-row{display:flex;gap:12px;padding:12px 20px;border-bottom:1px solid var(--g100);align-items:flex-start;}
+.gap-row:last-child{border-bottom:none;}
+.gap-row .code{font-size:11px;font-weight:800;color:var(--purple);background:#EDE9FE;padding:3px 8px;border-radius:4px;flex-shrink:0;font-family:monospace;}
+.gap-row .q{font-size:13px;color:var(--g800);flex:1;line-height:1.5;}
+.gap-row .pic{font-size:11px;color:var(--g500);flex-shrink:0;background:var(--g100);padding:3px 8px;border-radius:4px;}
+
+/* NOTIF TABLE */
+.notif-table{width:100%;border-collapse:collapse;font-size:12px;}
+.notif-table th{padding:10px 12px;background:var(--purple);color:#fff;font-size:11px;font-weight:700;text-align:center;}
+.notif-table th:first-child{text-align:left;}
+.notif-table td{padding:9px 12px;border-bottom:1px solid var(--g100);vertical-align:top;}
+.notif-table td:first-child{font-size:12px;color:var(--g800);font-weight:600;}
+.notif-table td:not(:first-child){text-align:center;}
+.notif-table tr:last-child td{border-bottom:none;}
+.nt-yes{color:#16A34A;font-size:16px;}
+.nt-no{color:var(--g300);font-size:16px;}
+.nt-note{font-size:10px;color:var(--g500);margin-top:2px;}
+
+/* DIVIDER */
+.divider{height:1px;background:rgba(255,255,255,.06);margin:32px 0;}
+
+/* FOOTER */
+.footer{background:#1A1033;padding:24px 32px;text-align:center;color:rgba(255,255,255,.3);font-size:11px;}
+.footer span{color:var(--lime);}
+
+/* FIGMA STATUS BADGES */
+.fs{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;}
+.fs-ok{background:#DCFCE7;color:#166534;}
+.fs-partial{background:#FEF3C7;color:#92400E;}
+.fs-missing{background:#FEE2E2;color:#DC2626;}
+.fs-wip{background:#EDE9FE;color:#4A2D8C;}
+
+/* VALIDATION BANNER */
+.val-banner{background:#0d1f0d;border:1px solid #16A34A44;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;}
+.val-banner.warn{background:#1a1300;border-color:#F59E0B44;}
+.val-banner.err{background:#1a0808;border-color:#DC262644;}
+.val-icon{font-size:18px;flex-shrink:0;}
+.val-title{font-size:12px;font-weight:700;color:#4ade80;margin-bottom:3px;}
+.val-banner.warn .val-title{color:#fbbf24;}
+.val-banner.err .val-title{color:#f87171;}
+.val-desc{font-size:11px;color:#aaa;line-height:1.6;}
+
+/* BACKLOG ITEMS */
+.backlog-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+@media(max-width:600px){.backlog-grid{grid-template-columns:1fr;}}
+.backlog-item{background:#fff;border-radius:12px;padding:14px 16px;border-left:4px solid var(--coral);}
+.backlog-item.medium{border-left-color:var(--amber);}
+.backlog-item.low{border-left-color:var(--g300);}
+.bi-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bi-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.bi-tag.critical{background:#FEE2E2;color:#DC2626;}
+.bi-tag.medium{background:#FEF3C7;color:#92400E;}
+.bi-tag.low{background:var(--g100);color:var(--g600);}
+.bi-title{font-size:13px;font-weight:700;color:var(--g800);}
+.bi-desc{font-size:11px;color:var(--g600);line-height:1.6;}
+.bi-owner{font-size:10px;color:var(--g400);margin-top:6px;}
+.bi-owner span{color:var(--purple);font-weight:600;}
+
+@media(max-width:600px){
+  .header h1{font-size:22px;}
+  .content{padding:20px 16px;}
+  .nav-btn{padding:12px 12px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hbadge">Case Flow Playbook v1.1 · Bisnis · UX · Backend · Validated</div>
+  <h1>GoPop <span>Case Flow</span></h1>
+  <p>Dokumentasi lengkap setiap flow dari 3 layer — <strong style="color:var(--lime)">Bisnis</strong>, <strong style="color:#93c5fd">UX</strong>, dan <strong style="color:#4ade80">Backend</strong> — untuk semua skenario happy path dan error case. Referensi tunggal untuk seluruh tim.</p>
+  <div class="hlegend">
+    <div class="hleg"><div class="hleg-dot" style="background:#F59E0B"></div>Bisnis</div>
+    <div class="hleg"><div class="hleg-dot" style="background:#3B82F6"></div>UX / User Experience</div>
+    <div class="hleg"><div class="hleg-dot" style="background:#16A34A"></div>Backend / Teknikal</div>
+    <div class="hleg"><div class="hleg-dot" style="background:#7C5CBF"></div>Dashboard / Admin</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('auth',this)">🔐 Auth</button>
+  <button class="nav-btn" onclick="showTab('transaction',this)">💳 Transaksi</button>
+  <button class="nav-btn" onclick="showTab('reseller',this)">🏪 Reseller</button>
+  <button class="nav-btn" onclick="showTab('admin',this)">⚙️ Admin & CS</button>
+  <button class="nav-btn" onclick="showTab('notif',this)">🔔 Notifikasi</button>
+  <button class="nav-btn" onclick="showTab('validation',this)">✅ Validasi Figma & Dashboard</button>
+  <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Design Backlog</button>
+  <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Decisions</button>
+</nav>
+
+<div class="filterbar">
+  <span class="filter-label">Tampilkan Layer:</span>
+  <button class="filter-btn biz active" onclick="toggleLayer('biz',this)">💼 Bisnis</button>
+  <button class="filter-btn ux active" onclick="toggleLayer('ux',this)">📱 UX</button>
+  <button class="filter-btn be active" onclick="toggleLayer('be',this)">⚙️ Backend</button>
+  <button class="filter-btn active" style="border-color:#7C5CBF44;color:#c4b5fd;" onclick="toggleLayer('dash',this)">🛠️ Dashboard</button>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════════ AUTH TAB -->
+<div id="tab-auth" class="tab-panel active">
+
+<!-- A1 REGISTER CONSUMER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">A1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Register Consumer</div>
+      <div class="flow-sub">End User · gopop.id & App · Guest-first, registrasi opsional</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Registrasi berhasil — akun aktif via OTP WhatsApp</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">User baru daftar akun untuk simpan riwayat & kumpulkan poin loyalty. Registrasi <strong>tidak wajib</strong> untuk transaksi — ini soft acquisition. Satu nomor HP = satu akun consumer.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><ul class="steps happy"><li class="step"><div class="step-n">1</div><div class="step-body"><div class="t">Tap "Daftar"</div><div class="d">Dari soft prompt post-transaksi atau dari halaman Profil</div></div></li><li class="step"><div class="step-n">2</div><div class="step-body"><div class="t">Isi form</div><div class="d">Nama lengkap · Nomor HP · Password (min 8 karakter, huruf+angka)</div></div></li><li class="step"><div class="step-n">3</div><div class="step-body"><div class="t">OTP dikirim via WhatsApp</div><div class="d">6 digit · berlaku 5 menit · ada countdown timer di layar</div></div></li><li class="step"><div class="step-n">4</div><div class="step-body"><div class="t">Input OTP → Akun aktif</div><div class="d">Redirect ke Home, sudah dalam status login</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/register</code> → cek duplikasi nomor HP → simpan user status <code>UNVERIFIED</code> → trigger WA OTP via WhatsApp Business API<br><br><code>POST /auth/verify-otp</code> → validasi OTP + TTL → update status <code>ACTIVE</code> → return <code>access_token</code> (15 menit) + <code>refresh_token</code> (30 hari)</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E1</span>
+      <span class="case-title">Nomor HP sudah terdaftar</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Satu nomor HP hanya boleh terdaftar satu kali sebagai consumer. Duplikasi dilarang.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Setelah submit form → pesan spesifik: <strong>"Nomor ini sudah terdaftar. Masuk sekarang?"</strong> dengan tombol langsung ke halaman Login. Bukan pesan generic "terjadi kesalahan."</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/register</code> return <code>400 PHONE_ALREADY_EXISTS</code> → frontend handle dengan copy yang spesifik. Jangan expose apakah nomor exist ke request yang tidak terautentikasi secara berlebihan — cukup di form register.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E2</span>
+      <span class="case-title">OTP tidak datang atau expired</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">OTP valid <strong>5 menit</strong>. Resend maksimal <strong>3x per sesi</strong> dengan cooldown <strong>60 detik</strong> antar resend. Setelah 3x → cooldown 10 menit.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Countdown timer tampil real-time. Setelah 5 menit → tombol "Kirim Ulang" aktif. Setelah 3x resend → <strong>"Coba lagi dalam 10 menit"</strong> + opsi "Hubungi CS".</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">OTP disimpan di Redis dengan TTL 5 menit. Rate limit resend per nomor HP di Redis: <code>otp:resend:{phone}</code> → counter + TTL 10 menit. Setelah 3x → return <code>429 OTP_RESEND_LIMIT</code> dengan <code>retry_after</code> timestamp.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E3</span>
+      <span class="case-title">OTP salah berkali-kali</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Maksimal <strong>5x percobaan</strong> input OTP. Lewat batas → sesi hangus, user harus mulai ulang dari awal.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Setiap salah → <strong>"Kode salah, sisa X percobaan."</strong> Setelah 5x salah → <strong>"Sesi habis, mohon daftar ulang"</strong> → redirect ke form register (field bersih).</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Counter attempt per OTP session di Redis: <code>otp:attempt:{phone}</code>. Setelah 5x → <code>PUT /auth/otp → 429 OTP_MAX_ATTEMPT</code> → invalidate OTP + hapus session. User harus register ulang.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A2 LOGIN CONSUMER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">A2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Login Consumer</div>
+      <div class="flow-sub">End User yang sudah punya akun · Akses riwayat, poin, profil</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Login berhasil</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Input nomor HP + password → jika sukses → redirect ke halaman sebelumnya (atau Home). Sesi tersimpan otomatis.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/login</code> → validasi credentials → return <code>access_token</code> (15 menit) + <code>refresh_token</code> (30 hari). Frontend simpan token di secure storage. Token menyertakan <code>role: "consumer"</code>.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E1</span>
+      <span class="case-title">Password salah — risiko brute force</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Maksimal <strong>5x salah dalam 15 menit</strong> → akun terkunci sementara 30 menit. Untuk mencegah brute force attack.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Tiap salah → <strong>"Kata sandi salah, sisa X percobaan."</strong> Setelah lock → <strong>"Akun dikunci sementara. Coba lagi dalam 30 menit atau reset kata sandi."</strong> Ada tombol "Lupa Kata Sandi" yang selalu visible.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Login attempt counter di Redis: <code>login:attempt:{phone}</code> TTL 15 menit. Setelah 5x → set <code>account_locked_until</code> di DB (timestamp + 30 menit). <code>POST /auth/login</code> return <code>423 ACCOUNT_LOCKED</code> dengan field <code>retry_after</code>.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">CS bisa lihat status <code>LOCKED</code> di profil pengguna dan manually unlock dari menu Pengguna jika user komplain sebelum 30 menit habis.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E2</span>
+      <span class="case-title">Akun belum verifikasi OTP</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Akun status <code>UNVERIFIED</code> tidak boleh bisa transaksi. Harus verifikasi nomor HP dulu.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Login credentials benar tapi muncul screen/banner: <strong>"Akun belum diverifikasi. Kirim ulang kode ke nomor HP kamu?"</strong> dengan tombol resend OTP. Tidak langsung masuk app.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/login</code> return <code>200</code> tapi dengan flag <code>verified: false</code> → frontend intercept dan redirect ke OTP verification screen. Token tidak diberikan sampai verifikasi selesai.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E3</span>
+      <span class="case-title">Akun di-suspend admin</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Admin bisa suspend akun consumer dari dashboard karena fraud, abuse, atau pelanggaran lain.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><strong>"Akun kamu sementara dinonaktifkan. Hubungi CS GoPop untuk informasi lebih lanjut."</strong> Ada tombol langsung ke WA CS. Tidak ada detail alasan suspend yang ditampilkan ke user.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/login</code> return <code>403 ACCOUNT_SUSPENDED</code> → frontend tampil pesan + CTA WA CS.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">CS lihat status <code>SUSPENDED</code> di profil pengguna, bisa lihat catatan alasan suspend (internal note), dan bisa reaktivasi akun jika sudah clear.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">E4</span>
+      <span class="case-title">Session expired di tengah penggunaan app</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Access token expired (15 menit) → harus pakai refresh token. Kalau refresh token juga expired (30 hari) → harus login ulang. Jangan paksa user logout tiba-tiba tanpa konteks.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Refresh token harus jalan <strong>silent di background</strong> — user tidak boleh sadar ada proses ini. Kalau refresh gagal → simpan state (halaman mana, sudah input apa) → redirect login dengan pesan: <strong>"Sesi kamu habis, silakan masuk lagi. Progress kamu tersimpan."</strong></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">HTTP interceptor di frontend: setiap API call return <code>401</code> → otomatis hit <code>POST /auth/refresh</code> dengan refresh token → kalau berhasil, ulangi request original dengan token baru. Kalau refresh return <code>401</code> juga → logout paksa, clear semua token, redirect login.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A3 REGISTER RESELLER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">A3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Register Reseller</div>
+      <div class="flow-sub">Reseller App · Perlu approval admin · Default tier Bronze</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Pendaftaran reseller berhasil dan diapprove admin</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Reseller adalah akun B2B dengan fitur khusus: saldo prepaid, HPP, downline. Perlu <strong>approval manual admin</strong> sebelum bisa transaksi. Tier default Bronze. Wallet dibuat saat approved dengan saldo Rp 0.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><ul class="steps happy"><li class="step"><div class="step-n">1</div><div class="step-body"><div class="t">Isi form pendaftaran</div><div class="d">Nama, nomor HP, nama usaha, alamat, kode referral (opsional)</div></div></li><li class="step"><div class="step-n">2</div><div class="step-body"><div class="t">Submit → Screen waiting</div><div class="d">"Pendaftaran kamu sedang diproses. Tim kami akan menghubungi kamu dalam 1×24 jam."</div></div></li><li class="step"><div class="step-n">3</div><div class="step-body"><div class="t">WA notif saat approved</div><div class="d">"Akun reseller kamu aktif! Silakan login dan mulai top up saldo."</div></div></li><li class="step"><div class="step-n">4</div><div class="step-body"><div class="t">Login → Dashboard reseller</div><div class="d">Saldo Rp 0 · Tier Bronze · Referral code sudah ter-generate</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /resellers/register</code> → simpan status <code>PENDING_APPROVAL</code> → notif badge di dashboard admin (menu Reseller).<br><br><code>PUT /admin/resellers/{id}/approve</code> → update status <code>ACTIVE</code> → buat wallet record (balance: 0, total_omzet: 0) → assign tier Bronze → generate referral_code unik 8 karakter → kirim WA notif ke reseller.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Menu Reseller → tab "Pending Approval" → list semua pendaftar baru. Admin bisa lihat detail, approve, atau reject dengan catatan alasan.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E1</span>
+      <span class="case-title">Nomor HP sudah terdaftar sebagai consumer</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content"><strong>⚠️ Gap keputusan (A-G1):</strong> Apakah 1 nomor HP bisa jadi consumer sekaligus reseller? Perlu keputusan Bili. Handling sementara di bawah.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX (sementara)</div><div class="layer-content"><strong>"Nomor ini sudah terdaftar sebagai pengguna GoPop. Hubungi CS untuk upgrade ke akun reseller."</strong> Ada tombol WA CS langsung.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend (sementara)</div><div class="layer-content">Return <code>400 PHONE_EXISTS_AS_CONSUMER</code> sampai ada keputusan bisnis apakah merge account atau tetap block.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E2</span>
+      <span class="case-title">Pendaftaran ditolak admin</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Admin bisa tolak pendaftaran: data tidak lengkap, wilayah duplikat, atau alasan lain. CS follow-up via WA.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">WA notif: <strong>"Pendaftaran reseller kamu belum bisa diproses saat ini. Hubungi CS GoPop untuk informasi lebih lanjut."</strong> Tidak ada alasan detail di WA — CS yang jelaskan.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>PUT /admin/resellers/{id}/reject</code> → status <code>REJECTED</code> → trigger WA notif. Alasan penolakan disimpan sebagai internal note di DB — tidak dikirim ke user.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Admin wajib isi alasan sebelum reject (dropdown + notes). Alasan tersimpan di profil reseller untuk referensi CS saat follow-up.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">E3</span>
+      <span class="case-title">Login saat status masih PENDING</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Reseller pending tidak boleh akses fitur transaksi apapun.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Masuk app → full-screen state: <strong>"Pendaftaran kamu masih diproses"</strong> dengan estimasi waktu dan kontak CS. Tidak ada menu navigasi aktif.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>GET /resellers/profile</code> return <code>status: "PENDING_APPROVAL"</code> → frontend render pending state screen. Semua endpoint transaksi return <code>403 ACCOUNT_PENDING</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A4 LOGIN RESELLER PIN -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">A4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Login Reseller + PIN App</div>
+      <div class="flow-sub">Reseller App · PIN sebagai second layer security</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Login + PIN berhasil</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Reseller App punya PIN 6 digit sebagai layer keamanan kedua (seperti e-wallet). PIN diminta setiap buka app dan setiap konfirmasi transaksi.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Login password seperti biasa → berhasil → redirect ke PIN screen. Buka app setelah background → langsung ke PIN screen (tidak perlu password lagi selama session aktif).</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">PIN disimpan hashed di backend — <strong>bukan di device</strong>. Validasi via <code>POST /resellers/auth/verify-pin</code>. Return short-lived session token untuk authorize transaksi.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">E1</span>
+      <span class="case-title">PIN salah 3x — dikunci</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Salah PIN 3x → PIN dikunci. Harus re-auth dengan password untuk bisa set PIN baru. Ini cegah akses tidak sah jika HP hilang.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Setiap salah → counter tampil. Setelah 3x → <strong>"PIN dikunci. Gunakan kata sandi untuk masuk dan atur ulang PIN."</strong> → redirect ke login password.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /resellers/auth/verify-pin</code> → counter di Redis. Setelah 3x → return <code>423 PIN_LOCKED</code> → user harus <code>POST /auth/login</code> dengan password → set PIN baru via <code>PUT /resellers/auth/pin</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A5 FORGOT PASSWORD -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">A5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Lupa Password</div>
+      <div class="flow-sub">Consumer & Reseller · Reset via OTP WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Reset password berhasil</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><ul class="steps happy"><li class="step"><div class="step-n">1</div><div class="step-body"><div class="t">Tap "Lupa Kata Sandi"</div><div class="d">Di halaman login</div></div></li><li class="step"><div class="step-n">2</div><div class="step-body"><div class="t">Input nomor HP</div></div></li><li class="step"><div class="step-n">3</div><div class="step-body"><div class="t">OTP dikirim via WA</div><div class="d">6 digit · 5 menit</div></div></li><li class="step"><div class="step-n">4</div><div class="step-body"><div class="t">Input OTP → Input password baru (2x konfirmasi)</div></div></li><li class="step"><div class="step-n">5</div><div class="step-body"><div class="t">Berhasil → auto login</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /auth/forgot-password</code> → cek nomor terdaftar → kirim OTP.<br><br><code>POST /auth/reset-password</code> → validasi OTP + nomor HP → update password hash → <strong>invalidate semua session aktif</strong> (force logout semua device) → return token baru untuk auto-login.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">E1</span>
+      <span class="case-title">Nomor HP tidak terdaftar</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Jangan expose apakah nomor terdaftar atau tidak ke publik — ini cegah <strong>user enumeration attack</strong>.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><strong>"Kalau nomor ini terdaftar, kamu akan menerima kode via WhatsApp."</strong> Response yang sama baik nomor ada maupun tidak.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Return <code>200</code> regardless nomor ada atau tidak. Kalau tidak ada → tidak kirim OTP tapi response tetap sama. Tambahkan artificial delay yang konsisten untuk cegah timing attack.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-auth -->
+
+<!-- ═══════════════════════════════════════════════════════ TRANSACTION TAB -->
+<div id="tab-transaction" class="tab-panel">
+
+<!-- T1 HAPPY PATH -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">T1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaksi Consumer — Happy Path</div>
+      <div class="flow-sub">Semua produk prepaid & postpaid · Web & App consumer</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Produk Prepaid (Pulsa, Token PLN, Voucher Game) — Sukses</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Consumer bayar <strong>harga jual</strong> (HPP + margin GoPop). Payment gateway handle pembayaran dulu, baru backend kirim ke biller. GoPop ambil margin dari selisih. Status lifecycle: <code>PENDING → PAID → PROCESSING → SUCCESS</code>.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><ul class="steps happy"><li class="step"><div class="step-n">1</div><div class="step-body"><div class="t">Pilih kategori & produk</div><div class="d">Harga tampil dari catalog API real-time</div></div></li><li class="step"><div class="step-n">2</div><div class="step-body"><div class="t">Input nomor tujuan</div><div class="d">Nomor HP / ID Pelanggan / Nomor meter. Validasi format di frontend.</div></div></li><li class="step"><div class="step-n">3</div><div class="step-body"><div class="t">Konfirmasi detail + harga final</div><div class="d">Preview produk, nominal, harga total. User harus confirm sebelum lanjut.</div></div></li><li class="step"><div class="step-n">4</div><div class="step-body"><div class="t">Pilih metode bayar</div><div class="d">QRIS · VA · E-Wallet (GoPay/OVO/DANA) · Retail (Alfamart/Indomaret)</div></div></li><li class="step"><div class="step-n">5</div><div class="step-body"><div class="t">Payment Instruction screen</div><div class="d">Tampil kode bayar + countdown timer. App polling status tiap 5 detik.</div></div></li><li class="step"><div class="step-n">6</div><div class="step-body"><div class="t">User bayar di luar app</div></div></li><li class="step"><div class="step-n">7</div><div class="step-body"><div class="t">Polling detect PAID → "Sedang diproses..."</div></div></li><li class="step"><div class="step-n">8</div><div class="step-body"><div class="t">Receipt screen</div><div class="d">Detail transaksi · Nomor referensi · Tombol "Simpan Struk" · WA notif otomatis</div></div></li><li class="step"><div class="step-n">9</div><div class="step-body"><div class="t">Soft prompt daftar akun (untuk guest)</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /transactions</code> → validasi produk aktif + harga masih valid → buat transaksi <code>PENDING</code> → <code>POST /payments</code> → hit Xendit → return payment instruction.<br><br>Xendit callback → <code>POST /payments/callback</code> → update <code>PAID</code> → queue job kirim ke biller (Ayoconnect primary) → response sukses → update <code>SUCCESS</code> → trigger WA notif.<br><br>Frontend polling: <code>GET /transactions/{id}</code> setiap 5 detik selama di Payment Instruction screen. Stop polling setelah status <code>SUCCESS</code> atau <code>FAILED</code>.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Transaksi muncul real-time di Monitoring dengan status lifecycle lengkap. Field <code>source_channel: "web"</code> atau <code>"app"</code> ter-tag otomatis untuk keperluan rekonsiliasi Rifky.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Produk Postpaid / Tagihan (PLN Pascabayar, BPJS, PDAM) — Sukses</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Tagihan butuh satu step tambahan: <strong>inquiry</strong> (cek tagihan dulu sebelum bayar). Inquiry bukan transaksi — tidak ada biaya, tidak ada record di DB transaksi.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Input ID Pelanggan → tap "Cek Tagihan" → loading inquiry → tampil: <strong>nama pelanggan, periode tagihan, jumlah tagihan, denda (jika ada)</strong> → user konfirmasi → lanjut ke pilih metode bayar (flow sama seperti prepaid).</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /transactions/inquiry</code> → hit Ayoconnect inquiry API → return nama + nominal tagihan. Inquiry tidak buat record transaksi.<br><br>Setelah konfirmasi user → <code>POST /transactions</code> dengan data dari hasil inquiry. Flow bayar sama seperti prepaid.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- T2 PAYMENT GATEWAY GAGAL -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">T2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Payment Gateway Gagal</div>
+      <div class="flow-sub">Sebelum uang masuk ke GoPop · Tidak ada refund yang diperlukan</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T2-A</span>
+      <span class="case-title">QRIS Expired — 15 menit tidak dibayar</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">QRIS dari Xendit punya TTL 15 menit. Kalau expired, transaksi dibatalkan. <strong>Tidak ada uang yang masuk ke GoPop</strong> — tidak perlu refund. Status: <code>EXPIRED</code> bukan <code>FAILED</code>.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Countdown timer habis → <strong>"Waktu pembayaran habis. Transaksi dibatalkan."</strong><br>Tombol: <strong>"Coba Lagi"</strong> (balik ke pilih metode bayar, data prefilled) + <strong>"Kembali ke Beranda"</strong>. Tidak ada WA notif karena tidak ada uang masuk.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Frontend stop polling saat countdown habis → <code>PUT /transactions/{id}</code> update status <code>EXPIRED</code>. Xendit otomatis expire QRIS di sisi mereka.<br><br>Record tetap ada di DB untuk audit tapi tidak muncul di riwayat user (atau muncul dengan label "Kedaluwarsa" yang berbeda dari "Gagal").</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T2-B</span>
+      <span class="case-title">VA Expired — 24 jam tidak dibayar</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">VA berlaku 24 jam. Handling identik dengan T2-A — tidak ada uang masuk, tidak ada refund.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Untuk VA, user mungkin tidak aktif di app saat expired. Bisa ada push notif 1 jam sebelum expired sebagai reminder: <strong>"VA kamu untuk [produk] hampir kedaluwarsa dalam 1 jam."</strong></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Scheduler: cek VA yang akan expired dalam 1 jam → kirim push notif reminder. Saat Xendit callback expired → update status <code>EXPIRED</code>.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T2-C</span>
+      <span class="case-title">E-Wallet Redirect — User batalkan atau tidak selesaikan di app e-wallet</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">User di-redirect ke GoPay/OVO/DANA tapi tidak selesaikan pembayaran (tutup app, batalkan, saldo tidak cukup). Tidak ada uang masuk.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">User balik ke GoPop app → cek status → belum terbayar → <strong>"Pembayaran belum selesai. Selesaikan via [nama e-wallet] atau pilih metode lain."</strong><br>Tombol: <strong>"Coba Bayar Lagi"</strong> (re-trigger redirect) + <strong>"Ganti Metode Bayar"</strong> + <strong>"Batalkan"</strong>.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Saat user balik ke app → <code>GET /payments/{id}</code> → status masih <code>PENDING</code>.<br>Ganti metode: <code>PUT /transactions/{id}/change-payment</code> → buat payment baru, batalkan payment lama di Xendit.<br>Batalkan: <code>PUT /transactions/{id}</code> → status <code>CANCELLED</code>.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T2-D</span>
+      <span class="case-title">Webhook Xendit tidak datang — User sudah bayar tapi status tidak update</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">User sudah bayar di bank/e-wallet tapi GoPop tidak dapat notifikasi dari Xendit karena network issue atau Xendit timeout. Ini jarang tapi bisa terjadi dan sangat meresahkan user.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Setelah <strong>10 menit</strong> tanpa status update → tampil: <strong>"Pembayaran kamu sedang diverifikasi. Kami akan kirim konfirmasi via WhatsApp. Nomor referensi: [ID]"</strong>. Jangan biarkan user terlalu lama di layar loading tanpa info.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Scheduler tiap 5 menit: cek transaksi <code>PENDING</code> yang sudah &gt;10 menit → hit Xendit API aktif untuk cek status payment (pull, bukan tunggu push).<br>Xendit confirm paid → proses normal (update <code>PAID</code> → kirim ke biller).<br>Xendit bilang belum bayar → biarkan sampai expire.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Rifky/CS bisa lihat transaksi <code>PENDING</code> &gt;10 menit dengan flag khusus di tab "Perlu Perhatian". Ada tombol <strong>"Cek Status Manual ke Xendit"</strong> untuk trigger pull manual.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- T3 BILLER GAGAL -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">T3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Biller Gagal — Setelah Payment Masuk</div>
+      <div class="flow-sub">⚠️ Paling kritis — uang sudah di GoPop tapi produk belum terkirim</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T3-A</span>
+      <span class="case-title">Biller Primary (Ayoconnect) Timeout — Auto retry + fallback</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">GoPop sudah terima uang dari user. Ayoconnect tidak response dalam batas waktu. GoPop harus: (1) retry ke Ayoconnect, (2) fallback ke biller backup, (3) kalau semua gagal → refund user. <strong>Reputasi GoPop ada di flow ini.</strong></div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">User tidak boleh tahu detail teknis (biller timeout, fallback, dll). Yang user lihat: <strong>"Transaksi kamu sedang diproses. Kami akan konfirmasi via WhatsApp dalam beberapa menit."</strong><br><br>Jangan tampil "Gagal" sebelum semua retry dan fallback sudah dicoba. Kalau akhirnya gagal total → <strong>"Transaksi tidak dapat diselesaikan. Dana kamu akan dikembalikan dalam 1×24 jam."</strong></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Setelah <code>PAID</code> → hit Ayoconnect timeout 30 detik → timeout → retry 2x (exponential backoff: 30 detik, 60 detik) → masih timeout → fallback ke Digiflazz/IAK (biller backup).<br><br>Backup sukses → <code>SUCCESS</code>, user tidak tahu ada fallback.<br>Semua gagal → status <code>FAILED</code> → trigger auto-refund flow.<br><br>Field <code>retry_count</code> di-increment setiap attempt. Catat di log: biller mana yang dicoba, hasil apa, waktu berapa.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Transaksi tampil status <code>PROCESSING</code> selama retry. Setelah fallback ada log: <em>"Switched to backup biller: Digiflazz"</em>. Kalau stuck &gt;15 menit → auto-flag ke tab "Perlu Perhatian" + notif ke Ops (Acoy).</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T3-B</span>
+      <span class="case-title">Biller: Nomor tidak valid / tidak ditemukan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">User input nomor yang salah (tidak aktif, ID pelanggan tidak exist). Biller tolak request. Produk tidak dikirim. Uang sudah masuk ke GoPop → harus refund penuh.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><strong>"Nomor yang kamu masukkan tidak dapat diproses. Cek kembali nomor tujuan kamu."</strong><br>Tampil: nomor yang diinput, jenis produk.<br>Tombol: <strong>"Coba dengan Nomor Lain"</strong> (form transaksi baru prefilled produk) + <strong>"Hubungi CS"</strong>.<br>WA notif: "Transaksi [ref] gagal karena nomor tidak ditemukan. Dana Rp X akan dikembalikan dalam 1×24 jam."</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Biller return error <code>INVALID_DESTINATION</code> → update status <code>FAILED</code> dengan <code>failure_reason: "invalid_destination"</code> → trigger auto-refund ke payment method asal via Xendit. Simpan <code>customer_no</code> yang salah di record untuk audit.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">CS lihat <code>failure_reason: "invalid_destination"</code> di detail transaksi/tiket. Refund status ter-track terpisah di kolom Refund Status.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T3-C</span>
+      <span class="case-title">Biller: Produk/Operator sedang gangguan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Bukan salah user — operator/provider memang sedang down. Bedain penanganan dari T3-B karena ada tindakan preventif: jika sudah banyak kegagalan untuk produk yang sama, produk harus di-nonaktifkan sementara.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><strong>"Layanan [nama operator] sedang gangguan. Dana kamu akan dikembalikan otomatis."</strong> Jangan blame user. WA notif dengan pesan yang sama + estimasi refund.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Biller return <code>PRODUCT_UNAVAILABLE</code> atau <code>OPERATOR_DOWN</code> → update <code>FAILED</code> → trigger refund.<br><br>Tambahan: <strong>increment counter gangguan per produk/operator</strong>. Jika &gt;5 kegagalan dalam 1 jam untuk produk yang sama → auto-flag ke dashboard + notif ke Ipong (Aggregator Mgmt).</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Ipong)</div><div class="layer-content">Alert: <em>"Produk Telkomsel 10rb: 5 kegagalan dalam 1 jam."</em><br>Aksi tersedia: (1) Nonaktifkan produk sementara, (2) Switch biller untuk produk ini, (3) Tambah banner maintenance di CMS.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T3-D</span>
+      <span class="case-title">Transaksi stuck di PROCESSING — tidak ada response biller</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content"><strong>Paling berbahaya</strong> — tidak tahu apakah produk sudah terkirim atau belum. GoPop tidak bisa refund sembarangan kalau produk mungkin sudah terkirim ke nomor tujuan user.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Status "Sedang Diproses" tidak berubah. Setelah 15 menit: <strong>"Transaksi kamu masih diproses. Kami sedang investigasi dan akan update via WhatsApp."</strong> CS yang handle follow-up ke user dari sini.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Scheduler tiap 5 menit: cek transaksi <code>PROCESSING</code> yang sudah &gt;15 menit → hit Ayoconnect status check API.<br>Ayoconnect: sukses → update <code>SUCCESS</code> + notif user.<br>Ayoconnect: gagal → update <code>FAILED</code> + trigger refund.<br>Ayoconnect: tidak bisa dikonfirmasi → flag <code>PROCESSING_STUCK</code> → eskalasi ke Ops manual.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Rifky + Acoy)</div><div class="layer-content">Tab/filter <strong>"Stuck &gt;15 menit"</strong> di Monitoring Transaksi. Per transaksi stuck tersedia: tombol <strong>"Cek Status ke Biller"</strong>, <strong>"Tandai Sukses Manual"</strong>, <strong>"Proses Refund Manual"</strong>. Semua aksi dicatat di activity log dengan nama admin + timestamp.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- T4 REFUND -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">T4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Refund Flow</div>
+      <div class="flow-sub">Auto-refund & Manual refund · GoPop tidak ambil fee saat refund</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Auto Refund</span>
+      <span class="case-title">Refund otomatis setelah biller gagal</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Refund terjadi setelah semua retry biller habis dan status <code>FAILED</code>. Uang kembali ke metode pembayaran asal. GoPop tidak ambil fee kalau terjadi refund. <strong>⚠️ Gap (T-G3):</strong> Konfirmasi apakah fee Rp 1.000 e-wallet juga dikembalikan — perlu keputusan Bili + Agung Finance.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">WA notif segera setelah refund di-trigger: <strong>"Transaksi [ref] gagal. Dana Rp X akan dikembalikan ke [metode bayar] dalam 1×24 jam."</strong><br>Di riwayat: status <strong>"Dikembalikan"</strong> (bukan "Gagal") — lebih clear untuk user.<br>Tidak ada aksi apapun yang dibutuhkan dari user.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /refunds</code> → hit Xendit refund API dengan <code>transaction_id</code> + <code>amount</code> → Xendit proses ke metode asal → Xendit callback refund status → update record refund di DB.<br><br>Estimasi waktu: VA 1-3 hari kerja · E-wallet lebih cepat. Copy ke user harus realistis dengan estimasi ini.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Manual Refund</span>
+      <span class="case-title">Refund manual via dashboard oleh Finance/Admin</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Kapan: auto-refund gagal, atau ada dispute dari user, atau transaksi stuck yang akhirnya di-resolve sebagai gagal. Hanya Finance (Agung) dan Super Admin yang bisa approve refund manual.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Finance/Admin)</div><div class="layer-content"><ul class="steps"><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">1</div><div class="step-body"><div class="t">Buka detail transaksi → tombol "Proses Refund"</div><div class="d">Hanya visible untuk role Finance dan Super Admin</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">2</div><div class="step-body"><div class="t">Modal konfirmasi</div><div class="d">Nominal (prefilled, bisa edit untuk partial refund) · metode · alasan wajib diisi</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">3</div><div class="step-body"><div class="t">Kalau nominal > threshold → butuh approval Super Admin</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">4</div><div class="step-body"><div class="t">Confirm → refund diproses + activity log + WA notif ke user</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /admin/transactions/{id}/refund</code> → RBAC: hanya role <code>FINANCE</code> dan <code>SUPER_ADMIN</code> → double-check tidak ada refund sebelumnya (<code>UNIQUE constraint</code> di refunds table) → hit Xendit → callback update <code>REFUNDED</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- T5 RESELLER TRANSACTION -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">T5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaksi Reseller</div>
+      <div class="flow-sub">Potong saldo internal · Tidak ada payment gateway · Lebih cepat dari consumer</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Transaksi reseller berhasil — saldo terpotong, produk terkirim</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Reseller sudah punya saldo. Transaksi langsung potong saldo — <strong>tidak ada payment gateway</strong>. Lebih cepat dari consumer karena skip step payment. Harga yang tampil adalah HPP (bukan harga jual consumer).</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><ul class="steps happy"><li class="step"><div class="step-n">1</div><div class="step-body"><div class="t">Pilih produk</div><div class="d">Katalog tampil HPP sesuai tier reseller, bukan harga jual consumer</div></div></li><li class="step"><div class="step-n">2</div><div class="step-body"><div class="t">Input nomor tujuan</div></div></li><li class="step"><div class="step-n">3</div><div class="step-body"><div class="t">Konfirmasi</div><div class="d">Tampil HPP yang terpotong dari saldo + preview keuntungan (harga jual - HPP)</div></div></li><li class="step"><div class="step-n">4</div><div class="step-body"><div class="t">Input PIN → Transaksi diproses</div></div></li><li class="step"><div class="step-n">5</div><div class="step-body"><div class="t">Receipt</div><div class="d">Detail transaksi + saldo sisa + WA notif ringkas</div></div></li></ul></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /resellers/transactions</code> → cek saldo ≥ HPP → <strong>lock saldo</strong> (prevent race condition via <code>SELECT FOR UPDATE</code>) → buat transaksi <code>PROCESSING</code> → potong saldo → kirim ke biller.<br>Biller sukses → <code>SUCCESS</code> → release lock, saldo final terpotong. Biller gagal → <code>FAILED</code> → rollback saldo.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T5-A</span>
+      <span class="case-title">Saldo tidak cukup</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Hard block — reseller tidak bisa transaksi kalau saldo &lt; HPP produk.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Di screen konfirmasi: warning merah <strong>"Saldo tidak cukup. Saldo kamu: Rp X, dibutuhkan: Rp Y."</strong> Tombol <strong>"Top Up Saldo Sekarang"</strong> langsung ke flow top up. Tidak bisa proceed tanpa top up.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Validasi pertama di <code>POST /resellers/transactions</code>: <code>balance >= hpp</code>. Return <code>400 INSUFFICIENT_BALANCE</code> dengan <code>current_balance</code> dan <code>required_amount</code>.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T5-B</span>
+      <span class="case-title">Race condition — dua transaksi dikirim bersamaan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Saldo Rp 50.000, transaksi A Rp 30.000 dan transaksi B Rp 30.000 dikirim hampir bersamaan. Tanpa lock, keduanya bisa lolos validasi saldo dan total terpotong Rp 60.000 → saldo minus.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">User tidak tahu dan tidak boleh tahu ada issue ini — sistem harus handle transparan. Transaksi kedua yang gagal validasi saldo → tampil pesan "Saldo tidak cukup" seperti case T5-A.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><strong>Pessimistic locking</strong>: saat <code>POST /resellers/transactions</code>, langsung <code>SELECT FOR UPDATE</code> pada wallet row reseller → lock row → cek saldo → potong → release lock. Transaksi kedua tunggu lock dilepas, lalu cek saldo sisa → kalau tidak cukup → return <code>INSUFFICIENT_BALANCE</code>.</div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T5-C</span>
+      <span class="case-title">Transaksi reseller gagal di biller — saldo sudah terpotong</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Refund untuk reseller bukan ke payment gateway — tapi rollback saldo internal. Lebih cepat dan tidak butuh Xendit.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Notif WA: <strong>"Transaksi ke [nomor] gagal. Saldo Rp X sudah dikembalikan ke akun kamu."</strong> Saldo langsung update real-time di app.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Biller gagal → <code>FAILED</code> → <code>UPDATE wallets SET balance = balance + hpp WHERE reseller_id = X</code> (atomic di DB). Catat di wallet activity log: "Saldo dikembalikan Rp X — refund transaksi [ref]".</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- T6 GUEST -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">T6</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaksi Guest</div>
+      <div class="flow-sub">Tanpa login · Komplain via WA · Struk via WA</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">T6-A</span>
+      <span class="case-title">Guest transaksi gagal — mau komplain</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Guest tidak punya akun. Komplain dilakukan via <strong>form Pusat Bantuan dengan isi nomor WA aktif</strong> (sesuai Figma). CS trace via nomor referensi yang disebutkan user di WA. Email tidak wajib.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Di receipt screen (meski gagal): tampil nomor referensi + instruksi <strong>"Simpan nomor ini jika butuh bantuan."</strong><br>Struk dikirim ke WA yang diisi saat checkout (nomor WA wajib diisi untuk guest).<br>Buka Pusat Bantuan → isi form → nomor WA + kategori masalah + ref transaksi (opsional tapi dianjurkan) → CS follow-up via WA.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Transaksi guest: <code>user_id: null</code>, <code>source_channel: "web_guest"</code> atau <code>"app_guest"</code>.<br>Tiket dari guest: <code>POST /tickets</code> dengan nomor WA sebagai identifier.<br>CS lookup transaksi guest dari dashboard: search by ref_id atau nomor WA yang diisi saat komplain.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">CS bisa search transaksi guest via ref_id atau nomor WA di menu Monitoring Transaksi. Tidak butuh user_id — cukup ref_id yang user sebutkan di WA mereka.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-transaction -->
+
+<!-- ═══════════════════════════════════════════════════════ RESELLER TAB -->
+<div id="tab-reseller" class="tab-panel">
+
+<!-- R1 TOP UP -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">R1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Top Up Saldo Reseller</div>
+      <div class="flow-sub">Via payment gateway · Saldo aktif setelah payment confirmed</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Top up berhasil — saldo langsung update</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Reseller prepaid — harus ada saldo dulu sebelum transaksi. Top up menggunakan Xendit sama seperti consumer bayar transaksi. Saldo baru aktif setelah payment confirmed. Top up masuk sebagai "Dana Masuk" di cash flow GoPop.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Tap "Top Up Saldo" → pilih nominal (quick-select: Rp 50rb/100rb/200rb/500rb/1jt + custom) → pilih metode bayar → Payment Instruction → bayar → saldo langsung update real-time → WA notif: <strong>"Top up Rp X berhasil. Saldo kamu sekarang Rp Y."</strong></div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /resellers/topup</code> → buat topup order → hit Xendit → return payment instruction.<br>Xendit callback → <code>type: "reseller_topup"</code> → <code>UPDATE wallets SET balance += amount</code> → buat record di <code>wallet_transactions</code> dengan <code>type: "TOPUP"</code>.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Agung (Finance) lihat semua top up reseller di laporan keuangan. Top up masuk sebagai "Dana Masuk" di cash flow GoPop.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">R1-A</span>
+      <span class="case-title">Top up gagal / payment expired</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Tidak ada uang masuk — saldo tidak berubah. Tidak perlu refund.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content"><strong>"Pembayaran top up kedaluwarsa. Saldo kamu tidak berubah."</strong> + tombol "Coba Top Up Lagi". Tidak ada WA notif.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Topup order status <code>EXPIRED</code> — tidak update saldo. Record tetap ada untuk audit.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">R1-B</span>
+      <span class="case-title">Webhook Xendit tidak datang — reseller sudah bayar tapi saldo belum masuk</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Ini urgent — reseller sudah transfer uang tapi tidak bisa transaksi. Potensi komplain tinggi dan berpengaruh ke omzet reseller.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Saldo masih sama setelah bayar. Banner otomatis setelah 10 menit: <strong>"Top up kamu sedang diverifikasi. Saldo akan masuk segera."</strong> + tombol "Hubungi CS".</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Scheduler: cek topup order <code>PENDING</code> &gt;10 menit → pull status dari Xendit. Kalau confirm paid → credit saldo + WA notif.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">CS/Finance lihat topup pending &gt;10 menit dengan tombol <strong>"Cek Status ke Xendit"</strong> dan <strong>"Credit Manual (dengan approval)"</strong>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- R2 TIER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">R2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Tier Progression</div>
+      <div class="flow-sub">Otomatis berdasarkan omzet kumulatif all-time · Tidak pernah reset · Efektif langsung</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Tier naik otomatis saat threshold omzet tercapai</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Tier naik otomatis berdasarkan total omzet kumulatif all-time. Tidak pernah reset, tidak pernah turun. Tier menentukan HPP — semakin tinggi tier, HPP semakin murah. Naik tier efektif <strong>langsung</strong> untuk transaksi berikutnya.<br><br><em>Threshold placeholder — perlu konfirmasi Bili (R-G1):</em><br>Bronze: Rp 0 · Silver: Rp 5jt · Gold: Rp 25jt · Platinum: Rp 100jt</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Screen "Tier Saya": progress bar ke tier berikutnya, omzet saat ini, selisih yang perlu dicapai.<br>Saat tier naik → WA notif + <strong>in-app celebration: "Selamat! Kamu naik ke tier [Gold]. HPP kamu sekarang lebih murah."</strong><br>Harga di katalog otomatis update — tidak perlu logout/login ulang.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Setiap transaksi reseller <code>SUCCESS</code>: <code>UPDATE wallets SET total_omzet += amount</code> → cek threshold tier → kalau naik: satu DB transaction atomic: <code>BEGIN → update omzet → check tier → update tier → log tier_history → COMMIT</code> → trigger WA notif.<br><br><code>GET /products</code> untuk reseller selalu join dengan tier → return HPP sesuai tier saat itu.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">R2-B</span>
+      <span class="case-title">Admin manual override tier</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Untuk kasus khusus: reseller partner strategis, kompensasi error sistem, atau promosi. Manual override tidak mengubah total_omzet — hanya tier yang berubah.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Profil reseller → <strong>"Ubah Tier Manual"</strong> → modal: pilih tier baru + alasan wajib → confirm → activity log: <em>"Tier diubah dari [lama] ke [baru] oleh [admin] — [alasan] — [timestamp]"</em> → WA notif ke reseller.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>PUT /admin/resellers/{id}/tier</code> → update tier → log di <code>tier_history</code> dengan flag <code>manual: true</code> + <code>changed_by: admin_id</code> + <code>reason</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- R3 BONUS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">R3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Bonus Jaringan (Downline)</div>
+      <div class="flow-sub">1 level downline · Bonus dari margin GoPop · Batched WA harian</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Transaksi downline sukses — bonus dikreditkan ke upline</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Setiap transaksi sukses reseller yang punya upline → bonus ke upline. Bonus dibayar GoPop dari margin sendiri — <strong>bukan dipotong dari profit downline</strong>. Besaran % sesuai tier upline. Hanya 1 level downline.<br><br><em>Contoh:</em> Upline tier Gold (bonus rate 2%), downline transaksi Rp 10.000 → bonus = 2% × Rp 10.000 = Rp 200 masuk saldo upline.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX Upline</div><div class="layer-content">In-app notif real-time (tidak WA per transaksi — terlalu spam). WA summary harian: <strong>"Bonus jaringan hari ini: Rp X dari Y transaksi downline."</strong> Dikirim sekali sehari jam 20.00 WIB jika ada bonus.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Setiap transaksi reseller <code>SUCCESS</code> yang punya <code>upline_id</code>: hitung bonus → <code>UPDATE wallets SET balance += bonus WHERE reseller_id = upline_id</code> → catat di <code>bonus_ledger</code>. Semua dalam satu DB transaction yang sama dengan update status <code>SUCCESS</code> → atomic.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">R3-A</span>
+      <span class="case-title">Transaksi downline refund/gagal — bonus harus di-reverse</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Bonus hanya untuk transaksi yang benar-benar sukses. Kalau downline di-refund → bonus yang sudah dikreditkan ke upline harus di-debit kembali.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX Upline</div><div class="layer-content">WA notif: <strong>"Koreksi bonus jaringan: Rp X dikurangi dari saldo kamu karena transaksi downline dibatalkan."</strong> Di riwayat bonus: entry "Koreksi" berwarna merah.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Saat transaksi downline <code>FAILED/REFUNDED</code>: cek <code>bonus_ledger</code> → <code>UPDATE wallets SET balance -= bonus_amount WHERE reseller_id = upline_id</code> → catat reversal di <code>bonus_ledger</code> dengan <code>type: "REVERSAL"</code>.<br><br>Kalau saldo upline tidak cukup untuk di-debit (sudah terpakai) → saldo bisa minus sementara → flag ke Finance (Agung).</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Agung Finance)</div><div class="layer-content">Alert jika bonus reversal menyebabkan saldo upline minus. Agung bisa lihat semua <code>bonus_ledger</code> per reseller di laporan keuangan.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- R4 DOWNLINE -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">R4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Downline Management</div>
+      <div class="flow-sub">Kode referral unik · 1 level · Relasi permanen</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Reseller baru daftar pakai kode referral</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Setiap reseller punya kode referral unik 8 karakter (auto-generate saat approved). Kalau ada yang daftar pakai kode ini → jadi downline. Relasi upline-downline <strong>permanen</strong> — tidak bisa diubah setelah aktif.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Form register reseller: field "Kode Referral (opsional)". Kalau kode valid → tampil nama upline untuk konfirmasi: <strong>"Kamu akan bergabung di jaringan [nama]. Lanjutkan?"</strong><br>Upline dapat WA notif: "Reseller baru bergabung di jaringan kamu!"</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>GET /resellers/validate-referral?code=X</code> → real-time validasi sebelum submit form.<br><code>POST /resellers/register</code> dengan <code>referral_code</code> → lookup pemilik kode → set <code>upline_id</code> → relasi tersimpan permanen di DB.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">R4-A</span>
+      <span class="case-title">Kode referral tidak valid</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">Inline error saat input: <strong>"Kode referral tidak ditemukan."</strong> Field referral opsional → bisa lanjut daftar tanpa kode.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>GET /resellers/validate-referral?code=X</code> return <code>404 REFERRAL_NOT_FOUND</code> → frontend tampil inline error. Validasi real-time saat user selesai input (onBlur).</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- R5 SUSPEND -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">R5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Suspend & Reaktivasi Reseller</div>
+      <div class="flow-sub">Admin action · Saldo tetap aman · Downline tidak terpengaruh</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">R5-A</span>
+      <span class="case-title">Admin suspend reseller</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Admin bisa suspend karena: fraud, saldo minus (dari bonus reversal), pelanggaran SOP, atau permintaan sendiri. Saldo tetap ada — tidak hilang. Downline tidak terpengaruh, tetap bisa transaksi normal.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Profil reseller → <strong>"Suspend Akun"</strong> → modal: pilih alasan (dropdown: Fraud / Saldo Bermasalah / Pelanggaran SOP / Lainnya) + notes wajib → confirm → WA otomatis ke reseller: "Akun reseller kamu telah dinonaktifkan sementara. Hubungi CS GoPop."</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX Reseller</div><div class="layer-content">Login → full-screen: <strong>"Akun kamu dinonaktifkan. Hubungi CS untuk informasi lebih lanjut."</strong> + tombol WA CS. Tidak ada menu apapun yang aktif.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>PUT /admin/resellers/{id}/suspend</code> → update status <code>SUSPENDED</code> → log di <code>account_history</code>. Semua request dari token reseller suspended → <code>403 ACCOUNT_SUSPENDED</code>. Bonus dari downline tetap masuk ke wallet tapi tidak bisa dipakai untuk transaksi.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-reseller -->
+
+<!-- ═══════════════════════════════════════════════════════ ADMIN TAB -->
+<div id="tab-admin" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">AC1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Komplain Masuk — End-to-End</div>
+      <div class="flow-sub">Consumer · Reseller · Guest · Semua masuk satu inbox dashboard</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">User submit tiket → CS terima → resolve</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Komplain dari 3 sumber semua masuk ke satu inbox dashboard: (1) Consumer App/Web → form Pusat Bantuan, (2) Reseller App → form Pusat Bantuan reseller, (3) WA langsung → CS input manual. Format nomor tiket: <code>#TKT-YYYYMMDD-XXXX</code>.</div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX User (sesuai Figma)</div><div class="layer-content">Buka Pusat Bantuan → pilih kategori → isi nomor WA aktif (wajib) → isi ID Transaksi (opsional) → isi deskripsi → tap "Kirim Laporan" → screen konfirmasi: <strong>nomor tiket, jenis masalah, status "Menunggu Respons", estimasi 1×24 jam via WhatsApp</strong>.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /tickets</code> → buat tiket status <code>OPEN</code> → generate nomor tiket → auto-assign ke CS on-duty → WA notif ke nomor yang diisi: "Laporan kamu (#TKT-XXX) sudah kami terima. Tim kami akan menghubungi kamu dalam 1×24 jam."</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard CS</div><div class="layer-content"><ul class="steps"><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">1</div><div class="step-body"><div class="t">Buka tiket → lihat detail + link ke transaksi</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">2</div><div class="step-body"><div class="t">Update status → IN_PROGRESS</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">3</div><div class="step-body"><div class="t">Tambah internal note</div><div class="d">Investigasi yang sudah dilakukan — tidak visible ke user</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">4</div><div class="step-body"><div class="t">Hubungi user via WA dari nomor yang diisi</div></div></li><li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">5</div><div class="step-body"><div class="t">Resolve → pilih resolusi + tutup tiket</div><div class="d">Dropdown: Refund Diproses / Transaksi Dikonfirmasi Sukses / Edukasi User / Lainnya</div></div></li></ul></div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">AC1-A</span>
+      <span class="case-title">Tiket perlu eskalasi ke Ops / Finance</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Ada tiket yang CS tidak bisa selesaikan sendiri — butuh akses atau keputusan dari Ops (Acoy) atau Finance (Agung).</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Detail tiket → tombol <strong>"Eskalasi"</strong> → pilih target: Ops / Finance / IT → wajib isi catatan eskalasi → status tiket berubah ke <code>ESCALATED</code> → notif dashboard ke assignee baru.<br><br>Ops/Finance lihat tiket dengan label "Eskalasi dari CS" + full history tiket termasuk semua internal notes sebelumnya.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>PUT /admin/tickets/{id}/escalate</code> → update <code>assigned_to</code> + status <code>ESCALATED</code> + catat escalation log dengan <code>escalated_by</code>, <code>escalated_to</code>, <code>note</code>, <code>timestamp</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AC2 PRIORITAS -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">AC2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Prioritas Tiket</div>
+      <div class="flow-sub">Auto-assign berdasarkan kategori + status transaksi · CS bisa override manual</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Matrix</span>
+      <span class="case-title">Aturan prioritas tiket</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Priority</th><th>Kriteria</th><th>Target Respons</th></tr>
+          <tr><td><span class="tag-urgent">🔴 Urgent</span></td><td>Transaksi gagal + uang sudah masuk (PAID → FAILED)</td><td>1 jam</td></tr>
+          <tr><td><span class="tag-high">🟠 High</span></td><td>Transaksi stuck PROCESSING &gt;1 jam</td><td>2 jam</td></tr>
+          <tr><td><span class="tag-med">🟡 Medium</span></td><td>Top up reseller tidak masuk</td><td>4 jam</td></tr>
+          <tr><td><span class="tag-low">⚪ Low</span></td><td>Pertanyaan umum, info bonus tidak sesuai harapan</td><td>1×24 jam</td></tr>
+        </table>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Priority auto-assign berdasarkan rules:<br>• Kategori "Transaksi Gagal" + <code>status=FAILED</code> + <code>payment_status=PAID</code> → auto <code>URGENT</code><br>• Kategori "Transaksi Gagal" + <code>status=PROCESSING</code> &gt;1 jam → auto <code>HIGH</code><br>• Kategori "Top Up Deposit" → auto <code>MEDIUM</code><br>• Kategori "Lainnya" → auto <code>LOW</code><br><br>CS tetap bisa override priority manual.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AC3 MANUAL OVERRIDE -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">AC3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Manual Override Transaksi</div>
+      <div class="flow-sub">Hanya Ops & Super Admin · Semua aksi ter-log</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">AC3-A</span>
+      <span class="case-title">Update status transaksi manual</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Kapan dipakai: biller konfirmasi sukses via email tapi sistem belum update, atau transaksi stuck lama. Hanya Ops keatas yang bisa akses.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Detail transaksi → <strong>"Update Status Manual"</strong> (hanya visible Ops/Super Admin) → modal: pilih status baru (SUCCESS/FAILED) + alasan wajib + upload bukti opsional → confirm → activity log: <em>"Status diubah dari PROCESSING ke SUCCESS oleh [nama] — [alasan] — [timestamp]"</em>.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>PUT /admin/transactions/{id}/status</code> RBAC: hanya <code>OPS</code> dan <code>SUPER_ADMIN</code>.<br>Kalau di-set <code>SUCCESS</code>: cek tidak ada duplicate delivery (cek <code>biller_ref</code> sudah ada).<br>Kalau di-set <code>FAILED</code>: auto-trigger refund flow → cek bonus jaringan → kalau sudah dikreditkan → trigger reversal.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">AC3-B</span>
+      <span class="case-title">Retry manual ke biller</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Auto-retry sudah habis tapi Ops yakin biller bisa diretry sekarang (tadi gangguan sesaat). Harus ada konfirmasi bahwa produk belum terkirim sebelum retry.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard</div><div class="layer-content">Detail transaksi stuck → <strong>"Retry ke Biller"</strong> → modal konfirmasi: <em>"Pastikan produk belum terkirim ke [nomor tujuan] sebelum retry."</em> → confirm → hasil retry tampil real-time di activity log.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /admin/transactions/{id}/retry</code> → hit biller API → <code>retry_count</code> di-increment → update status accordingly. <strong>Rate limit:</strong> tidak bisa retry dalam 5 menit dari retry sebelumnya.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AC4 MONITORING -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">AC4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Monitoring & Rekonsiliasi</div>
+      <div class="flow-sub">Rifky (Rekonsiliasi) · Ipong (Aggregator) · Acoy (Ops)</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">AC4-A</span>
+      <span class="case-title">Biller primary down — deteksi otomatis & penanganan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Kalau banyak transaksi gagal di biller yang sama dalam waktu singkat → biller mungkin down. Harus ada deteksi otomatis — tidak bisa tunggu banyak user komplain dulu.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Threshold detection: error rate biller &gt;X% dalam Y menit → set <code>biller.status = WARNING</code> → alert push ke dashboard + email ke Ipong dan Acoy. <strong>⚠️ Gap (AC-G4):</strong> nilai threshold X% dan Y menit perlu dikonfirmasi Rifky + Ipong.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Ipong)</div><div class="layer-content">Alert banner merah: <em>"⚠️ Ayoconnect: 8 kegagalan dalam 15 menit untuk Telkomsel. Pertimbangkan switch ke biller backup."</em><br>Aksi: <strong>"Switch Semua Produk [Operator X] ke Biller Backup"</strong> atau <strong>"Nonaktifkan Produk Sementara"</strong>. Semua switch dicatat di <code>biller_switch_log</code>.</div></div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">AC4-B</span>
+      <span class="case-title">Rekonsiliasi harian (Rifky)</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">Setiap hari Rifky cocokkan data transaksi GoPop vs laporan dari Ayoconnect. Kalau ada selisih → eskalasi ke Finance. <strong>⚠️ Gap (AC-G5):</strong> rekonsiliasi via upload CSV atau API pull otomatis perlu dikonfirmasi Rifky + Ipong.</div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Dashboard (Rifky)</div><div class="layer-content">Menu Rekonsiliasi → pilih tanggal + biller → upload CSV laporan Ayoconnect → sistem auto-match via <code>biller_ref</code> → tampil: matched, unmatched GoPop, unmatched biller, selisih nominal → unmatched bisa langsung buka tiket investigasi atau tandai "Sudah Diklarifikasi" → export hasil rekon.</div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content"><code>POST /admin/reconcile/upload</code> → parse CSV → match logic: <code>biller_ref</code> exact match + <code>SUCCESS</code> di kedua sisi = matched.<br>GoPop <code>SUCCESS</code> tapi tidak di biller → <code>UNMATCHED_GOPOP</code> (potential ghost transaction).<br>Biller ada tapi GoPop tidak → <code>UNMATCHED_BILLER</code> (missing transaction).<br><code>GET /admin/reconcile/{id}/export</code> → download hasil.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AC5 ROLE -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">AC5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Role & Akses Admin</div>
+      <div class="flow-sub">RBAC — setiap role hanya lihat & lakukan yang relevan dengan tugasnya</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Matrix</span>
+      <span class="case-title">Role dan akses per tim</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Role</th><th>Akses Utama</th><th>Tidak Bisa</th></tr>
+          <tr><td><strong>Super Admin</strong></td><td>Semua akses + setting role</td><td>—</td></tr>
+          <tr><td><strong>Finance (Agung)</strong></td><td>Laporan keuangan, approve refund, rekonsiliasi</td><td>Edit produk/harga</td></tr>
+          <tr><td><strong>Ops (Acoy)</strong></td><td>Monitoring transaksi, eskalasi, suspend reseller</td><td>Approve refund</td></tr>
+          <tr><td><strong>CS</strong></td><td>Inbox tiket, internal notes, eskalasi</td><td>Manual override transaksi, refund</td></tr>
+          <tr><td><strong>Aggregator Mgmt (Ipong)</strong></td><td>Master data biller, switch biller, HPP</td><td>Data keuangan sensitif</td></tr>
+          <tr><td><strong>Marketing (Kayong)</strong></td><td>CMS saja</td><td>Semua data transaksi & keuangan</td></tr>
+          <tr><td><strong>IT (Rifky/Irwan/Fikly)</strong></td><td>Full akses teknikal, monitoring</td><td>Approve refund</td></tr>
+        </table>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Setiap API endpoint admin punya middleware RBAC: <code>requireRole(['FINANCE', 'SUPER_ADMIN'])</code>. Token admin menyertakan <code>role</code> → backend validate setiap request. Semua aksi sensitif (refund, manual override, suspend) ter-log dengan <code>performed_by: admin_id</code> + timestamp.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-admin -->
+
+<!-- ═══════════════════════════════════════════════════════ NOTIF TAB -->
+<div id="tab-notif" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">N</div>
+    <div class="flow-meta">
+      <div class="flow-title">Prinsip Dasar Notifikasi</div>
+      <div class="flow-sub">WA = primary · Push = secondary · In-App = always · Anti-spam rules</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Prinsip</span>
+      <span class="case-title">Aturan dasar notifikasi GoPop</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">
+        <strong>3 channel:</strong><br>
+        • <strong>WhatsApp</strong> — primary, untuk konfirmasi penting. Reach tinggi karena tidak butuh app installed.<br>
+        • <strong>Push Notification</strong> — untuk user yang install app, real-time saat app tidak dibuka.<br>
+        • <strong>In-App</strong> — bell icon, riwayat notif yang bisa dibaca kapanpun.<br><br>
+        <strong>Aturan dasar:</strong><br>
+        • Satu event = maks 1 notif per channel.<br>
+        • Guest = WA only (tidak ada push, tidak ada in-app).<br>
+        • Reseller = WA primary + Push jika app terinstall.<br>
+        • Consumer login = Push primary + WA untuk event kritis.<br>
+        • Maks WA per user per hari: 5 pesan (kecuali OTP & security alert — tidak dibatasi).<br>
+        • Bonus summary WA: 1x per hari, jam 20.00 WIB, hanya kalau ada bonus.
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- N AUTH -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">N1</div>
+    <div class="flow-meta"><div class="flow-title">Notifikasi Auth</div></div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Matrix</span>
+      <span class="case-title">Kapan notif dikirim untuk event auth</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis + Teknikal</div><div class="layer-content">
+        <table class="notif-table">
+          <tr><th>Event</th><th>WA</th><th>Push</th><th>In-App</th><th>Target</th></tr>
+          <tr><td>Register — OTP dikirim</td><td class="nt-yes">✅</td><td class="nt-no">—</td><td class="nt-no">—</td><td>Semua</td></tr>
+          <tr><td>Akun aktif setelah OTP</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Consumer login</td></tr>
+          <tr><td>Reseller approved</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Reseller</td></tr>
+          <tr><td>Reseller rejected</td><td class="nt-yes">✅</td><td class="nt-no">—</td><td class="nt-no">—</td><td>Reseller</td></tr>
+          <tr><td>Login device baru</td><td class="nt-yes">✅</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td>Semua</td></tr>
+          <tr><td>Akun di-suspend</td><td class="nt-yes">✅</td><td class="nt-no">—</td><td class="nt-no">—</td><td>Semua</td></tr>
+          <tr><td>Reset password berhasil</td><td class="nt-yes">✅</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td>Semua</td></tr>
+          <tr><td>PIN salah 3x, dikunci</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Reseller</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- N TRANSAKSI CONSUMER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">N2</div>
+    <div class="flow-meta"><div class="flow-title">Notifikasi Transaksi Consumer</div></div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Matrix</span>
+      <span class="case-title">Kapan notif dikirim untuk event transaksi consumer</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis + Teknikal</div><div class="layer-content">
+        <table class="notif-table">
+          <tr><th>Event</th><th>WA</th><th>Push</th><th>In-App</th><th>Target</th></tr>
+          <tr><td>Transaksi dibuat, menunggu bayar</td><td class="nt-no">—</td><td class="nt-yes">✅ <div class="nt-note">Reminder bayar</div></td><td class="nt-yes">✅</td><td>Consumer login</td></tr>
+          <tr><td>Pembayaran diterima (PAID)</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Consumer login</td></tr>
+          <tr><td>Transaksi SUCCESS</td><td class="nt-yes">✅ <div class="nt-note">Struk + detail</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Semua (incl. guest)</td></tr>
+          <tr><td>Transaksi FAILED (setelah bayar)</td><td class="nt-yes">✅ <div class="nt-note">WA wajib</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Semua (incl. guest)</td></tr>
+          <tr><td>Transaksi EXPIRED (tidak bayar)</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Consumer login</td></tr>
+          <tr><td>PROCESSING &gt;15 menit</td><td class="nt-yes">✅ <div class="nt-note">Reassurance</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Semua (incl. guest)</td></tr>
+          <tr><td>Refund diproses</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Semua (incl. guest)</td></tr>
+          <tr><td>Refund selesai — dana masuk</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td>Semua (incl. guest)</td></tr>
+        </table>
+        <br>
+        <strong>Template WA — Transaksi SUCCESS:</strong>
+        <div class="wa-template">✅ Transaksi Berhasil!
+
+Produk   : Pulsa Telkomsel Rp 50.000
+Tujuan   : 0812-XXXX-XXXX
+Total    : Rp 50.500
+Ref      : GPP-20260611-0042
+
+Simpan nomor ini sebagai bukti transaksi.
+Butuh bantuan? Kunjungi gopop.id/bantuan</div>
+        <br>
+        <strong>Template WA — Transaksi FAILED:</strong>
+        <div class="wa-template">❌ Transaksi Gagal
+
+Ref      : GPP-20260611-0042
+Produk   : Pulsa Telkomsel Rp 50.000
+Alasan   : Layanan sedang gangguan
+
+Dana Rp 50.500 akan dikembalikan ke metode
+pembayaran kamu dalam 1×24 jam.
+
+Nomor tiket komplain: #TKT-20260611-0042
+Hubungi CS via Pusat Bantuan di app GoPop.</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- N RESELLER -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">N3</div>
+    <div class="flow-meta"><div class="flow-title">Notifikasi Reseller (Transaksi + Saldo + Bonus + Tier)</div></div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Matrix</span>
+      <span class="case-title">Semua event notifikasi untuk reseller</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis + Teknikal</div><div class="layer-content">
+        <table class="notif-table">
+          <tr><th>Event</th><th>WA</th><th>Push</th><th>In-App</th></tr>
+          <tr><td>Transaksi SUCCESS</td><td class="nt-yes">✅ <div class="nt-note">Struk + saldo sisa</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Transaksi FAILED + saldo rollback</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Saldo hampir habis (&lt;threshold)</td><td class="nt-yes">✅ <div class="nt-note">Maks 1x/hari</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Top up SUCCESS</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Top up FAILED/EXPIRED</td><td class="nt-no">—</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Bonus jaringan dikreditkan</td><td class="nt-no">— <div class="nt-note">In-app saja</div></td><td class="nt-no">—</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Bonus harian summary</td><td class="nt-yes">✅ <div class="nt-note">Jam 20.00 WIB</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Bonus di-reverse (koreksi)</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Tier naik</td><td class="nt-yes">✅ <div class="nt-note">Selamat + benefit</div></td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Mendekati tier berikutnya (90%)</td><td class="nt-no">—</td><td class="nt-yes">✅ <div class="nt-note">Motivasi</div></td><td class="nt-yes">✅</td></tr>
+          <tr><td>Tier diubah manual admin</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+          <tr><td>Downline baru bergabung</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td><td class="nt-yes">✅</td></tr>
+        </table>
+        <br>
+        <strong>Template WA — Bonus Harian:</strong>
+        <div class="wa-template">💰 Rekapitulasi Bonus Jaringan
+Hari ini, [tanggal]
+
+Total Bonus  : Rp 12.500
+Dari         : 8 transaksi downline
+Saldo kamu   : Rp 238.000
+
+Detail lengkap tersedia di app GoPop.</div>
+        <br>
+        <strong>Template WA — Tier Naik:</strong>
+        <div class="wa-template">🎉 Selamat! Kamu Naik ke Tier Gold!
+
+Omzet kamu telah mencapai Rp 25.000.000.
+Keuntungan kamu sekarang lebih besar:
+• HPP lebih murah untuk semua produk
+• Bonus jaringan lebih tinggi
+
+GoPop — Tumbuh Bersama Kamu</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- N OPT OUT -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">N4</div>
+    <div class="flow-meta"><div class="flow-title">Opt-Out & Rate Limiting</div></div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Rules</span>
+      <span class="case-title">Notifikasi mana yang bisa dimatikan user</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Tipe Notifikasi</th><th>Bisa Di-off?</th></tr>
+          <tr><td>OTP & security alert (login device baru, suspend)</td><td><span style="color:#DC2626;font-weight:700">❌ Tidak bisa</span></td></tr>
+          <tr><td>Struk transaksi sukses/gagal</td><td><span style="color:#DC2626;font-weight:700">❌ Tidak bisa</span></td></tr>
+          <tr><td>Refund confirmation</td><td><span style="color:#DC2626;font-weight:700">❌ Tidak bisa</span></td></tr>
+          <tr><td>Tier & bonus jaringan</td><td><span style="color:#16A34A;font-weight:700">✅ Bisa off</span></td></tr>
+          <tr><td>Saldo rendah reminder</td><td><span style="color:#16A34A;font-weight:700">✅ Bisa off</span></td></tr>
+          <tr><td>Promo & marketing</td><td><span style="color:#16A34A;font-weight:700">✅ Bisa off</span></td></tr>
+          <tr><td>Tips & info produk</td><td><span style="color:#16A34A;font-weight:700">✅ Bisa off</span></td></tr>
+        </table>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>Backend</div><div class="layer-content">Rate limit tracker di Redis: <code>notif:wa:{user_id}:{date}</code> → counter maks 5/hari. OTP dan security alert bypass rate limit selalu.<br><br><code>notif_preferences</code> per user di DB: JSON field <code>{ tier: true, bonus: true, promo: false, saldo_rendah: true }</code> → dicek sebelum kirim notif non-transaksional.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-notif -->
+
+<!-- ═══════════════════════════════════════════════════════ VALIDATION TAB -->
+<div id="tab-validation" class="tab-panel">
+
+<div class="val-banner warn">
+  <div class="val-icon">⚠️</div>
+  <div>
+    <div class="val-title">Catatan Metodologi</div>
+    <div class="val-desc">Validasi Figma dilakukan via MCP langsung (file key: bwdy1MflFyrW5S7vvIDTy0). Validasi dashboard dari clone repo GitHub ardabili22/gopop. Beberapa screens Figma tersimpan dalam Section (bukan top-level frame) sehingga perlu query mendalam — status di bawah sudah dikoreksi setelah verifikasi visual dari screenshot.</div>
+  </div>
+</div>
+
+<!-- FIGMA VALIDATION -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">F</div>
+    <div class="flow-meta">
+      <div class="flow-title">Validasi Figma — App End User</div>
+      <div class="flow-sub">File: bwdy1MflFyrW5S7vvIDTy0 · Semua screens 390px (mobile)</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Auth Flow</span>
+      <span class="case-title">Login, Register, Lupa Password, Profile</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Status per Screen</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Screen</th><th>Status Figma</th><th>Catatan</th></tr>
+          <tr><td>Login (berbagai state)</td><td><span class="fs fs-ok">✅ Ada</span></td><td>Dalam Section "Login" — ada state default, error password salah, akun dibekukan, verifying</td></tr>
+          <tr><td>Register / Daftar</td><td><span class="fs fs-ok">✅ Ada</span></td><td>Multi-step, ada validasi password kuat/lemah</td></tr>
+          <tr><td>Lupa Password</td><td><span class="fs fs-ok">✅ Ada</span></td><td>Ada screen "Lupa Password?" dan "Ubah Password"</td></tr>
+          <tr><td>OTP Verification</td><td><span class="fs fs-partial">⚠️ Belum konfirmasi</span></td><td>Belum terdeteksi eksplisit — perlu cek manual di Section Login</td></tr>
+          <tr><td>Profile view</td><td><span class="fs fs-ok">✅ Ada</span></td><td>Dalam Section "Profile" — ada profile view, edit profile, ganti password</td></tr>
+          <tr><td>Pengaturan / Notifikasi</td><td><span class="fs fs-missing">❌ Belum ada</span></td><td>Belum terdeteksi di file</td></tr>
+        </table>
+        <div class="note" style="margin-top:8px"><strong>Temuan kritis:</strong> Masih ada label <strong>"muurah"</strong> di beberapa text node dalam section Login dan Profile. Perlu rename ke "gopop" sebelum handoff ke dev.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Transaction Flow</span>
+      <span class="case-title">Semua produk PPOB</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Status per Produk</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Produk</th><th>Input</th><th>Inquiry</th><th>Checkout</th><th>Sukses</th><th>Gagal</th></tr>
+          <tr><td>Transfer E-Wallet</td><td><span class="fs fs-ok">✅</span> 3 versi</td><td>N/A</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span> 2 versi</td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>Pulsa & Data</td><td><span class="fs fs-ok">✅</span></td><td>N/A</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>BPJS Kesehatan</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>BPJS Ketenagakerjaan</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>Internet & TV</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>Voucher Game</td><td><span class="fs fs-ok">✅</span> ML + FF</td><td>N/A</td><td>N/A</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>PDAM</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span> 2 versi</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+          <tr><td>Token Listrik</td><td><span class="fs fs-ok">✅</span> 2 versi</td><td>N/A</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span> 2 error spesifik</td></tr>
+          <tr><td>PBB</td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-ok">✅</span></td><td><span class="fs fs-partial">⚠️ Generik</span></td></tr>
+        </table>
+        <div class="note" style="margin-top:8px"><strong>Token Listrik paling matang</strong> — punya error screen spesifik (Sistem Sibuk, Tidak Ada Tagihan). Ini bisa jadi pattern untuk produk lain. <br><br><strong>Payment Instruction screen</strong> (QRIS, VA, e-wallet deeplink) — belum terdeteksi sebagai frame tersendiri. Kemungkinan ada di dalam frame Checkout tapi perlu konfirmasi.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">Lain-lain</span>
+      <span class="case-title">Riwayat, Bantuan, Tips & Promo, Homepage</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Status</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Screen</th><th>Status</th><th>Catatan</th></tr>
+          <tr><td>Homepage</td><td><span class="fs fs-partial">⚠️ 13 versi</span></td><td>Terlalu banyak iterasi — perlu dikunci versi final sebelum dev implement</td></tr>
+          <tr><td>Layanan - Semua</td><td><span class="fs fs-ok">✅</span></td><td>3 tab: Transfer, Semua, Tagihan</td></tr>
+          <tr><td>Riwayat Transaksi</td><td><span class="fs fs-ok">✅</span></td><td>List + Detail (2 versi)</td></tr>
+          <tr><td>Pusat Bantuan</td><td><span class="fs fs-ok">✅</span></td><td>Sesuai screenshot yang lo share — form WA + kategori</td></tr>
+          <tr><td>Live Chat</td><td><span class="fs fs-ok">✅</span></td><td>Ada screen tersendiri</td></tr>
+          <tr><td>Tips & Promo</td><td><span class="fs fs-ok">✅</span></td><td>Listing + Detail artikel</td></tr>
+          <tr><td>Status Processing</td><td><span class="fs fs-ok">✅</span></td><td>Frame "04 - Status - Cek Transaksi" — ada state loading/processing</td></tr>
+          <tr><td>Status Gagal Generik</td><td><span class="fs fs-ok">✅</span></td><td>Frame "05h - Status - Transaksi Gagal"</td></tr>
+          <tr><td>Splash / Onboarding</td><td><span class="fs fs-missing">❌ Belum ada</span></td><td>Tidak ada frame splash screen atau onboarding flow</td></tr>
+          <tr><td>Notifikasi (in-app)</td><td><span class="fs fs-missing">❌ Belum ada</span></td><td>Tidak ada notification center screen</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VALIDATION -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#FF6B4A">D</div>
+    <div class="flow-meta">
+      <div class="flow-title">Validasi Dashboard — Repo ardabili22/gopop</div>
+      <div class="flow-sub">Live di: gopop-lilac.vercel.app · Auto-deploy dari branch main</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">🔴 Kritis</span>
+      <span class="case-title">Mismatch yang harus difix sebelum launch</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Detail Mismatch</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>#</th><th>File</th><th>Masalah</th><th>Seharusnya</th></tr>
+          <tr><td><strong>M1</strong></td><td><code>reseller.jsx</code></td><td>Masih pakai terminologi "Komisi" dan tab "Pencairan Komisi"</td><td>Model bisnis adalah margin — tidak ada komisi, tidak ada pencairan. Ganti ke "Keuntungan" dan hapus tab pencairan</td></tr>
+          <tr><td><strong>M2</strong></td><td><code>reseller.jsx</code></td><td>Ada withdrawal system ke bank/e-wallet untuk "komisi"</td><td>Tidak ada withdrawal — profit reseller dari selisih harga jual vs HPP real-time</td></tr>
+          <tr><td><strong>M3</strong></td><td><code>reseller.jsx</code></td><td>Tier berbasis omzet <strong>bulanan</strong> ("syarat omzet Rp 25jt/bln")</td><td>Tier berbasis omzet <strong>kumulatif all-time</strong> — tidak pernah reset</td></tr>
+          <tr><td><strong>M4</strong></td><td><code>transaksi.jsx</code></td><td>Status: <code>sukses</code>, <code>gagal</code>, <code>processing</code> (lowercase Indonesian)</td><td>Harus konsisten: <code>SUCCESS</code>, <code>FAILED</code>, <code>PROCESSING</code>, <code>PENDING</code>, <code>EXPIRED</code></td></tr>
+          <tr><td><strong>M5</strong></td><td><code>transaksi.jsx</code></td><td>Tidak ada field <code>source_channel</code> di data transaksi</td><td>Wajib ada: <code>"web_consumer"</code> | <code>"app_consumer"</code> | <code>"seller_app"</code> | <code>"admin_manual"</code></td></tr>
+          <tr><td><strong>M6</strong></td><td><code>komplain.jsx</code></td><td>Channel komplain: <code>"email"</code> dan <code>"telegram"</code></td><td>Channel yang valid: form Pusat Bantuan (via WA) — sesuai Figma</td></tr>
+          <tr><td><strong>M7</strong></td><td><code>index.html</code></td><td>Title masih: <strong>"muurah.com · Admin Dashboard"</strong></td><td>Harus: <strong>"gopop · Admin Dashboard"</strong></td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">🟡 Missing</span>
+      <span class="case-title">Fitur yang belum ada di dashboard tapi dibutuhkan flow</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Feature Gap</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Fitur</th><th>Dibutuhkan oleh Flow</th><th>PIC Dev</th></tr>
+          <tr><td>Status <code>EXPIRED</code> untuk transaksi</td><td>T2-A, T2-B</td><td>Isal/Fikly</td></tr>
+          <tr><td>Tab "Perlu Perhatian" — PROCESSING stuck &gt;15 menit</td><td>T3-D, AC4</td><td>Rifky + Isal</td></tr>
+          <tr><td>Tombol "Retry ke Biller" di detail transaksi</td><td>AC3-B</td><td>Isal</td></tr>
+          <tr><td>Tombol "Refund Manual" di detail transaksi</td><td>AC3-C, T4</td><td>Agung + Isal</td></tr>
+          <tr><td>Tombol "Cek Status ke Xendit" manual</td><td>T2-D, R1-B</td><td>Isal/Rifky</td></tr>
+          <tr><td>Alert otomatis biller down (threshold detection)</td><td>AC4-A</td><td>Rifky + Ipong</td></tr>
+          <tr><td>Bonus ledger & reversal tracking</td><td>R3-A</td><td>Agung + Isal</td></tr>
+          <tr><td>Tier history per reseller</td><td>R2</td><td>Isal</td></tr>
+          <tr><td>Activity log per aksi admin (audit trail)</td><td>AC3, AC5</td><td>Isal/Irwan</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">✅ Sudah Ada</span>
+      <span class="case-title">Fitur dashboard yang sudah sesuai dokumen case flow</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Confirmed</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Modul</th><th>Status</th></tr>
+          <tr><td>Master Data (7 sub-menu: Produk, Kategori, Operator, Biller, Prefix, Zona, dll)</td><td><span class="fs fs-ok">✅ Lengkap</span></td></tr>
+          <tr><td>Komplain & Tiket (status, prioritas, internal notes, thread)</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Monitoring Transaksi (filter, search, export)</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>CMS dengan tab split per platform</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Role & Tim dengan RBAC</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Promo Harga Produk</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Rekonsiliasi & Settlement</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Saldo & Limit Biller (4-status zonasi)</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+          <tr><td>Global Stores (Kategori, Operator, Supplier, Channel, Bank, dll)</td><td><span class="fs fs-ok">✅ Ada</span></td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-validation -->
+
+<!-- ═══════════════════════════════════════════════════════ BACKLOG TAB -->
+<div id="tab-backlog" class="tab-panel">
+
+<div class="val-banner">
+  <div class="val-icon">🔧</div>
+  <div>
+    <div class="val-title">Design & Dev Backlog</div>
+    <div class="val-desc">Item-item yang perlu diselesaikan sebelum sistem bisa dianggap production-ready. Diurutkan berdasarkan dampak ke user dan risiko bisnis. Setiap item punya owner yang jelas.</div>
+  </div>
+</div>
+
+<!-- DESIGN BACKLOG -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">🎨</div>
+    <div class="flow-meta">
+      <div class="flow-title">Design Backlog — Figma</div>
+      <div class="flow-sub">Screen yang perlu dibuat atau difinalisasi di Figma sebelum handoff ke dev</div>
+    </div>
+  </div>
+
+  <div class="backlog-grid">
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical</span></div>
+      <div class="bi-title">Lock versi final Homepage</div>
+      <div class="bi-desc">Ada 13 iterasi "00 - Homepage" di Figma. Dev tidak tahu mana yang harus diimplementasikan. Perlu satu frame final yang di-mark sebagai "FINAL" dan sisanya diarsipkan.</div>
+      <div class="bi-owner">Owner: <span>Bili (Product)</span> · Target: sebelum dev sprint berikutnya</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical</span></div>
+      <div class="bi-title">Rename semua "muurah" → "gopop" di Figma</div>
+      <div class="bi-desc">Masih ada label "muurah" di text nodes dalam section Login, Profile, dan beberapa frame lain. Harus di-replace sebelum developer membaca spec.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Bisa dilakukan via Find & Replace di Figma</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical</span></div>
+      <div class="bi-title">Payment Instruction screen (QRIS, VA, E-Wallet)</div>
+      <div class="bi-desc">Belum ada frame tersendiri untuk Payment Instruction — layar yang muncul setelah pilih metode bayar dengan kode bayar + countdown timer. Ini screen yang paling sering dilihat user saat transaksi.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Flow: T1 Happy Path step 5</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical</span></div>
+      <div class="bi-title">OTP Verification screen</div>
+      <div class="bi-desc">Belum ada frame eksplisit untuk input OTP setelah register atau forgot password. Perlu screen dengan 6 kotak OTP + countdown timer + tombol "Kirim Ulang".</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Flow: A1-E2, A5 Happy Path</div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Transaksi Gagal — screen per kategori error</div>
+      <div class="bi-desc">Saat ini hanya ada 1 screen generik (05h). Perlu dibedakan minimal: (1) Nomor tidak valid, (2) Operator/layanan gangguan, (3) Timeout/sistem sibuk. Token Listrik sudah punya pattern ini — tinggal replikasi.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Referensi: frame 21b & 21c Token Listrik</div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Refund Status screen</div>
+      <div class="bi-desc">Tidak ada screen yang menunjukkan status "Dana sedang dikembalikan" atau "Refund berhasil". User perlu tahu statusnya tanpa harus tanya ke CS.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Flow: T4</div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Pengaturan Notifikasi screen</div>
+      <div class="bi-desc">User perlu bisa toggle notif promo/bonus/saldo rendah dari dalam app. Sesuai aturan opt-out di dokumen N9.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Flow: N4 Opt-Out</div>
+    </div>
+    <div class="backlog-item low">
+      <div class="bi-header"><span class="bi-tag low">⚪ Low</span></div>
+      <div class="bi-title">Splash screen / Onboarding</div>
+      <div class="bi-desc">Belum ada screen pertama yang dilihat user saat buka app untuk pertama kali. Bisa berupa animasi logo atau 3-step onboarding singkat.</div>
+      <div class="bi-owner">Owner: <span>Designer + Kayong (Marketing)</span></div>
+    </div>
+    <div class="backlog-item low">
+      <div class="bi-header"><span class="bi-tag low">⚪ Low</span></div>
+      <div class="bi-title">Notification Center screen</div>
+      <div class="bi-desc">Belum ada screen in-app notification list. User perlu bisa lihat riwayat notif yang sudah diterima.</div>
+      <div class="bi-owner">Owner: <span>Designer</span> · Flow: N (semua)</div>
+    </div>
+  </div>
+</div>
+
+<!-- DEV BACKLOG DASHBOARD -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#FF6B4A">⚙️</div>
+    <div class="flow-meta">
+      <div class="flow-title">Dev Backlog — Dashboard (repo: ardabili22/gopop)</div>
+      <div class="flow-sub">Fix dan fitur yang perlu diimplementasikan di dashboard</div>
+    </div>
+  </div>
+
+  <div class="backlog-grid">
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical Fix</span></div>
+      <div class="bi-title">Fix: Rename "muurah.com" → "gopop" di seluruh dashboard</div>
+      <div class="bi-desc">Title di index.html masih "muurah.com · Admin Dashboard". Cek seluruh codebase untuk semua referensi "muurah" yang perlu diganti ke "gopop".</div>
+      <div class="bi-owner">Owner: <span>Isal/Fikly</span> · File: index.html + semua .jsx</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical Fix</span></div>
+      <div class="bi-title">Fix: Reseller model dari komisi → margin</div>
+      <div class="bi-desc">reseller.jsx masih pakai "Komisi", "Pencairan Komisi", withdrawal system. Harus diubah total ke margin model: reseller profit dari selisih harga jual vs HPP, tidak ada pencairan terpisah.</div>
+      <div class="bi-owner">Owner: <span>Isal</span> · Konfirmasi bisnis: Bili</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical Fix</span></div>
+      <div class="bi-title">Fix: Tier dari omzet bulanan → kumulatif all-time</div>
+      <div class="bi-desc">Logic tier di reseller.jsx harus diubah dari monthly reset ke cumulative all-time. Field yang perlu ditambah: total_omzet di wallet table, tidak pernah reset.</div>
+      <div class="bi-owner">Owner: <span>Isal/Rifky</span></div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical Fix</span></div>
+      <div class="bi-title">Fix: Status transaksi enum — standarisasi</div>
+      <div class="bi-desc">Ganti semua status Indonesian lowercase ke English uppercase: sukses→SUCCESS, gagal→FAILED, processing→PROCESSING. Tambah status baru: EXPIRED, CANCELLED, REFUNDED. Harus konsisten di frontend, backend, dan notif.</div>
+      <div class="bi-owner">Owner: <span>Isal/Irwan</span> · Koordinasi: Rifky (rekon)</div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical</span></div>
+      <div class="bi-title">Add: Field source_channel di semua transaksi</div>
+      <div class="bi-desc">Setiap transaksi harus ter-tag: "web_consumer" | "app_consumer" | "seller_app" | "admin_manual". Tanpa ini rekonsiliasi Rifky tidak bisa memisahkan channel.</div>
+      <div class="bi-owner">Owner: <span>Irwan (backend) + Isal (dashboard)</span></div>
+    </div>
+    <div class="backlog-item">
+      <div class="bi-header"><span class="bi-tag critical">🔴 Critical Fix</span></div>
+      <div class="bi-title">Fix: Channel komplain dari email/telegram → WA</div>
+      <div class="bi-desc">komplain.jsx masih punya channel "email" dan "telegram". Sesuai Figma Pusat Bantuan, channel komplain adalah form dengan nomor WA. Update enum channel di komplain module.</div>
+      <div class="bi-owner">Owner: <span>Isal</span></div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Add: Tab "Perlu Perhatian" di Monitoring Transaksi</div>
+      <div class="bi-desc">Filter otomatis untuk: transaksi PROCESSING &gt;15 menit + transaksi FAILED yang belum di-refund. Ini yang Rifky butuhkan untuk monitoring harian.</div>
+      <div class="bi-owner">Owner: <span>Isal</span> · PIC monitoring: Rifky</div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Add: Tombol aksi manual di detail transaksi</div>
+      <div class="bi-desc">3 tombol yang perlu ditambah: (1) "Retry ke Biller" — untuk Ops, (2) "Update Status Manual" — untuk Ops/Super Admin, (3) "Proses Refund" — untuk Finance. Semua dengan RBAC dan activity log.</div>
+      <div class="bi-owner">Owner: <span>Isal</span> · Koordinasi: Acoy + Agung</div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Add: Activity log / Audit trail</div>
+      <div class="bi-desc">Setiap aksi sensitif (refund, manual override, suspend, tier change) harus tercatat: siapa admin, aksi apa, kapan, alasan. Tampil di detail transaksi/reseller sebagai timeline.</div>
+      <div class="bi-owner">Owner: <span>Irwan (backend) + Isal (frontend)</span></div>
+    </div>
+    <div class="backlog-item medium">
+      <div class="bi-header"><span class="bi-tag medium">🟡 Medium</span></div>
+      <div class="bi-title">Add: Alert otomatis biller down</div>
+      <div class="bi-desc">Deteksi otomatis ketika error rate biller &gt;threshold dalam waktu tertentu. Alert banner merah di dashboard + notif ke Ipong. Threshold: perlu keputusan (AC-G4).</div>
+      <div class="bi-owner">Owner: <span>Rifky + Isal</span> · Konfirmasi: Ipong</div>
+    </div>
+    <div class="backlog-item low">
+      <div class="bi-header"><span class="bi-tag low">⚪ Low</span></div>
+      <div class="bi-title">Add: Bonus ledger & tier history di profil reseller</div>
+      <div class="bi-desc">Tab tambahan di detail reseller: (1) Riwayat tier naik/turun dengan timestamp dan alasan, (2) Bonus ledger — semua kredit/debit bonus dengan referensi transaksi downline.</div>
+      <div class="bi-owner">Owner: <span>Isal</span> · PIC: Agung Finance</div>
+    </div>
+    <div class="backlog-item low">
+      <div class="bi-header"><span class="bi-tag low">⚪ Low</span></div>
+      <div class="bi-title">Add: "Cek Status ke Xendit" manual di topup pending</div>
+      <div class="bi-desc">Di list topup reseller yang pending &gt;10 menit: tombol pull manual status dari Xendit. Untuk CS/Finance ketika reseller komplain saldo belum masuk.</div>
+      <div class="bi-owner">Owner: <span>Isal</span> · PIC: CS + Agung</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-backlog -->
+
+<div id="tab-gaps" class="tab-panel">
+
+<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;">
+  <span style="font-size:20px">⚠️</span>
+  <div>
+    <div style="font-size:14px;font-weight:700;color:#92400E;margin-bottom:4px">31 Keputusan Bisnis yang Harus Dijawab</div>
+    <div style="font-size:12px;color:#B45309;line-height:1.6">Semua item di bawah adalah keputusan yang belum ada jawaban finalnya. Dev tidak bisa implement dengan benar sebelum pertanyaan-pertanyaan ini dijawab. Tandai satu per satu setelah ada keputusan dari stakeholder terkait.</div>
+  </div>
+</div>
+
+<div class="gap-section">
+  <div class="gap-section-header"><div><div class="title">🔐 Auth Flow (A-G1 s/d A-G5)</div><div class="sub">PIC utama: Bili + Rifky + Irwan</div></div></div>
+  <div class="gap-row"><div class="code">A-G1</div><div class="q">1 nomor HP bisa jadi consumer sekaligus reseller? Atau harus pilih salah satu? Kalau bisa, bagaimana cara switch dan apakah data consumer carry over?</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">A-G2</div><div class="q">OTP hanya via WA atau ada fallback SMS kalau WA tidak terdeliver? Kalau ada SMS fallback, siapa provider-nya dan berapa biayanya?</div><div class="pic">Bili + Irwan</div></div>
+  <div class="gap-row"><div class="code">A-G3</div><div class="q">Durasi refresh token: apakah sama untuk consumer dan reseller (30 hari)? Atau reseller lebih pendek karena security sensitif?</div><div class="pic">Bili + Rifky</div></div>
+  <div class="gap-row"><div class="code">A-G4</div><div class="q">PIN reseller disimpan hashed di server (lebih aman) atau di device (lebih cepat)? Trade-off: server = butuh internet untuk verify PIN, device = bisa diakali kalau HP di-root.</div><div class="pic">Rifky + Irwan</div></div>
+  <div class="gap-row"><div class="code">A-G5</div><div class="q">Kalau reseller/consumer ganti nomor HP, bagaimana flow verifikasinya? Perlu verifikasi nomor lama dulu atau cukup OTP ke nomor baru?</div><div class="pic">Bili + Rifky</div></div>
+</div>
+
+<div class="gap-section">
+  <div class="gap-section-header"><div><div class="title">💳 Transaction Flow (T-G1 s/d T-G6)</div><div class="sub">PIC utama: Bili + Agung Finance + Rifky + Acoy</div></div></div>
+  <div class="gap-row"><div class="code">T-G1</div><div class="q">SLA refund yang dijanjikan ke user: 1×24 jam atau real-time? Ini yang tertulis di copy WA dan app. Harus realistis sesuai kemampuan Xendit dan bank.</div><div class="pic">Bili + Agung</div></div>
+  <div class="gap-row"><div class="code">T-G2</div><div class="q">Kalau biller stuck dan tidak bisa dikonfirmasi (unknown state), GoPop refund otomatis setelah berapa jam? Ini menentukan kapan user dapat kepastian dan berapa lama uang "floating."</div><div class="pic">Bili + Rifky</div></div>
+  <div class="gap-row"><div class="code">T-G3</div><div class="q">Saat transaksi di-refund, apakah fee Rp 1.000 (e-wallet) dan biaya admin lainnya juga dikembalikan full? Atau hanya nominal produk?</div><div class="pic">Bili + Agung</div></div>
+  <div class="gap-row"><div class="code">T-G4</div><div class="q">Berapa kali maksimal retry ke biller sebelum dianggap gagal total dan trigger refund? Semakin banyak retry = user lebih lama menunggu, tapi peluang sukses lebih besar.</div><div class="pic">Rifky + Ipong</div></div>
+  <div class="gap-row"><div class="code">T-G5</div><div class="q">Kalau transaksi reseller gagal di biller, apakah saldo otomatis rollback (tanpa perlu komplain) atau reseller harus ajukan tiket dulu? Rekomendasi: otomatis rollback.</div><div class="pic">Bili + Acoy</div></div>
+  <div class="gap-row"><div class="code">T-G6</div><div class="q">Untuk guest, apakah email tetap perlu dikumpulkan di checkout? Update: komplain guest sudah bisa via WA (form Pusat Bantuan). Apakah email masih diperlukan untuk keperluan lain?</div><div class="pic">Bili + Acoy</div></div>
+</div>
+
+<div class="gap-section">
+  <div class="gap-section-header"><div><div class="title">🏪 Reseller Flow (R-G1 s/d R-G8)</div><div class="sub">PIC utama: Bili + Agung Finance + Acoy</div></div></div>
+  <div class="gap-row"><div class="code">R-G1</div><div class="q">Berapa threshold omzet kumulatif untuk setiap tier? (Bronze/Silver/Gold/Platinum). Ini menentukan kecepatan progression dan seberapa besar insentif yang dirasakan reseller.</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">R-G2</div><div class="q">Berapa % bonus jaringan per tier? Ini langsung mempengaruhi margin GoPop. Perlu kalkulasi break-even dari Agung Finance.</div><div class="pic">Bili + Agung</div></div>
+  <div class="gap-row"><div class="code">R-G3</div><div class="q">Minimum top up saldo reseller berapa rupiah? Perlu cukup tinggi agar tidak terlalu sering top up, tapi tidak terlalu tinggi agar bisa dijangkau warung kecil.</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">R-G4</div><div class="q">Kalau upline di-suspend, apakah bonus dari downline tetap masuk ke wallet mereka (tapi tidak bisa dipakai) atau di-hold sampai akun aktif kembali?</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">R-G5</div><div class="q">Ada batas maksimal downline per reseller atau unlimited? Kalau ada limit, berapa? Ini mempengaruhi potensi pendapatan reseller tier atas.</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">R-G6</div><div class="q">Referral code bisa diganti sendiri oleh reseller atau fixed selamanya? Kalau bisa ganti, apakah referral lama yang sudah dipakai orang lain tetap berlaku?</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">R-G7</div><div class="q">Notif bonus jaringan dikirim real-time per transaksi atau batched harian? Rekomendasi sudah ada di dokumen: batched harian jam 20.00 untuk cegah spam. Konfirmasi Bili + Acoy.</div><div class="pic">Bili + Acoy</div></div>
+  <div class="gap-row"><div class="code">R-G8</div><div class="q">Saldo reseller bisa minus (akibat bonus reversal) atau ada hard floor Rp 0? Kalau hard floor, transaksi baru di-block sampai saldo positif kembali.</div><div class="pic">Bili + Agung</div></div>
+</div>
+
+<div class="gap-section">
+  <div class="gap-section-header"><div><div class="title">⚙️ Admin & CS Flow (AC-G1 s/d AC-G7)</div><div class="sub">PIC utama: Bili + Agung + Acoy + Rifky + Ipong</div></div></div>
+  <div class="gap-row"><div class="code">AC-G1</div><div class="q">SLA respons tiket berbeda per priority atau flat 1×24 jam semua? Rekomendasi: beda per priority (Urgent=1 jam, High=2 jam, Medium=4 jam, Low=24 jam). Perlu konfirmasi Acoy soal kapasitas CS.</div><div class="pic">Bili + Acoy</div></div>
+  <div class="gap-row"><div class="code">AC-G2</div><div class="q">Siapa yang bisa approve refund manual? Hanya Finance (Agung) atau Ops (Acoy) juga? Berapa threshold nominal yang butuh approval Super Admin?</div><div class="pic">Bili + Agung</div></div>
+  <div class="gap-row"><div class="code">AC-G3</div><div class="q">Kalau biller primary down, switch ke backup otomatis atau harus Ipong yang decide secara manual? Trade-off: auto lebih cepat, manual lebih kontrol.</div><div class="pic">Bili + Ipong</div></div>
+  <div class="gap-row"><div class="code">AC-G4</div><div class="q">Berapa error rate % dan dalam berapa menit untuk trigger alert biller down? Misal: &gt;20% error dalam 15 menit. Terlalu sensitif = false alarm, terlalu longgar = deteksi lambat.</div><div class="pic">Rifky + Ipong</div></div>
+  <div class="gap-row"><div class="code">AC-G5</div><div class="q">Rekonsiliasi dengan Ayoconnect via upload CSV manual atau ada API yang bisa di-pull otomatis? Kalau API tersedia, jadwal pull otomatis jam berapa?</div><div class="pic">Rifky + Ipong</div></div>
+  <div class="gap-row"><div class="code">AC-G6</div><div class="q">CS bisa lihat nominal transaksi reseller (HPP) dan data keuangan sensitif lainnya? Atau CS hanya lihat status dan info dasar, tidak lihat margin/HPP?</div><div class="pic">Bili</div></div>
+  <div class="gap-row"><div class="code">AC-G7</div><div class="q">Berapa jam transaksi PROCESSING dianggap stuck dan perlu di-flag ke dashboard? Rekomendasi: 15 menit. Terlalu cepat = terlalu banyak false alarm.</div><div class="pic">Rifky + Acoy</div></div>
+</div>
+
+<div class="gap-section">
+  <div class="gap-section-header"><div><div class="title">🔔 Notification Flow (N-G1 s/d N-G7)</div><div class="sub">PIC utama: Bili + Rifky + Irwan + Acoy + Kayong</div></div></div>
+  <div class="gap-row"><div class="code">N-G1</div><div class="q">Threshold default "saldo hampir habis" berapa? Rp 50.000? Atau berbeda per tier? Dan apakah reseller bisa set sendiri threshold-nya dari pengaturan?</div><div class="pic">Bili + Acoy</div></div>
+  <div class="gap-row"><div class="code">N-G2</div><div class="q">Bonus harian summary dikirim jam berapa? Rekomendasi: jam 20.00 WIB. Perlu konfirmasi Bili dan Kayong — sesuai strategi engagement marketing.</div><div class="pic">Bili + Kayong</div></div>
+  <div class="gap-row"><div class="code">N-G3</div><div class="q">Apakah akan ada notif promo/marketing blast ke semua user? Siapa yang approve sebelum dikirim? Perlu flow approval konten marketing sebelum blast.</div><div class="pic">Bili + Kayong</div></div>
+  <div class="gap-row"><div class="code">N-G4</div><div class="q">WA Business API pakai nomor GoPop sendiri (self-managed) atau via BSP (Business Solution Provider seperti Wablas, Zenziva)? BSP lebih mudah tapi ada biaya tambahan per pesan.</div><div class="pic">Rifky + Irwan</div></div>
+  <div class="gap-row"><div class="code">N-G5</div><div class="q">Kalau WA gagal dikirim (nomor tidak aktif atau chat tidak bisa diinisiasi), ada fallback SMS? Kalau ya, provider SMS mana? Kalau tidak, bagaimana user tahu ada update?</div><div class="pic">Bili + Rifky</div></div>
+  <div class="gap-row"><div class="code">N-G6</div><div class="q">Maksimal berapa pesan WA per hari per user sebelum dianggap spam? Rekomendasi awal: 5 pesan. Perlu di-test dan disesuaikan berdasarkan data opt-out.</div><div class="pic">Rifky</div></div>
+  <div class="gap-row"><div class="code">N-G7</div><div class="q">Internal alert kalau biller down dikirim via WA grup internal, email tim, atau cukup notif di dashboard saja? Ops dan Ipong perlu tahu bahkan saat tidak buka dashboard.</div><div class="pic">Acoy + Ipong</div></div>
+</div>
+
+</div><!-- end tab-gaps -->
+
+</div><!-- end content -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>GoPop · Case Flow Playbook v1.1 · <span>Juni 2026</span></p>
+  <p style="margin-top:4px">Auth · Transaksi · Reseller · Admin & CS · Notifikasi · Validasi Figma & Dashboard · Design Backlog · 31 Gap Decisions</p>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleCase(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.case-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+function toggleLayer(layer, btn) {
+  btn.classList.toggle('active');
+  const isActive = btn.classList.contains('active');
+  if (isActive) {
+    document.body.classList.remove('hide-' + layer);
+  } else {
+    document.body.classList.add('hide-' + layer);
+  }
+}
+
+// Open all cases by default
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.case-body').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.case-toggle').forEach(t => t.classList.add('open'));
+});
+</script>
+</body>
+</html>
