@@ -226,6 +226,7 @@ body.hide-dash .layer.dash{display:none;}
   <button class="nav-btn" onclick="showTab('notif',this)">🔔 Notifikasi</button>
   <button class="nav-btn" onclick="showTab('validation',this)">✅ Validasi</button>
   <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Backlog</button>
+  <button class="nav-btn" onclick="showTab('journey',this)">🔗 Journey Map</button>
   <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Decisions</button>
 </nav>
 
@@ -1880,6 +1881,246 @@ GoPop — Tumbuh Bersama Kamu</div>
 </div>
 
 </div><!-- end tab-backlog -->
+
+<!-- ═══════════════════════════════════════════════════════ JOURNEY MAP TAB -->
+<div id="tab-journey" class="tab-panel">
+
+<div class="val-banner">
+  <div class="val-icon">🔗</div>
+  <div>
+    <div class="val-title">Journey Map — Flow Antar Sistem</div>
+    <div class="val-desc">Bagaimana satu kejadian menyambung ke flow lain. Kode dalam tanda kurung (T3-A, AC1, dll) merujuk ke detail di tab masing-masing. Ini adalah skenario nyata yang melibatkan lebih dari satu sistem dan lebih dari satu tim.</div>
+  </div>
+</div>
+
+<!-- J1 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">J1</div>
+    <div class="flow-meta">
+      <div class="flow-title">Consumer — Transaksi Gagal Setelah Bayar</div>
+      <div class="flow-sub">Skenario paling kritis · User → Backend → Biller → CS → Finance</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">End-to-End</span>
+      <span class="case-title">Sudah bayar → produk tidak terkirim → refund → selesai</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">1</div><div class="step-body"><div class="t">User bayar → PAID <code>(T1)</code></div><div class="d">Payment gateway konfirmasi → backend kirim ke biller</div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">2</div><div class="step-body"><div class="t">Biller gagal → auto retry → semua gagal → FAILED <code>(T3-A/B/C)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEF3C7;color:#92400E">3</div><div class="step-body"><div class="t">Auto-refund di-trigger → WA notif ke user <code>(T4, N2)</code></div><div class="d">"Dana Rp X akan dikembalikan dalam 1×24 jam"</div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">4</div><div class="step-body"><div class="t">Rifky monitor di dashboard <code>(AC4)</code></div><div class="d">Kalau refund berhasil → tidak perlu aksi tambahan</div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">5a</div><div class="step-body"><div class="t">User komplain → tiket masuk ke CS <code>(AC1)</code></div><div class="d">CS cek status refund → update user via WA</div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">5b</div><div class="step-body"><div class="t">Auto-refund gagal → CS eskalasi ke Finance <code>(AC1-A, AC3-C)</code></div><div class="d">Agung proses refund manual dari dashboard</div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">6</div><div class="step-body"><div class="t">Refund selesai → WA notif → tiket closed</div></div></li>
+        </ul>
+      </div></div>
+      <div class="layer dash"><div class="layer-title"><div class="dot"></div>Siapa Terlibat</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Siapa</th><th>Aksi</th><th>Kapan</th></tr>
+          <tr><td>Sistem (auto)</td><td>Retry biller, trigger refund, WA notif</td><td>Segera setelah FAILED</td></tr>
+          <tr><td>Rifky</td><td>Monitor status di dashboard</td><td>Real-time</td></tr>
+          <tr><td>CS</td><td>Handle tiket jika user komplain</td><td>Saat tiket masuk</td></tr>
+          <tr><td>Agung</td><td>Approve refund manual jika auto-refund gagal</td><td>Saat dieskala CS</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- J2 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">J2</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaksi Stuck PROCESSING</div>
+      <div class="flow-sub">Status tidak berubah · Backend → Ops → CS → Biller</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-warn">End-to-End</span>
+      <span class="case-title">Bayar sukses → PROCESSING tidak berubah → investigasi → resolve</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#FEF3C7;color:#92400E">1</div><div class="step-body"><div class="t">Bayar → PAID → kirim ke biller → tidak ada response <code>(T3-D)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEF3C7;color:#92400E">2</div><div class="step-body"><div class="t">Scheduler &gt;15 menit → pull status ke biller + WA reassurance ke user <code>(T3-D, N2)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">3</div><div class="step-body"><div class="t">Flag PROCESSING_STUCK muncul di dashboard → notif Rifky & Acoy <code>(AC4)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">4a</div><div class="step-body"><div class="t">Biller konfirmasi SUKSES → update SUCCESS → WA notif user <code>(AC3-A)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">4b</div><div class="step-body"><div class="t">Biller konfirmasi GAGAL → FAILED → auto-refund <code>(T4)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">4c</div><div class="step-body"><div class="t">Biller tidak bisa dikonfirmasi → Acoy investigate manual <code>(AC3-A, AC3-B)</code></div><div class="d">Retry manual atau force-update status dari dashboard</div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">5</div><div class="step-body"><div class="t">Status final → user di-notif → tiket closed jika ada</div></div></li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- J3 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">J3</div>
+    <div class="flow-meta">
+      <div class="flow-title">Reseller — Onboarding sampai Transaksi Pertama</div>
+      <div class="flow-sub">Journey lengkap reseller baru · Dileh → Admin → Reseller → Biller</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">End-to-End</span>
+      <span class="case-title">Daftar → Approved → Top Up → Transaksi Pertama → Mulai Tier</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">1</div><div class="step-body"><div class="t">Reseller daftar via app <code>(A3)</code></div><div class="d">Nama, nomor HP, nama usaha, kode referral (opsional) → PENDING_APPROVAL</div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">2</div><div class="step-body"><div class="t">Admin approve di dashboard → WA otomatis ke reseller <code>(A3 Dashboard)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">3</div><div class="step-body"><div class="t">Login → Top Up saldo via Xendit <code>(A4, R1)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">4</div><div class="step-body"><div class="t">Transaksi pertama → HPP tier Bronze → potong saldo <code>(T5)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">5</div><div class="step-body"><div class="t">Omzet tercatat → progress tier mulai berjalan <code>(R2)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">6</div><div class="step-body"><div class="t">Kalau pakai referral → upline dapat bonus otomatis <code>(R3)</code></div></div></li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- J4 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">J4</div>
+    <div class="flow-meta">
+      <div class="flow-title">Biller Primary Down — Deteksi sampai Recovery</div>
+      <div class="flow-sub">Gangguan sistem · Backend → Ipong → Acoy → Kayong → User</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-error">End-to-End</span>
+      <span class="case-title">Banyak transaksi gagal → deteksi → switch biller → recovery</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">1</div><div class="step-body"><div class="t">Banyak transaksi gagal di biller yang sama <code>(T3-C)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEF3C7;color:#92400E">2</div><div class="step-body"><div class="t">Threshold error rate terlampaui → alert otomatis ke Ipong & Acoy <code>(AC4-A)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">3</div><div class="step-body"><div class="t">Ipong switch ke biller backup dari dashboard <code>(AC4-A)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">4</div><div class="step-body"><div class="t">Kayong update CMS → banner maintenance di app/web <code>(AC5)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">5</div><div class="step-body"><div class="t">Transaksi yang sudah gagal → auto-refund → CS siap terima komplain <code>(T4, AC1)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">6</div><div class="step-body"><div class="t">Biller recover → Ipong switch balik → remove banner CMS</div></div></li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- J5 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">J5</div>
+    <div class="flow-meta">
+      <div class="flow-title">Reseller — Tier Naik Otomatis</div>
+      <div class="flow-sub">Milestone reseller · Transaksi → Wallet → Tier → Notif → HPP baru</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">End-to-End</span>
+      <span class="case-title">Transaksi sukses → omzet threshold → tier naik → HPP lebih murah</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">1</div><div class="step-body"><div class="t">Transaksi reseller SUCCESS <code>(T5)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">2</div><div class="step-body"><div class="t">Update total_omzet → cek threshold tier <code>(R2)</code></div><div class="d">Atomic dalam 1 DB transaction</div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">3</div><div class="step-body"><div class="t">Tier naik → log tier_history → HPP baru efektif langsung <code>(R2)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">4</div><div class="step-body"><div class="t">WA notif + in-app celebration <code>(N3)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">5</div><div class="step-body"><div class="t">Tier history update di profil reseller di dashboard</div></div></li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- J6 -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">J6</div>
+    <div class="flow-meta">
+      <div class="flow-title">Komplain User — Submit sampai Resolved</div>
+      <div class="flow-sub">CS journey lengkap · User → CS → Ops/Finance → User</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">End-to-End</span>
+      <span class="case-title">Submit tiket → CS investigate → eskalasi (jika perlu) → resolved</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Urutan Flow</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">1</div><div class="step-body"><div class="t">User submit tiket di Pusat Bantuan <code>(AC1)</code></div><div class="d">Nomor WA, kategori, ID transaksi, deskripsi → dapat #TKT-xxx</div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">2</div><div class="step-body"><div class="t">WA notif: tiket diterima + estimasi respons <code>(N6)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">3</div><div class="step-body"><div class="t">CS buka tiket → cek transaksi → tambah internal note <code>(AC1)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">4a</div><div class="step-body"><div class="t">CS bisa resolve sendiri → tutup tiket</div></div></li>
+          <li class="step"><div class="step-n" style="background:#FEE2E2;color:#DC2626">4b</div><div class="step-body"><div class="t">Perlu eskalasi → ke Ops / Finance / IT <code>(AC1-A)</code></div></div></li>
+          <li class="step"><div class="step-n" style="background:#EDE9FE;color:#4A2D8C">5</div><div class="step-body"><div class="t">Ops/Finance aksi manual jika perlu <code>(AC3)</code></div><div class="d">Retry biller / update status manual / proses refund</div></div></li>
+          <li class="step"><div class="step-n" style="background:#DCFCE7;color:#166534">6</div><div class="step-body"><div class="t">CS WA user → resolved → tiket closed dengan activity log lengkap</div></div></li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CROSS-FLOW MATRIX -->
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">⚡</div>
+    <div class="flow-meta">
+      <div class="flow-title">Matrix — Flow mana yang trigger flow lain</div>
+      <div class="flow-sub">Referensi cepat dependency antar flow</div>
+    </div>
+  </div>
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">Matrix</span>
+      <span class="case-title">Trigger → Flow yang ikut jalan</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Dependency Map</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Kalau ini terjadi...</th><th>Maka flow ini ikut jalan</th></tr>
+          <tr><td>Transaksi consumer <code>PAID</code></td><td>T3 (kirim ke biller) → N2 (push notif) → T4 jika gagal</td></tr>
+          <tr><td>Transaksi consumer <code>FAILED</code> setelah bayar</td><td>T4 (auto-refund) → N2 (WA notif gagal) → AC1 jika user komplain</td></tr>
+          <tr><td>Transaksi <code>PROCESSING</code> &gt;15 menit</td><td>T3-D (scheduler) → N2 (WA reassurance) → AC4 (flag) → AC3 jika stuck</td></tr>
+          <tr><td>Refund selesai</td><td>N2 (WA konfirmasi) → AC1 (tutup tiket jika ada)</td></tr>
+          <tr><td>Reseller transaksi <code>SUCCESS</code></td><td>R2 (omzet + cek tier) → R3 (bonus upline) → N3 (WA struk)</td></tr>
+          <tr><td>Reseller transaksi <code>FAILED</code></td><td>Rollback saldo → N3 (WA gagal) → R3-A (reverse bonus)</td></tr>
+          <tr><td>Tier reseller naik</td><td>N3 (WA celebration) → semua GET /products return HPP baru</td></tr>
+          <tr><td>Error rate biller &gt;threshold</td><td>AC4-A (alert Ipong) → AC5 CMS (banner) → T3-C (auto-refund terdampak)</td></tr>
+          <tr><td>Tiket <code>URGENT</code> masuk</td><td>AC1 (auto-assign CS) → N6 (WA konfirmasi) → AC2 (priority) → AC3 jika perlu</td></tr>
+          <tr><td>Admin suspend reseller</td><td>R5 (status SUSPENDED) → N1 (WA ke reseller) → semua request → 403</td></tr>
+          <tr><td>Bonus reversal → saldo minus</td><td>R3-A (flag ke Finance) → AC3 (Agung handle manual)</td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-journey -->
 
 <div id="tab-gaps" class="tab-panel">
 
