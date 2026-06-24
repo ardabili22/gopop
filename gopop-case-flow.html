@@ -2487,75 +2487,45 @@ GoPop — Tumbuh Bersama Kamu</div>
 
 <div id="tab-gaps" class="tab-panel">
 
-<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;">
+<div id="gap-banner" style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px 20px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;">
   <span style="font-size:20px">⚠️</span>
-  <div>
-    <div style="font-size:14px;font-weight:700;color:#92400E;margin-bottom:4px">31 Keputusan Bisnis yang Harus Dijawab</div>
-    <div style="font-size:12px;color:#B45309;line-height:1.6">Semua item di bawah adalah keputusan yang belum ada jawaban finalnya. Dev tidak bisa implement dengan benar sebelum pertanyaan-pertanyaan ini dijawab. Tandai satu per satu setelah ada keputusan dari stakeholder terkait.</div>
+  <div style="flex:1">
+    <div style="font-size:14px;font-weight:700;color:#92400E;margin-bottom:4px">Gap Decisions — Keputusan Bisnis yang Harus Dijawab</div>
+    <div style="font-size:12px;color:#B45309;line-height:1.6">Dev tidak bisa implement dengan benar sebelum semua pertanyaan ini dijawab. Checklist satu per satu setelah ada keputusan dari stakeholder. Jawaban tersimpan di browser ini.</div>
+  </div>
+  <div id="gap-counter" style="background:#fff;border:1px solid #FED7AA;border-radius:10px;padding:10px 16px;text-align:center;flex-shrink:0;">
+    <div id="gap-done-count" style="font-size:24px;font-weight:800;color:#16A34A;">0</div>
+    <div style="font-size:10px;color:#92400E;font-weight:600;">/ 31 selesai</div>
   </div>
 </div>
 
-<div class="gap-section">
-  <div class="gap-section-header"><div><div class="title">🔐 Auth Flow (A-G1 s/d A-G5)</div><div class="sub">PIC utama: Bili + Rifky + Irwan</div></div></div>
-  <div class="gap-row"><div class="code">A-G1</div><div class="q">1 nomor HP bisa jadi consumer sekaligus reseller? Atau harus pilih salah satu? Kalau bisa, bagaimana cara switch dan apakah data consumer carry over?</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">A-G2</div><div class="q">OTP hanya via WA atau ada fallback SMS kalau WA tidak terdeliver? Kalau ada SMS fallback, siapa provider-nya dan berapa biayanya?</div><div class="pic">Bili + Irwan</div></div>
-  <div class="gap-row"><div class="code">A-G3</div><div class="q">Durasi refresh token: apakah sama untuk consumer dan reseller (30 hari)? Atau reseller lebih pendek karena security sensitif?</div><div class="pic">Bili + Rifky</div></div>
-  <div class="gap-row"><div class="code">A-G4</div><div class="q">PIN reseller disimpan hashed di server (lebih aman) atau di device (lebih cepat)? Trade-off: server = butuh internet untuk verify PIN, device = bisa diakali kalau HP di-root.</div><div class="pic">Rifky + Irwan</div></div>
-  <div class="gap-row"><div class="code">A-G5</div><div class="q">Kalau reseller/consumer ganti nomor HP, bagaimana flow verifikasinya? Perlu verifikasi nomor lama dulu atau cukup OTP ke nomor baru?</div><div class="pic">Bili + Rifky</div></div>
+<!-- FILTER + SEARCH -->
+<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+  <button onclick="filterGaps('all')" id="gf-all" class="filter-btn active" style="background:#4A2D8C;border-color:#4A2D8C;color:#fff;">Semua (31)</button>
+  <button onclick="filterGaps('open')" id="gf-open" class="filter-btn">⚪ Belum Dijawab</button>
+  <button onclick="filterGaps('done')" id="gf-done" class="filter-btn">✅ Sudah Dijawab</button>
+  <select onchange="filterGaps('section',this.value)" style="padding:5px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:#1A1033;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">
+    <option value="">Semua Section</option>
+    <option value="auth">🔐 Auth</option>
+    <option value="transaction">💳 Transaksi</option>
+    <option value="reseller">🏪 Reseller</option>
+    <option value="admin">⚙️ Admin & CS</option>
+    <option value="notif">🔔 Notifikasi</option>
+  </select>
 </div>
 
-<div class="gap-section">
-  <div class="gap-section-header"><div><div class="title">💳 Transaction Flow (T-G1 s/d T-G6)</div><div class="sub">PIC utama: Bili + Agung Finance + Rifky + Acoy</div></div></div>
-  <div class="gap-row"><div class="code">T-G1</div><div class="q">SLA refund yang dijanjikan ke user: 1×24 jam atau real-time? Ini yang tertulis di copy WA dan app. Harus realistis sesuai kemampuan Xendit dan bank.</div><div class="pic">Bili + Agung</div></div>
-  <div class="gap-row"><div class="code">T-G2</div><div class="q">Kalau biller stuck dan tidak bisa dikonfirmasi (unknown state), GoPop refund otomatis setelah berapa jam? Ini menentukan kapan user dapat kepastian dan berapa lama uang "floating."</div><div class="pic">Bili + Rifky</div></div>
-  <div class="gap-row"><div class="code">T-G3</div><div class="q">Saat transaksi di-refund, apakah fee Rp 1.000 (e-wallet) dan biaya admin lainnya juga dikembalikan full? Atau hanya nominal produk?</div><div class="pic">Bili + Agung</div></div>
-  <div class="gap-row"><div class="code">T-G4</div><div class="q">Berapa kali maksimal retry ke biller sebelum dianggap gagal total dan trigger refund? Semakin banyak retry = user lebih lama menunggu, tapi peluang sukses lebih besar.</div><div class="pic">Rifky + Ipong</div></div>
-  <div class="gap-row"><div class="code">T-G5</div><div class="q">Kalau transaksi reseller gagal di biller, apakah saldo otomatis rollback (tanpa perlu komplain) atau reseller harus ajukan tiket dulu? Rekomendasi: otomatis rollback.</div><div class="pic">Bili + Acoy</div></div>
-  <div class="gap-row"><div class="code">T-G6</div><div class="q">Untuk guest, apakah email tetap perlu dikumpulkan di checkout? Update: komplain guest sudah bisa via WA (form Pusat Bantuan). Apakah email masih diperlukan untuk keperluan lain?</div><div class="pic">Bili + Acoy</div></div>
-</div>
-
-<div class="gap-section">
-  <div class="gap-section-header"><div><div class="title">🏪 Reseller Flow (R-G1 s/d R-G8)</div><div class="sub">PIC utama: Bili + Agung Finance + Acoy</div></div></div>
-  <div class="gap-row"><div class="code">R-G1</div><div class="q">Berapa threshold omzet kumulatif untuk setiap tier? (Bronze/Silver/Gold/Platinum). Ini menentukan kecepatan progression dan seberapa besar insentif yang dirasakan reseller.</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">R-G2</div><div class="q">Berapa % bonus jaringan per tier? Ini langsung mempengaruhi margin GoPop. Perlu kalkulasi break-even dari Agung Finance.</div><div class="pic">Bili + Agung</div></div>
-  <div class="gap-row"><div class="code">R-G3</div><div class="q">Minimum top up saldo reseller berapa rupiah? Perlu cukup tinggi agar tidak terlalu sering top up, tapi tidak terlalu tinggi agar bisa dijangkau warung kecil.</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">R-G4</div><div class="q">Kalau upline di-suspend, apakah bonus dari downline tetap masuk ke wallet mereka (tapi tidak bisa dipakai) atau di-hold sampai akun aktif kembali?</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">R-G5</div><div class="q">Ada batas maksimal downline per reseller atau unlimited? Kalau ada limit, berapa? Ini mempengaruhi potensi pendapatan reseller tier atas.</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">R-G6</div><div class="q">Referral code bisa diganti sendiri oleh reseller atau fixed selamanya? Kalau bisa ganti, apakah referral lama yang sudah dipakai orang lain tetap berlaku?</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">R-G7</div><div class="q">Notif bonus jaringan dikirim real-time per transaksi atau batched harian? Rekomendasi sudah ada di dokumen: batched harian jam 20.00 untuk cegah spam. Konfirmasi Bili + Acoy.</div><div class="pic">Bili + Acoy</div></div>
-  <div class="gap-row"><div class="code">R-G8</div><div class="q">Saldo reseller bisa minus (akibat bonus reversal) atau ada hard floor Rp 0? Kalau hard floor, transaksi baru di-block sampai saldo positif kembali.</div><div class="pic">Bili + Agung</div></div>
-</div>
-
-<div class="gap-section">
-  <div class="gap-section-header"><div><div class="title">⚙️ Admin & CS Flow (AC-G1 s/d AC-G7)</div><div class="sub">PIC utama: Bili + Agung + Acoy + Rifky + Ipong</div></div></div>
-  <div class="gap-row"><div class="code">AC-G1</div><div class="q">SLA respons tiket berbeda per priority atau flat 1×24 jam semua? Rekomendasi: beda per priority (Urgent=1 jam, High=2 jam, Medium=4 jam, Low=24 jam). Perlu konfirmasi Acoy soal kapasitas CS.</div><div class="pic">Bili + Acoy</div></div>
-  <div class="gap-row"><div class="code">AC-G2</div><div class="q">Siapa yang bisa approve refund manual? Hanya Finance (Agung) atau Ops (Acoy) juga? Berapa threshold nominal yang butuh approval Super Admin?</div><div class="pic">Bili + Agung</div></div>
-  <div class="gap-row"><div class="code">AC-G3</div><div class="q">Kalau biller primary down, switch ke backup otomatis atau harus Ipong yang decide secara manual? Trade-off: auto lebih cepat, manual lebih kontrol.</div><div class="pic">Bili + Ipong</div></div>
-  <div class="gap-row"><div class="code">AC-G4</div><div class="q">Berapa error rate % dan dalam berapa menit untuk trigger alert biller down? Misal: &gt;20% error dalam 15 menit. Terlalu sensitif = false alarm, terlalu longgar = deteksi lambat.</div><div class="pic">Rifky + Ipong</div></div>
-  <div class="gap-row"><div class="code">AC-G5</div><div class="q">Rekonsiliasi dengan Ayoconnect via upload CSV manual atau ada API yang bisa di-pull otomatis? Kalau API tersedia, jadwal pull otomatis jam berapa?</div><div class="pic">Rifky + Ipong</div></div>
-  <div class="gap-row"><div class="code">AC-G6</div><div class="q">CS bisa lihat nominal transaksi reseller (HPP) dan data keuangan sensitif lainnya? Atau CS hanya lihat status dan info dasar, tidak lihat margin/HPP?</div><div class="pic">Bili</div></div>
-  <div class="gap-row"><div class="code">AC-G7</div><div class="q">Berapa jam transaksi PROCESSING dianggap stuck dan perlu di-flag ke dashboard? Rekomendasi: 15 menit. Terlalu cepat = terlalu banyak false alarm.</div><div class="pic">Rifky + Acoy</div></div>
-</div>
-
-<div class="gap-section">
-  <div class="gap-section-header"><div><div class="title">🔔 Notification Flow (N-G1 s/d N-G7)</div><div class="sub">PIC utama: Bili + Rifky + Irwan + Acoy + Kayong</div></div></div>
-  <div class="gap-row"><div class="code">N-G1</div><div class="q">Threshold default "saldo hampir habis" berapa? Rp 50.000? Atau berbeda per tier? Dan apakah reseller bisa set sendiri threshold-nya dari pengaturan?</div><div class="pic">Bili + Acoy</div></div>
-  <div class="gap-row"><div class="code">N-G2</div><div class="q">Bonus harian summary dikirim jam berapa? Rekomendasi: jam 20.00 WIB. Perlu konfirmasi Bili dan Kayong — sesuai strategi engagement marketing.</div><div class="pic">Bili + Kayong</div></div>
-  <div class="gap-row"><div class="code">N-G3</div><div class="q">Apakah akan ada notif promo/marketing blast ke semua user? Siapa yang approve sebelum dikirim? Perlu flow approval konten marketing sebelum blast.</div><div class="pic">Bili + Kayong</div></div>
-  <div class="gap-row"><div class="code">N-G4</div><div class="q">WA Business API pakai nomor GoPop sendiri (self-managed) atau via BSP (Business Solution Provider seperti Wablas, Zenziva)? BSP lebih mudah tapi ada biaya tambahan per pesan.</div><div class="pic">Rifky + Irwan</div></div>
-  <div class="gap-row"><div class="code">N-G5</div><div class="q">Kalau WA gagal dikirim (nomor tidak aktif atau chat tidak bisa diinisiasi), ada fallback SMS? Kalau ya, provider SMS mana? Kalau tidak, bagaimana user tahu ada update?</div><div class="pic">Bili + Rifky</div></div>
-  <div class="gap-row"><div class="code">N-G6</div><div class="q">Maksimal berapa pesan WA per hari per user sebelum dianggap spam? Rekomendasi awal: 5 pesan. Perlu di-test dan disesuaikan berdasarkan data opt-out.</div><div class="pic">Rifky</div></div>
-  <div class="gap-row"><div class="code">N-G7</div><div class="q">Internal alert kalau biller down dikirim via WA grup internal, email tim, atau cukup notif di dashboard saja? Ops dan Ipong perlu tahu bahkan saat tidak buka dashboard.</div><div class="pic">Acoy + Ipong</div></div>
-</div>
+<div id="gaps-container"></div>
 
 </div><!-- end tab-gaps -->
+
+<div id="tab-gaps-end"></div>
 
 </div><!-- end content -->
 
 <!-- FOOTER -->
 <div class="footer">
-  <p>GoPop · Case Flow Playbook v1.1 · <span>Juni 2026</span></p>
-  <p style="margin-top:4px">Auth · Transaksi · Reseller · Admin & CS · Notifikasi · Validasi Figma & Dashboard · Design Backlog · 31 Gap Decisions</p>
+  <p>GoPop · Case Flow Playbook v1.2 · <span>Juni 2026</span></p>
+  <p style="margin-top:4px">v1.2: Intro · Journey Map · Ownership · Error Codes · Progress Indicator · Gap Decisions Interaktif</p>
 </div>
 
 <script>
@@ -2578,18 +2548,187 @@ function toggleCase(header) {
 function toggleLayer(layer, btn) {
   btn.classList.toggle('active');
   const isActive = btn.classList.contains('active');
-  if (isActive) {
-    document.body.classList.remove('hide-' + layer);
-  } else {
-    document.body.classList.add('hide-' + layer);
-  }
+  document.body.classList.toggle('hide-' + layer, !isActive);
 }
 
 // Open all cases by default
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.case-body').forEach(b => b.classList.add('open'));
   document.querySelectorAll('.case-toggle').forEach(t => t.classList.add('open'));
+  initGaps();
 });
+
+// ═══════════ GAP DECISIONS INTERACTIVE ═══════════
+const GAPS_KEY = 'gopop_gaps_v1';
+
+const GAPS_DATA = [
+  {code:"A-G1",sec:"auth",q:`1 nomor HP bisa jadi consumer sekaligus reseller? Atau harus pilih salah satu? Kalau bisa, bagaimana cara switch dan apakah data consumer carry over?`,pic:"Bili",done:false,ans:""},
+  {code:"A-G2",sec:"auth",q:`OTP hanya via WA atau ada fallback SMS kalau WA tidak terdeliver? Kalau ada SMS fallback, siapa provider-nya dan berapa biayanya?`,pic:"Bili + Irwan",done:false,ans:""},
+  {code:"A-G3",sec:"auth",q:`Durasi refresh token: apakah sama untuk consumer dan reseller (30 hari)? Atau reseller lebih pendek karena security sensitif?`,pic:"Bili + Rifky",done:false,ans:""},
+  {code:"A-G4",sec:"auth",q:`PIN reseller disimpan hashed di server (lebih aman) atau di device (lebih cepat)? Trade-off: server = butuh internet untuk verify PIN, device = bisa diakali kalau HP di-root.`,pic:"Rifky + Irwan",done:false,ans:""},
+  {code:"A-G5",sec:"auth",q:`Kalau reseller/consumer ganti nomor HP, bagaimana flow verifikasinya? Perlu verifikasi nomor lama dulu atau cukup OTP ke nomor baru?`,pic:"Bili + Rifky",done:false,ans:""},
+  {code:"T-G1",sec:"transaction",q:`SLA refund yang dijanjikan ke user: 1×24 jam atau real-time? Ini yang tertulis di copy WA dan app. Harus realistis sesuai kemampuan Xendit dan bank.`,pic:"Bili + Agung",done:false,ans:""},
+  {code:"T-G2",sec:"transaction",q:`Kalau biller stuck dan tidak bisa dikonfirmasi (unknown state), GoPop refund otomatis setelah berapa jam? Ini menentukan kapan user dapat kepastian dan berapa lama uang &ldquo;floating.&rdquo;`,pic:"Bili + Rifky",done:false,ans:""},
+  {code:"T-G3",sec:"transaction",q:`Saat transaksi di-refund, apakah fee Rp 1.000 (e-wallet) dan biaya admin lainnya juga dikembalikan full? Atau hanya nominal produk?`,pic:"Bili + Agung",done:false,ans:""},
+  {code:"T-G4",sec:"transaction",q:`Berapa kali maksimal retry ke biller sebelum dianggap gagal total dan trigger refund? Semakin banyak retry = user lebih lama menunggu, tapi peluang sukses lebih besar.`,pic:"Rifky + Ipong",done:false,ans:""},
+  {code:"T-G5",sec:"transaction",q:`Kalau transaksi reseller gagal di biller, apakah saldo otomatis rollback (tanpa perlu komplain) atau reseller harus ajukan tiket dulu? Rekomendasi: otomatis rollback.`,pic:"Bili + Acoy",done:false,ans:""},
+  {code:"T-G6",sec:"transaction",q:`Untuk guest, apakah email tetap perlu dikumpulkan di checkout? Update: komplain guest sudah bisa via WA (form Pusat Bantuan). Apakah email masih diperlukan untuk keperluan lain?`,pic:"Bili + Acoy",done:false,ans:""},
+  {code:"R-G1",sec:"reseller",q:`Berapa threshold omzet kumulatif untuk setiap tier? (Bronze/Silver/Gold/Platinum). Ini menentukan kecepatan progression dan seberapa besar insentif yang dirasakan reseller.`,pic:"Bili",done:false,ans:""},
+  {code:"R-G2",sec:"reseller",q:`Berapa % bonus jaringan per tier? Ini langsung mempengaruhi margin GoPop. Perlu kalkulasi break-even dari Agung Finance.`,pic:"Bili + Agung",done:false,ans:""},
+  {code:"R-G3",sec:"reseller",q:`Minimum top up saldo reseller berapa rupiah? Perlu cukup tinggi agar tidak terlalu sering top up, tapi tidak terlalu tinggi agar bisa dijangkau warung kecil.`,pic:"Bili",done:false,ans:""},
+  {code:"R-G4",sec:"reseller",q:`Kalau upline di-suspend, apakah bonus dari downline tetap masuk ke wallet mereka (tapi tidak bisa dipakai) atau di-hold sampai akun aktif kembali?`,pic:"Bili",done:false,ans:""},
+  {code:"R-G5",sec:"reseller",q:`Ada batas maksimal downline per reseller atau unlimited? Kalau ada limit, berapa? Ini mempengaruhi potensi pendapatan reseller tier atas.`,pic:"Bili",done:false,ans:""},
+  {code:"R-G6",sec:"reseller",q:`Referral code bisa diganti sendiri oleh reseller atau fixed selamanya? Kalau bisa ganti, apakah referral lama yang sudah dipakai orang lain tetap berlaku?`,pic:"Bili",done:false,ans:""},
+  {code:"R-G7",sec:"reseller",q:`Notif bonus jaringan dikirim real-time per transaksi atau batched harian? Rekomendasi sudah ada di dokumen: batched harian jam 20.00 untuk cegah spam. Konfirmasi Bili + Acoy.`,pic:"Bili + Acoy",done:false,ans:""},
+  {code:"R-G8",sec:"reseller",q:`Saldo reseller bisa minus (akibat bonus reversal) atau ada hard floor Rp 0? Kalau hard floor, transaksi baru di-block sampai saldo positif kembali.`,pic:"Bili + Agung",done:false,ans:""},
+  {code:"AC-G1",sec:"admin",q:`SLA respons tiket berbeda per priority atau flat 1×24 jam semua? Rekomendasi: beda per priority (Urgent=1 jam, High=2 jam, Medium=4 jam, Low=24 jam). Perlu konfirmasi Acoy soal kapasitas CS.`,pic:"Bili + Acoy",done:false,ans:""},
+  {code:"AC-G2",sec:"admin",q:`Siapa yang bisa approve refund manual? Hanya Finance (Agung) atau Ops (Acoy) juga? Berapa threshold nominal yang butuh approval Super Admin?`,pic:"Bili + Agung",done:false,ans:""},
+  {code:"AC-G3",sec:"admin",q:`Kalau biller primary down, switch ke backup otomatis atau harus Ipong yang decide secara manual? Trade-off: auto lebih cepat, manual lebih kontrol.`,pic:"Bili + Ipong",done:false,ans:""},
+  {code:"AC-G4",sec:"admin",q:`Berapa error rate % dan dalam berapa menit untuk trigger alert biller down? Misal: &gt;20% error dalam 15 menit. Terlalu sensitif = false alarm, terlalu longgar = deteksi lambat.`,pic:"Rifky + Ipong",done:false,ans:""},
+  {code:"AC-G5",sec:"admin",q:`Rekonsiliasi dengan Ayoconnect via upload CSV manual atau ada API yang bisa di-pull otomatis? Kalau API tersedia, jadwal pull otomatis jam berapa?`,pic:"Rifky + Ipong",done:false,ans:""},
+  {code:"AC-G6",sec:"admin",q:`CS bisa lihat nominal transaksi reseller (HPP) dan data keuangan sensitif lainnya? Atau CS hanya lihat status dan info dasar, tidak lihat margin/HPP?`,pic:"Bili",done:false,ans:""},
+  {code:"AC-G7",sec:"admin",q:`Berapa jam transaksi PROCESSING dianggap stuck dan perlu di-flag ke dashboard? Rekomendasi: 15 menit. Terlalu cepat = terlalu banyak false alarm.`,pic:"Rifky + Acoy",done:false,ans:""},
+  {code:"N-G1",sec:"notif",q:`Threshold default &ldquo;saldo hampir habis&rdquo; berapa? Rp 50.000? Atau berbeda per tier? Dan apakah reseller bisa set sendiri threshold-nya dari pengaturan?`,pic:"Bili + Acoy",done:false,ans:""},
+  {code:"N-G2",sec:"notif",q:`Bonus harian summary dikirim jam berapa? Rekomendasi: jam 20.00 WIB. Perlu konfirmasi Bili dan Kayong &mdash; sesuai strategi engagement marketing.`,pic:"Bili + Kayong",done:false,ans:""},
+  {code:"N-G3",sec:"notif",q:`Apakah akan ada notif promo/marketing blast ke semua user? Siapa yang approve sebelum dikirim? Perlu flow approval konten marketing sebelum blast.`,pic:"Bili + Kayong",done:false,ans:""},
+  {code:"N-G4",sec:"notif",q:`WA Business API pakai nomor GoPop sendiri (self-managed) atau via BSP (Business Solution Provider seperti Wablas, Zenziva)? BSP lebih mudah tapi ada biaya tambahan per pesan.`,pic:"Rifky + Irwan",done:false,ans:""},
+  {code:"N-G5",sec:"notif",q:`Kalau WA gagal dikirim (nomor tidak aktif atau chat tidak bisa diinisiasi), ada fallback SMS? Kalau ya, provider SMS mana? Kalau tidak, bagaimana user tahu ada update?`,pic:"Bili + Rifky",done:false,ans:""},
+  {code:"N-G6",sec:"notif",q:`Maksimal berapa pesan WA per hari per user sebelum dianggap spam? Rekomendasi awal: 5 pesan. Perlu di-test dan disesuaikan berdasarkan data opt-out.`,pic:"Rifky",done:false,ans:""},
+  {code:"N-G7",sec:"notif",q:`Internal alert kalau biller down dikirim via WA grup internal, email tim, atau cukup notif di dashboard saja? Ops dan Ipong perlu tahu bahkan saat tidak buka dashboard.`,pic:"Acoy + Ipong",done:false,ans:""}
+];
+
+const SECTIONS = {
+  auth:        {icon:"🔐", title:"Auth Flow",        range:"A-G1 s/d A-G5",  pic:"Bili + Irwan + Rifky"},
+  transaction: {icon:"💳", title:"Transaction Flow", range:"T-G1 s/d T-G6",  pic:"Bili + Agung + Rifky + Acoy"},
+  reseller:    {icon:"🏪", title:"Reseller Flow",    range:"R-G1 s/d R-G8",  pic:"Bili + Agung + Acoy"},
+  admin:       {icon:"⚙️", title:"Admin & CS Flow",  range:"AC-G1 s/d AC-G7",pic:"Bili + Agung + Acoy + Rifky + Ipong"},
+  notif:       {icon:"🔔", title:"Notification Flow",range:"N-G1 s/d N-G7",  pic:"Bili + Rifky + Irwan + Acoy + Kayong"},
+};
+
+let gapsState = [];
+let currentFilter = 'all';
+let currentSection = '';
+
+function initGaps() {
+  try {
+    const saved = localStorage.getItem(GAPS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      gapsState = GAPS_DATA.map((g, i) => ({
+        ...g,
+        done: parsed[i]?.done || false,
+        ans: parsed[i]?.ans || ''
+      }));
+    } else {
+      gapsState = GAPS_DATA.map(g => ({...g}));
+    }
+  } catch(e) {
+    gapsState = GAPS_DATA.map(g => ({...g}));
+  }
+  renderGaps();
+  updateCounter();
+}
+
+function saveGaps() {
+  try {
+    localStorage.setItem(GAPS_KEY, JSON.stringify(gapsState.map(g => ({done:g.done,ans:g.ans}))));
+  } catch(e) {}
+}
+
+function toggleGap(idx) {
+  gapsState[idx].done = !gapsState[idx].done;
+  saveGaps();
+  renderGaps();
+  updateCounter();
+}
+
+function saveAnswer(idx, val) {
+  gapsState[idx].ans = val;
+  saveGaps();
+}
+
+function updateCounter() {
+  const done = gapsState.filter(g => g.done).length;
+  const el = document.getElementById('gap-done-count');
+  if (el) el.textContent = done;
+  // Update filter buttons
+  const open = gapsState.filter(g => !g.done).length;
+  const bf = document.getElementById('gf-open');
+  const bd = document.getElementById('gf-done');
+  if (bf) bf.textContent = '⚪ Belum Dijawab (' + open + ')';
+  if (bd) bd.textContent = '✅ Sudah Dijawab (' + done + ')';
+}
+
+function filterGaps(type, val) {
+  if (type === 'all') { currentFilter = 'all'; currentSection = ''; }
+  else if (type === 'open') { currentFilter = 'open'; currentSection = ''; }
+  else if (type === 'done') { currentFilter = 'done'; currentSection = ''; }
+  else if (type === 'section') { currentSection = val; currentFilter = 'all'; }
+  // Update active filter button
+  ['gf-all','gf-open','gf-done'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.classList.remove('active'); b.style.background=''; b.style.borderColor=''; b.style.color=''; }
+  });
+  if (type !== 'section') {
+    const active = document.getElementById('gf-' + type);
+    if (active) { active.classList.add('active'); active.style.background='#4A2D8C'; active.style.borderColor='#4A2D8C'; active.style.color='#fff'; }
+  }
+  renderGaps();
+}
+
+function renderGaps() {
+  const container = document.getElementById('gaps-container');
+  if (!container) return;
+
+  let filtered = gapsState;
+  if (currentSection) filtered = filtered.filter(g => g.sec === currentSection);
+  if (currentFilter === 'open') filtered = filtered.filter(g => !g.done);
+  if (currentFilter === 'done') filtered = filtered.filter(g => g.done);
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3);font-size:13px;">Tidak ada item yang cocok dengan filter ini.</div>';
+    return;
+  }
+
+  // Group by section
+  const sections = ['auth','transaction','reseller','admin','notif'];
+  let html = '';
+  sections.forEach(sec => {
+    const items = filtered.filter(g => g.sec === sec);
+    if (!items.length) return;
+    const s = SECTIONS[sec];
+    html += `<div class="gap-section" style="margin-bottom:16px;">`;
+    html += `<div class="gap-section-header" style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div class="title">${s.icon} ${s.title} (${s.range})</div><div class="sub">PIC: ${s.pic}</div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);">${items.filter(g=>g.done).length}/${items.length} selesai</div>
+    </div>`;
+    items.forEach(g => {
+      const idx = gapsState.indexOf(g);
+      const isDone = g.done;
+      html += `<div class="gap-row" style="${isDone ? 'background:#f0fdf4;' : ''}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+          <div class="code">${g.code}</div>
+          <button onclick="toggleGap(${idx})" style="width:28px;height:28px;border-radius:50%;border:2px solid ${isDone?'#16A34A':'#D1D5DB'};background:${isDone?'#16A34A':'transparent'};cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;" title="${isDone?'Tandai belum selesai':'Tandai sudah selesai'}">${isDone?'✓':''}</button>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="q" style="${isDone?'text-decoration:line-through;color:#6B7280;':''}">${g.q}</div>
+          <div style="margin-top:6px;">
+            <textarea
+              placeholder="${isDone?'Jawaban / keputusan...':'Isi jawaban / keputusan setelah dibahas...'}"
+              onchange="saveAnswer(${idx},this.value)"
+              style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid ${isDone?'#BBF7D0':'#E5E7EB'};font-size:11px;color:#374151;resize:vertical;min-height:36px;background:${isDone?'#F0FDF4':'#FAFAFA'};font-family:inherit;line-height:1.5;"
+            >${g.ans}</textarea>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <span style="font-size:10px;color:#9CA3AF;">PIC: <strong>${g.pic}</strong></span>
+            ${isDone?'<span style="font-size:10px;color:#16A34A;font-weight:700;">✅ Sudah dijawab</span>':'<span style="font-size:10px;color:#F59E0B;font-weight:700;">⏳ Menunggu keputusan</span>'}
+          </div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
 </script>
 </body>
-</html>
