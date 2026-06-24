@@ -58,6 +58,12 @@ body{font-family:'Plus Jakarta Sans','Inter',sans-serif;background:#0F0A1E;color
 .flow-code{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;color:#fff;}
 .flow-meta .flow-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
 .flow-meta .flow-sub{font-size:13px;color:rgba(255,255,255,.45);}
+.owner-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.owner-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid;}
+.owner-pill.design{background:rgba(206,241,123,.1);border-color:rgba(206,241,123,.3);color:#CEF17B;}
+.owner-pill.dev{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#93c5fd;}
+.owner-pill.ops{background:rgba(255,107,74,.1);border-color:rgba(255,107,74,.3);color:#ff9a7a;}
+.owner-pill.biz{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#fbbf24;}
 
 /* CASE CARD */
 .case-card{background:#fff;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.12);}
@@ -466,7 +472,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#4A2D8C">A2</div>
     <div class="flow-meta">
       <div class="flow-title">Login Consumer</div>
-      <div class="flow-sub">End User yang sudah punya akun · Akses riwayat, poin, profil</div>
+      <div class="flow-sub">End User yang sudah punya akun · Akses riwayat, poin, profil</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (FE)</span><span class="owner-pill ops">🛠️ CS (handle locked)</span></div>
     </div>
   </div>
 
@@ -543,7 +549,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#16A34A">A3</div>
     <div class="flow-meta">
       <div class="flow-title">Register Reseller</div>
-      <div class="flow-sub">Reseller App · Perlu approval admin · Default tier Bronze</div>
+      <div class="flow-sub">Reseller App · Perlu approval admin · Default tier Bronze</div><div class="owner-row"><span class="owner-pill biz">💼 Dileh</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span></div>
     </div>
   </div>
 
@@ -608,7 +614,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#16A34A">A4</div>
     <div class="flow-meta">
       <div class="flow-title">Login Reseller + PIN App</div>
-      <div class="flow-sub">Reseller App · PIN sebagai second layer security</div>
+      <div class="flow-sub">Reseller App · PIN sebagai second layer security</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (App)</span></div>
     </div>
   </div>
 
@@ -724,7 +730,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#F59E0B">T2</div>
     <div class="flow-meta">
       <div class="flow-title">Payment Gateway Gagal</div>
-      <div class="flow-sub">Sebelum uang masuk ke GoPop · Tidak ada refund yang diperlukan</div>
+      <div class="flow-sub">Sebelum uang masuk ke GoPop · Tidak ada refund yang diperlukan</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (FE)</span></div>
     </div>
   </div>
 
@@ -788,7 +794,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#DC2626">T3</div>
     <div class="flow-meta">
       <div class="flow-title">Biller Gagal — Setelah Payment Masuk</div>
-      <div class="flow-sub">⚠️ Paling kritis — uang sudah di GoPop tapi produk belum terkirim</div>
+      <div class="flow-sub">⚠️ Paling kritis — uang sudah di GoPop tapi produk belum terkirim</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill ops">🛠️ Rifky (Monitor)</span><span class="owner-pill ops">🛠️ Acoy (Ops)</span><span class="owner-pill ops">🛠️ Ipong (Biller)</span></div>
     </div>
   </div>
 
@@ -892,7 +898,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#16A34A">T5</div>
     <div class="flow-meta">
       <div class="flow-title">Transaksi Reseller</div>
-      <div class="flow-sub">Potong saldo internal · Tidak ada payment gateway · Lebih cepat dari consumer</div>
+      <div class="flow-sub">Potong saldo internal · Tidak ada payment gateway · Lebih cepat dari consumer</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (App)</span><span class="owner-pill ops">🛠️ Ipong (Biller)</span></div>
     </div>
   </div>
 
@@ -955,7 +961,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#6B7280">T6</div>
     <div class="flow-meta">
       <div class="flow-title">Transaksi Guest</div>
-      <div class="flow-sub">Tanpa login · Komplain via WA · Struk via WA</div>
+      <div class="flow-sub">Tanpa login · Komplain via WA · Struk via WA</div><div class="owner-row"><span class="owner-pill biz">💼 Bili</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (FE)</span><span class="owner-pill ops">🛠️ CS</span></div>
     </div>
   </div>
 
@@ -985,7 +991,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#16A34A">R1</div>
     <div class="flow-meta">
       <div class="flow-title">Top Up Saldo Reseller</div>
-      <div class="flow-sub">Via payment gateway · Saldo aktif setelah payment confirmed</div>
+      <div class="flow-sub">Via payment gateway · Saldo aktif setelah payment confirmed</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (App)</span><span class="owner-pill ops">🛠️ Agung (Finance)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1034,7 +1040,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#F59E0B">R2</div>
     <div class="flow-meta">
       <div class="flow-title">Tier Progression</div>
-      <div class="flow-sub">Otomatis berdasarkan omzet kumulatif all-time · Tidak pernah reset · Efektif langsung</div>
+      <div class="flow-sub">Otomatis berdasarkan omzet kumulatif all-time · Tidak pernah reset · Efektif langsung</div><div class="owner-row"><span class="owner-pill biz">💼 Bili</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1069,7 +1075,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#7C5CBF">R3</div>
     <div class="flow-meta">
       <div class="flow-title">Bonus Jaringan (Downline)</div>
-      <div class="flow-sub">1 level downline · Bonus dari margin GoPop · Batched WA harian</div>
+      <div class="flow-sub">1 level downline · Bonus dari margin GoPop · Batched WA harian</div><div class="owner-row"><span class="owner-pill biz">💼 Bili</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill ops">🛠️ Agung (Finance)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1105,7 +1111,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#3B82F6">R4</div>
     <div class="flow-meta">
       <div class="flow-title">Downline Management</div>
-      <div class="flow-sub">Kode referral unik · 1 level · Relasi permanen</div>
+      <div class="flow-sub">Kode referral unik · 1 level · Relasi permanen</div><div class="owner-row"><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Fikly (App)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1139,7 +1145,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#DC2626">R5</div>
     <div class="flow-meta">
       <div class="flow-title">Suspend & Reaktivasi Reseller</div>
-      <div class="flow-sub">Admin action · Saldo tetap aman · Downline tidak terpengaruh</div>
+      <div class="flow-sub">Admin action · Saldo tetap aman · Downline tidak terpengaruh</div><div class="owner-row"><span class="owner-pill ops">🛠️ Acoy (Ops)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1167,7 +1173,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#4A2D8C">AC1</div>
     <div class="flow-meta">
       <div class="flow-title">Komplain Masuk — End-to-End</div>
-      <div class="flow-sub">Consumer · Reseller · Guest · Semua masuk satu inbox dashboard</div>
+      <div class="flow-sub">Consumer · Reseller · Guest · Semua masuk satu inbox dashboard</div><div class="owner-row"><span class="owner-pill ops">🛠️ CS (Acoy)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span><span class="owner-pill dev">⚙️ Fikly (Form)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1204,7 +1210,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#DC2626">AC2</div>
     <div class="flow-meta">
       <div class="flow-title">Prioritas Tiket</div>
-      <div class="flow-sub">Auto-assign berdasarkan kategori + status transaksi · CS bisa override manual</div>
+      <div class="flow-sub">Auto-assign berdasarkan kategori + status transaksi · CS bisa override manual</div><div class="owner-row"><span class="owner-pill biz">💼 Acoy (Ops)</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1269,7 +1275,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#3B82F6">AC4</div>
     <div class="flow-meta">
       <div class="flow-title">Monitoring & Rekonsiliasi</div>
-      <div class="flow-sub">Rifky (Rekonsiliasi) · Ipong (Aggregator) · Acoy (Ops)</div>
+      <div class="flow-sub">Rifky (Rekonsiliasi) · Ipong (Aggregator) · Acoy (Ops)</div><div class="owner-row"><span class="owner-pill ops">🛠️ Rifky</span><span class="owner-pill ops">🛠️ Ipong</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill dev">⚙️ Isal (Dashboard)</span></div>
     </div>
   </div>
   <div class="case-card">
@@ -1341,7 +1347,7 @@ body.hide-dash .layer.dash{display:none;}
     <div class="flow-code" style="background:#7C5CBF">N</div>
     <div class="flow-meta">
       <div class="flow-title">Prinsip Dasar Notifikasi</div>
-      <div class="flow-sub">WA = primary · Push = secondary · In-App = always · Anti-spam rules</div>
+      <div class="flow-sub">WA = primary · Push = secondary · In-App = always · Anti-spam rules</div><div class="owner-row"><span class="owner-pill biz">💼 Bili</span><span class="owner-pill dev">⚙️ Irwan (BE)</span><span class="owner-pill ops">🛠️ Acoy (Ops)</span></div>
     </div>
   </div>
   <div class="case-card">
