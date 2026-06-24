@@ -218,13 +218,14 @@ body.hide-dash .layer.dash{display:none;}
 </div>
 
 <nav class="nav">
-  <button class="nav-btn active" onclick="showTab('auth',this)">🔐 Auth</button>
+  <button class="nav-btn active" onclick="showTab('intro',this)">📖 Cara Baca</button>
+  <button class="nav-btn" onclick="showTab('auth',this)">🔐 Auth</button>
   <button class="nav-btn" onclick="showTab('transaction',this)">💳 Transaksi</button>
   <button class="nav-btn" onclick="showTab('reseller',this)">🏪 Reseller</button>
   <button class="nav-btn" onclick="showTab('admin',this)">⚙️ Admin & CS</button>
   <button class="nav-btn" onclick="showTab('notif',this)">🔔 Notifikasi</button>
-  <button class="nav-btn" onclick="showTab('validation',this)">✅ Validasi Figma & Dashboard</button>
-  <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Design Backlog</button>
+  <button class="nav-btn" onclick="showTab('validation',this)">✅ Validasi</button>
+  <button class="nav-btn" onclick="showTab('backlog',this)">🔧 Backlog</button>
   <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Decisions</button>
 </nav>
 
@@ -238,8 +239,162 @@ body.hide-dash .layer.dash{display:none;}
 
 <div class="content">
 
+<!-- ═══════════════════════════════════════════════════════ INTRO TAB -->
+<div id="tab-intro" class="tab-panel active">
+
+<div style="max-width:780px;margin:0 auto;">
+
+  <!-- WELCOME -->
+  <div style="background:linear-gradient(135deg,#4A2D8C,#6B3FA0);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(206,241,123,.1);border-radius:50%;"></div>
+    <div style="font-size:11px;font-weight:700;color:rgba(206,241,123,.8);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">GoPop · Case Flow Playbook v1.1</div>
+    <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.3;">Referensi tunggal untuk semua flow,<br>semua tim, semua skenario.</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.7;">Dokumen ini mendokumentasikan setiap alur kerja GoPop dari 3 sudut pandang sekaligus — bisnis, user experience, dan teknikal backend — termasuk semua skenario error dan edge case yang mungkin terjadi.</div>
+  </div>
+
+  <!-- UNTUK SIAPA -->
+  <div class="case-card">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">👥</span>
+      <span class="case-title">Dokumen ini untuk siapa?</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <table class="ftable">
+        <tr><th>Siapa</th><th>Baca bagian mana</th><th>Fokus layer</th></tr>
+        <tr><td><strong>Bili</strong> (Product/Biz Dev)</td><td>Semua tab + Gap Decisions</td><td>💼 Bisnis</td></tr>
+        <tr><td><strong>Agung</strong> (Finance)</td><td>Transaksi (T4 Refund), Reseller (R3 Bonus), Admin (AC3), Gap Decisions</td><td>💼 Bisnis + 🛠️ Dashboard</td></tr>
+        <tr><td><strong>Acoy</strong> (Ops)</td><td>Transaksi (T3), Admin (AC2, AC3, AC4), Gap Decisions</td><td>💼 Bisnis + 🛠️ Dashboard</td></tr>
+        <tr><td><strong>Rifky</strong> (Rekonsiliasi)</td><td>Transaksi (T2-D, T3-D), Admin (AC4), Validasi Dashboard</td><td>🛠️ Dashboard + ⚙️ Backend</td></tr>
+        <tr><td><strong>Ipong</strong> (Aggregator)</td><td>Transaksi (T3), Admin (AC4), Validasi Dashboard</td><td>💼 Bisnis + 🛠️ Dashboard</td></tr>
+        <tr><td><strong>Kayong / Luqman</strong> (Marketing)</td><td>Notifikasi, Admin (AC5 CMS), Backlog</td><td>💼 Bisnis + 📱 UX</td></tr>
+        <tr><td><strong>Dileh</strong> (Partnership)</td><td>Reseller Flow (R1–R5)</td><td>💼 Bisnis</td></tr>
+        <tr><td><strong>Isal / Fikly / Irwan</strong> (IT)</td><td>Semua tab — fokus Backend + Validasi + Backlog</td><td>⚙️ Backend + 🛠️ Dashboard</td></tr>
+        <tr><td><strong>CS / Onboarding baru</strong></td><td>Auth, Transaksi (T6 Guest), Admin (AC1, AC2)</td><td>📱 UX + 🛠️ Dashboard</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARA BACA -->
+  <div class="case-card" style="margin-top:12px;">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">📖</span>
+      <span class="case-title">Cara membaca dokumen ini</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Struktur per Flow</div><div class="layer-content">
+        Setiap flow punya <strong>kode unik</strong> (A1, T3-B, R2, AC4, dll) dan terdiri dari:<br><br>
+        <strong>Happy Path</strong> — alur ideal saat semuanya berjalan normal.<br>
+        <strong>Error Cases (E1, E2, ...)</strong> — skenario ketika ada yang salah, gagal, atau edge case.<br><br>
+        Setiap case dijelaskan dari 4 sudut pandang yang bisa di-toggle:
+      </div></div>
+      <div class="layer biz" style="margin-top:8px;"><div class="layer-title"><div class="dot"></div>💼 Bisnis</div><div class="layer-content">Aturan bisnis, batasan, konsekuensi. <strong>Wajib dibaca semua orang</strong> sebelum implement apapun.</div></div>
+      <div class="layer ux" style="margin-top:8px;"><div class="layer-title"><div class="dot"></div>📱 UX</div><div class="layer-content">Apa yang dilihat dan dialami user. Copy teks exact, alur navigasi, pesan error, tombol apa yang muncul.</div></div>
+      <div class="layer be" style="margin-top:8px;"><div class="layer-title"><div class="dot"></div>⚙️ Backend</div><div class="layer-content">API endpoint, logic server, error codes, database operation, queue/scheduler yang diperlukan.</div></div>
+      <div class="layer dash" style="margin-top:8px;"><div class="layer-title"><div class="dot"></div>🛠️ Dashboard</div><div class="layer-content">Aksi yang dilakukan admin/CS/ops dari dashboard internal gopop-lilac.vercel.app.</div></div>
+    </div>
+  </div>
+
+  <!-- LEGEND BADGE -->
+  <div class="case-card" style="margin-top:12px;">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">🏷️</span>
+      <span class="case-title">Legend — arti setiap badge dan status</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <table class="ftable">
+        <tr><th>Badge</th><th>Arti</th></tr>
+        <tr><td><span class="case-badge badge-happy">Happy Path</span></td><td>Alur ideal — semuanya berjalan normal</td></tr>
+        <tr><td><span class="case-badge badge-error">E1, E2, ...</span></td><td>Error case — skenario gagal atau edge case</td></tr>
+        <tr><td><span class="case-badge badge-warn">Warning</span></td><td>Case yang perlu perhatian khusus atau keputusan bisnis</td></tr>
+        <tr><td><span class="fs fs-ok">✅ Ada</span></td><td>Screen/fitur sudah ada di Figma atau dashboard</td></tr>
+        <tr><td><span class="fs fs-partial">⚠️ Parsial</span></td><td>Ada tapi belum lengkap atau masih iterasi</td></tr>
+        <tr><td><span class="fs fs-missing">❌ Belum ada</span></td><td>Belum didesain atau diimplementasi</td></tr>
+        <tr><td><span class="bi-tag critical">🔴 Critical</span></td><td>Blocker — harus selesai sebelum launch</td></tr>
+        <tr><td><span class="bi-tag medium">🟡 Medium</span></td><td>Penting tapi tidak blocking launch</td></tr>
+        <tr><td><span class="bi-tag low">⚪ Low</span></td><td>Nice to have — bisa dikerjakan post-launch</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- KODE FLOW -->
+  <div class="case-card" style="margin-top:12px;">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">🗺️</span>
+      <span class="case-title">Peta semua flow — kode referensi</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <table class="ftable">
+        <tr><th>Kode</th><th>Flow</th><th>Tab</th></tr>
+        <tr><td><code>A1</code></td><td>Register Consumer</td><td>🔐 Auth</td></tr>
+        <tr><td><code>A2</code></td><td>Login Consumer</td><td>🔐 Auth</td></tr>
+        <tr><td><code>A3</code></td><td>Register Reseller</td><td>🔐 Auth</td></tr>
+        <tr><td><code>A4</code></td><td>Login Reseller + PIN</td><td>🔐 Auth</td></tr>
+        <tr><td><code>A5</code></td><td>Lupa Password</td><td>🔐 Auth</td></tr>
+        <tr><td><code>T1</code></td><td>Transaksi Consumer — Happy Path (semua produk)</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>T2</code></td><td>Payment Gateway Gagal (sebelum uang masuk)</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>T3</code></td><td>Biller Gagal (setelah uang masuk) — KRITIS</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>T4</code></td><td>Refund Flow (auto & manual)</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>T5</code></td><td>Transaksi Reseller</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>T6</code></td><td>Transaksi Guest</td><td>💳 Transaksi</td></tr>
+        <tr><td><code>R1</code></td><td>Top Up Saldo Reseller</td><td>🏪 Reseller</td></tr>
+        <tr><td><code>R2</code></td><td>Tier Progression</td><td>🏪 Reseller</td></tr>
+        <tr><td><code>R3</code></td><td>Bonus Jaringan (Downline)</td><td>🏪 Reseller</td></tr>
+        <tr><td><code>R4</code></td><td>Downline Management</td><td>🏪 Reseller</td></tr>
+        <tr><td><code>R5</code></td><td>Suspend & Reaktivasi Reseller</td><td>🏪 Reseller</td></tr>
+        <tr><td><code>AC1</code></td><td>Komplain Masuk — End-to-End</td><td>⚙️ Admin & CS</td></tr>
+        <tr><td><code>AC2</code></td><td>Prioritas & Eskalasi Tiket</td><td>⚙️ Admin & CS</td></tr>
+        <tr><td><code>AC3</code></td><td>Manual Override Transaksi</td><td>⚙️ Admin & CS</td></tr>
+        <tr><td><code>AC4</code></td><td>Monitoring & Rekonsiliasi</td><td>⚙️ Admin & CS</td></tr>
+        <tr><td><code>AC5</code></td><td>Role & Akses Admin (RBAC)</td><td>⚙️ Admin & CS</td></tr>
+        <tr><td><code>N1–N4</code></td><td>Notifikasi (Auth, Transaksi, Reseller, Opt-out)</td><td>🔔 Notifikasi</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- KONTAK TIM -->
+  <div class="case-card" style="margin-top:12px;">
+    <div class="case-header" onclick="toggleCase(this)">
+      <span class="case-badge badge-happy">📞</span>
+      <span class="case-title">Ada pertanyaan? Tanya ke siapa</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <table class="ftable">
+        <tr><th>Topik</th><th>PIC</th></tr>
+        <tr><td>Keputusan bisnis, model harga, tier, bonus rate</td><td><strong>Bili</strong></td></tr>
+        <tr><td>Keuangan, refund, rekonsiliasi, laporan</td><td><strong>Agung</strong></td></tr>
+        <tr><td>Operasional, monitoring, eskalasi</td><td><strong>Acoy</strong></td></tr>
+        <tr><td>Rekonsiliasi harian, status transaksi stuck</td><td><strong>Rifky</strong></td></tr>
+        <tr><td>Aggregator (Ayoconnect), biller, HPP produk</td><td><strong>Ipong</strong></td></tr>
+        <tr><td>Marketing, konten CMS, notif promo</td><td><strong>Kayong / Luqman</strong></td></tr>
+        <tr><td>Partnership, reseller onboarding</td><td><strong>Dileh</strong></td></tr>
+        <tr><td>Implementasi backend, API, database</td><td><strong>Irwan</strong></td></tr>
+        <tr><td>Frontend dashboard, UI components</td><td><strong>Isal</strong></td></tr>
+        <tr><td>Frontend app/web consumer</td><td><strong>Fikly</strong></td></tr>
+        <tr><td>Desain Figma, UX copy, screen baru</td><td><strong>Bili / Designer</strong></td></tr>
+      </table>
+      <div class="note" style="margin-top:10px">Semua keputusan yang ada di tab <strong>⚠️ Gap Decisions</strong> belum final — jangan implement sampai ada jawaban dari PIC terkait.</div>
+    </div>
+  </div>
+
+  <!-- VERSION -->
+  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 20px;margin-top:16px;">
+    <div style="font-size:11px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Changelog</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:1.8;">
+      <strong style="color:var(--lime)">v1.1</strong> — Juni 2026 · Tambah tab Validasi Figma & Dashboard, Design Backlog, halaman Cara Baca ini. Cross-check langsung dari repo GitHub dan Figma MCP.<br>
+      <strong style="color:rgba(255,255,255,.4)">v1.0</strong> — Juni 2026 · Draft awal — Auth, Transaksi, Reseller, Admin & CS, Notifikasi, Gap Decisions.
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-intro -->
+
 <!-- ═══════════════════════════════════════════════════════ AUTH TAB -->
-<div id="tab-auth" class="tab-panel active">
+<div id="tab-auth" class="tab-panel">
 
 <!-- A1 REGISTER CONSUMER -->
 <div class="flow-section">
