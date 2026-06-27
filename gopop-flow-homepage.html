@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · Flow Detail: Homepage App & Web</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{background:#16432b;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(22,67,43,.4);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;background:#CEF17B;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#1A1228;}
+.tb-name{font-size:15px;font-weight:800;color:#fff;}
+.tb-name span{color:#CEF17B;}
+.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.3);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.tb-meta{font-size:11px;color:rgba(255,255,255,.5);}
+
+.layout{display:flex;flex:1;}
+.sidebar{width:260px;background:#fff;border-right:1px solid #E8E4F5;flex-shrink:0;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px);padding:16px 12px;}
+.sb-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin:12px 0 6px;padding:0 8px;display:flex;align-items:center;gap:6px;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px;transition:all .12s;}
+.sb-item:hover{background:#F0EBFF;}
+.sb-item.active{background:#16432b;}
+.sb-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.sb-info{flex:1;}
+.sb-title{font-size:12px;font-weight:700;color:#574872;line-height:1.3;}
+.sb-item.active .sb-title{color:#fff;}
+.sb-sub{font-size:10px;color:#9085AE;margin-top:2px;}
+.sb-item.active .sb-sub{color:rgba(255,255,255,.6);}
+.sb-divider{height:1px;background:#F0EBFF;margin:10px 4px;}
+
+.main{flex:1;overflow-y:auto;padding:32px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* WELCOME */
+.hero{background:linear-gradient(135deg,#16432b,#1a5c38 60%,#22763f);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(206,241,123,.07);border-radius:50%;}
+.hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.hero h1 span{color:#CEF17B;}
+.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
+.flow-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.flow-card{background:#fff;border-radius:14px;padding:18px;border:2px solid #E8E4F5;cursor:pointer;transition:all .18s;}
+.flow-card:hover{border-color:#16A34A;box-shadow:0 4px 16px rgba(22,163,74,.1);transform:translateY(-1px);}
+.fc-num{font-size:11px;font-weight:800;color:#9085AE;margin-bottom:6px;}
+.fc-icon{font-size:24px;margin-bottom:8px;}
+.fc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:4px;line-height:1.3;}
+.fc-who{font-size:11px;color:#9085AE;}
+.fc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px;}
+.fct{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;}
+.fct-user{background:#EFF6FF;color:#1E40AF;}
+.fct-guest{background:#F5F3FF;color:#4A2D8C;}
+.fct-be{background:#F0FDF4;color:#166534;}
+.fct-fe{background:#FFF7ED;color:#92400E;}
+
+/* FLOW PAGE HEADER */
+.flow-header{margin-bottom:28px;}
+.fh-breadcrumb{font-size:11px;color:#9085AE;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.fh-breadcrumb span{color:#16A34A;font-weight:600;}
+.fh-title{font-size:24px;font-weight:800;color:#1A1228;letter-spacing:-.02em;margin-bottom:8px;}
+.fh-desc{font-size:13px;color:#574872;line-height:1.7;max-width:600px;margin-bottom:14px;}
+.fh-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.fh-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid;}
+.fp-who{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+.fp-trigger{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
+.fp-time{background:#FFF7ED;border-color:#FED7AA;color:#92400E;}
+.fp-figma{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
+
+/* SECTION */
+.section{margin-bottom:28px;}
+.section-label{font-size:11px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:#E8E4F5;}
+
+/* STEPS */
+.flow-steps{display:flex;flex-direction:column;}
+.fs-step{display:flex;gap:16px;position:relative;}
+.fs-step:not(:last-child)::before{content:'';position:absolute;left:19px;top:44px;bottom:0;width:2px;background:#E8E4F5;z-index:0;}
+.fs-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;z-index:1;position:relative;}
+.fs-num.ok{background:#DCFCE7;color:#166534;}
+.fs-num.warn{background:#FEF3C7;color:#92400E;}
+.fs-num.err{background:#FEE2E2;color:#DC2626;}
+.fs-num.info{background:#EDE9FE;color:#4A2D8C;}
+.fs-body{flex:1;padding:2px 0 28px;}
+.fs-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.fs-card-title{font-size:14px;font-weight:800;color:#1A1228;margin-bottom:4px;}
+.fs-card-sub{font-size:12px;color:#574872;line-height:1.6;margin-bottom:14px;}
+.who-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.who{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700;}
+.who-user{background:#EFF6FF;color:#1E40AF;}
+.who-be{background:#F0FDF4;color:#166534;}
+.who-fe{background:#FFF7ED;color:#92400E;}
+.who-sys{background:#F5F3FF;color:#4A2D8C;}
+
+/* DETAIL BLOCKS */
+.detail-blocks{display:flex;flex-direction:column;gap:8px;}
+.db{border-radius:10px;padding:12px 14px;}
+.db-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.db-dot{width:6px;height:6px;border-radius:50%;}
+.db-content{font-size:12px;line-height:1.75;color:#374151;}
+.db-content strong{color:#1A1228;font-weight:700;}
+.db-content ul{padding-left:16px;margin-top:4px;}
+.db-content li{margin-bottom:4px;}
+.db-content code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(74,45,140,.08);padding:1px 6px;border-radius:4px;color:#4A2D8C;}
+
+.db.user{background:#EFF6FF;border:1px solid #BFDBFE;}
+.db.user .db-label{color:#1E40AF;} .db.user .db-dot{background:#3B82F6;}
+.db.fe{background:#FFF7ED;border:1px solid #FED7AA;}
+.db.fe .db-label{color:#92400E;} .db.fe .db-dot{background:#F59E0B;}
+.db.be{background:#F0FDF4;border:1px solid #BBF7D0;}
+.db.be .db-label{color:#166534;} .db.be .db-dot{background:#16A34A;}
+.db.figma{background:#F5F3FF;border:1px solid #DDD6FE;}
+.db.figma .db-label{color:#4A2D8C;} .db.figma .db-dot{background:#7C5CBF;}
+
+/* API BLOCK */
+.api-block{background:#1A1228;border-radius:12px;padding:16px 18px;margin-top:8px;}
+.api-block-title{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.api-call{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06);}
+.api-call:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.api-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.api-method{font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;font-family:monospace;}
+.api-method.get{background:#DCFCE7;color:#166534;}
+.api-method.post{background:#DBEAFE;color:#1E40AF;}
+.api-method.put{background:#FEF3C7;color:#92400E;}
+.api-endpoint{font-family:'JetBrains Mono',monospace;font-size:12px;color:#CEF17B;font-weight:600;}
+.api-desc{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+.api-detail{margin-top:8px;}
+.api-detail-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.api-detail-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.7);line-height:1.8;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:6px;}
+.api-response{margin-top:8px;}
+.api-response-label{font-size:10px;font-weight:700;color:#BBF7D0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.api-response-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:#BBF7D0;line-height:1.8;background:rgba(22,163,74,.08);padding:8px 10px;border-radius:6px;}
+
+/* FIGMA REF */
+.figma-ref{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:12px 14px;margin-top:8px;display:flex;gap:10px;align-items:flex-start;}
+.figma-ref-icon{font-size:20px;flex-shrink:0;}
+.figma-ref-content{}
+.figma-ref-title{font-size:12px;font-weight:700;color:#4A2D8C;margin-bottom:3px;}
+.figma-ref-desc{font-size:11px;color:#574872;line-height:1.6;}
+.figma-ref-screens{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.figma-screen-tag{font-size:10px;font-weight:700;background:#4A2D8C;color:#fff;padding:2px 8px;border-radius:4px;}
+
+/* BOTTLENECK */
+.bottleneck{background:#FFF1F2;border:1.5px solid #FECDD3;border-radius:12px;padding:16px 18px;margin-top:4px;}
+.bn-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.bn-icon{font-size:18px;}
+.bn-title{font-size:13px;font-weight:800;color:#9F1239;}
+.bn-cases{display:flex;flex-direction:column;gap:10px;}
+.bn-case{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #FECDD3;}
+.bn-q{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:8px;display:flex;gap:8px;}
+.bn-q::before{content:'❓';flex-shrink:0;}
+.bn-a{font-size:12px;color:#374151;line-height:1.7;display:flex;gap:8px;}
+.bn-a::before{content:'✅';flex-shrink:0;}
+.bn-owner{font-size:10px;color:#9085AE;margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;}
+
+/* RESULT */
+.result-box{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin-top:12px;}
+.rb-title{font-size:12px;font-weight:800;color:#166534;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.rb-items{display:flex;flex-direction:column;gap:5px;}
+.rb-item{font-size:12px;color:#374151;display:flex;gap:8px;line-height:1.5;}
+.rb-item::before{content:'→';color:#16A34A;font-weight:800;flex-shrink:0;}
+
+/* CALLOUT */
+.co{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:10px;display:flex;gap:10px;}
+.co-icon{font-size:18px;flex-shrink:0;}
+.co-text strong{font-weight:700;}
+.co-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+.co-warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;}
+.co-tip{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+
+/* NAV */
+.flow-nav{display:flex;gap:10px;margin-top:32px;padding-top:20px;border-top:1px solid #E8E4F5;}
+.fn-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
+.fn-btn:hover{border-color:#16A34A;color:#16A34A;}
+.fn-btn.next{background:#16A34A;border-color:#16A34A;color:#fff;margin-left:auto;}
+.fn-btn.next:hover{background:#15803D;}
+
+@media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">G</div>
+    <div class="tb-name">Go<span>Pop</span> · Flow Detail</div>
+    <div class="tb-badge">HOMEPAGE APP & WEB</div>
+  </div>
+  <div class="tb-meta">Contoh format · App & Web Consumer</div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sb-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
+  <div class="sb-item active" onclick="sp('welcome',this)">
+    <div class="sb-icon">🗺️</div>
+    <div class="sb-info"><div class="sb-title">Semua Flow</div><div class="sb-sub">Peta 4 flow homepage</div></div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-label"><div class="sb-dot" style="background:#16A34A"></div>Flow Homepage</div>
+  <div class="sb-item" onclick="sp('f01',this)">
+    <div class="sb-icon">🏠</div>
+    <div class="sb-info"><div class="sb-title">AW-F01 · Load Homepage</div><div class="sb-sub">Buka app / web pertama kali</div></div>
+  </div>
+  <div class="sb-item" onclick="sp('f02',this)">
+    <div class="sb-icon">🔄</div>
+    <div class="sb-info"><div class="sb-title">AW-F02 · Refresh & Cache</div><div class="sb-sub">Banner & konten update</div></div>
+  </div>
+  <div class="sb-item" onclick="sp('f03',this)">
+    <div class="sb-icon">👆</div>
+    <div class="sb-info"><div class="sb-title">AW-F03 · User Tap Produk</div><div class="sb-sub">Dari homepage ke transaksi</div></div>
+  </div>
+  <div class="sb-item" onclick="sp('f04',this)">
+    <div class="sb-icon">📶</div>
+    <div class="sb-info"><div class="sb-title">AW-F04 · Homepage Offline</div><div class="sb-sub">Saat tidak ada koneksi</div></div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- WELCOME -->
+<div id="page-welcome" class="page active">
+  <div class="hero">
+    <h1>Homepage App & Web — <span>4 Flow Detail</span></h1>
+    <p>Semua alur yang terjadi di halaman utama GoPop — dari pertama kali dibuka, banner dimuat, user pilih produk, sampai kondisi offline. Setiap flow mencakup detail API call, apa yang Agung dan Fikly perlu implement, dan bottleneck yang perlu diantisipasi.</p>
+  </div>
+
+  <div class="section-label">4 Flow yang Akan Dibahas</div>
+  <div class="flow-cards">
+    <div class="flow-card" onclick="sp('f01',null)">
+      <div class="fc-num">AW-F01</div>
+      <div class="fc-icon">🏠</div>
+      <div class="fc-title">Load Homepage Pertama Kali</div>
+      <div class="fc-who">App buka → semua konten dimuat</div>
+      <div class="fc-tags"><span class="fct fct-user">User</span><span class="fct fct-guest">Guest</span><span class="fct fct-fe">Agung (App)</span><span class="fct fct-fe">Fikly (Desktop)</span></div>
+    </div>
+    <div class="flow-card" onclick="sp('f02',null)">
+      <div class="fc-num">AW-F02</div>
+      <div class="fc-icon">🔄</div>
+      <div class="fc-title">Refresh & Update Konten CMS</div>
+      <div class="fc-who">Banner Kayong update → live di app</div>
+      <div class="fc-tags"><span class="fct fct-fe">Agung + Fikly</span><span class="fct fct-be">BE Cache</span></div>
+    </div>
+    <div class="flow-card" onclick="sp('f03',null)">
+      <div class="fc-num">AW-F03</div>
+      <div class="fc-icon">👆</div>
+      <div class="fc-title">User Tap Shortcut Produk</div>
+      <div class="fc-who">Dari homepage ke flow transaksi</div>
+      <div class="fc-tags"><span class="fct fct-user">User</span><span class="fct fct-guest">Guest</span></div>
+    </div>
+    <div class="flow-card" onclick="sp('f04',null)">
+      <div class="fc-num">AW-F04</div>
+      <div class="fc-icon">📶</div>
+      <div class="fc-title">Homepage Saat Offline</div>
+      <div class="fc-who">Koneksi putus — app tetap bisa buka</div>
+      <div class="fc-tags"><span class="fct fct-fe">Agung + Fikly</span></div>
+    </div>
+  </div>
+
+  <div class="co co-warn" style="margin-top:20px;">
+    <div class="co-icon">⚠️</div>
+    <div class="co-text"><strong>Sebelum flow ini bisa diimplementasi:</strong> Bili perlu mengunci 1 versi final Homepage dari 13 versi yang ada di Figma (AW-GAP-03). Sampai itu selesai, Agung dan Fikly belum bisa mulai build.</div>
+  </div>
+
+  <div class="figma-ref" style="margin-top:12px;">
+    <div class="figma-ref-icon">🎨</div>
+    <div class="figma-ref-content">
+      <div class="figma-ref-title">Referensi Figma — Screen yang Terlibat</div>
+      <div class="figma-ref-desc">File: bwdy1MflFyrW5S7vvIDTy0 · Semua 390px (mobile portrait)</div>
+      <div class="figma-ref-screens">
+        <span class="figma-screen-tag">00 - Homepage (13 versi — belum dikunci)</span>
+        <span class="figma-screen-tag">28 - Layanan Semua</span>
+        <span class="figma-screen-tag">29 - Tips & Promo Listing</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- F01: LOAD HOMEPAGE -->
+<div id="page-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Homepage App & Web <span>›</span> AW-F01</div>
+    <div class="fh-title">🏠 Load Homepage Pertama Kali</div>
+    <div class="fh-desc">Flow ini terjadi setiap kali user atau guest membuka app GoPop atau mengunjungi gopop.id. Homepage perlu menampilkan: banner promo dari CMS, shortcut produk populer, dan section Tips & Promo — semuanya diambil dari server secara real-time.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">👤 User / Guest</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: Buka app atau kunjungi gopop.id</span>
+      <span class="fh-pill fp-time">⏱ Target Load: &lt;2 detik</span>
+      <span class="fh-pill fp-figma">🎨 Figma: 00 - Homepage</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-num ok">1</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">App/web terbuka — tampilkan skeleton loading</div>
+            <div class="fs-card-sub">Sambil menunggu data dari server, app langsung tampilkan skeleton (abu-abu berkedip) agar user tahu app sedang loading, bukan hang.</div>
+            <div class="who-row">
+              <span class="who who-fe">📱 Agung (App) / Fikly (Desktop)</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat</div>
+                <div class="db-content">Layar muncul langsung dengan layout homepage tapi semua konten masih kosong/abu-abu berkedip (skeleton). Navbar bawah sudah muncul — user bisa tap menu lain sambil menunggu.</div>
+              </div>
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Yang Agung & Fikly Perlu Implement</div>
+                <div class="db-content">Render skeleton component untuk: area banner (kotak abu tinggi), 6 skeleton shortcut produk (lingkaran + garis pendek), dan 2 skeleton card Tips & Promo. Jangan tampilkan halaman kosong — UX terasa lebih cepat dengan skeleton.</div>
+              </div>
+              <div class="db figma">
+                <div class="db-label"><div class="db-dot"></div>Status di Figma</div>
+                <div class="db-content">Skeleton state belum ada di Figma. Ini perlu ditambahkan Bili. Sementara belum ada, Agung & Fikly bisa implement dengan warna abu #E5E7EB dengan animasi pulse sederhana.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-num ok">2</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">FE kirim 2 request API secara bersamaan (paralel)</div>
+            <div class="fs-card-sub">Supaya homepage lebih cepat, dua request dikirim sekaligus — tidak perlu menunggu yang satu selesai sebelum yang lain mulai.</div>
+            <div class="who-row">
+              <span class="who who-fe">📱 Agung / Fikly</span>
+              <span class="who who-be">⚙️ Irwan + Rifky (BE)</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Yang Agung & Fikly Implement</div>
+                <div class="db-content">Kirim dua request secara paralel menggunakan <code>Promise.all()</code> — jangan sequential (satu-satu). Dengan paralel, total waktu tunggu = waktu request terlama, bukan jumlah keduanya.</div>
+              </div>
+            </div>
+
+            <div class="api-block" style="margin-top:12px;">
+              <div class="api-block-title">API Call #1 — Konten CMS Homepage</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method get">GET</span>
+                  <span class="api-endpoint">/cms/homepage</span>
+                </div>
+                <div class="api-desc">Ambil banner aktif dan artikel Tips & Promo yang sudah dipublish. Public endpoint — tidak butuh login. Dikerjakan Kayong/Luqman dari dashboard CMS.</div>
+                <div class="api-detail">
+                  <div class="api-detail-label">Query Params</div>
+                  <div class="api-detail-val">platform=app  ← kirim "web" kalau dari browser desktop</div>
+                </div>
+                <div class="api-response">
+                  <div class="api-response-label">Response</div>
+                  <div class="api-response-val">{
+  "banners": [
+    {
+      "id": "BNR-001",
+      "image_url": "https://cdn.gopop.id/banners/promo-hari-ini.jpg",
+      "link_type": "product",  // atau "url" atau "none"
+      "link_value": "pulsa",   // kategori produk yang dituju
+      "active": true
+    }
+  ],
+  "articles": [
+    {
+      "id": "ART-001",
+      "title": "5 Tips Hemat Pulsa Setiap Bulan",
+      "thumbnail": "https://cdn.gopop.id/articles/tips-hemat.jpg",
+      "slug": "tips-hemat-pulsa"
+    }
+  ]
+}</div>
+                </div>
+              </div>
+
+              <div class="api-block-title" style="margin-top:12px;">API Call #2 — Daftar Produk Populer</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method get">GET</span>
+                  <span class="api-endpoint">/products?popular=true&limit=6</span>
+                </div>
+                <div class="api-desc">Ambil 6 produk paling populer untuk ditampilkan sebagai shortcut di homepage. Public endpoint — tidak perlu login. Kalau user sudah login sebagai reseller, tambahkan token agar BE bisa return HPP sesuai tier.</div>
+                <div class="api-detail">
+                  <div class="api-detail-label">Query Params</div>
+                  <div class="api-detail-val">popular=true&limit=6
+Authorization: Bearer {token}  ← opsional, hanya kalau sudah login</div>
+                </div>
+                <div class="api-response">
+                  <div class="api-response-label">Response</div>
+                  <div class="api-response-val">{
+  "products": [
+    {
+      "id": "PROD-001",
+      "name": "Transfer E-Wallet",
+      "icon": "https://cdn.gopop.id/icons/ewallet.png",
+      "category": "transfer",
+      "is_hero": true,
+      "tagline": "Flat Rp1.000"
+    },
+    {
+      "id": "PROD-002",
+      "name": "Pulsa",
+      "icon": "https://cdn.gopop.id/icons/pulsa.png",
+      "category": "pulsa"
+    }
+    // ... 4 produk lainnya
+  ]
+}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-num ok">3</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Response diterima — konten ditampilkan</div>
+            <div class="fs-card-sub">Setelah data dari server datang, skeleton digantikan dengan konten nyata satu per satu sesuai data yang diterima.</div>
+            <div class="who-row">
+              <span class="who who-fe">📱 Agung / Fikly</span>
+              <span class="who who-user">👤 User</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat (Sesuai Figma Homepage)</div>
+                <div class="db-content">
+                  <ul>
+                    <li><strong>Banner Promo</strong> — gambar dari CMS tampil sebagai carousel. Swipe kiri-kanan. Kalau tidak ada banner aktif dari CMS, tampil banner default hardcode.</li>
+                    <li><strong>Shortcut Transfer E-Wallet</strong> — tampil sebagai hero card paling atas dengan tagline "Flat Rp1.000" karena ini produk utama GoPop.</li>
+                    <li><strong>Grid 6 Produk Populer</strong> — ikon + nama produk dalam grid 3×2. Tap langsung ke flow transaksi produk tersebut.</li>
+                    <li><strong>Tips & Promo</strong> — 2–3 card artikel dari CMS. Tap ke halaman detail artikel.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Yang Agung & Fikly Perlu Implement</div>
+                <div class="db-content">
+                  <ul>
+                    <li>Banner: gunakan library carousel (misal Swiper.js). Auto-play setiap 3 detik. Indicator titik di bawah.</li>
+                    <li>Cache response di localStorage dengan TTL 5 menit. Kalau user buka lagi dalam 5 menit, tampilkan cache dulu sambil fetch ulang di background.</li>
+                    <li>Fallback: kalau <code>image_url</code> gagal load, tampilkan placeholder warna ungu dengan logo GoPop.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 — cek login state -->
+      <div class="fs-step">
+        <div class="fs-num info">4</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">FE cek status login — tampilkan UI yang sesuai</div>
+            <div class="fs-card-sub">Homepage tampilannya sedikit berbeda tergantung apakah user sudah login atau masih guest. Tidak ada perbedaan besar, tapi ada beberapa elemen yang muncul/hilang.</div>
+            <div class="who-row">
+              <span class="who who-fe">📱 Agung / Fikly</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Perbedaan UI: Guest vs Login</div>
+                <div class="db-content">
+                  <strong>Kalau Guest (tidak ada token di storage):</strong>
+                  <ul>
+                    <li>Header: "Selamat datang di GoPop 👋" + tombol "Masuk / Daftar"</li>
+                    <li>Tidak ada greeting nama user</li>
+                    <li>Semua produk tetap bisa di-tap (guest-first)</li>
+                  </ul>
+                  <strong>Kalau Sudah Login:</strong>
+                  <ul>
+                    <li>Header: "Halo, [Nama User] 👋"</li>
+                    <li>Avatar kecil di pojok kanan atas</li>
+                    <li>Tidak ada tombol "Masuk / Daftar"</li>
+                  </ul>
+                  Cek dari localStorage: ada <code>access_token</code> yang belum expired → sudah login.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header"><div class="bn-icon">⚡</div><div class="bn-title">4 Case yang Bisa Bermasalah</div></div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-q">API <code>GET /cms/homepage</code> belum ada — homepage tidak bisa ambil konten CMS</div>
+          <div class="bn-a">Ini gap yang sudah teridentifikasi (INT-GAP-18 + AW-GAP-05). Sementara endpoint ini belum dibuat Irwan + Rifky, Agung & Fikly bisa hardcode data dummy di FE supaya bisa develop tampilan dulu. Tapi <strong>jangan ship ke production</strong> sebelum endpoint nyata tersedia.</div>
+          <div class="bn-owner">⚙️ Fix: Irwan + Rifky buat endpoint <code>GET /cms/homepage</code> · 📱 Agung + Fikly: pakai mock data sementara untuk development</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-q">Server lambat merespons — user melihat homepage kosong terlalu lama</div>
+          <div class="bn-a">Pasang timeout 5 detik untuk kedua request. Kalau timeout: tampilkan konten dari cache localStorage (meski mungkin sudah lama). Kalau tidak ada cache sama sekali: tampilkan homepage versi minimal dengan hanya shortcut produk yang sudah di-hardcode (bukan dari API). User tetap bisa transaksi.</div>
+          <div class="bn-owner">📱 Agung + Fikly: implementasi timeout + fallback ke cache + fallback ke hardcode minimal</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-q">Banner dari CMS menampilkan gambar yang tidak sesuai platform (resolusi salah)</div>
+          <div class="bn-a">Kayong upload 1 gambar tapi dipakai di app mobile (sempit) dan web desktop (lebar) — hasilnya bisa stretch atau crop tidak ideal. Solusinya: CMS support upload 2 versi gambar per banner: <code>image_mobile</code> dan <code>image_desktop</code>. FE app ambil <code>image_mobile</code>, FE web ambil <code>image_desktop</code>. Kalau hanya 1 yang diupload, gunakan yang ada untuk keduanya.</div>
+          <div class="bn-owner">🎨 Bili (tambah spec gambar ke Figma) · 👤 Kayong (upload 2 versi di CMS) · Irwan+Rifky (update schema CMS) · Agung+Fikly (implementasi conditional)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-q">Homepage version Figma belum dikunci — Agung dan Fikly tidak tahu mana yang diimplementasi</div>
+          <div class="bn-a">Ini blocker terbesar saat ini. Ada 13 versi "00 - Homepage" di Figma. Agung dan Fikly tidak bisa mulai implement sampai Bili pilih 1 dan rename jadi "00 - Homepage [FINAL]". Kalau ini tidak segera diselesaikan, Agung & Fikly tidak bisa mulai kerja pada flow ini sama sekali.</div>
+          <div class="bn-owner">🎨 Bili: <strong>ACTION ITEM</strong> — pilih 1 versi final, rename, arsipkan sisanya. Estimasi 30 menit.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">Homepage tampil dengan konten real dari server dalam &lt;2 detik</div>
+      <div class="rb-item">Banner promo yang diubah Kayong dari CMS langsung muncul di app user</div>
+      <div class="rb-item">User/guest melihat UI yang sesuai status login mereka</div>
+      <div class="rb-item">Konten ter-cache untuk load lebih cepat saat buka lagi</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="sp('welcome',null)">← Semua Flow</div>
+    <div class="fn-btn next" onclick="sp('f02',null)">AW-F02: Refresh & Cache →</div>
+  </div>
+</div>
+
+<!-- F02: REFRESH & CACHE -->
+<div id="page-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Homepage App & Web <span>›</span> AW-F02</div>
+    <div class="fh-title">🔄 Refresh & Update Konten CMS</div>
+    <div class="fh-desc">Kayong mengubah banner di dashboard CMS. Flow ini menjelaskan bagaimana perubahan itu akhirnya sampai ke layar user — termasuk bagaimana cache di-handle agar user tidak terus lihat konten lama.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">📢 Kayong/Luqman → 👤 User</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: Banner/konten diubah di CMS dashboard</span>
+      <span class="fh-pill fp-time">⏱ Delay max: 5 menit (TTL cache)</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-num ok">1</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Kayong update banner di dashboard CMS</div>
+            <div class="fs-card-sub">Kayong upload gambar baru atau nonaktifkan banner lama dari dashboard.</div>
+            <div class="who-row"><span class="who who-sys">📢 Kayong (Marketing)</span><span class="who who-be">⚙️ BE</span></div>
+            <div class="detail-blocks">
+              <div class="db be">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di BE</div>
+                <div class="db-content">Dashboard kirim request update ke BE → BE simpan perubahan di database → BE invalidate cache untuk key <code>cms:homepage:app</code> dan <code>cms:homepage:web</code> di Redis.</div>
+              </div>
+            </div>
+            <div class="api-block" style="margin-top:12px;">
+              <div class="api-block-title">API Call dari Dashboard CMS</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method put">PUT</span>
+                  <span class="api-endpoint">/admin/cms/banners/{banner_id}</span>
+                </div>
+                <div class="api-desc">Update atau nonaktifkan banner. Butuh login admin dengan permission cms.write.</div>
+                <div class="api-detail">
+                  <div class="api-detail-label">Request Body</div>
+                  <div class="api-detail-val">{
+  "image_url": "https://cdn.gopop.id/banners/promo-baru.jpg",
+  "active": true,
+  "platform": "app",
+  "link_type": "product",
+  "link_value": "transfer"
+}</div>
+                </div>
+                <div class="api-response">
+                  <div class="api-response-label">Response</div>
+                  <div class="api-response-val">{
+  "success": true,
+  "banner_id": "BNR-002",
+  "cache_invalidated": true  // BE sudah hapus cache lama
+}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-num ok">2</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User buka / refresh homepage</div>
+            <div class="fs-card-sub">Saat user buka homepage, FE cek dulu apakah ada cache yang masih valid sebelum call API.</div>
+            <div class="who-row"><span class="who who-fe">📱 Agung / Fikly</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Cache Strategy yang Harus Diimplementasi</div>
+                <div class="db-content">
+                  <strong>Langkah yang FE lakukan setiap buka homepage:</strong>
+                  <ul>
+                    <li>Cek localStorage: ada data <code>homepage_cache</code> yang <code>timestamp</code>-nya kurang dari 5 menit lalu?</li>
+                    <li><strong>Kalau ya (cache masih fresh):</strong> tampilkan data cache dulu → di background, tetap fetch ulang dari server → kalau data baru berbeda, update tampilan tanpa user perlu refresh manual</li>
+                    <li><strong>Kalau tidak (cache expired atau tidak ada):</strong> tampilkan skeleton → fetch dari server → tampilkan data baru → simpan ke cache dengan timestamp baru</li>
+                  </ul>
+                  Pattern ini disebut <em>stale-while-revalidate</em> — user tidak pernah nunggu lama tapi konten selalu up-to-date.
+                </div>
+              </div>
+            </div>
+            <div class="api-block" style="margin-top:12px;">
+              <div class="api-block-title">API Call dari FE (sama dengan AW-F01)</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method get">GET</span>
+                  <span class="api-endpoint">/cms/homepage?platform=app</span>
+                </div>
+                <div class="api-desc">BE cek Redis cache dulu. Cache key: <code>cms:homepage:app</code>. Cache TTL di server: 5 menit. Kalau cache sudah di-invalidate Kayong, BE ambil fresh dari database dan set cache baru.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-num ok">3</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Banner baru muncul di layar user</div>
+            <div class="fs-card-sub">User melihat banner baru tanpa perlu tahu bahwa ada perubahan — update terasa mulus.</div>
+            <div class="who-row"><span class="who who-user">👤 User</span></div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat</div>
+                <div class="db-content">Kalau user sudah ada di homepage saat update terjadi — banner berganti pelan-pelan (fade transition) tanpa halaman reload. Kalau user baru buka homepage — langsung lihat banner baru.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header"><div class="bn-icon">⚡</div><div class="bn-title">2 Case yang Bisa Bermasalah</div></div>
+      <div class="bn-cases">
+        <div class="bn-case">
+          <div class="bn-q">Kayong ubah banner tapi user masih lihat yang lama sampai 5 menit ke depan</div>
+          <div class="bn-a">Ini wajar dan by design — TTL cache 5 menit. Kalau Kayong perlu update yang langsung live untuk kampanye urgent, ada tombol "Force Refresh Cache" di dashboard CMS yang akan invalidate cache segera. Untuk update normal, 5 menit sudah cukup.</div>
+          <div class="bn-owner">📢 Kayong: pakai tombol "Force Refresh" kalau butuh langsung live · ⚙️ Irwan+Rifky: implementasi endpoint invalidate cache on-demand</div>
+        </div>
+        <div class="bn-case">
+          <div class="bn-q">CMS dashboard belum terhubung ke BE — banner yang diubah tidak pernah sampai ke user</div>
+          <div class="bn-a">Ini adalah gap kritis (D-GAP-18). Saat ini semua perubahan CMS hanya update state lokal di browser Kayong — tidak tersimpan ke database, tidak ada yang bisa diambil FE. Kayong bisa ubah banner sebanyak apapun tapi user tidak akan pernah lihat perubahannya sampai ini difix.</div>
+          <div class="bn-owner">⚙️ Fix: Irwan+Rifky buat semua endpoint CMS dan hubungkan ke dashboard · Ini harus selesai sebelum fitur CMS bisa dipakai Kayong</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">Perubahan banner Kayong di CMS muncul di app user dalam max 5 menit</div>
+      <div class="rb-item">User tidak perlu refresh manual — update otomatis</div>
+      <div class="rb-item">Performance tetap cepat karena ada caching di FE dan BE</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="sp('f01',null)">← AW-F01: Load Homepage</div>
+    <div class="fn-btn next" onclick="sp('f03',null)">AW-F03: User Tap Produk →</div>
+  </div>
+</div>
+
+<!-- F03: TAP PRODUK -->
+<div id="page-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Homepage App & Web <span>›</span> AW-F03</div>
+    <div class="fh-title">👆 User Tap Shortcut Produk dari Homepage</div>
+    <div class="fh-desc">User melihat grid produk di homepage dan tap salah satu — misalnya "Transfer E-Wallet" atau "Pulsa". Flow ini menjelaskan apa yang terjadi dari tap sampai screen produk muncul.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">👤 User / Guest</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: User tap ikon produk di homepage</span>
+      <span class="fh-pill fp-time">⏱ Target: Langsung pindah screen tanpa loading</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-num ok">1</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User tap ikon produk</div>
+            <div class="fs-card-sub">Setiap ikon produk di homepage punya <code>category</code> dan <code>link_type</code> yang menentukan ke mana user diarahkan.</div>
+            <div class="who-row"><span class="who who-user">👤 User / Guest</span><span class="who who-fe">📱 Agung / Fikly</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Routing Logic di FE (Berdasarkan category dari API)</div>
+                <div class="db-content">
+                  <ul>
+                    <li><code>category: "transfer"</code> → Screen 01 Transfer E-Wallet Input</li>
+                    <li><code>category: "pulsa"</code> → Screen 06 Pulsa & Data Input</li>
+                    <li><code>category: "token_listrik"</code> → Screen 19 Token Listrik Input</li>
+                    <li><code>category: "game"</code> → Screen 14 Voucher Game Pilih Game</li>
+                    <li><code>category: "bpjs"</code> → Screen 08 BPJS Kesehatan Input</li>
+                    <li><code>category: "pdam"</code> → Screen 17 PDAM Input</li>
+                    <li><code>category: "all"</code> → Screen 28 Layanan Semua</li>
+                  </ul>
+                  Navigasi ini langsung — tidak perlu API call dulu. Screen langsung buka.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-num ok">2</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Screen produk terbuka — fetch data produk</div>
+            <div class="fs-card-sub">Setelah screen produk terbuka, baru FE fetch data produk yang relevan (misal: daftar nominal pulsa). Ini dipisah dari homepage agar homepage tetap ringan.</div>
+            <div class="who-row"><span class="who who-fe">📱 Agung / Fikly</span><span class="who who-be">⚙️ BE</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Contoh: User Tap "Pulsa"</div>
+                <div class="db-content">Screen 06 Pulsa Input terbuka. Ada field input nomor HP. Saat user mulai ketik nomor → FE hit API untuk detect operator dari prefix nomor.</div>
+              </div>
+            </div>
+            <div class="api-block" style="margin-top:12px;">
+              <div class="api-block-title">API: Detect Operator dari Nomor HP (Real-time)</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method get">GET</span>
+                  <span class="api-endpoint">/products/prefix-detect?phone=0812</span>
+                </div>
+                <div class="api-desc">Dipanggil saat user ketik 4 digit pertama nomor HP. Tidak perlu nomor lengkap. Public endpoint, tidak butuh login.</div>
+                <div class="api-response">
+                  <div class="api-response-label">Response</div>
+                  <div class="api-response-val">{
+  "operator": "Telkomsel",
+  "operator_logo": "https://cdn.gopop.id/operators/telkomsel.png",
+  "prefix": "0812",
+  "is_valid": true
+}
+// Kalau prefix tidak dikenal:
+{
+  "operator": null,
+  "is_valid": false,
+  "message": "Prefix nomor tidak dikenal"
+}</div>
+                </div>
+              </div>
+              <div class="api-block-title" style="margin-top:12px;">API: Daftar Nominal Pulsa (Setelah Operator Terdeteksi)</div>
+              <div class="api-call">
+                <div class="api-row">
+                  <span class="api-method get">GET</span>
+                  <span class="api-endpoint">/products?category=pulsa&operator=telkomsel</span>
+                </div>
+                <div class="api-desc">Ambil semua nominal pulsa untuk operator yang terdeteksi. Public — tidak butuh login. Kalau sudah login sebagai reseller, BE return HPP sesuai tier.</div>
+                <div class="api-response">
+                  <div class="api-response-label">Response</div>
+                  <div class="api-response-val">{
+  "products": [
+    {
+      "id": "PLN-TL-5",
+      "name": "Pulsa Telkomsel 5.000",
+      "nominal": 5000,
+      "price": 6500,    // harga jual consumer
+      "hpp": null       // null kalau bukan reseller, atau angka kalau reseller
+    },
+    {
+      "id": "PLN-TL-10",
+      "name": "Pulsa Telkomsel 10.000",
+      "nominal": 10000,
+      "price": 11500
+    }
+    // ... nominal lainnya
+  ]
+}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header"><div class="bn-icon">⚡</div><div class="bn-title">2 Case yang Bisa Bermasalah</div></div>
+      <div class="bn-cases">
+        <div class="bn-case">
+          <div class="bn-q">Produk di-tap dari banner CMS yang link-nya salah atau produk sudah tidak aktif</div>
+          <div class="bn-a">Saat FE terima response <code>GET /products?category=...</code> dan produk tidak ada atau <code>active: false</code> — tampilkan pesan: "Layanan ini sedang tidak tersedia. Coba lagi nanti." dengan tombol kembali ke homepage. Jangan tampilkan halaman kosong atau error teknikal.</div>
+          <div class="bn-owner">📱 Agung + Fikly: implementasi empty state yang friendly · Irwan+Rifky: pastikan response selalu ada field <code>active</code></div>
+        </div>
+        <div class="bn-case">
+          <div class="bn-q">Prefix detect terlalu sering di-hit saat user ketik — bikin boros request</div>
+          <div class="bn-a">Jangan hit API setiap karakter diketik. Pakai debounce 500ms — tunggu sampai user berhenti mengetik 0.5 detik baru kirim request. Dan hanya hit kalau sudah 4 digit (prefix selalu 4 digit). Ini mengurangi 80% request yang tidak perlu.</div>
+          <div class="bn-owner">📱 Agung + Fikly: implementasi debounce di input field nomor HP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">User langsung masuk ke screen produk yang ditap tanpa loading awal</div>
+      <div class="rb-item">Operator otomatis terdeteksi saat user ketik 4 digit pertama nomor HP</div>
+      <div class="rb-item">Daftar nominal muncul sesuai operator — siap dipilih user</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="sp('f02',null)">← AW-F02: Cache & Refresh</div>
+    <div class="fn-btn next" onclick="sp('f04',null)">AW-F04: Homepage Offline →</div>
+  </div>
+</div>
+
+<!-- F04: OFFLINE -->
+<div id="page-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Homepage App & Web <span>›</span> AW-F04</div>
+    <div class="fh-title">📶 Homepage Saat Tidak Ada Koneksi</div>
+    <div class="fh-desc">User buka app tapi tidak ada koneksi internet. GoPop tetap harus bisa dibuka — user tidak boleh lihat layar error kosong. Flow ini menjelaskan bagaimana app handle kondisi offline dengan graceful.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">👤 User / Guest</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: App dibuka saat offline / koneksi putus</span>
+      <span class="fh-pill fp-time">⏱ Target: App tetap terbuka, informasikan status offline</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-num warn">1</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">FE deteksi tidak ada koneksi</div>
+            <div class="fs-card-sub">Saat app dibuka atau koneksi tiba-tiba putus, FE harus deteksi kondisi ini dan bereaksi yang tepat.</div>
+            <div class="who-row"><span class="who who-fe">📱 Agung / Fikly</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Cara Deteksi Offline</div>
+                <div class="db-content">
+                  <ul>
+                    <li>Listen ke event <code>window.addEventListener('offline', ...)</code> — trigger saat koneksi putus di tengah jalan</li>
+                    <li>Saat app buka, coba fetch dengan timeout pendek (2 detik) — kalau gagal, anggap offline</li>
+                    <li>Tampilkan banner tipis di bagian atas: "Kamu sedang offline. Beberapa fitur mungkin tidak tersedia."</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-num ok">2</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Tampilkan homepage dari cache</div>
+            <div class="fs-card-sub">Kalau ada data homepage yang tersimpan dari sesi sebelumnya, tampilkan itu. User tetap bisa lihat UI penuh.</div>
+            <div class="who-row"><span class="who who-fe">📱 Agung / Fikly</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Yang Ditampilkan Saat Offline</div>
+                <div class="db-content">
+                  <strong>Kalau ada cache (paling ideal):</strong>
+                  <ul>
+                    <li>Banner promo dari cache — mungkin sudah lama, tapi lebih baik dari kosong</li>
+                    <li>Grid produk dari cache — produk tidak berubah sering jadi aman</li>
+                    <li>Label kecil di bawah banner: "Konten mungkin tidak terkini"</li>
+                  </ul>
+                  <strong>Kalau tidak ada cache sama sekali (pertama kali install, belum pernah online):</strong>
+                  <ul>
+                    <li>Tampilkan homepage minimal: hanya grid produk yang di-hardcode (tidak dari API)</li>
+                    <li>Banner tidak tampil — bukan placeholder, cukup tidak ada</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat & Bisa Lakukan</div>
+                <div class="db-content">User masih bisa lihat homepage, tapi kalau tap produk → muncul pesan: "Tidak bisa melanjutkan — kamu sedang offline. Sambungkan ke internet untuk transaksi." Ini mencegah user frustrasi karena tidak tahu kenapa tidak bisa lanjut.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-num ok">3</div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Koneksi kembali — app otomatis update</div>
+            <div class="fs-card-sub">Saat koneksi pulih, app otomatis refresh konten tanpa perlu user tap apapun.</div>
+            <div class="who-row"><span class="who who-fe">📱 Agung / Fikly</span></div>
+            <div class="detail-blocks">
+              <div class="db fe">
+                <div class="db-label"><div class="db-dot"></div>Implementasi</div>
+                <div class="db-content">Listen ke event <code>window.addEventListener('online', ...)</code> → saat online kembali, auto-fetch data terbaru → update tampilan → hilangkan banner "offline" → tampilkan snackbar kecil: "Koneksi kembali ✓"</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header"><div class="bn-icon">⚡</div><div class="bn-title">1 Case yang Perlu Diantisipasi</div></div>
+      <div class="bn-cases">
+        <div class="bn-case">
+          <div class="bn-q">User tap produk saat offline lalu koneksi kembali — state produk hilang</div>
+          <div class="bn-a">Simpan state "user terakhir tap produk X" di memory. Saat koneksi kembali, jangan otomatis lanjut ke transaksi (bisa expired atau state tidak konsisten). Cukup biarkan user di screen produk yang sama — mereka bisa tap lagi untuk mulai. Tampilkan snackbar: "Koneksi kembali. Kamu bisa lanjut transaksi sekarang."</div>
+          <div class="bn-owner">📱 Agung + Fikly: jangan auto-resume transaksi yang terputus — biarkan user yang inisiasi ulang</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">App tidak crash atau tampil kosong saat offline</div>
+      <div class="rb-item">User tahu kenapa tidak bisa transaksi (pesan offline yang jelas)</div>
+      <div class="rb-item">Saat online kembali, app langsung siap tanpa perlu restart</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="sp('f03',null)">← AW-F03: Tap Produk</div>
+    <div class="fn-btn" onclick="sp('welcome',null)">🗺️ Semua Flow</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function sp(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    // find sidebar item by onclick content
+    document.querySelectorAll('.sb-item').forEach(s => {
+      if (s.getAttribute('onclick') && s.getAttribute('onclick').includes("'"+id+"'")) {
+        s.classList.add('active');
+      }
+    });
+  }
+  document.querySelector('.main').scrollTop = 0;
+}
+</script>
+</body>
+</html>
