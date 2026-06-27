@@ -179,6 +179,14 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="si" onclick="go('aw-guest',this)"><span class="sicon">👻</span>Guest Flow<span class="sgb">2</span></div>
     <div class="si" onclick="go('aw-gaps',this)" style="margin-top:4px;background:#FFF1F2;color:#9F1239;"><span class="sicon">⚠️</span>Gap Summary<span class="sgb" style="background:#DC2626;color:#fff;">17</span></div>
   </div>
+  <div class="sdiv"></div>
+  <div class="sidebar-group">
+    <div class="sidebar-section"><div class="sdot" style="background:#F59E0B"></div>Integrasi Teknikal</div>
+    <div class="si" onclick="go('xendit',this)"><span class="sicon">💰</span>Payment Gateway<span class="sgb">4</span></div>
+    <div class="si" onclick="go('biller',this)"><span class="sicon">📡</span>Biller (Ayoconnect)<span class="sgb">5</span></div>
+    <div class="si" onclick="go('notif',this)"><span class="sicon">🔔</span>Notifikasi (WA + Push)<span class="sgb">4</span></div>
+    <div class="si" onclick="go('int-gaps',this)" style="margin-top:4px;background:#FFF1F2;color:#9F1239;"><span class="sicon">⚠️</span>Gap Summary Integrasi<span class="sgb" style="background:#DC2626;color:#fff;">13</span></div>
+  </div>
 </nav>
 <main class="main" id="main">
 
@@ -1597,6 +1605,327 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     Dari 17 gap, <strong>11 adalah gap design (Figma)</strong> — artinya Bili adalah bottleneck utama sebelum Agung dan Fikly bisa mulai implement. Prioritas utama untuk Bili: (1) Lock Homepage final, (2) Buat Payment Instruction screen, (3) Buat OTP screen, (4) Tambah field nomor WA di Checkout untuk guest.<br><br>
     Gap FE/BE (6 gap) bisa dikerjakan paralel oleh Agung, Fikly, Irwan, dan Rifky setelah design selesai.
   </div>
+</div>
+</div>
+<!-- ════ XENDIT ════ -->
+<div id="page-xendit" style="display:none;">
+<div class="ph">
+  <div class="peyebrow">Integrasi Teknikal</div>
+  <div class="ptitle">💰 Payment Gateway — Xendit</div>
+  <div class="pdesc">Semua alur pembayaran consumer dan top up saldo reseller melewati Xendit. Ini adalah titik pertama uang masuk ke GoPop sebelum dikirim ke biller.</div>
+  <div class="powners">
+    <span class="op op-b">⚙️ Irwan + Rifky (BE)</span>
+    <span class="op op-f">⚙️ Agung + Fikly (FE — polling + redirect)</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Alur Payment Gateway — Consumer Transaksi</div>
+  <div class="steps">
+    <div class="step"><div class="sn sno">1</div><div class="sc_"><div class="st">FE hit <code>POST /transactions</code> → BE buat order di Xendit</div><div class="sd">BE call <code>POST https://api.xendit.co/v2/invoices</code> dengan amount, external_id (= gopop transaction_id), dan payment methods yang diizinkan.</div></div></div>
+    <div class="step"><div class="sn sno">2</div><div class="sc_"><div class="st">Xendit return payment URL / QRIS / VA number</div><div class="sd">BE forward ke FE: <code>{payment_type, qr_string?, va_number?, payment_url?, expired_at}</code>. FE tampilkan di Payment Instruction screen.</div></div></div>
+    <div class="step"><div class="sn sno">3</div><div class="sc_"><div class="st">User bayar di luar app → Xendit terima pembayaran</div></div></div>
+    <div class="step"><div class="sn sno">4</div><div class="sc_"><div class="st">Xendit kirim webhook ke <code>POST /payments/callback</code></div><div class="sd">BE verifikasi signature Xendit → update transaksi ke PAID → queue job kirim ke biller. FE detect via polling.</div></div></div>
+    <div class="step"><div class="sn snw">5a</div><div class="sc_"><div class="st">Webhook tidak datang → BE scheduler pull aktif</div><div class="sd">Setiap 5 menit: cek transaksi PENDING &gt;10 menit → hit <code>GET https://api.xendit.co/v2/invoices/{external_id}</code> untuk pull status.</div></div></div>
+    <div class="step"><div class="sn sno">5b</div><div class="sc_"><div class="st">Payment expired → status EXPIRED, tidak ada refund</div><div class="sd">Xendit kirim webhook <code>EXPIRED</code> atau BE detect dari pull. Update status → tidak ada uang masuk → tidak perlu refund.</div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Endpoint Xendit yang Dipakai</div>
+  <table class="at">
+    <tr><th>Endpoint Xendit</th><th>Method</th><th>Kapan Dipanggil</th><th>Siapa yang Call</th></tr>
+    <tr><td><code>/v2/invoices</code></td><td><span class="m mp">POST</span></td><td>Saat consumer checkout — buat payment request</td><td>BE (Irwan)</td></tr>
+    <tr><td><code>/v2/invoices/{external_id}</code></td><td><span class="m mg">GET</span></td><td>Pull status manual kalau webhook tidak datang</td><td>BE scheduler</td></tr>
+    <tr><td><code>/v2/refunds</code></td><td><span class="m mp">POST</span></td><td>Saat transaksi FAILED setelah bayar — auto-refund</td><td>BE (otomatis)</td></tr>
+    <tr><td><code>/v2/refunds/{id}</code></td><td><span class="m mg">GET</span></td><td>Cek status refund</td><td>BE scheduler</td></tr>
+    <tr><td><code>webhook → /payments/callback</code></td><td><span class="m mp">POST</span></td><td>Xendit push notif: PAID, EXPIRED, SETTLED</td><td>Xendit → BE</td></tr>
+    <tr><td><code>webhook → /refunds/callback</code></td><td><span class="m mp">POST</span></td><td>Xendit push notif status refund selesai</td><td>Xendit → BE</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Endpoint GoPop BE yang Dibutuhkan</div>
+  <table class="at">
+    <tr><th>Endpoint</th><th>Method</th><th>Fungsi</th><th>Dipanggil oleh</th></tr>
+    <tr><td><code>/payments/callback</code></td><td><span class="m mp">POST</span></td><td>Terima webhook dari Xendit. Verifikasi header <code>x-callback-token</code>. Update status transaksi.</td><td>Xendit (push)</td></tr>
+    <tr><td><code>/refunds/callback</code></td><td><span class="m mp">POST</span></td><td>Terima webhook refund selesai. Update status refund di DB.</td><td>Xendit (push)</td></tr>
+    <tr><td><code>/admin/transactions/{id}/check-payment</code></td><td><span class="m mp">POST</span></td><td>Manual pull status dari Xendit. Dipanggil dari dashboard oleh CS/Rifky.</td><td>Dashboard (manual)</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Logika Penting yang Harus Diimplementasi</div>
+  <table class="ft">
+    <tr><th>Logika</th><th>Detail</th><th>Owner</th></tr>
+    <tr><td class="fn">Webhook signature verification</td><td>Setiap webhook dari Xendit harus diverifikasi via header <code>x-callback-token</code>. Tolak request tanpa token valid. Cegah fake webhook.</td><td>Irwan + Rifky</td></tr>
+    <tr><td class="fn">Idempotency — duplicate webhook handling</td><td>Xendit bisa kirim webhook yang sama lebih dari sekali. BE harus idempotent: kalau transaksi sudah PAID, jangan proses ulang.</td><td>Irwan + Rifky</td></tr>
+    <tr><td class="fn">External ID mapping</td><td><code>external_id</code> di Xendit = <code>transaction_id</code> GoPop. Harus unique per transaksi. Format: <code>GPP-{transaction_id}</code></td><td>Irwan + Rifky</td></tr>
+    <tr><td class="fn">Payment method allowlist</td><td>Xendit support banyak metode. GoPop hanya expose: QRIS, VA (BCA/Mandiri/BNI/BRI), OVO, DANA, GoPay, ShopeePay. Kirim allowlist di request buat invoice.</td><td>Irwan + Rifky + Bili (keputusan metode apa saja)</td></tr>
+    <tr><td class="fn">Refund auto-trigger logic</td><td>Hanya trigger refund kalau: (1) transaksi PAID dan (2) status akhir = FAILED. Jangan refund EXPIRED karena tidak ada uang masuk.</td><td>Irwan + Rifky</td></tr>
+    <tr><td class="fn">Reseller top up — tipe berbeda</td><td>Top up saldo reseller juga pakai Xendit tapi dengan flag berbeda di payload: <code>type: "reseller_topup"</code> di metadata. Callback handler harus bedain ini dari transaksi consumer biasa.</td><td>Irwan + Rifky</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Gap yang Ditemukan</div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-01</div><div class="gtitle">Tidak ada webhook handler untuk Xendit di repo</div></div>
+    <div class="gdesc">Tidak ada file atau endpoint <code>/payments/callback</code> yang terdeteksi di repo. Tanpa ini, semua pembayaran yang berhasil tidak akan pernah diproses — transaksi akan stuck di PENDING selamanya.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Buat endpoint <code>POST /payments/callback</code> di BE dengan: (1) verifikasi signature, (2) idempotency check, (3) update status transaksi ke PAID, (4) trigger job kirim ke biller.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE) — prioritas tertinggi</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-02</div><div class="gtitle">Tidak ada scheduler pull status Xendit untuk transaksi pending</div></div>
+    <div class="gdesc">Kalau webhook Xendit gagal terkirim (network issue, server down sesaat), transaksi akan stuck di PENDING selamanya. Tidak ada mekanisme fallback pull status secara aktif.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Buat cron job yang jalan setiap 5 menit: cek transaksi PENDING &gt;10 menit → pull status dari Xendit API → proses sesuai hasilnya.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc h">
+    <div class="gct"><div class="gcode gch">INT-GAP-03</div><div class="gtitle">Tidak ada definisi payment method yang diizinkan</div></div>
+    <div class="gdesc">Xendit support puluhan metode pembayaran. Belum ada kesepakatan metode mana saja yang GoPop expose ke user — ini menentukan payload saat buat invoice Xendit.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Bili putuskan daftar metode resmi (QRIS, VA bank apa saja, e-wallet mana). Irwan + Rifky implementasi sebagai config/constant di BE.</div>
+    <div class="gfoot"><div class="gown">Owner: Bili (keputusan bisnis) → Irwan + Rifky (implementasi)</div><span class="sev sh">High</span></div>
+  </div>
+  <div class="gc h">
+    <div class="gct"><div class="gcode gch">INT-GAP-04</div><div class="gtitle">Reseller top up dan consumer transaksi tidak dibedakan di callback</div></div>
+    <div class="gdesc">Keduanya akan masuk ke endpoint callback yang sama. Tanpa differentiator, handler tidak tahu apakah harus update saldo wallet reseller atau update status transaksi consumer.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Sertakan <code>metadata: {type: "reseller_topup", reseller_id: "..."}</code> di payload Xendit untuk top up reseller. Callback handler cek metadata.type sebelum proses.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sh">High</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ BILLER ════ -->
+<div id="page-biller" style="display:none;">
+<div class="ph">
+  <div class="peyebrow">Integrasi Teknikal</div>
+  <div class="ptitle">📡 Biller — Ayoconnect</div>
+  <div class="pdesc">Setelah uang masuk via Xendit, GoPop kirim request ke Ayoconnect (primary biller) untuk delivery produk. Ini adalah titik paling kritis — uang sudah di GoPop tapi produk belum terkirim.</div>
+  <div class="powners">
+    <span class="op op-b">⚙️ Irwan + Rifky (BE)</span>
+    <span class="op op-o">⚙️ Ipong (Aggregator Mgmt — monitor + switch)</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Alur Kirim ke Biller</div>
+  <div class="steps">
+    <div class="step"><div class="sn sno">1</div><div class="sc_"><div class="st">Setelah PAID → BE queue job kirim ke biller</div><div class="sd">Tidak langsung synchronous — pakai job queue (Redis/BullMQ atau similar) agar tidak blocking response ke FE.</div></div></div>
+    <div class="step"><div class="sn sno">2</div><div class="sc_"><div class="st">Job hit Ayoconnect primary → timeout 30 detik</div><div class="sd"><code>POST https://api.ayoconnect.id/v1/transactions</code> dengan product_code, destination, amount, external_ref. Update status ke PROCESSING.</div></div></div>
+    <div class="step"><div class="sn snw">3a</div><div class="sc_"><div class="st">Ayoconnect sukses → status SUCCESS</div><div class="sd">Ayoconnect return <code>{status: "SUCCESS", ref_id: "...", sn: "token/kode produk"}</code>. Update DB → trigger WA notif sukses ke user.</div></div></div>
+    <div class="step"><div class="sn snw">3b</div><div class="sc_"><div class="st">Ayoconnect timeout → retry 2x dengan backoff</div><div class="sd">Retry 1: setelah 30 detik. Retry 2: setelah 60 detik. Increment <code>retry_count</code> setiap attempt. Log semua attempt.</div></div></div>
+    <div class="step"><div class="sn snw">3c</div><div class="sc_"><div class="st">Semua retry ke primary gagal → fallback ke biller backup</div><div class="sd">Hit Digiflazz atau IAK sebagai backup. User tidak tahu ada fallback — tetap lihat "Sedang diproses".</div></div></div>
+    <div class="step"><div class="sn sne">3d</div><div class="sc_"><div class="st">Semua biller gagal → status FAILED → auto-refund</div><div class="sd">Trigger <code>POST /v2/refunds</code> ke Xendit. Update status ke FAILED. WA notif ke user: "Transaksi gagal, dana dikembalikan."</div></div></div>
+    <div class="step"><div class="sn snw">4</div><div class="sc_"><div class="st">PROCESSING stuck tanpa response → scheduler cek</div><div class="sd">Setiap 5 menit: cek transaksi PROCESSING &gt;15 menit → hit <code>GET /v1/transactions/{ref}</code> ke Ayoconnect untuk pull status. Resolve berdasarkan response.</div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Endpoint Ayoconnect yang Dipakai</div>
+  <table class="at">
+    <tr><th>Endpoint Ayoconnect</th><th>Method</th><th>Kapan Dipanggil</th><th>Keterangan</th></tr>
+    <tr><td><code>/v1/transactions</code></td><td><span class="m mp">POST</span></td><td>Saat kirim produk ke biller</td><td>Body: <code>{product_code, destination, amount, external_ref}</code>. <code>external_ref</code> = gopop transaction_id.</td></tr>
+    <tr><td><code>/v1/transactions/{ref}</code></td><td><span class="m mg">GET</span></td><td>Pull status transaksi yang stuck</td><td>Dipakai oleh scheduler dan tombol manual dari dashboard.</td></tr>
+    <tr><td><code>/v1/inquiry</code></td><td><span class="m mp">POST</span></td><td>Cek tagihan postpaid sebelum bayar</td><td>Untuk BPJS, PDAM, PBB, Internet & TV. Return: nama pelanggan, jumlah tagihan.</td></tr>
+    <tr><td><code>/v1/products</code></td><td><span class="m mg">GET</span></td><td>Sync daftar produk + harga (HPP)</td><td>Dijalankan berkala (cron harian) untuk update HPP di DB GoPop.</td></tr>
+    <tr><td><code>webhook → /biller/callback</code></td><td><span class="m mp">POST</span></td><td>Ayoconnect push status async</td><td>Beberapa produk (PLN, BPJS) prosesnya async — Ayoconnect push status setelah selesai.</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Endpoint GoPop BE yang Dibutuhkan</div>
+  <table class="at">
+    <tr><th>Endpoint</th><th>Method</th><th>Fungsi</th></tr>
+    <tr><td><code>/biller/callback</code></td><td><span class="m mp">POST</span></td><td>Terima webhook async dari Ayoconnect. Verifikasi signature. Update status transaksi SUCCESS/FAILED.</td></tr>
+    <tr><td><code>/admin/transactions/{id}/retry</code></td><td><span class="m mp">POST</span></td><td>Manual retry ke biller dari dashboard. Rate limit 1x per 5 menit per transaksi.</td></tr>
+    <tr><td><code>/admin/billers/{id}/status</code></td><td><span class="m mg">GET</span></td><td>Cek health biller real-time (success rate, avg latency, last error). Untuk Ipong di dashboard.</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Retry & Fallback Logic</div>
+  <table class="ft">
+    <tr><th>Kondisi</th><th>Aksi BE</th><th>Yang User Lihat</th></tr>
+    <tr><td class="fn">Ayoconnect timeout (&gt;30 detik)</td><td>Retry 1 setelah 30 detik → retry 2 setelah 60 detik</td><td>"Sedang diproses..." — tidak ada perubahan</td></tr>
+    <tr><td class="fn">Semua retry primary gagal</td><td>Fallback ke biller backup (Digiflazz/IAK) berdasarkan priority di DB</td><td>"Sedang diproses..." — tetap tidak ada perubahan</td></tr>
+    <tr><td class="fn">Backup juga gagal</td><td>Status FAILED → trigger auto-refund ke Xendit</td><td>"Transaksi gagal, dana dikembalikan dalam 1×24 jam"</td></tr>
+    <tr><td class="fn">PROCESSING &gt;15 menit</td><td>Scheduler pull status ke Ayoconnect → resolve sesuai response</td><td>Setelah 10 menit: "Masih diproses, kami WA kamu segera"</td></tr>
+    <tr><td class="fn">Ayoconnect return INVALID_DESTINATION</td><td>Status FAILED langsung (tanpa retry) → auto-refund</td><td>"Nomor tidak dapat diproses. Cek kembali nomor tujuan."</td></tr>
+    <tr><td class="fn">Ayoconnect return OPERATOR_DOWN</td><td>Status FAILED → auto-refund → increment error counter produk</td><td>"Layanan sedang gangguan. Dana dikembalikan."</td></tr>
+    <tr><td class="fn">Error counter &gt;threshold</td><td>Auto-flag biller → notif ke Ipong di dashboard</td><td>Ipong nonaktifkan produk → banner maintenance di CMS</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Gap yang Ditemukan</div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-05</div><div class="gtitle">Tidak ada job queue untuk kirim ke biller</div></div>
+    <div class="gdesc">Kalau kirim ke biller dilakukan synchronous saat callback Xendit, dan Ayoconnect lambat, maka response ke Xendit akan timeout dan Xendit akan retry webhook berkali-kali. Butuh job queue yang process pengiriman ke biller secara async.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Saat callback Xendit masuk dan transaksi PAID → langsung return 200 ke Xendit → push job ke queue → worker process pengiriman ke biller secara terpisah.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE architecture)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-06</div><div class="gtitle">Tidak ada retry + fallback logic ke biller</div></div>
+    <div class="gdesc">Tidak ada kode yang mengimplementasi retry ke primary biller dan fallback ke backup. Kalau Ayoconnect timeout sekali → transaksi langsung FAILED, tidak dicoba ulang.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Implementasi retry policy: 2x retry dengan exponential backoff (30s, 60s). Setelah semua retry habis → coba biller backup berdasarkan <code>biller_priority</code> di DB. Semua attempt di-log.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-07</div><div class="gtitle">Tidak ada scheduler untuk transaksi PROCESSING stuck</div></div>
+    <div class="gdesc">Tidak ada mekanisme yang secara aktif mengecek transaksi yang stuck di PROCESSING. Transaksi bisa stuck selamanya tanpa ada yang tahu — uang floating, user tidak dapat kepastian.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Cron job setiap 5 menit: query transaksi PROCESSING &gt;15 menit → pull status ke Ayoconnect → update berdasarkan response → flag ke dashboard kalau tidak bisa dikonfirmasi.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-08</div><div class="gtitle">Tidak ada biller webhook handler</div></div>
+    <div class="gdesc">Beberapa produk Ayoconnect (PLN token, BPJS) prosesnya async — Ayoconnect push status setelah selesai via webhook. Tanpa handler, status transaksi produk async tidak akan pernah update.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Buat endpoint <code>POST /biller/callback</code> dengan verifikasi signature Ayoconnect. Identifikasi transaksi via <code>external_ref</code> → update status SUCCESS/FAILED.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc h">
+    <div class="gct"><div class="gcode gch">INT-GAP-09</div><div class="gtitle">Tidak ada error counter per biller untuk deteksi down otomatis</div></div>
+    <div class="gdesc">Kalau Ayoconnect sedang down, GoPop tidak akan tahu sampai banyak user komplain. Tidak ada monitoring otomatis yang detect pola kegagalan dan alert Ipong.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Setiap kegagalan biller increment counter di Redis: <code>biller_error:{biller_id}:{product_id}:15min</code>. Kalau &gt;threshold → flag biller + notif Ipong + alert di dashboard.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE) · Ipong (threshold config di dashboard)</div><span class="sev sh">High</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ NOTIFIKASI ════ -->
+<div id="page-notif" style="display:none;">
+<div class="ph">
+  <div class="peyebrow">Integrasi Teknikal</div>
+  <div class="ptitle">🔔 Notifikasi — WhatsApp + Push</div>
+  <div class="pdesc">Semua notifikasi ke user melewati dua channel: WhatsApp Business API (primary) dan Push Notification (untuk user yang sudah install app). Saat ini tidak ada implementasi keduanya.</div>
+  <div class="powners">
+    <span class="op op-b">⚙️ Irwan + Rifky (BE — trigger + template)</span>
+    <span class="op op-f">⚙️ Agung + Fikly + Dileh (FE — push notification setup)</span>
+    <span class="op op-o">👁️ Acoy (monitor delivery)</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Kapan WA Dikirim — Matrix Lengkap</div>
+  <table class="ft">
+    <tr><th>Event</th><th>WA</th><th>Push</th><th>Target</th><th>Timing</th></tr>
+    <tr><td class="fn">OTP Register / Forgot Password</td><td><span class="tag tg">✅ Kirim</span></td><td>❌</td><td>Semua</td><td>Segera saat request</td></tr>
+    <tr><td class="fn">Login device baru (security alert)</td><td><span class="tag tg">✅ Kirim</span></td><td>❌</td><td>Semua</td><td>Segera</td></tr>
+    <tr><td class="fn">Akun di-suspend</td><td><span class="tag tg">✅ Kirim</span></td><td>❌</td><td>Semua</td><td>Segera</td></tr>
+    <tr><td class="fn">Reseller approved / rejected</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Reseller</td><td>Segera</td></tr>
+    <tr><td class="fn">Transaksi SUCCESS</td><td><span class="tag tg">✅ Kirim (struk)</span></td><td>✅</td><td>Semua incl. guest</td><td>Segera setelah SUCCESS</td></tr>
+    <tr><td class="fn">Transaksi FAILED (setelah bayar)</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Semua incl. guest</td><td>Segera setelah FAILED</td></tr>
+    <tr><td class="fn">Transaksi PROCESSING &gt;10 menit</td><td><span class="tag tg">✅ Kirim (reassurance)</span></td><td>✅</td><td>Semua incl. guest</td><td>Saat 10 menit terlampaui</td></tr>
+    <tr><td class="fn">Transaksi EXPIRED (tidak dibayar)</td><td>❌</td><td>✅</td><td>User login saja</td><td>Saat expired</td></tr>
+    <tr><td class="fn">Refund diproses</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Semua incl. guest</td><td>Segera saat trigger refund</td></tr>
+    <tr><td class="fn">Refund selesai (dana masuk)</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Semua incl. guest</td><td>Saat Xendit callback refund settled</td></tr>
+    <tr><td class="fn">Tiket komplain diterima</td><td><span class="tag tg">✅ Kirim</span></td><td>❌</td><td>Semua incl. guest</td><td>Segera setelah POST /tickets</td></tr>
+    <tr><td class="fn">Top up reseller SUCCESS</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Reseller</td><td>Segera</td></tr>
+    <tr><td class="fn">Saldo reseller hampir habis</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Reseller</td><td>Saat balance &lt; threshold (max 1x/hari)</td></tr>
+    <tr><td class="fn">Tier reseller naik</td><td><span class="tag tg">✅ Kirim</span></td><td>✅</td><td>Reseller</td><td>Segera saat tier naik</td></tr>
+    <tr><td class="fn">Bonus jaringan summary harian</td><td><span class="tag tg">✅ Kirim (batched)</span></td><td>✅</td><td>Reseller (upline)</td><td>Setiap hari jam 20.00 WIB jika ada bonus</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Arsitektur Notifikasi yang Dibutuhkan</div>
+  <table class="ft">
+    <tr><th>Komponen</th><th>Fungsi</th><th>Teknologi</th></tr>
+    <tr><td class="fn">Notification Service (BE)</td><td>Menerima trigger event → format template → kirim ke WA API atau push service</td><td>Internal service / module di BE</td></tr>
+    <tr><td class="fn">WA Business API Provider</td><td>Actual pengiriman WA ke nomor user</td><td>BSP (Wablas/Zenziva/dll) atau langsung WhatsApp Cloud API — perlu keputusan Bili (N-G4)</td></tr>
+    <tr><td class="fn">Push Notification Service</td><td>Kirim push ke device user yang sudah install app</td><td>Firebase Cloud Messaging (FCM) untuk Android/iOS</td></tr>
+    <tr><td class="fn">Template Engine</td><td>Render template WA dengan variable dinamis (nama, nominal, ref_id, dll)</td><td>Simple string interpolation di BE</td></tr>
+    <tr><td class="fn">Rate Limiter</td><td>Cegah spam — max 5 WA/hari/user, kecuali OTP dan security alert</td><td>Redis counter dengan TTL 24 jam</td></tr>
+    <tr><td class="fn">Batch Job — bonus summary</td><td>Kumpulkan semua bonus hari ini per reseller → kirim 1 WA saja jam 20.00</td><td>Cron job daily</td></tr>
+    <tr><td class="fn">Device Token Registry</td><td>Simpan FCM token per user saat login di app — dipakai untuk push notif</td><td>Field <code>fcm_token</code> di tabel users</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Template WA Kunci</div>
+  <table class="ft">
+    <tr><th>Template</th><th>Variabel</th><th>Kapan Dipakai</th></tr>
+    <tr><td class="fn">OTP</td><td><code>{otp_code}</code>, <code>{expired_minutes}</code></td><td>Register, forgot password</td></tr>
+    <tr><td class="fn">Transaksi Sukses</td><td><code>{nama_produk}</code>, <code>{tujuan}</code>, <code>{total}</code>, <code>{ref_id}</code></td><td>Setiap transaksi SUCCESS</td></tr>
+    <tr><td class="fn">Transaksi Gagal</td><td><code>{nama_produk}</code>, <code>{ref_id}</code>, <code>{alasan}</code>, <code>{sla_refund}</code></td><td>Setiap transaksi FAILED setelah bayar</td></tr>
+    <tr><td class="fn">Refund Diproses</td><td><code>{nominal}</code>, <code>{metode_bayar}</code>, <code>{estimasi}</code></td><td>Saat auto/manual refund trigger</td></tr>
+    <tr><td class="fn">Tiket Diterima</td><td><code>{ticket_number}</code>, <code>{estimasi_respons}</code></td><td>Setelah POST /tickets</td></tr>
+    <tr><td class="fn">Top Up Sukses (Reseller)</td><td><code>{nominal}</code>, <code>{saldo_baru}</code></td><td>Setelah top up reseller berhasil</td></tr>
+    <tr><td class="fn">Tier Naik (Reseller)</td><td><code>{tier_baru}</code>, <code>{benefit}</code></td><td>Setelah tier upgrade</td></tr>
+    <tr><td class="fn">Bonus Summary Harian</td><td><code>{total_bonus}</code>, <code>{jumlah_transaksi}</code>, <code>{saldo}</code></td><td>Setiap hari jam 20.00 WIB</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Endpoint GoPop BE yang Dibutuhkan</div>
+  <table class="at">
+    <tr><th>Endpoint</th><th>Method</th><th>Fungsi</th></tr>
+    <tr><td><code>/users/me/fcm-token</code></td><td><span class="m mu">PUT</span></td><td>FE kirim FCM token setelah login / saat token refresh. Simpan di DB per user.</td></tr>
+    <tr><td><code>/users/me/notification-preferences</code></td><td><span class="m mg">GET</span> <span class="m mu">PUT</span></td><td>Get/update preferensi notif user. Toggle per kategori: promo, bonus, saldo rendah.</td></tr>
+    <tr><td><code>/internal/notifications/send</code></td><td><span class="m mp">POST</span></td><td>Internal endpoint — dipanggil antar service di BE untuk trigger notifikasi. Tidak expose ke FE.</td></tr>
+  </table>
+</div>
+
+<div class="sec">
+  <div class="sectitle">Gap yang Ditemukan</div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-10</div><div class="gtitle">Tidak ada implementasi WA Business API sama sekali</div></div>
+    <div class="gdesc">Semua WA notif (OTP, struk transaksi, refund, tiket, dll) belum ada implementasinya. Saat ini tidak ada cara GoPop mengirim pesan WA ke user. Ini blocker untuk semua flow yang depend pada WA notif.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Pertama putuskan provider (N-G4: BSP vs WhatsApp Cloud API langsung). Lalu buat Notification Service di BE yang wraps provider API. Semua trigger event call service ini.</div>
+    <div class="gfoot"><div class="gown">Owner: Bili (keputusan provider N-G4) → Irwan + Rifky (implementasi)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc">
+    <div class="gct"><div class="gcode gcc">INT-GAP-11</div><div class="gtitle">Tidak ada push notification setup (FCM)</div></div>
+    <div class="gdesc">Tidak ada FCM token registration di app, tidak ada endpoint simpan token di BE, tidak ada mekanisme kirim push ke device spesifik. Semua alert real-time (transaksi sukses/gagal, tier naik) tidak akan sampai kalau user tidak buka app.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Setup Firebase project → Agung + Fikly + Dileh integrasikan FCM SDK di app masing-masing → kirim token ke BE saat login → BE pakai token ini untuk push.</div>
+    <div class="gfoot"><div class="gown">Owner: Agung (App) + Fikly (Desktop) + Dileh (Reseller) — FCM SDK · Irwan + Rifky (BE simpan token + kirim push)</div><span class="sev sc">Critical</span></div>
+  </div>
+  <div class="gc h">
+    <div class="gct"><div class="gcode gch">INT-GAP-12</div><div class="gtitle">Tidak ada rate limiter untuk WA — risiko spam dan biaya tinggi</div></div>
+    <div class="gdesc">WA Business API berbayar per pesan. Tanpa rate limiter, kalau ada bug yang trigger notif berulang atau banyak event dalam waktu singkat, bisa kirim ratusan WA ke satu user — biaya membengkak dan user malah block nomor GoPop.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Redis counter per user per hari: <code>notif:wa:{user_id}:{date}</code> max 5. OTP dan security alert bypass counter. Pesan yang tidak terkirim karena limit → queue untuk besok atau drop (tergantung prioritas).</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE)</div><span class="sev sh">High</span></div>
+  </div>
+  <div class="gc h">
+    <div class="gct"><div class="gcode gch">INT-GAP-13</div><div class="gtitle">Bonus summary WA belum ada batch job-nya</div></div>
+    <div class="gdesc">Bonus jaringan harusnya di-batch jadi 1 WA per hari per reseller (jam 20.00 WIB). Kalau tidak di-batch, setiap transaksi downline trigger 1 WA ke upline — bisa puluhan WA per hari untuk reseller aktif.</div>
+    <div class="gfix">✅ <strong>Fix:</strong> Cron job daily jam 19.55 WIB: query semua reseller yang dapat bonus hari ini → aggregate → kirim 1 WA summary per reseller. Bonus real-time tetap masuk ke in-app notif saja.</div>
+    <div class="gfoot"><div class="gown">Owner: Irwan + Rifky (BE — cron job)</div><span class="sev sh">High</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ INTEGRATION GAP SUMMARY ════ -->
+<div id="page-int-gaps" style="display:none;">
+<div class="ph">
+  <div class="peyebrow">Integrasi Teknikal</div>
+  <div class="ptitle">⚠️ Gap Summary — Integrasi</div>
+  <div class="pdesc">Gap dari trace Payment Gateway, Biller, dan Notifikasi. Mayoritas Critical karena ini backbone sistem — tanpa ini tidak ada transaksi yang bisa selesai end-to-end.</div>
+</div>
+<div class="sr">
+  <div class="scard"><div class="snum" style="color:#DC2626;">8</div><div class="slabel">Critical</div></div>
+  <div class="scard"><div class="snum" style="color:#F59E0B;">4</div><div class="slabel">High</div></div>
+  <div class="scard"><div class="snum" style="color:#4A2D8C;">1</div><div class="slabel">Medium</div></div>
+  <div class="scard"><div class="snum" style="color:#1A1228;">13</div><div class="slabel">Total Gap</div></div>
+</div>
+<table class="ft" style="margin-top:16px;">
+  <tr><th>Kode</th><th>Modul</th><th>Gap</th><th>Severity</th><th>Owner</th></tr>
+  <tr><td><code>INT-GAP-01</code></td><td>Xendit</td><td>Tidak ada webhook handler <code>/payments/callback</code></td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-02</code></td><td>Xendit</td><td>Tidak ada scheduler pull status Xendit untuk transaksi pending</td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-03</code></td><td>Xendit</td><td>Tidak ada definisi payment method yang diizinkan</td><td><span class="tag tp">High</span></td><td>Bili → Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-04</code></td><td>Xendit</td><td>Reseller top up dan consumer tidak dibedakan di callback</td><td><span class="tag tp">High</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-05</code></td><td>Biller</td><td>Tidak ada job queue untuk kirim ke biller (async)</td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-06</code></td><td>Biller</td><td>Tidak ada retry + fallback logic ke biller</td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-07</code></td><td>Biller</td><td>Tidak ada scheduler untuk transaksi PROCESSING stuck</td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-08</code></td><td>Biller</td><td>Tidak ada biller webhook handler <code>/biller/callback</code></td><td><span class="tag tm">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-09</code></td><td>Biller</td><td>Tidak ada error counter untuk deteksi biller down otomatis</td><td><span class="tag tp">High</span></td><td>Irwan + Rifky · Ipong</td></tr>
+  <tr><td><code>INT-GAP-10</code></td><td>Notifikasi</td><td>Tidak ada implementasi WA Business API sama sekali</td><td><span class="tag tm">Critical</span></td><td>Bili (N-G4) → Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-11</code></td><td>Notifikasi</td><td>Tidak ada push notification setup (FCM)</td><td><span class="tag tm">Critical</span></td><td>Agung + Fikly + Dileh · Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-12</code></td><td>Notifikasi</td><td>Tidak ada rate limiter untuk WA</td><td><span class="tag tp">High</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>INT-GAP-13</code></td><td>Notifikasi</td><td>Bonus summary WA belum ada batch job</td><td><span class="tag tp">High</span></td><td>Irwan + Rifky</td></tr>
+</table>
+<div class="co cow" style="margin-top:16px;">
+  <strong>Insight kritis:</strong> 8 dari 13 gap ini adalah Critical — artinya tanpa difix, tidak ada satu pun transaksi yang bisa selesai end-to-end. Webhook handler Xendit (INT-GAP-01) dan job queue biller (INT-GAP-05) adalah yang paling urgent — fix ini dulu sebelum yang lain.
 </div>
 </div>
 </main>
