@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · E2E App & Web Consumer</title>
+<style>
+:root{--purple:#4A2D8C;--lime:#CEF17B;--coral:#FF6B4A;--amber:#F59E0B;--blue:#3B82F6;--green:#16A34A;--red:#DC2626;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',sans-serif;background:#0F0A1E;color:#f0eaff;min-height:100vh;}
+
+.header{background:linear-gradient(135deg,#0d1a0d,#16432b 60%,#1a5c38);padding:40px 32px 32px;text-align:center;}
+.hbadge{display:inline-block;background:rgba(206,241,123,.15);border:1px solid rgba(206,241,123,.3);color:var(--lime);font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 12px;border-radius:100px;margin-bottom:14px;text-transform:uppercase;}
+.header h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:6px;}
+.header h1 span{color:var(--lime);}
+.header p{color:rgba(255,255,255,.6);font-size:13px;max-width:580px;margin:0 auto 16px;}
+.hrow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.htag{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;font-size:11px;color:rgba(255,255,255,.7);font-weight:600;}
+
+.nav{background:#1A1033;padding:0 20px;display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-btn{padding:13px 15px;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;}
+.nav-btn.active{color:var(--lime);border-bottom-color:var(--lime);}
+
+.content{max-width:1100px;margin:0 auto;padding:28px 20px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.flow-section{margin-bottom:28px;}
+.flow-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.flow-code{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;color:#fff;text-align:center;}
+.flow-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:3px;}
+.flow-sub{font-size:12px;color:rgba(255,255,255,.45);}
+
+.case-card{background:#fff;border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.case-header{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.case-badge{padding:3px 9px;border-radius:100px;font-size:10px;font-weight:800;text-transform:uppercase;flex-shrink:0;}
+.badge-happy{background:#DCFCE7;color:#166534;}
+.badge-error{background:#FEE2E2;color:#DC2626;}
+.badge-warn{background:#FEF3C7;color:#92400E;}
+.case-title{font-size:13px;font-weight:700;color:#1F2937;flex:1;}
+.case-toggle{font-size:16px;color:#9CA3AF;transition:transform .2s;flex-shrink:0;}
+.case-toggle.open{transform:rotate(180deg);}
+.case-body{display:none;padding:0 18px 18px;}
+.case-body.open{display:block;}
+
+.layer{border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.layer-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.layer-title .dot{width:7px;height:7px;border-radius:50%;}
+.layer-content{font-size:12px;color:#374151;line-height:1.7;}
+.layer-content ul{padding-left:16px;margin-top:3px;}
+.layer-content li{margin-bottom:2px;}
+.layer-content code{font-family:monospace;font-size:11px;background:rgba(74,45,140,.08);padding:2px 5px;border-radius:4px;color:var(--purple);}
+.layer-content strong{color:#111827;}
+.layer.biz{background:#FFFBEB;border:1px solid #FDE68A;} .layer.biz .layer-title{color:#92400E;} .layer.biz .dot{background:#F59E0B;}
+.layer.ux{background:#EFF6FF;border:1px solid #BFDBFE;} .layer.ux .layer-title{color:#1E40AF;} .layer.ux .dot{background:#3B82F6;}
+.layer.be{background:#F0FDF4;border:1px solid #BBF7D0;} .layer.be .layer-title{color:#166534;} .layer.be .dot{background:#16A34A;}
+.layer.gap{background:#FFF1F2;border:1px solid #FECDD3;} .layer.gap .layer-title{color:#9F1239;} .layer.gap .dot{background:#DC2626;}
+
+.ftable{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+.ftable th{text-align:left;padding:7px 10px;background:#F9FAFB;color:#6B7280;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #E5E7EB;}
+.ftable td{padding:8px 10px;border-bottom:1px solid #F3F4F6;color:#374151;vertical-align:top;line-height:1.5;}
+.ftable tr:last-child td{border-bottom:none;}
+.ftable td code{font-family:monospace;font-size:10px;background:#F3F4F6;padding:2px 5px;border-radius:3px;color:var(--purple);}
+
+.chip{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;}
+.chip-ok{background:#DCFCE7;color:#166534;}
+.chip-warn{background:#FEF3C7;color:#92400E;}
+.chip-err{background:#FEE2E2;color:#DC2626;}
+.chip-info{background:#EDE9FE;color:#4A2D8C;}
+
+.tag-exist{display:inline-block;background:#DCFCE7;color:#166534;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-miss{display:inline-block;background:#FEE2E2;color:#DC2626;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-partial{display:inline-block;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+
+.gap-card{background:#FFF1F2;border:1px solid #FECDD3;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.gap-code{font-size:10px;font-weight:800;color:#9F1239;background:#FFE4E6;padding:2px 7px;border-radius:4px;font-family:monospace;margin-bottom:5px;display:inline-block;}
+.gap-title{font-size:12px;font-weight:700;color:#1F2937;margin-bottom:3px;}
+.gap-desc{font-size:11px;color:#6B7280;line-height:1.6;}
+.gap-fix{font-size:11px;color:#166534;margin-top:4px;}
+.gap-owner{font-size:10px;color:#9CA3AF;margin-top:4px;}
+
+.steps{list-style:none;padding:0;position:relative;}
+.steps::before{content:'';position:absolute;left:13px;top:20px;bottom:20px;width:2px;background:#E5E7EB;}
+.step{display:flex;gap:10px;margin-bottom:8px;position:relative;}
+.step-n{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;position:relative;z-index:1;}
+.step-n.ok{background:#DCFCE7;color:#166534;}
+.step-n.warn{background:#FEF3C7;color:#92400E;}
+.step-n.err{background:#FEE2E2;color:#DC2626;}
+.step-n.info{background:#EDE9FE;color:#4A2D8C;}
+.step-body{flex:1;padding-top:3px;}
+.step-title{font-size:12px;font-weight:700;color:#1F2937;margin-bottom:1px;}
+.step-desc{font-size:11px;color:#4B5563;line-height:1.5;}
+.step-desc code{font-family:monospace;font-size:10px;background:#F3F4F6;padding:1px 5px;border-radius:3px;color:var(--purple);}
+
+.owner-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid;}
+.pill-biz{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#92400E;}
+.pill-dev{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#1E40AF;}
+
+/* SCREEN INVENTORY */
+.screen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px;}
+.screen-item{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;}
+.screen-name{font-size:11px;font-weight:700;color:#1F2937;margin-bottom:3px;}
+.screen-meta{font-size:10px;color:#6B7280;}
+.screen-item.missing{background:#FFF1F2;border-color:#FECDD3;}
+.screen-item.missing .screen-name{color:#9F1239;}
+
+.footer{background:#1A1033;padding:20px;text-align:center;color:rgba(255,255,255,.3);font-size:11px;margin-top:40px;}
+.footer span{color:var(--lime);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hbadge">E2E App & Web · Consumer · UX + API + Gap</div>
+  <h1>GoPop <span>E2E App & Web Consumer</span></h1>
+  <p>Flow lengkap dari sudut pandang end user — guest dan registered, di mobile app dan desktop web. Berdasarkan screens aktual di Figma + kebutuhan API per flow.</p>
+  <div class="hrow">
+    <div class="htag">📱 Mobile App — Agung</div>
+    <div class="htag">🖥️ Desktop Web — Fikly</div>
+    <div class="htag">⚙️ Backend — Irwan + Rifky</div>
+    <div class="htag">🎨 Design — Bili</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('screens',this)">🗂️ Screen Inventory</button>
+  <button class="nav-btn" onclick="showTab('auth',this)">🔐 Auth</button>
+  <button class="nav-btn" onclick="showTab('home',this)">🏠 Home</button>
+  <button class="nav-btn" onclick="showTab('transaksi',this)">💳 Transaksi</button>
+  <button class="nav-btn" onclick="showTab('tagihan',this)">📋 Tagihan & Inquiry</button>
+  <button class="nav-btn" onclick="showTab('status',this)">📊 Status & Riwayat</button>
+  <button class="nav-btn" onclick="showTab('bantuan',this)">🆘 Bantuan & CS</button>
+  <button class="nav-btn" onclick="showTab('profil',this)">👤 Profil</button>
+  <button class="nav-btn" onclick="showTab('guest',this)">👻 Guest Flow</button>
+  <button class="nav-btn" onclick="showTab('gaps',this)">⚠️ Gap Summary</button>
+</nav>
+
+<div class="content">
+
+<!-- ═══ SCREEN INVENTORY ═══ -->
+<div id="tab-screens" class="tab-panel active">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">📱</div>
+    <div class="flow-meta">
+      <div class="flow-title">Screen Inventory — Dari Figma Langsung</div>
+      <div class="flow-sub">File: bwdy1MflFyrW5S7vvIDTy0 · 390px (mobile) · Dibaca via MCP Juni 2026</div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Ada di Figma</span>
+      <span class="case-title">Screen yang sudah didesain (33 screens)</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="screen-grid">
+        <div class="screen-item"><div class="screen-name">00 - Homepage</div><div class="screen-meta">13 versi iterasi — perlu dikunci</div></div>
+        <div class="screen-item"><div class="screen-name">01 - Transfer E-Wallet Input</div><div class="screen-meta">3 versi + v3</div></div>
+        <div class="screen-item"><div class="screen-name">02 - Transfer E-Wallet Filled</div><div class="screen-meta">Nomor sudah terisi</div></div>
+        <div class="screen-item"><div class="screen-name">03 - Checkout - Pilih Pembayaran</div><div class="screen-meta">Semua produk punya versi ini</div></div>
+        <div class="screen-item"><div class="screen-name">04 - Status - Cek Transaksi</div><div class="screen-meta">Processing state</div></div>
+        <div class="screen-item"><div class="screen-name">05 - Status - Sukses</div><div class="screen-meta">2 versi per produk (sukses + dengan detail)</div></div>
+        <div class="screen-item"><div class="screen-name">06 - Pulsa & Data - Input</div><div class="screen-meta">Input nomor HP</div></div>
+        <div class="screen-item"><div class="screen-name">07 - Pulsa & Data - Pilih Nominal</div><div class="screen-meta">4 versi</div></div>
+        <div class="screen-item"><div class="screen-name">08 - BPJS Kesehatan - Input</div></div>
+        <div class="screen-item"><div class="screen-name">09 - BPJS Kesehatan - Inquiry</div></div>
+        <div class="screen-item"><div class="screen-name">10 - BPJS Ketenagakerjaan - Input</div></div>
+        <div class="screen-item"><div class="screen-name">11 - BPJS Ketenagakerjaan - Inquiry</div></div>
+        <div class="screen-item"><div class="screen-name">12 - Internet & TV - Input</div></div>
+        <div class="screen-item"><div class="screen-name">13 - Internet & TV - Inquiry</div></div>
+        <div class="screen-item"><div class="screen-name">14 - Voucher Game - Pilih Game</div><div class="screen-meta">2 versi</div></div>
+        <div class="screen-item"><div class="screen-name">15 - Mobile Legends - Input</div><div class="screen-meta">ID Game + Server</div></div>
+        <div class="screen-item"><div class="screen-name">16 - Free Fire - Input</div></div>
+        <div class="screen-item"><div class="screen-name">17 - PDAM - Input</div></div>
+        <div class="screen-item"><div class="screen-name">18 - PDAM - Inquiry</div><div class="screen-meta">2 versi</div></div>
+        <div class="screen-item"><div class="screen-name">19 - Token Listrik - Input</div><div class="screen-meta">v1 + v2</div></div>
+        <div class="screen-item"><div class="screen-name">20 - Token Listrik - Pilih Nominal</div></div>
+        <div class="screen-item"><div class="screen-name">21 - Token Listrik - Sukses</div><div class="screen-meta">+ 21b Error Sistem Sibuk + 21c Error Tidak Ada Tagihan</div></div>
+        <div class="screen-item"><div class="screen-name">22 - PBB - Input</div></div>
+        <div class="screen-item"><div class="screen-name">23 - PBB - Inquiry</div></div>
+        <div class="screen-item"><div class="screen-name">24 - Riwayat Transaksi</div><div class="screen-meta">2 versi</div></div>
+        <div class="screen-item"><div class="screen-name">25 - Riwayat - Detail Transaksi</div><div class="screen-meta">2 versi</div></div>
+        <div class="screen-item"><div class="screen-name">26 - Pusat Bantuan</div><div class="screen-meta">Form + Tiket Terkirim ✅</div></div>
+        <div class="screen-item"><div class="screen-name">27 - Live Chat</div></div>
+        <div class="screen-item"><div class="screen-name">28 - Layanan - Semua</div><div class="screen-meta">3 tab: Transfer, Semua, Tagihan</div></div>
+        <div class="screen-item"><div class="screen-name">29 - Tips & Promo Listing</div><div class="screen-meta">2 versi</div></div>
+        <div class="screen-item"><div class="screen-name">31 - Tips Detail Artikel</div></div>
+        <div class="screen-item"><div class="screen-name">32 - Riwayat Voucher Game</div></div>
+        <div class="screen-item"><div class="screen-name">Login (Section)</div><div class="screen-meta">Login + Register + Lupa Password</div></div>
+        <div class="screen-item"><div class="screen-name">Profil (Section)</div><div class="screen-meta">View + Edit + Ganti Password</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-error">Belum Ada di Figma</span>
+      <span class="case-title">Screen yang dibutuhkan flow tapi belum didesain (8 screens)</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="screen-grid">
+        <div class="screen-item missing"><div class="screen-name">Payment Instruction</div><div class="screen-meta">QRIS + VA + E-Wallet redirect — screen setelah pilih metode bayar</div></div>
+        <div class="screen-item missing"><div class="screen-name">OTP Verification</div><div class="screen-meta">6 kotak OTP + countdown + resend</div></div>
+        <div class="screen-item missing"><div class="screen-name">Transaksi Gagal — per kategori</div><div class="screen-meta">Nomor invalid / Operator down / Timeout — sekarang hanya 1 generik</div></div>
+        <div class="screen-item missing"><div class="screen-name">Refund Status</div><div class="screen-meta">"Dana sedang dikembalikan" + estimasi waktu</div></div>
+        <div class="screen-item missing"><div class="screen-name">Splash / Onboarding</div><div class="screen-meta">First launch experience</div></div>
+        <div class="screen-item missing"><div class="screen-name">Notification Center</div><div class="screen-meta">In-app notif list</div></div>
+        <div class="screen-item missing"><div class="screen-name">Pengaturan Notifikasi</div><div class="screen-meta">Toggle per kategori notif</div></div>
+        <div class="screen-item missing"><div class="screen-name">VA Expired Reminder</div><div class="screen-meta">Screen saat VA kedaluwarsa sebelum dibayar</div></div>
+      </div>
+      <div style="margin-top:10px;padding:10px 12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:11px;color:#92400E;line-height:1.6;">
+        <strong>Action untuk Bili:</strong> 8 screen ini perlu dibuat di Figma sebelum Agung (App) dan Fikly (Desktop) bisa implement. Yang paling urgent: <strong>Payment Instruction</strong> (blocker checkout flow) dan <strong>OTP Verification</strong> (blocker auth flow).
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-screens -->
+
+<!-- ═══ AUTH ═══ -->
+<div id="tab-auth" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#4A2D8C">AW-A</div>
+    <div class="flow-meta">
+      <div class="flow-title">Auth Flow — Login, Register, Lupa Password</div>
+      <div class="flow-sub">Figma: Section "Login" sudah ada · OTP screen belum ada</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Register baru → OTP → Login berhasil</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX — Step by Step</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n ok">1</div><div class="step-body"><div class="step-title">Tap "Daftar" dari Home atau soft prompt post-transaksi</div></div></li>
+          <li class="step"><div class="step-n ok">2</div><div class="step-body"><div class="step-title">Form Register — Nama + Nomor HP + Password</div><div class="step-desc">Validasi real-time: format HP, kekuatan password (min 8 char + angka). Tombol submit disabled sampai semua valid.</div></div></li>
+          <li class="step"><div class="step-n ok">3</div><div class="step-body"><div class="step-title">OTP dikirim via WA → screen OTP</div><div class="step-desc">6 kotak OTP + countdown 5 menit + tombol "Kirim Ulang" (aktif setelah 60 detik). <span style="color:#DC2626">❌ Screen ini belum ada di Figma</span></div></div></li>
+          <li class="step"><div class="step-n ok">4</div><div class="step-body"><div class="step-title">OTP benar → akun aktif → redirect Home (sudah login)</div></div></li>
+        </ul>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Method</th><th>Body / Response</th></tr>
+          <tr><td><code>/auth/register</code></td><td>POST</td><td>Body: <code>{name, phone, password}</code> → Return: <code>{user_id, status: "UNVERIFIED"}</code></td></tr>
+          <tr><td><code>/auth/verify-otp</code></td><td>POST</td><td>Body: <code>{phone, otp}</code> → Return: <code>{access_token, refresh_token, user}</code></td></tr>
+          <tr><td><code>/auth/resend-otp</code></td><td>POST</td><td>Body: <code>{phone}</code> → Rate limit: max 3x, cooldown 60 detik</td></tr>
+          <tr><td><code>/auth/login</code></td><td>POST</td><td>Body: <code>{phone, password}</code> → Return: <code>{access_token, refresh_token, user}</code></td></tr>
+          <tr><td><code>/auth/refresh</code></td><td>POST</td><td>Body: <code>{refresh_token}</code> → Return: new <code>access_token</code></td></tr>
+          <tr><td><code>/auth/forgot-password</code></td><td>POST</td><td>Body: <code>{phone}</code> → Return: <code>200</code> selalu (cegah enumeration)</td></tr>
+          <tr><td><code>/auth/reset-password</code></td><td>POST</td><td>Body: <code>{phone, otp, new_password}</code> → Invalidate semua session</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-01</div>
+          <div class="gap-title">Screen OTP Verification belum ada di Figma</div>
+          <div class="gap-desc">Register dan Forgot Password butuh screen OTP input. Tanpa screen ini Agung dan Fikly tidak bisa implement auth flow.</div>
+          <div class="gap-fix">✅ Action Bili: Buat screen OTP di Figma — 6 input box + countdown timer + tombol Kirim Ulang + error state.</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (implement)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-02</div>
+          <div class="gap-title">Tidak ada interceptor refresh token di FE</div>
+          <div class="gap-desc">Kalau access token expired saat user lagi di app, semua API call akan return 401. Tanpa interceptor, user tiba-tiba keluar dari app tanpa penjelasan.</div>
+          <div class="gap-fix">✅ Fix: HTTP interceptor di Agung (App) dan Fikly (Desktop): saat 401 → auto hit <code>/auth/refresh</code> → retry request. Kalau refresh juga 401 → redirect login dengan pesan kontekstual.</div>
+          <div class="gap-owner">Owner: Agung (App) + Fikly (Desktop)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-error">Error Cases</span>
+      <span class="case-title">Login gagal, akun locked, akun belum verifikasi</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX per Error</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Error Code</th><th>Yang User Lihat</th><th>Screen di Figma</th></tr>
+          <tr><td><code>INVALID_CREDENTIALS</code></td><td>"Kata sandi salah, sisa X percobaan."</td><td><span class="tag-exist">✅ Ada</span> — state error di login screen</td></tr>
+          <tr><td><code>ACCOUNT_LOCKED</code></td><td>"Akun dikunci sementara. Coba lagi dalam 30 menit atau reset kata sandi."</td><td><span class="tag-exist">✅ Ada</span> — "Akun dibekukan sementara"</td></tr>
+          <tr><td><code>ACCOUNT_UNVERIFIED</code></td><td>Banner: "Akun belum diverifikasi. Kirim ulang kode?"</td><td><span class="tag-partial">⚠️ Partial</span> — ada "Verifying..." tapi tidak jelas state-nya</td></tr>
+          <tr><td><code>ACCOUNT_SUSPENDED</code></td><td>"Akun kamu dinonaktifkan. Hubungi CS GoPop." + tombol WA CS</td><td><span class="tag-miss">❌ Belum ada</span></td></tr>
+          <tr><td><code>PHONE_ALREADY_EXISTS</code></td><td>"Nomor ini sudah terdaftar. Masuk sekarang?"</td><td><span class="tag-miss">❌ Belum ada screen-nya</span></td></tr>
+          <tr><td><code>OTP_MAX_ATTEMPT</code></td><td>"Sesi habis, mohon daftar ulang."</td><td><span class="tag-miss">❌ Belum ada</span></td></tr>
+        </table>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-auth -->
+
+<!-- ═══ HOME ═══ -->
+<div id="tab-home" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#16A34A">AW-H</div>
+    <div class="flow-meta">
+      <div class="flow-title">Home & Discovery</div>
+      <div class="flow-sub">Figma: 00 - Homepage (13 versi) + 28 - Layanan Semua + 29 - Tips & Promo</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">User buka app → lihat homepage → pilih produk</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">
+        Homepage berisi: banner promo (dari CMS), shortcut produk (Transfer E-Wallet hero), grid layanan populer, Tips & Promo section. <br><br>
+        <strong>Guest:</strong> Tampil normal — tidak ada perbedaan UI antara guest dan logged-in di homepage. Perbedaan baru kelihatan saat akses Profil atau Riwayat.
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Keterangan</th></tr>
+          <tr><td><code>GET /cms/homepage</code></td><td>Return: banner aktif + artikel published. Cache TTL 5 menit. Public — tidak butuh auth.</td></tr>
+          <tr><td><code>GET /products?category=&popular=true</code></td><td>Produk untuk ditampilkan di homepage. Public.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-03</div>
+          <div class="gap-title">13 versi Homepage di Figma — belum dikunci versi final</div>
+          <div class="gap-desc">Agung dan Fikly tidak tahu mana yang harus diimplementasi. Ini blocker untuk mulai build Homepage.</div>
+          <div class="gap-fix">✅ Action Bili: Pilih 1 frame final → rename "00 - Homepage [FINAL]" → arsipkan sisanya. Paling cepat: 30 menit.</div>
+          <div class="gap-owner">Owner: Bili (design decision)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-04</div>
+          <div class="gap-title">Homepage masih pakai label "muurah" di beberapa text node</div>
+          <div class="gap-desc">Terdeteksi saat baca Figma via MCP — ada text node dengan string "muurah" yang belum diganti ke "gopop".</div>
+          <div class="gap-fix">✅ Fix: Bili pakai Figma Find & Replace untuk ganti semua "muurah" → "gopop" di seluruh file.</div>
+          <div class="gap-owner">Owner: Bili (design)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-05</div>
+          <div class="gap-title">Endpoint <code>GET /cms/homepage</code> belum ada di BE</div>
+          <div class="gap-desc">CMS di dashboard masih state lokal — tidak ada API yang return konten homepage real-time. FE tidak bisa pull banner dan artikel dari dashboard.</div>
+          <div class="gap-fix">✅ Fix: Irwan + Rifky buat endpoint ini setelah CMS BE ready (D-GAP-18). FE hit endpoint ini saat load homepage.</div>
+          <div class="gap-owner">Owner: Irwan + Rifky (BE) → Agung + Fikly (FE)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-home -->
+
+<!-- ═══ TRANSAKSI ═══ -->
+<div id="tab-transaksi" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#3B82F6">AW-T</div>
+    <div class="flow-meta">
+      <div class="flow-title">Transaksi — Checkout & Payment</div>
+      <div class="flow-sub">Figma: Screen 01-07 (prepaid) · 03 Checkout · 04 Processing · 05 Sukses · Missing: Payment Instruction</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Input → Checkout → Bayar → Sukses (semua produk prepaid)</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX — Step by Step</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n ok">1</div><div class="step-body"><div class="step-title">Pilih produk dari Homepage atau Layanan Semua</div><div class="step-desc">Transfer E-Wallet: screen 01 · Pulsa: screen 06 · Voucher Game: screen 14-16 · Token Listrik: screen 19-20</div></div></li>
+          <li class="step"><div class="step-n ok">2</div><div class="step-body"><div class="step-title">Input nomor tujuan / ID</div><div class="step-desc">Validasi format real-time. Pulsa: detect operator otomatis dari prefix. Token Listrik: input ID Pelanggan.</div></div></li>
+          <li class="step"><div class="step-n ok">3</div><div class="step-body"><div class="step-title">Screen 03 — Checkout: Pilih Metode Bayar</div><div class="step-desc">Tampil: detail produk, harga, pilihan QRIS / VA / E-Wallet / Retail.</div></div></li>
+          <li class="step"><div class="step-n warn">4</div><div class="step-body"><div class="step-title">Payment Instruction screen — BELUM ADA DI FIGMA</div><div class="step-desc">Seharusnya tampil kode bayar + countdown timer + instruksi per metode. Ini gap kritis.</div></div></li>
+          <li class="step"><div class="step-n ok">5</div><div class="step-body"><div class="step-title">User bayar di luar app</div><div class="step-desc">App polling status tiap 5 detik. Screen 04 (Cek Transaksi) = processing state.</div></div></li>
+          <li class="step"><div class="step-n ok">6</div><div class="step-body"><div class="step-title">Screen 05 — Status Sukses</div><div class="step-desc">Detail transaksi + nomor referensi + tombol Simpan Struk. WA notif otomatis ke user.</div></div></li>
+        </ul>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Method</th><th>Keterangan</th></tr>
+          <tr><td><code>/products</code></td><td>GET</td><td>Query: <code>?category=pulsa&operator=telkomsel</code>. Public.</td></tr>
+          <tr><td><code>/products/prefix-detect</code></td><td>GET</td><td>Query: <code>?phone=0812xxxx</code> → return operator name. Public.</td></tr>
+          <tr><td><code>/transactions</code></td><td>POST</td><td>Body: <code>{product_id, destination, source_channel}</code>. Auth opsional (guest bisa). Return: <code>{transaction_id, payment_instruction}</code></td></tr>
+          <tr><td><code>/transactions/{id}</code></td><td>GET</td><td>Polling status. Return: <code>{status, product_detail, ...}</code></td></tr>
+          <tr><td><code>/payments/callback</code></td><td>POST</td><td>Webhook dari Xendit. Internal — tidak dipanggil FE.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-06</div>
+          <div class="gap-title">Payment Instruction screen belum ada di Figma</div>
+          <div class="gap-desc">Screen yang muncul setelah user pilih metode bayar (QRIS, VA, E-Wallet) tidak ada di Figma. Ini screen paling sering dilihat user saat transaksi — yang menampilkan kode bayar dan countdown timer.</div>
+          <div class="gap-fix">✅ Action Bili: Buat 3 variant — QRIS (tampil QR code + countdown), VA (tampil nomor VA per bank + instruksi transfer), E-Wallet (deeplink redirect + fallback "Buka aplikasi X").</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (implement)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-07</div>
+          <div class="gap-title">Polling status tidak ada mekanisme stop</div>
+          <div class="gap-desc">FE perlu polling <code>GET /transactions/{id}</code> tiap 5 detik tapi tidak ada definisi: kapan stop polling? Kalau user tutup app saat polling, apakah ada background check?</div>
+          <div class="gap-fix">✅ Fix: Stop polling saat status bukan PENDING/PAID/PROCESSING, atau setelah timeout 15 menit. Setelah 10 menit tampil pesan reassurance. Tidak perlu background — kalau app ditutup, update datang via WA notif.</div>
+          <div class="gap-owner">Owner: Agung (App) + Fikly (Desktop) — logic FE</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-08</div>
+          <div class="gap-title">source_channel tidak dikirim dari FE</div>
+          <div class="gap-desc">POST /transactions harus menyertakan <code>source_channel</code> tapi ini belum didefinisikan di contract antara Agung (App), Fikly (Desktop), dan Irwan (BE).</div>
+          <div class="gap-fix">✅ Fix: Agung kirim <code>source_channel: "app_consumer"</code> atau <code>"app_guest"</code>. Fikly kirim <code>"web_consumer"</code> atau <code>"web_guest"</code>. Tergantung ada tidaknya auth token.</div>
+          <div class="gap-owner">Owner: Agung (App) + Fikly (Desktop) — 1 baris kode per FE</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-error">Error Cases</span>
+      <span class="case-title">Payment expired, e-wallet cancel, transaksi gagal</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX per Error</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Case</th><th>Screen Figma</th><th>Yang User Lihat</th></tr>
+          <tr><td>QRIS/VA Expired (tidak bayar)</td><td><span class="tag-miss">❌ Belum ada</span></td><td>"Waktu pembayaran habis." + tombol Coba Lagi</td></tr>
+          <tr><td>E-Wallet redirect, user balik tanpa bayar</td><td><span class="tag-miss">❌ Belum ada</span></td><td>"Pembayaran belum selesai." + opsi Coba Lagi / Ganti Metode / Batalkan</td></tr>
+          <tr><td>Transaksi Gagal (generik)</td><td><span class="tag-exist">✅ Ada — 05h generik</span></td><td>Screen gagal generik</td></tr>
+          <tr><td>Transaksi Gagal (nomor invalid)</td><td><span class="tag-exist">✅ Ada — Token Listrik 21c</span></td><td>"Nomor tidak ditemukan" — tapi hanya untuk Token Listrik</td></tr>
+          <tr><td>Transaksi Gagal (sistem sibuk/timeout)</td><td><span class="tag-exist">✅ Ada — Token Listrik 21b</span></td><td>"Sistem sedang sibuk" — tapi hanya untuk Token Listrik</td></tr>
+          <tr><td>Processing stuck &gt;10 menit</td><td><span class="tag-miss">❌ Belum ada</span></td><td>"Transaksi masih diproses. Kami akan update via WhatsApp."</td></tr>
+          <tr><td>Refund status</td><td><span class="tag-miss">❌ Belum ada</span></td><td>"Dana sedang dikembalikan. Estimasi X hari kerja."</td></tr>
+        </table>
+        <div style="margin-top:8px;padding:8px 10px;background:#FFF7ED;border-radius:6px;font-size:11px;color:#92400E;">
+          <strong>Rekomendasi:</strong> Token Listrik sudah punya error screens spesifik (21b & 21c). Ini template yang bagus — Bili bisa replikasi pattern ini untuk semua produk lain.
+        </div>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-09</div>
+          <div class="gap-title">Error screens hanya ada untuk Token Listrik — produk lain pakai generik</div>
+          <div class="gap-desc">Transaksi gagal untuk Pulsa, BPJS, PDAM, dll hanya punya 1 screen generik (05h). User tidak dapat informasi spesifik kenapa gagal.</div>
+          <div class="gap-fix">✅ Fix: Minimal 2 error state yang perlu didesain per produk — (1) Nomor/ID tidak valid, (2) Layanan sedang gangguan. Bisa pakai komponen reusable yang terima string produk sebagai prop.</div>
+          <div class="gap-owner">Owner: Bili (design pattern) → Agung + Fikly (komponen reusable)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-transaksi -->
+
+<!-- ═══ TAGIHAN ═══ -->
+<div id="tab-tagihan" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#F59E0B">AW-TG</div>
+    <div class="flow-meta">
+      <div class="flow-title">Tagihan & Inquiry (Postpaid)</div>
+      <div class="flow-sub">BPJS · PDAM · PBB · Internet & TV — Figma: Screen 08-13, 17-18, 22-23</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Input ID → Inquiry → Konfirmasi → Bayar → Sukses</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX — Perbedaan dari Prepaid</div><div class="layer-content">
+        Step tambahan antara input nomor dan checkout: <strong>Inquiry</strong> — cek tagihan dulu sebelum bayar.<br><br>
+        Tampil di screen inquiry: nama pelanggan, periode tagihan, jumlah tagihan, denda (jika ada). User harus konfirmasi dulu baru lanjut ke screen 03 Checkout.
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Keterangan</th></tr>
+          <tr><td><code>POST /transactions/inquiry</code></td><td>Body: <code>{product_category, customer_id}</code>. Hit Ayoconnect inquiry. Return: <code>{customer_name, period, amount, penalty}</code>. Bukan transaksi — tidak ada record DB, tidak ada biaya.</td></tr>
+        </table>
+        <br>
+        Setelah user konfirmasi → lanjut ke <code>POST /transactions</code> biasa dengan data hasil inquiry sebagai body tambahan.
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-10</div>
+          <div class="gap-title">Inquiry gagal — screen error tidak ada untuk semua produk</div>
+          <div class="gap-desc">Kalau ID pelanggan tidak ditemukan saat inquiry, tidak ada screen spesifik yang memberitahu user. Akan pakai screen error generik yang tidak kontekstual.</div>
+          <div class="gap-fix">✅ Fix: Tambah inline error state di screen inquiry masing-masing: "ID Pelanggan tidak ditemukan. Cek kembali nomor yang kamu masukkan." Tidak perlu screen baru — cukup error state di screen yang sama.</div>
+          <div class="gap-owner">Owner: Bili (design error state) → Agung + Fikly (implement)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-tagihan -->
+
+<!-- ═══ STATUS & RIWAYAT ═══ -->
+<div id="tab-status" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#7C5CBF">AW-S</div>
+    <div class="flow-meta">
+      <div class="flow-title">Status Transaksi & Riwayat</div>
+      <div class="flow-sub">Figma: Screen 04 (Processing), 05 (Sukses), 24-25 (Riwayat), 05h (Gagal generik)</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Lihat riwayat transaksi + detail per transaksi</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">
+        Screen 24: List riwayat dengan filter status dan tanggal. Screen 25: Detail transaksi — produk, nominal, tujuan, metode bayar, status, nomor referensi, tombol "Ulangi Transaksi".<br><br>
+        <strong>Guest:</strong> Riwayat hanya dari localStorage — tidak persistent kalau ganti device atau clear data. Soft prompt untuk daftar muncul di screen riwayat.
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Auth</th><th>Keterangan</th></tr>
+          <tr><td><code>GET /transactions</code></td><td>Required</td><td>Riwayat user. Filter: <code>?status=&date_from=&date_to=&page=&limit=</code></td></tr>
+          <tr><td><code>GET /transactions/{id}</code></td><td>Optional</td><td>Detail transaksi. Guest bisa akses dengan ref_id tanpa auth.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-11</div>
+          <div class="gap-title">Status EXPIRED, REFUNDED, CANCELLED tidak ada di screen</div>
+          <div class="gap-desc">Riwayat hanya punya tampilan untuk Sukses dan Gagal. Status lain (Kedaluwarsa, Dikembalikan, Dibatalkan) tidak ada visual state-nya.</div>
+          <div class="gap-fix">✅ Fix: Tambah badge status per enum yang ada. Di screen 25 detail: kalau status REFUNDED tampil informasi refund ("Dana dikembalikan pada [tanggal]").</div>
+          <div class="gap-owner">Owner: Bili (design badge states) → Agung + Fikly (implement)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-12</div>
+          <div class="gap-title">Tidak ada screen Refund Status</div>
+          <div class="gap-desc">User tidak punya cara untuk tahu status refund mereka dari dalam app. Harus tunggu WA notif saja.</div>
+          <div class="gap-fix">✅ Fix: Di screen 25 detail transaksi yang statusnya FAILED/REFUNDED: tampil section "Status Pengembalian Dana" dengan timeline (Diproses → Dalam Perjalanan → Selesai) dan estimasi waktu.</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (implement) → Irwan + Rifky (tambah field refund_status di response)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-status -->
+
+<!-- ═══ BANTUAN ═══ -->
+<div id="tab-bantuan" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#DC2626">AW-B</div>
+    <div class="flow-meta">
+      <div class="flow-title">Pusat Bantuan & CS</div>
+      <div class="flow-sub">Figma: Screen 26 (Pusat Bantuan + Tiket Terkirim) + Screen 27 (Live Chat)</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">User submit tiket komplain → dapat nomor tiket → CS follow up via WA</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX — Sesuai Figma Screen 26</div><div class="layer-content">
+        <ul class="steps">
+          <li class="step"><div class="step-n ok">1</div><div class="step-body"><div class="step-title">Buka Pusat Bantuan</div><div class="step-desc">Bisa dari menu navigasi atau dari screen transaksi gagal</div></div></li>
+          <li class="step"><div class="step-n ok">2</div><div class="step-body"><div class="step-title">Pilih kategori masalah</div><div class="step-desc">Top Up Deposit Bermasalah / Bonus Jaringan / Masalah Akun / Lainnya</div></div></li>
+          <li class="step"><div class="step-n ok">3</div><div class="step-body"><div class="step-title">Isi nomor WA aktif (wajib) + ID Transaksi (opsional) + deskripsi</div></div></li>
+          <li class="step"><div class="step-n ok">4</div><div class="step-body"><div class="step-title">Tap "Kirim Laporan"</div></div></li>
+          <li class="step"><div class="step-n ok">5</div><div class="step-body"><div class="step-title">Screen "Tiket Terkirim" — nomor tiket #TKT-xxx + estimasi 1×24 jam</div><div class="step-desc">WA notif otomatis ke nomor yang diisi: konfirmasi tiket diterima</div></div></li>
+        </ul>
+        <br>
+        <strong>Guest:</strong> Flow sama persis — tidak perlu login. Nomor WA = satu-satunya identifier CS.
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Auth</th><th>Body</th></tr>
+          <tr><td><code>POST /tickets</code></td><td>Optional</td><td><code>{wa_number, category, transaction_id?, description, source_channel}</code> → Return: <code>{ticket_id, ticket_number, estimated_response}</code></td></tr>
+          <tr><td><code>GET /tickets/{ticket_number}</code></td><td>Optional</td><td>Cek status tiket. User bisa akses dengan ticket_number + wa_number tanpa login.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-13</div>
+          <div class="gap-title">Kategori komplain di Figma berbeda dengan yang di dashboard</div>
+          <div class="gap-desc">Figma screen 26: "Top Up Deposit Bermasalah", "Bonus Jaringan", "Masalah Akun/Login", "Lainnya". Dashboard komplain: "Transaksi Gagal", "Saldo Tidak Masuk", "Produk Tidak Terkirim", dll. Kategori tidak sinkron.</div>
+          <div class="gap-fix">✅ Fix: Perlu alignment antara Bili (design) dan Isal+Ipong (dashboard) untuk menyepakati satu set kategori yang sama. Kategori dari FE harus bisa di-filter dan di-group di dashboard.</div>
+          <div class="gap-owner">Owner: Bili (keputusan) · Isal + Ipong (dashboard) · Agung + Fikly (FE form)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-14</div>
+          <div class="gap-title">Tidak ada cara user cek status tiket dari dalam app</div>
+          <div class="gap-desc">Setelah submit tiket, user tidak bisa cek update status dari app. Harus tunggu WA dari CS. Tidak ada "Riwayat Tiket" screen.</div>
+          <div class="gap-fix">✅ Fix: Di screen "Tiket Terkirim" tambah tombol "Lihat Riwayat Tiket". Screen riwayat tiket (sederhana): list tiket dengan status (Menunggu/Diproses/Selesai). Lookup by wa_number — tidak perlu login.</div>
+          <div class="gap-owner">Owner: Bili (design screen baru) · Irwan + Rifky (endpoint GET /tickets) · Agung + Fikly (implement)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-bantuan -->
+
+<!-- ═══ PROFIL ═══ -->
+<div id="tab-profil" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#6B7280">AW-P</div>
+    <div class="flow-meta">
+      <div class="flow-title">Profil & Akun</div>
+      <div class="flow-sub">Figma: Section "Profil" — View, Edit, Ganti Password</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Lihat profil, edit data, ganti password</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX</div><div class="layer-content">
+        Screen profil: nama, nomor HP, email (opsional), avatar. Tombol "Edit Profil" dan "Ganti Kata Sandi".<br><br>
+        Screen edit profil: form dengan field yang bisa diubah. Ganti nomor HP butuh verifikasi OTP ke nomor baru.<br><br>
+        <strong>Yang belum ada di Figma:</strong> Pengaturan notifikasi, hapus akun, riwayat tiket, sesi aktif (logout semua device).
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Method</th><th>Keterangan</th></tr>
+          <tr><td><code>/users/me</code></td><td>GET</td><td>Profil user yang sedang login. Auth required.</td></tr>
+          <tr><td><code>/users/me</code></td><td>PUT</td><td>Update nama, email. Body: <code>{name, email}</code></td></tr>
+          <tr><td><code>/users/me/change-phone</code></td><td>POST</td><td>Ganti nomor HP. Step 1: kirim OTP ke nomor baru. Step 2: verifikasi OTP + update nomor.</td></tr>
+          <tr><td><code>/users/me/change-password</code></td><td>POST</td><td>Body: <code>{current_password, new_password}</code></td></tr>
+          <tr><td><code>/users/me/notification-preferences</code></td><td>GET/PUT</td><td>Toggle notif per kategori (tier, bonus, promo, saldo rendah)</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-15</div>
+          <div class="gap-title">Pengaturan Notifikasi screen belum ada di Figma</div>
+          <div class="gap-desc">User tidak bisa opt-out dari notif promo/bonus/saldo rendah. Screen toggle per kategori notif belum didesain.</div>
+          <div class="gap-fix">✅ Fix: Bili buat screen Pengaturan Notifikasi di bawah menu Profil. Toggle per kategori: Promo, Bonus Jaringan, Saldo Rendah (tier dan security tidak bisa di-off).</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (implement) → Irwan + Rifky (endpoint preferences)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-profil -->
+
+<!-- ═══ GUEST FLOW ═══ -->
+<div id="tab-guest" class="tab-panel">
+
+<div class="flow-section">
+  <div class="flow-header">
+    <div class="flow-code" style="background:#374151">AW-G</div>
+    <div class="flow-meta">
+      <div class="flow-title">Guest Flow — Tanpa Login</div>
+      <div class="flow-sub">GoPop adalah guest-first — semua transaksi bisa tanpa login</div>
+      <div class="owner-row"><span class="pill pill-dev">⚙️ Agung (App)</span><span class="pill pill-dev">⚙️ Fikly (Desktop)</span><span class="pill pill-dev">⚙️ Irwan + Rifky (BE)</span></div>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header" onclick="tog(this)">
+      <span class="case-badge badge-happy">Happy Path</span>
+      <span class="case-title">Guest transaksi → dapat struk via WA → soft prompt daftar</span>
+      <span class="case-toggle">▾</span>
+    </div>
+    <div class="case-body open">
+      <div class="layer biz"><div class="layer-title"><div class="dot"></div>Bisnis</div><div class="layer-content">
+        Guest tidak perlu login untuk transaksi. Tujuan: kurangi friction akuisisi user baru. Setelah transaksi sukses → soft prompt untuk daftar akun (bukan force). Riwayat guest hanya di localStorage.
+      </div></div>
+      <div class="layer ux"><div class="layer-title"><div class="dot"></div>UX — Perbedaan dengan User Login</div><div class="layer-content">
+        <table class="ftable">
+          <tr><th>Feature</th><th>Guest</th><th>Registered User</th></tr>
+          <tr><td>Transaksi semua produk</td><td><span class="tag-exist">✅ Bisa</span></td><td><span class="tag-exist">✅ Bisa</span></td></tr>
+          <tr><td>Nomor WA di form checkout (untuk struk)</td><td><span class="tag-exist">✅ Wajib isi</span></td><td>Auto dari profil</td></tr>
+          <tr><td>Struk transaksi</td><td>Via WA ke nomor yang diisi</td><td>Via WA + tersimpan di Riwayat</td></tr>
+          <tr><td>Riwayat transaksi</td><td>localStorage saja</td><td>Server + localStorage</td></tr>
+          <tr><td>Komplain</td><td>Via form Pusat Bantuan + nomor WA</td><td>Sama + bisa track tiket</td></tr>
+          <tr><td>Soft prompt daftar</td><td>Setelah transaksi sukses</td><td>—</td></tr>
+        </table>
+      </div></div>
+      <div class="layer be"><div class="layer-title"><div class="dot"></div>API</div><div class="layer-content">
+        Guest tidak butuh token untuk <code>POST /transactions</code> — tapi butuh <code>source_channel: "app_guest"</code> atau <code>"web_guest"</code> dan <code>wa_number</code> wajib di body.<br><br>
+        <table class="ftable">
+          <tr><th>Endpoint</th><th>Perbedaan untuk Guest</th></tr>
+          <tr><td><code>POST /transactions</code></td><td>Tidak butuh Authorization header. <code>user_id: null</code> di DB. <code>wa_number</code> wajib di body.</td></tr>
+          <tr><td><code>GET /transactions/guest-lookup</code></td><td>Query: <code>?ref_id=X&wa_number=Y</code>. CS dan user bisa lookup tanpa auth.</td></tr>
+          <tr><td><code>POST /tickets</code></td><td>Tidak butuh auth. <code>wa_number</code> sebagai identifier.</td></tr>
+        </table>
+      </div></div>
+      <div class="layer gap"><div class="layer-title"><div class="dot"></div>Gap</div><div class="layer-content">
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-16</div>
+          <div class="gap-title">Nomor WA wajib di checkout guest belum ada di Figma</div>
+          <div class="gap-desc">Screen 03 Checkout tidak terlihat ada field nomor WA untuk guest. Tanpa nomor WA, tidak ada cara kirim struk ke guest dan tidak ada contact point kalau transaksi bermasalah.</div>
+          <div class="gap-fix">✅ Fix: Bili tambah field "Nomor WhatsApp untuk struk" di screen 03 Checkout — muncul hanya jika user tidak login. Validasi format nomor HP Indonesia.</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (conditional field berdasarkan auth state)</div>
+        </div>
+        <div class="gap-card">
+          <div class="gap-code">AW-GAP-17</div>
+          <div class="gap-title">Soft prompt daftar setelah transaksi sukses belum ada di Figma</div>
+          <div class="gap-desc">Screen 05 Sukses tidak menampilkan prompt untuk daftar akun. Ini hilangkan kesempatan konversi guest → registered user di moment yang paling tepat.</div>
+          <div class="gap-fix">✅ Fix: Tambah card di bawah receipt sukses: "Simpan riwayat & kumpulkan poin? Daftar gratis." dengan tombol "Daftar Sekarang" — tidak mengganggu receipt utama.</div>
+          <div class="gap-owner">Owner: Bili (design) → Agung + Fikly (conditional — hanya tampil jika guest)</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-guest -->
+
+<!-- ═══ GAP SUMMARY ═══ -->
+<div id="tab-gaps" class="tab-panel">
+
+<div style="background:#0d1f0d;border:1px solid rgba(206,241,123,.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:12px;align-items:center;">
+  <span style="font-size:24px;">⚠️</span>
+  <div>
+    <div style="font-size:14px;font-weight:700;color:var(--lime);margin-bottom:3px;">17 Gap Ditemukan di App & Web Consumer</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);">Dari trace E2E per flow + cross-check dengan screens Figma aktual. Diurutkan berdasarkan dampak ke user.</div>
+  </div>
+</div>
+
+<table class="ftable" style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);">
+  <tr><th>Kode</th><th>Flow</th><th>Gap</th><th>Jenis</th><th>Severity</th><th>Owner</th></tr>
+  <tr><td><code>AW-GAP-01</code></td><td>Auth</td><td>Screen OTP Verification belum ada di Figma</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-err">Critical</span></td><td>Bili</td></tr>
+  <tr><td><code>AW-GAP-02</code></td><td>Auth</td><td>Tidak ada interceptor refresh token di FE</td><td><span class="chip chip-info">FE</span></td><td><span class="chip chip-err">Critical</span></td><td>Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-03</code></td><td>Home</td><td>13 versi Homepage — belum dikunci versi final</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-err">Critical</span></td><td>Bili</td></tr>
+  <tr><td><code>AW-GAP-04</code></td><td>Home</td><td>Label "muurah" belum diganti ke "gopop" di Figma</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-err">Critical</span></td><td>Bili</td></tr>
+  <tr><td><code>AW-GAP-05</code></td><td>Home</td><td>Endpoint GET /cms/homepage belum ada di BE</td><td><span class="chip chip-ok">BE</span></td><td><span class="chip chip-err">Critical</span></td><td>Irwan + Rifky</td></tr>
+  <tr><td><code>AW-GAP-06</code></td><td>Transaksi</td><td>Payment Instruction screen belum ada di Figma</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-err">Critical</span></td><td>Bili</td></tr>
+  <tr><td><code>AW-GAP-07</code></td><td>Transaksi</td><td>Polling tidak ada mekanisme stop yang terdefinisi</td><td><span class="chip chip-info">FE</span></td><td><span class="chip chip-warn">High</span></td><td>Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-08</code></td><td>Transaksi</td><td>source_channel tidak dikirim dari FE ke BE</td><td><span class="chip chip-info">FE</span></td><td><span class="chip chip-err">Critical</span></td><td>Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-09</code></td><td>Transaksi</td><td>Error screens hanya ada untuk Token Listrik</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-warn">High</span></td><td>Bili → Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-10</code></td><td>Tagihan</td><td>Inquiry gagal tidak ada error state per produk</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-warn">High</span></td><td>Bili → Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-11</code></td><td>Status</td><td>Status EXPIRED, REFUNDED, CANCELLED tidak ada di screen riwayat</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-warn">High</span></td><td>Bili → Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-12</code></td><td>Status</td><td>Tidak ada screen Refund Status</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-warn">High</span></td><td>Bili → Agung + Fikly → Irwan + Rifky</td></tr>
+  <tr><td><code>AW-GAP-13</code></td><td>Bantuan</td><td>Kategori komplain FE ≠ dashboard — tidak sinkron</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-warn">High</span></td><td>Bili · Isal + Ipong · Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-14</code></td><td>Bantuan</td><td>Tidak ada screen Riwayat Tiket</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-info">Medium</span></td><td>Bili → Agung + Fikly → Irwan + Rifky</td></tr>
+  <tr><td><code>AW-GAP-15</code></td><td>Profil</td><td>Pengaturan Notifikasi screen belum ada</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-info">Medium</span></td><td>Bili → Agung + Fikly → Irwan + Rifky</td></tr>
+  <tr><td><code>AW-GAP-16</code></td><td>Guest</td><td>Field nomor WA wajib di checkout guest belum ada di Figma</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-err">Critical</span></td><td>Bili → Agung + Fikly</td></tr>
+  <tr><td><code>AW-GAP-17</code></td><td>Guest</td><td>Soft prompt daftar setelah transaksi sukses belum ada</td><td><span class="chip chip-warn">Design</span></td><td><span class="chip chip-info">Medium</span></td><td>Bili → Agung + Fikly</td></tr>
+</table>
+
+<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+  <div style="background:#fff;border-radius:10px;padding:14px 20px;flex:1;min-width:140px;text-align:center;">
+    <div style="font-size:28px;font-weight:800;color:#DC2626;">7</div>
+    <div style="font-size:11px;color:#6B7280;font-weight:600;">Critical</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 20px;flex:1;min-width:140px;text-align:center;">
+    <div style="font-size:28px;font-weight:800;color:#F59E0B;">7</div>
+    <div style="font-size:11px;color:#6B7280;font-weight:600;">High</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 20px;flex:1;min-width:140px;text-align:center;">
+    <div style="font-size:28px;font-weight:800;color:#4A2D8C;">3</div>
+    <div style="font-size:11px;color:#6B7280;font-weight:600;">Medium</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 20px;flex:1;min-width:140px;text-align:center;">
+    <div style="font-size:28px;font-weight:800;color:#16A34A;">11</div>
+    <div style="font-size:11px;color:#6B7280;font-weight:600;">Jenis: Design</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 20px;flex:1;min-width:140px;text-align:center;">
+    <div style="font-size:28px;font-weight:800;color:#3B82F6;">3</div>
+    <div style="font-size:11px;color:#6B7280;font-weight:600;">Jenis: FE/BE</div>
+  </div>
+</div>
+
+<div style="margin-top:14px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px 16px;">
+  <div style="font-size:12px;font-weight:700;color:#1E40AF;margin-bottom:6px;">📌 Insight Penting</div>
+  <div style="font-size:12px;color:#374151;line-height:1.7;">
+    Dari 17 gap, <strong>11 adalah gap design (Figma)</strong> — artinya Bili adalah bottleneck utama sebelum Agung dan Fikly bisa mulai implement. Prioritas utama untuk Bili: (1) Lock Homepage final, (2) Buat Payment Instruction screen, (3) Buat OTP screen, (4) Tambah field nomor WA di Checkout untuk guest.<br><br>
+    Gap FE/BE (6 gap) bisa dikerjakan paralel oleh Agung, Fikly, Irwan, dan Rifky setelah design selesai.
+  </div>
+</div>
+
+</div><!-- end tab-gaps -->
+
+</div><!-- end content -->
+
+<div class="footer">
+  <p>GoPop · E2E App & Web Consumer · <span>Juni 2026</span></p>
+  <p style="margin-top:4px">Screen inventory dari Figma MCP (bwdy1MflFyrW5S7vvIDTy0) · 33 screens ada · 8 screens missing · 17 gap teridentifikasi</p>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+function tog(header) {
+  const body = header.nextElementSibling;
+  const t = header.querySelector('.case-toggle');
+  body.classList.toggle('open');
+  t.classList.toggle('open', body.classList.contains('open'));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.case-body').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.case-toggle').forEach(t => t.classList.add('open'));
+});
+</script>
+</body>
+</html>
