@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · Flow Detail: Komplain & Tiket</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{background:#4A2D8C;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(74,45,140,.4);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;background:#CEF17B;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#1A1228;}
+.tb-name{font-size:15px;font-weight:800;color:#fff;}
+.tb-name span{color:#CEF17B;}
+.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.3);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.tb-meta{font-size:11px;color:rgba(255,255,255,.5);}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;}
+
+/* SIDEBAR */
+.sidebar{width:260px;background:#fff;border-right:1px solid #E8E4F5;flex-shrink:0;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px);padding:16px 12px;}
+.sb-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin:12px 0 6px;padding:0 8px;display:flex;align-items:center;gap:6px;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px;transition:all .12s;}
+.sb-item:hover{background:#F0EBFF;}
+.sb-item.active{background:#4A2D8C;}
+.sb-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.sb-info{flex:1;}
+.sb-title{font-size:12px;font-weight:700;color:#574872;line-height:1.3;}
+.sb-item.active .sb-title{color:#fff;}
+.sb-sub{font-size:10px;color:#9085AE;margin-top:2px;}
+.sb-item.active .sb-sub{color:rgba(255,255,255,.6);}
+.sb-divider{height:1px;background:#F0EBFF;margin:10px 4px;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:32px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* WELCOME */
+.welcome-hero{background:linear-gradient(135deg,#4A2D8C,#6B3FA0);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.welcome-hero::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(206,241,123,.08);border-radius:50%;}
+.welcome-hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.welcome-hero h1 span{color:#CEF17B;}
+.welcome-hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
+.flow-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.flow-card{background:#fff;border-radius:14px;padding:18px;border:2px solid #E8E4F5;cursor:pointer;transition:all .18s;}
+.flow-card:hover{border-color:#4A2D8C;box-shadow:0 4px 16px rgba(74,45,140,.1);transform:translateY(-1px);}
+.fc-num{font-size:11px;font-weight:800;color:#9085AE;margin-bottom:6px;}
+.fc-icon{font-size:24px;margin-bottom:8px;}
+.fc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:4px;line-height:1.3;}
+.fc-who{font-size:11px;color:#9085AE;}
+.fc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px;}
+.fct{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;}
+.fct-user{background:#EFF6FF;color:#1E40AF;}
+.fct-cs{background:#F0FDF4;color:#166534;}
+.fct-ops{background:#F5F3FF;color:#4A2D8C;}
+.fct-fin{background:#FFF7ED;color:#92400E;}
+
+/* FLOW PAGE HEADER */
+.flow-header{margin-bottom:28px;}
+.fh-breadcrumb{font-size:11px;color:#9085AE;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.fh-breadcrumb span{color:#4A2D8C;font-weight:600;}
+.fh-title{font-size:24px;font-weight:800;color:#1A1228;letter-spacing:-.02em;margin-bottom:8px;}
+.fh-desc{font-size:13px;color:#574872;line-height:1.7;max-width:600px;margin-bottom:14px;}
+.fh-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.fh-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid;}
+.fp-who{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
+.fp-trigger{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
+.fp-time{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+
+/* SECTION */
+.section{margin-bottom:28px;}
+.section-label{font-size:11px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:#E8E4F5;}
+
+/* STEP FLOW */
+.flow-steps{display:flex;flex-direction:column;gap:0;}
+.fs-step{display:flex;gap:16px;position:relative;}
+.fs-step:not(:last-child)::before{content:'';position:absolute;left:19px;top:44px;bottom:0;width:2px;background:#E8E4F5;z-index:0;}
+.fs-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.fs-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;z-index:1;position:relative;}
+.fs-num.ok{background:#DCFCE7;color:#166534;}
+.fs-num.warn{background:#FEF3C7;color:#92400E;}
+.fs-num.err{background:#FEE2E2;color:#DC2626;}
+.fs-num.info{background:#EDE9FE;color:#4A2D8C;}
+.fs-body{flex:1;padding:2px 0 28px;}
+.fs-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.fs-card-title{font-size:14px;font-weight:800;color:#1A1228;margin-bottom:4px;}
+.fs-card-sub{font-size:12px;color:#574872;line-height:1.6;margin-bottom:12px;}
+
+/* WHO BADGES in step */
+.who-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.who{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700;}
+.who-user{background:#EFF6FF;color:#1E40AF;}
+.who-cs{background:#F0FDF4;color:#166534;}
+.who-be{background:#FEF3C7;color:#92400E;}
+.who-ops{background:#F5F3FF;color:#4A2D8C;}
+.who-fin{background:#FFF7ED;color:#C2410C;}
+
+/* DETAIL BLOCKS */
+.detail-blocks{display:flex;flex-direction:column;gap:8px;}
+.db{border-radius:10px;padding:12px 14px;}
+.db-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.db-dot{width:6px;height:6px;border-radius:50%;}
+.db-content{font-size:12px;line-height:1.7;color:#374151;}
+.db-content strong{color:#1A1228;font-weight:700;}
+.db-content code{font-family:monospace;font-size:11px;background:rgba(74,45,140,.08);padding:1px 5px;border-radius:4px;color:#4A2D8C;}
+.db-content ul{padding-left:16px;margin-top:4px;}
+.db-content li{margin-bottom:3px;}
+.db.user{background:#EFF6FF;border:1px solid #BFDBFE;}
+.db.user .db-label{color:#1E40AF;} .db.user .db-dot{background:#3B82F6;}
+.db.system{background:#FFFBEB;border:1px solid #FDE68A;}
+.db.system .db-label{color:#92400E;} .db.system .db-dot{background:#F59E0B;}
+.db.be{background:#F0FDF4;border:1px solid #BBF7D0;}
+.db.be .db-label{color:#166534;} .db.be .db-dot{background:#16A34A;}
+.db.dash{background:#F5F3FF;border:1px solid #DDD6FE;}
+.db.dash .db-label{color:#4A2D8C;} .db.dash .db-dot{background:#7C5CBF;}
+
+/* BOTTLENECK */
+.bottleneck{background:#FFF1F2;border:1.5px solid #FECDD3;border-radius:12px;padding:16px 18px;margin-top:10px;}
+.bn-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.bn-icon{font-size:18px;}
+.bn-title{font-size:13px;font-weight:800;color:#9F1239;}
+.bn-cases{display:flex;flex-direction:column;gap:10px;}
+.bn-case{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #FECDD3;}
+.bn-case-q{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;}
+.bn-case-q::before{content:'❓';font-size:14px;flex-shrink:0;}
+.bn-case-a{font-size:12px;color:#374151;line-height:1.7;display:flex;align-items:flex-start;gap:8px;}
+.bn-case-a::before{content:'✅';font-size:14px;flex-shrink:0;}
+.bn-case-owner{font-size:10px;color:#9085AE;margin-top:6px;padding-top:6px;border-top:1px solid #F3F4F6;}
+
+/* RESULT BOX */
+.result-box{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin-top:10px;}
+.rb-title{font-size:12px;font-weight:800;color:#166534;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.rb-items{display:flex;flex-direction:column;gap:6px;}
+.rb-item{font-size:12px;color:#374151;display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.rb-item::before{content:'→';color:#16A34A;font-weight:800;flex-shrink:0;}
+
+/* CALLOUT */
+.callout{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:8px;display:flex;gap:10px;}
+.callout-icon{font-size:18px;flex-shrink:0;}
+.callout-text strong{font-weight:700;}
+.co-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+.co-warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;}
+.co-tip{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+
+/* NAV BUTTONS */
+.flow-nav{display:flex;gap:10px;margin-top:32px;padding-top:20px;border-top:1px solid #E8E4F5;}
+.fn-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
+.fn-btn:hover{border-color:#4A2D8C;color:#4A2D8C;}
+.fn-btn.next{background:#4A2D8C;border-color:#4A2D8C;color:#fff;margin-left:auto;}
+.fn-btn.next:hover{background:#3B2070;}
+
+@media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">G</div>
+    <div class="tb-name">Go<span>Pop</span> · Flow Detail</div>
+    <div class="tb-badge">KOMPLAIN & TIKET</div>
+  </div>
+  <div class="tb-meta">Contoh format · Dashboard</div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
+  <div class="sb-item active" onclick="showPage('welcome',this)">
+    <div class="sb-icon">🗺️</div>
+    <div class="sb-info">
+      <div class="sb-title">Semua Flow</div>
+      <div class="sb-sub">Peta 5 flow komplain</div>
+    </div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-label"><div class="sb-dot" style="background:#FF6B4A"></div>Flow Komplain & Tiket</div>
+
+  <div class="sb-item" onclick="showPage('f01',this)">
+    <div class="sb-icon">📝</div>
+    <div class="sb-info">
+      <div class="sb-title">D-F01 · User Submit Tiket</div>
+      <div class="sb-sub">Dari Pusat Bantuan app/web</div>
+    </div>
+  </div>
+  <div class="sb-item" onclick="showPage('f02',this)">
+    <div class="sb-icon">📥</div>
+    <div class="sb-info">
+      <div class="sb-title">D-F02 · CS Terima Tiket</div>
+      <div class="sb-sub">Masuk ke dashboard CS</div>
+    </div>
+  </div>
+  <div class="sb-item" onclick="showPage('f03',this)">
+    <div class="sb-icon">🔍</div>
+    <div class="sb-info">
+      <div class="sb-title">D-F03 · CS Investigate & Resolve</div>
+      <div class="sb-sub">Cek, handle, tutup tiket</div>
+    </div>
+  </div>
+  <div class="sb-item" onclick="showPage('f04',this)">
+    <div class="sb-icon">📤</div>
+    <div class="sb-info">
+      <div class="sb-title">D-F04 · Eskalasi ke Ops/Finance</div>
+      <div class="sb-sub">CS tidak bisa handle sendiri</div>
+    </div>
+  </div>
+  <div class="sb-item" onclick="showPage('f05',this)">
+    <div class="sb-icon">🔄</div>
+    <div class="sb-info">
+      <div class="sb-title">D-F05 · Tiket Re-open</div>
+      <div class="sb-sub">Masalah belum selesai</div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ══════════════ WELCOME ══════════════ -->
+<div id="page-welcome" class="page active">
+  <div class="welcome-hero">
+    <h1>Komplain & Tiket — <span>5 Flow Detail</span></h1>
+    <p>Semua alur dari mulai user submit komplain sampai tiket selesai diselesaikan. Klik flow di bawah atau di sidebar untuk mulai baca.</p>
+  </div>
+
+  <div class="section-label">5 Flow yang Akan Dibahas</div>
+  <div class="flow-cards">
+    <div class="flow-card" onclick="showPage('f01',document.querySelector('[onclick=\"showPage(\'f01\',this)\"]'))">
+      <div class="fc-num">D-F01</div>
+      <div class="fc-icon">📝</div>
+      <div class="fc-title">User Submit Tiket dari Pusat Bantuan</div>
+      <div class="fc-who">Dimulai dari: App atau Web consumer</div>
+      <div class="fc-tags">
+        <span class="fct fct-user">User / Guest</span>
+        <span class="fct fct-cs">CS</span>
+      </div>
+    </div>
+    <div class="flow-card" onclick="showPage('f02',document.querySelector('[onclick=\"showPage(\'f02\',this)\"]'))">
+      <div class="fc-num">D-F02</div>
+      <div class="fc-icon">📥</div>
+      <div class="fc-title">CS Terima & Review Tiket Baru</div>
+      <div class="fc-who">Dimulai dari: Dashboard CS</div>
+      <div class="fc-tags">
+        <span class="fct fct-cs">CS</span>
+        <span class="fct fct-ops">Acoy (Monitor)</span>
+      </div>
+    </div>
+    <div class="flow-card" onclick="showPage('f03',document.querySelector('[onclick=\"showPage(\'f03\',this)\"]'))">
+      <div class="fc-num">D-F03</div>
+      <div class="fc-icon">🔍</div>
+      <div class="fc-title">CS Investigate & Selesaikan Tiket</div>
+      <div class="fc-who">Dimulai dari: Tiket berstatus Diproses</div>
+      <div class="fc-tags">
+        <span class="fct fct-cs">CS</span>
+        <span class="fct fct-user">User dapat update</span>
+      </div>
+    </div>
+    <div class="flow-card" onclick="showPage('f04',document.querySelector('[onclick=\"showPage(\'f04\',this)\"]'))">
+      <div class="fc-num">D-F04</div>
+      <div class="fc-icon">📤</div>
+      <div class="fc-title">Eskalasi ke Ops atau Finance</div>
+      <div class="fc-who">Dimulai dari: CS tidak bisa handle</div>
+      <div class="fc-tags">
+        <span class="fct fct-cs">CS</span>
+        <span class="fct fct-ops">Ops (Acoy)</span>
+        <span class="fct fct-fin">Finance (Agung)</span>
+      </div>
+    </div>
+    <div class="flow-card" onclick="showPage('f05',document.querySelector('[onclick=\"showPage(\'f05\',this)\"]'))">
+      <div class="fc-num">D-F05</div>
+      <div class="fc-icon">🔄</div>
+      <div class="fc-title">Tiket Re-open Setelah Ditutup</div>
+      <div class="fc-who">Dimulai dari: User komplain lagi</div>
+      <div class="fc-tags">
+        <span class="fct fct-user">User</span>
+        <span class="fct fct-cs">CS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout co-info" style="margin-top:20px;">
+    <div class="callout-icon">💡</div>
+    <div class="callout-text">
+      <strong>Cara baca dokumen ini:</strong> Setiap flow menjelaskan step by step apa yang terjadi — dari sisi user, sistem, dan tim internal GoPop. Kalau ada bagian yang bisa macet atau bermasalah, ada penjelasan kenapa dan cara mengatasinya.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ F01: USER SUBMIT TIKET ══════════════ -->
+<div id="page-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Komplain & Tiket <span>›</span> D-F01</div>
+    <div class="fh-title">📝 User Submit Tiket dari Pusat Bantuan</div>
+    <div class="fh-desc">Flow ini dimulai ketika user atau guest punya masalah dan ingin melaporkan ke GoPop. Mereka buka Pusat Bantuan di app atau web, isi form, lalu kirim. Tidak perlu login — guest pun bisa komplain.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">👤 User / Guest</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: User punya masalah</span>
+      <span class="fh-pill fp-time">⏱ Estimasi: 2–3 menit</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">1</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User buka menu Pusat Bantuan</div>
+            <div class="fs-card-sub">User tap tombol "Pusat Bantuan" dari menu navigasi bawah, atau tap langsung dari screen transaksi gagal (ada shortcut di sana).</div>
+            <div class="who-row">
+              <span class="who who-user">👤 User</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat & Lakukan</div>
+                <div class="db-content">Halaman Pusat Bantuan terbuka. Ada form dengan 3 bagian yang harus diisi. Di bagian atas ada info singkat: "Kami siap bantu. Tim GoPop akan menghubungi kamu via WhatsApp."</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">2</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User isi form komplain</div>
+            <div class="fs-card-sub">Ada 3 field yang harus diisi. Field nomor WA adalah satu-satunya cara CS menghubungi user, jadi wajib diisi bahkan untuk user yang sudah login.</div>
+            <div class="who-row">
+              <span class="who who-user">👤 User / Guest</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat & Lakukan</div>
+                <div class="db-content">
+                  <ul>
+                    <li><strong>Nomor WhatsApp Aktif</strong> (wajib) — nomor yang bisa dihubungi CS. Kalau sudah login, otomatis terisi dari profil tapi bisa diganti.</li>
+                    <li><strong>Kategori Masalah</strong> (wajib) — dropdown pilihan: Transaksi Gagal, Saldo Tidak Masuk, Masalah Akun/Login, Lainnya.</li>
+                    <li><strong>ID Transaksi</strong> (opsional) — bisa dikosongkan kalau tidak ingat atau masalahnya bukan tentang transaksi spesifik.</li>
+                    <li><strong>Deskripsi Masalah</strong> (wajib) — text area bebas, minimal 20 karakter.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di Sistem (Validasi Real-time)</div>
+                <div class="db-content">Saat user mengetik, app langsung cek format nomor WA (harus 08xx atau +628xx, 10–13 digit). Tombol "Kirim Laporan" tetap abu-abu (tidak bisa diklik) sampai semua field wajib terisi dengan benar.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">3</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User tap "Kirim Laporan"</div>
+            <div class="fs-card-sub">Setelah semua field terisi, user tap tombol kirim. Sistem langsung proses dan buat tiket.</div>
+            <div class="who-row">
+              <span class="who who-user">👤 User</span>
+              <span class="who who-be">⚙️ Sistem (BE)</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Yang User Lihat</div>
+                <div class="db-content">Tombol berubah jadi loading spinner sebentar (1–2 detik). Tidak bisa di-tap dua kali — ini mencegah tiket duplikat.</div>
+              </div>
+              <div class="db be">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di Sistem</div>
+                <div class="db-content">
+                  Sistem terima data form → buat tiket baru di database dengan info:
+                  <ul>
+                    <li>Nomor tiket unik, contoh: <code>#TKT-20240628-001</code></li>
+                    <li>Status awal: <strong>Menunggu</strong></li>
+                    <li>Priority: ditentukan otomatis berdasarkan kategori (Transaksi Gagal = High, Lainnya = Normal)</li>
+                    <li>Assign otomatis ke CS yang sedang bertugas</li>
+                  </ul>
+                  Setelah tiket tersimpan, sistem langsung kirim WA ke nomor yang user isi.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">4</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User terima konfirmasi</div>
+            <div class="fs-card-sub">Dua konfirmasi langsung dikirim: di dalam app/web dan via WhatsApp.</div>
+            <div class="who-row">
+              <span class="who who-user">👤 User</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Di App/Web (Screen "Tiket Terkirim")</div>
+                <div class="db-content">
+                  Screen berganti ke halaman konfirmasi yang menampilkan:
+                  <ul>
+                    <li>✅ Ikon sukses besar</li>
+                    <li>Nomor tiket: <strong>#TKT-20240628-001</strong></li>
+                    <li>Pesan: "Laporan kamu sudah kami terima. Tim kami akan menghubungi kamu via WhatsApp dalam 1×24 jam."</li>
+                    <li>Tombol "Kembali ke Beranda"</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Via WhatsApp (Otomatis)</div>
+                <div class="db-content">Pesan WA dikirim ke nomor yang diisi:<br><br>
+                  <em>"Halo! Laporan kamu sudah kami terima 🙏<br>
+                  Nomor tiket: #TKT-20240628-001<br>
+                  Kategori: Transaksi Gagal<br><br>
+                  Tim GoPop akan menghubungi kamu di nomor ini dalam 1×24 jam. Simpan nomor tiket ini ya!"</em>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header">
+        <div class="bn-icon">⚡</div>
+        <div class="bn-title">3 Case yang Bisa Bermasalah di Flow Ini</div>
+      </div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-case-q">User isi nomor WA yang salah atau tidak aktif — CS tidak bisa menghubungi</div>
+          <div class="bn-case-a">Tambahkan langkah verifikasi ringan: setelah user isi nomor WA, kirim kode 4 digit ke nomor itu. User input kode untuk konfirmasi nomor aktif. Kalau nomor salah, user tahu sebelum tiket disubmit. Kode ini berbeda dengan OTP login — tidak mempengaruhi akun user.</div>
+          <div class="bn-case-owner">👤 Keputusan: Bili (apakah verifikasi nomor WA perlu?) · ⚙️ Implementasi: Irwan + Rifky (BE) + Agung/Fikly (FE)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">WA konfirmasi tidak terkirim karena API WA belum ada</div>
+          <div class="bn-case-a">Ini gap yang sudah teridentifikasi (INT-GAP-10). Sementara WA API belum ready, konfirmasi hanya lewat screen app. User tetap dapat nomor tiket — jangan tampilkan "WA sudah dikirim" sebelum benar-benar dikirim. Tampilkan saja: "Tiket #TKT-xxx berhasil dibuat."</div>
+          <div class="bn-case-owner">⚙️ Fix: Irwan + Rifky (implementasi WA API dulu, baru aktifkan notif WA untuk tiket)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">User double-tap tombol "Kirim" dan tiket terduplikat</div>
+          <div class="bn-case-a">Sistem harus tolak request identik yang masuk dalam 30 detik (same user/nomor WA + same kategori). Di FE, tombol langsung di-disable setelah pertama kali di-tap. Di BE, ada pengecekan duplikat sebelum buat tiket baru.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Agung/Fikly (disable button di FE) + Irwan + Rifky (idempotency check di BE)</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- HASIL -->
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">Tiket tersimpan di sistem dengan nomor unik dan status "Menunggu"</div>
+      <div class="rb-item">CS on-duty otomatis di-assign dan bisa lihat tiket di dashboard</div>
+      <div class="rb-item">User dapat nomor tiket sebagai bukti laporan mereka diterima</div>
+      <div class="rb-item">WA konfirmasi dikirim ke nomor yang user isi (setelah INT-GAP-10 selesai)</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="showPage('welcome',document.querySelector('[onclick=\"showPage(\'welcome\',this)\"]'))">← Semua Flow</div>
+    <div class="fn-btn next" onclick="showPage('f02',document.querySelector('[onclick=\"showPage(\'f02\',this)\"]'))">Flow Berikutnya: CS Terima Tiket →</div>
+  </div>
+</div>
+
+<!-- ══════════════ F02: CS TERIMA TIKET ══════════════ -->
+<div id="page-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Komplain & Tiket <span>›</span> D-F02</div>
+    <div class="fh-title">📥 CS Terima & Review Tiket Baru</div>
+    <div class="fh-desc">Setelah user submit tiket, tiket masuk ke dashboard CS. Flow ini menjelaskan bagaimana CS tahu ada tiket baru, bagaimana membuka dan membacanya, serta apa yang CS lihat di dalamnya.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">🎧 CS GoPop</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: Tiket baru masuk dari user</span>
+      <span class="fh-pill fp-time">⏱ Target Respons: &lt;1 jam (High Priority)</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num info">1</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS dapat notifikasi tiket baru</div>
+            <div class="fs-card-sub">Tiket yang baru masuk langsung muncul di dashboard CS tanpa perlu refresh halaman.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Di Dashboard CS</div>
+                <div class="db-content">Badge merah di menu "Komplain & Tiket" bertambah — misalnya dari "3" jadi "4". Kalau CS sedang buka halaman lain, ada notifikasi pop-up kecil di pojok kanan bawah: "📥 Tiket baru dari +628xx — Transaksi Gagal".</div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Penentuan Priority Otomatis</div>
+                <div class="db-content">
+                  Sistem tentukan priority tiket secara otomatis berdasarkan kategori:
+                  <ul>
+                    <li><strong>Urgent</strong> — Transaksi Gagal dengan nominal &gt; Rp 500.000</li>
+                    <li><strong>High</strong> — Transaksi Gagal, Saldo Tidak Masuk</li>
+                    <li><strong>Normal</strong> — Masalah Akun/Login, Lainnya</li>
+                  </ul>
+                  Tiket Urgent dan High muncul di bagian atas list, dengan label warna merah atau oranye.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">2</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS buka list tiket dan pilih yang akan dihandle</div>
+            <div class="fs-card-sub">CS masuk ke halaman Komplain & Tiket. Tiket ditampilkan berurutan dari yang paling urgent.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lihat di List Tiket</div>
+                <div class="db-content">
+                  Setiap baris tiket menampilkan:
+                  <ul>
+                    <li>Nomor tiket + waktu masuk ("5 menit yang lalu")</li>
+                    <li>Kategori masalah + badge priority (merah/oranye/abu)</li>
+                    <li>Nomor WA user (disamarkan: 0812-xxxx-8901)</li>
+                    <li>Cuplikan deskripsi masalah (max 60 karakter)</li>
+                    <li>Status saat ini (Menunggu / Diproses / Selesai)</li>
+                  </ul>
+                  CS bisa filter: "Semua" / "Belum Dihandle" / "Milik Saya" / "Urgent".
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">3</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS klik tiket untuk lihat detail</div>
+            <div class="fs-card-sub">CS buka tiket dan baca semua informasi yang user kirimkan, termasuk konteks transaksi jika ada.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lihat di Detail Tiket</div>
+                <div class="db-content">
+                  Panel detail tiket terbuka di sebelah kanan (atau halaman baru di mobile):
+                  <ul>
+                    <li>Semua info form yang user isi (nomor WA, kategori, deskripsi)</li>
+                    <li>Kalau user mengisi ID Transaksi → otomatis muncul ringkasan transaksi itu: produk, nominal, status, waktu transaksi</li>
+                    <li>Timeline aktivitas tiket (kapan dibuat, siapa yang di-assign)</li>
+                    <li>Field "Catatan Internal" — hanya CS/admin yang bisa lihat, user tidak tahu</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di Sistem</div>
+                <div class="db-content">Saat CS buka tiket, status otomatis berubah dari <strong>Menunggu</strong> ke <strong>Dibaca</strong>. Waktu "dibaca pertama kali" dicatat — berguna untuk laporan SLA nanti.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">4</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS mulai proses tiket</div>
+            <div class="fs-card-sub">CS tap "Mulai Proses" untuk menandai tiket sedang ditangani. Status berubah, tiket terkunci ke CS ini.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Aksi CS</div>
+                <div class="db-content">CS tap tombol <strong>"Mulai Proses"</strong> di pojok kanan atas detail tiket. Status berubah ke <strong>Sedang Diproses</strong>. Nama CS otomatis tercatat sebagai PIC tiket ini. CS lain bisa lihat tapi tidak bisa ambil alih kecuali CS ini melepasnya.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header">
+        <div class="bn-icon">⚡</div>
+        <div class="bn-title">3 Case yang Bisa Bermasalah di Flow Ini</div>
+      </div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-case-q">CS sedang offline atau sibuk — tiket menunggu terlalu lama</div>
+          <div class="bn-case-a">Sistem perlu pantau tiket yang belum dibuka dalam 30 menit. Kalau lewat 30 menit dan CS yang di-assign tidak membuka tiket, sistem auto-reassign ke CS lain yang sedang aktif (online di dashboard). Kalau semua CS offline, kirim notifikasi ke Acoy sebagai monitor.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Irwan + Rifky (cron job pantau tiket) + Isal/Ipong (dashboard notif ke Acoy)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">Tiket masuk tapi tidak ada ID Transaksi — CS tidak tahu kasus mana</div>
+          <div class="bn-case-a">CS bisa cari manual dari dashboard: tombol "Cari Transaksi" di dalam detail tiket. CS input nomor HP user atau rentang waktu kejadian → sistem tampilkan kandidat transaksi yang mungkin terkait. CS pilih yang paling sesuai dan "link" ke tiket ini.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Isal/Ipong (fitur cari dan link transaksi di detail tiket) + Irwan/Rifky (endpoint search)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">Dua CS buka tiket yang sama bersamaan — bisa terjadi duplikat penanganan</div>
+          <div class="bn-case-a">Saat CS pertama tap "Mulai Proses", tiket langsung terkunci untuk CS itu. CS kedua yang buka tiket yang sama akan lihat banner: "Tiket ini sedang ditangani oleh [nama CS]. Kamu bisa baca tapi tidak bisa mengambil alih." Hanya Acoy (Super CS) yang bisa force-reassign.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Irwan/Rifky (locking logic di BE) + Isal/Ipong (UI banner lock)</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">CS sudah membaca dan memahami masalah user</div>
+      <div class="rb-item">Tiket berstatus "Sedang Diproses" dan terkunci ke CS yang handle</div>
+      <div class="rb-item">Kalau ada ID Transaksi, CS sudah bisa lihat detail transaksi terkait</div>
+      <div class="rb-item">Waktu respons pertama tercatat untuk laporan SLA</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="showPage('f01',document.querySelector('[onclick=\"showPage(\'f01\',this)\"]'))">← F01: User Submit Tiket</div>
+    <div class="fn-btn next" onclick="showPage('f03',document.querySelector('[onclick=\"showPage(\'f03\',this)\"]'))">F03: CS Investigate & Resolve →</div>
+  </div>
+</div>
+
+<!-- ══════════════ F03: CS INVESTIGATE & RESOLVE ══════════════ -->
+<div id="page-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Komplain & Tiket <span>›</span> D-F03</div>
+    <div class="fh-title">🔍 CS Investigate & Selesaikan Tiket</div>
+    <div class="fh-desc">CS sudah buka tiket dan mulai proses. Sekarang CS perlu cari tahu apa masalahnya, hubungi user via WA untuk update, dan selesaikan tiket dengan resolusi yang tepat.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">🎧 CS GoPop</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: Tiket status "Sedang Diproses"</span>
+      <span class="fh-pill fp-time">⏱ Target Selesai: &lt;24 jam</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">1</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS cek status transaksi terkait</div>
+            <div class="fs-card-sub">Langkah pertama CS selalu cek dulu di sistem — apakah transaksi memang bermasalah, atau sudah selesai tapi user belum tahu.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lakukan di Dashboard</div>
+                <div class="db-content">CS klik "Lihat Detail Transaksi" di dalam detail tiket → langsung dibawa ke halaman detail transaksi di modul Monitoring. CS lihat: status saat ini, waktu terakhir diupdate, sudah berapa kali retry, apakah sudah ada refund yang berjalan.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">2</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS hubungi user via WA dengan update status</div>
+            <div class="fs-card-sub">CS tidak balas via dashboard — CS hubungi user langsung ke nomor WA yang mereka isi di form. CS bisa pakai template pesan yang sudah disediakan.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-user">👤 User</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lakukan</div>
+                <div class="db-content">Tap tombol <strong>"Hubungi via WA"</strong> di detail tiket → nomor WA user langsung terbuka di WA CS. CS pilih template pesan sesuai kondisi, lalu kirim. Setelah menghubungi, CS tap "Tandai Sudah Dihubungi" di dashboard — waktu kontak dicatat.</div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Template Pesan yang Tersedia</div>
+                <div class="db-content">
+                  <ul>
+                    <li><em>"Halo [nama]! Ini CS GoPop terkait tiket #TKT-xxx. Transaksi kamu sedang kami proses, dana kamu aman. Estimasi selesai [waktu]."</em></li>
+                    <li><em>"Halo [nama]! Kami sudah cek tiket #TKT-xxx. Transaksi berhasil — [nama produk] sudah terkirim ke [tujuan]. Ada yang bisa kami bantu lagi?"</em></li>
+                    <li><em>"Halo [nama]! Terkait tiket #TKT-xxx, kami perlu escalate ke tim terkait. Estimasi respons 2×24 jam. Kami akan update kamu via WA ini."</em></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 - SELESAI SENDIRI -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">3</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Masalah selesai — CS tutup tiket</div>
+            <div class="fs-card-sub">Kalau masalah sudah terselesaikan (transaksi sukses, refund sudah berjalan, atau user puas dengan penjelasan), CS tutup tiket dengan memilih jenis resolusi.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lakukan</div>
+                <div class="db-content">
+                  CS tap <strong>"Tutup Tiket"</strong> → muncul form penutupan yang wajib diisi:
+                  <ul>
+                    <li><strong>Jenis Resolusi</strong> (dropdown wajib): Transaksi Berhasil / Refund Diproses / Edukasi User / Tidak Ada Masalah / Lainnya</li>
+                    <li><strong>Catatan Penutupan</strong> (teks opsional): ringkasan apa yang terjadi dan bagaimana diselesaikan</li>
+                  </ul>
+                  Setelah submit → tiket status berubah ke <strong>Selesai</strong>. Tidak bisa diubah lagi kecuali user re-open (flow D-F05).
+                </div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di Sistem</div>
+                <div class="db-content">Waktu selesai dicatat. Total durasi penanganan dihitung otomatis (dari tiket dibuat sampai ditutup). Data ini masuk ke laporan SLA bulanan Acoy.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header">
+        <div class="bn-icon">⚡</div>
+        <div class="bn-title">3 Case yang Bisa Bermasalah di Flow Ini</div>
+      </div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-case-q">CS tidak punya akses untuk lihat detail transaksi — harus minta ke tim lain</div>
+          <div class="bn-case-a">CS harus bisa lihat detail transaksi (status, waktu, produk, nominal) tapi tidak boleh lihat data sensitif seperti HPP reseller atau margin. Di dashboard, CS punya akses read-only ke Monitoring Transaksi. Tidak perlu minta ke Rifky atau Acoy hanya untuk cek status.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Irwan/Rifky (RBAC — CS role bisa GET /transactions tapi tidak bisa aksi) + Isal/Ipong (shortcut link dari tiket ke transaksi)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">User tidak balas WA — CS tidak tahu apakah masalah sudah selesai</div>
+          <div class="bn-case-a">CS tetap bisa tutup tiket meski user tidak balas, dengan resolusi "Tidak Ada Respons dari User setelah 3×24 jam". Sebelum tutup, CS kirim WA terakhir: "Tiket #TKT-xxx akan kami tutup dalam 24 jam. Balas WA ini kalau masalah belum selesai." Kalau user balas setelah ditutup, bisa re-open (flow D-F05).</div>
+          <div class="bn-case-owner">👤 Keputusan: Bili (berapa lama tunggu sebelum auto-close?) · ⚙️ Isal/Ipong (reminder auto-close di dashboard)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">CS tidak tahu harus jawab apa untuk kasus teknikal tertentu</div>
+          <div class="bn-case-a">Tambahkan knowledge base sederhana di dashboard: CS bisa cari berdasarkan kategori ("token listrik gagal", "transfer ewallet pending") dan dapat panduan respon standar. Ini juga memastikan jawaban CS konsisten. Knowledge base bisa dikelola Acoy atau Bili dari CMS.</div>
+          <div class="bn-case-owner">📋 Keputusan: Acoy (buat knowledge base awal) · ⚙️ Isal/Ipong (fitur search KB di detail tiket) · 👤 Bili (integrasi ke CMS)</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">Tiket berstatus Selesai dengan jenis resolusi yang tercatat</div>
+      <div class="rb-item">User sudah dihubungi via WA dan tahu statusnya</div>
+      <div class="rb-item">Durasi penanganan tercatat untuk laporan SLA</div>
+      <div class="rb-item">Kalau belum selesai sendiri → lanjut ke F04 (Eskalasi)</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="showPage('f02',document.querySelector('[onclick=\"showPage(\'f02\',this)\"]'))">← F02: CS Terima Tiket</div>
+    <div class="fn-btn next" onclick="showPage('f04',document.querySelector('[onclick=\"showPage(\'f04\',this)\"]'))">F04: Eskalasi ke Ops/Finance →</div>
+  </div>
+</div>
+
+<!-- ══════════════ F04: ESKALASI ══════════════ -->
+<div id="page-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Komplain & Tiket <span>›</span> D-F04</div>
+    <div class="fh-title">📤 Eskalasi ke Ops atau Finance</div>
+    <div class="fh-desc">Ada kasus yang CS tidak bisa selesaikan sendiri — seperti refund yang gagal, transaksi yang perlu force update status, atau kasus yang butuh akses lebih tinggi. Flow ini menjelaskan bagaimana eskalasi dilakukan dan apa yang terjadi setelahnya.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">🎧 CS → Ops (Acoy) / Finance (Agung)</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: CS tidak bisa resolve sendiri</span>
+      <span class="fh-pill fp-time">⏱ Target Respons Eskalasi: &lt;2 jam</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Kapan Harus Eskalasi?</div>
+    <div class="callout co-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">📋</div>
+      <div class="callout-text">
+        <strong>Eskalasi ke Ops (Acoy)</strong> — kalau butuh: cek atau retry transaksi ke biller, force update status transaksi, investigasi transaksi stuck &gt;1 jam.<br><br>
+        <strong>Eskalasi ke Finance (Agung)</strong> — kalau butuh: proses refund manual, approve refund di atas batas nominal CS, investigasi selisih saldo reseller.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num warn">1</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS memutuskan untuk eskalasi</div>
+            <div class="fs-card-sub">Setelah CS cek dan tidak bisa selesaikan, CS tap tombol "Eskalasi" di detail tiket.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lakukan</div>
+                <div class="db-content">
+                  Tap <strong>"Eskalasi Tiket"</strong> → muncul form eskalasi:
+                  <ul>
+                    <li><strong>Eskalasi ke</strong> (wajib pilih): Ops (Acoy) / Finance (Agung) / IT (Irwan)</li>
+                    <li><strong>Alasan Eskalasi</strong> (wajib isi): CS jelaskan apa yang sudah dicoba dan kenapa butuh bantuan</li>
+                    <li><strong>Prioritas</strong>: Normal / Urgent (kalau user sudah komplain lebih dari 1 kali atau nominal besar)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">2</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Ops/Finance dapat notifikasi eskalasi</div>
+            <div class="fs-card-sub">Orang yang di-eskalasi langsung dapat notif di dashboard dan via WA internal.</div>
+            <div class="who-row">
+              <span class="who who-ops">👁️ Acoy (Ops)</span>
+              <span class="who who-fin">💰 Agung (Finance)</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang Terjadi di Dashboard</div>
+                <div class="db-content">Tiket muncul di halaman "Tiket yang Di-eskalasi ke Saya" dengan label <strong>ESCALATED</strong>. Badge di menu Komplain bertambah untuk Acoy atau Agung. Mereka bisa lihat: deskripsi masalah user, riwayat yang sudah dilakukan CS, dan alasan eskalasi.</div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>WA Notif Internal</div>
+                <div class="db-content"><em>"[Nama CS] mengalihkan tiket #TKT-xxx ke kamu.<br>Kategori: Transaksi Gagal (Refund Manual)<br>Alasan: Auto-refund gagal, butuh proses manual.<br>Prioritas: Urgent<br>Buka dashboard untuk tindak lanjut."</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">3</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Ops/Finance tindak lanjut dari dashboard</div>
+            <div class="fs-card-sub">Acoy atau Agung buka tiket, cek detail transaksi, lalu lakukan aksi yang diperlukan — langsung dari dashboard tanpa perlu koordinasi manual.</div>
+            <div class="who-row">
+              <span class="who who-ops">👁️ Acoy (Ops)</span>
+              <span class="who who-fin">💰 Agung (Finance)</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Aksi yang Bisa Dilakukan</div>
+                <div class="db-content">
+                  <strong>Ops (Acoy):</strong>
+                  <ul>
+                    <li>Retry transaksi ke biller</li>
+                    <li>Cek status ke biller (pull status manual)</li>
+                    <li>Update status transaksi dengan alasan</li>
+                  </ul>
+                  <strong>Finance (Agung):</strong>
+                  <ul>
+                    <li>Proses refund manual ke metode bayar asal</li>
+                    <li>Input nominal + konfirmasi → sistem proses refund via Xendit</li>
+                    <li>Tambahkan catatan untuk laporan internal</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">4</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Update dikirim ke CS dan user</div>
+            <div class="fs-card-sub">Setelah Ops/Finance selesai handle, CS yang awal menangani dapat notif update. CS yang follow up ke user.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-user">👤 User</span>
+              <span class="who who-be">⚙️ Sistem</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Alur Balik ke CS</div>
+                <div class="db-content">Ops/Finance klik <strong>"Selesai dari Sisi Saya"</strong> + isi catatan apa yang dilakukan → tiket kembali ke CS dengan status "Perlu Follow-up ke User". CS dapat notif: "Eskalasi #TKT-xxx sudah ditangani Agung. Refund sudah diproses. Hubungi user untuk konfirmasi."</div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>WA ke User (Dikirim CS)</div>
+                <div class="db-content"><em>"Halo [nama]! Update terkait tiket #TKT-xxx: refund sebesar Rp [nominal] sudah kami proses. Dana akan kembali ke [metode bayar] dalam 1–3 hari kerja. Ada pertanyaan? Balas WA ini ya!"</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header">
+        <div class="bn-icon">⚡</div>
+        <div class="bn-title">2 Case yang Bisa Bermasalah di Flow Ini</div>
+      </div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-case-q">Acoy atau Agung tidak buka dashboard — eskalasi tidak ditindaklanjuti</div>
+          <div class="bn-case-a">Kalau eskalasi Urgent tidak ada respons dalam 1 jam, sistem kirim pengingat WA kedua ke yang bersangkutan. Kalau 2 jam masih tidak ada respons, notif juga ke Acoy (sebagai monitor semua). Semua eskalasi terlambat masuk ke laporan mingguan yang Acoy review.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Irwan/Rifky (cron job pantau eskalasi) + Isal/Ipong (laporan eskalasi di dashboard)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">Eskalasi bolak-balik antar tim — tiket ping-pong dan user tidak dapat kepastian</div>
+          <div class="bn-case-a">Setiap eskalasi harus ada alasan yang jelas dan aksi konkret. Kalau Agung terima eskalasi tapi butuh info dari Acoy, mereka communicate via catatan internal di tiket (bukan eskalasi lagi). Hanya boleh eskalasi 1x per level — CS → Ops/Finance. Tidak ada CS → Ops → Finance → Ops lagi.</div>
+          <div class="bn-case-owner">📋 Keputusan: Acoy (buat SOP eskalasi yang jelas) · ⚙️ Isal/Ipong (batasi eskalasi max 1x di sistem)</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">Masalah yang butuh akses lebih tinggi sudah ditangani Ops atau Finance</div>
+      <div class="rb-item">Semua aksi tercatat di timeline tiket — ada audit trail lengkap</div>
+      <div class="rb-item">User sudah di-update via WA dengan status terbaru</div>
+      <div class="rb-item">CS tutup tiket setelah konfirmasi user puas → selesai</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="showPage('f03',document.querySelector('[onclick=\"showPage(\'f03\',this)\"]'))">← F03: CS Investigate</div>
+    <div class="fn-btn next" onclick="showPage('f05',document.querySelector('[onclick=\"showPage(\'f05\',this)\"]'))">F05: Tiket Re-open →</div>
+  </div>
+</div>
+
+<!-- ══════════════ F05: RE-OPEN ══════════════ -->
+<div id="page-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">Komplain & Tiket <span>›</span> D-F05</div>
+    <div class="fh-title">🔄 Tiket Re-open Setelah Ditutup</div>
+    <div class="fh-desc">Kadang tiket sudah ditutup tapi masalah ternyata belum benar-benar selesai. User bisa re-open tiket yang sama tanpa perlu buat tiket baru — semua riwayat percakapan sebelumnya tetap ada.</div>
+    <div class="fh-meta">
+      <span class="fh-pill fp-who">👤 User + 🎧 CS</span>
+      <span class="fh-pill fp-trigger">🔔 Trigger: Masalah belum selesai setelah tiket ditutup</span>
+      <span class="fh-pill fp-time">⏱ Window Re-open: 7 hari setelah ditutup</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Alur Step by Step</div>
+    <div class="flow-steps">
+
+      <!-- STEP 1 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num warn">1</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">User minta buka kembali tiket</div>
+            <div class="fs-card-sub">User bisa re-open lewat dua cara: balas WA dari CS, atau buka Riwayat Tiket di app dan tap "Buka Kembali".</div>
+            <div class="who-row">
+              <span class="who who-user">👤 User</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Cara 1 — Balas WA CS</div>
+                <div class="db-content">User balas WA terakhir dari CS dengan pesan apapun dalam 7 hari setelah tiket ditutup → sistem deteksi balasan ini → tiket otomatis re-open dan CS yang sama mendapat notif.</div>
+              </div>
+              <div class="db user">
+                <div class="db-label"><div class="db-dot"></div>Cara 2 — Dari App (Riwayat Tiket)</div>
+                <div class="db-content">User buka menu Riwayat Tiket → pilih tiket yang statusnya "Selesai" → tap tombol <strong>"Masalah Belum Selesai? Buka Kembali"</strong> → isi penjelasan singkat kenapa re-open.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">2</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">Tiket re-open dengan konteks lengkap</div>
+            <div class="fs-card-sub">Tiket yang sama dibuka kembali — bukan buat tiket baru. Semua riwayat CS, eskalasi, dan aksi sebelumnya masih ada.</div>
+            <div class="who-row">
+              <span class="who who-be">⚙️ Sistem</span>
+              <span class="who who-cs">🎧 CS</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lihat Saat Buka Tiket Re-open</div>
+                <div class="db-content">
+                  Tiket muncul kembali di list dengan label <strong>RE-OPENED</strong> warna oranye. CS yang sama otomatis di-assign ulang. Di dalam tiket, ada section baru "Alasan Re-open" yang menampilkan penjelasan user. Semua riwayat lama tetap tersedia di bawahnya — CS tidak perlu tanya ulang dari awal.
+                </div>
+              </div>
+              <div class="db system">
+                <div class="db-label"><div class="db-dot"></div>Aturan Re-open di Sistem</div>
+                <div class="db-content">
+                  <ul>
+                    <li>Hanya bisa re-open maksimal <strong>3 hari</strong> setelah tiket ditutup</li>
+                    <li>Kalau sudah lebih dari 3 hari, user harus buat tiket baru (tapi bisa referensikan nomor tiket lama)</li>
+                    <li>Satu tiket bisa di-reopen maksimal <strong>2 kali</strong>. Lebih dari itu → otomatis di-escalate ke Acoy</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="fs-step">
+        <div class="fs-left"><div class="fs-num ok">3</div></div>
+        <div class="fs-body">
+          <div class="fs-card">
+            <div class="fs-card-title">CS handle ulang dan selesaikan</div>
+            <div class="fs-card-sub">CS lihat alasan re-open, cek ulang apa yang sudah dilakukan sebelumnya, dan tindaklanjut dengan info baru dari user.</div>
+            <div class="who-row">
+              <span class="who who-cs">🎧 CS</span>
+              <span class="who who-user">👤 User</span>
+            </div>
+            <div class="detail-blocks">
+              <div class="db dash">
+                <div class="db-label"><div class="db-dot"></div>Yang CS Lakukan</div>
+                <div class="db-content">CS baca alasan re-open → cek kembali status transaksi yang relevan → hubungi user via WA dengan update terbaru. Kalau masalahnya berbeda dari sebelumnya → bisa eskalasi lagi (flow D-F04). Kalau sudah selesai → tutup tiket lagi dengan resolusi baru ditambahkan.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTLENECK -->
+  <div class="section">
+    <div class="section-label">Bottleneck & Cara Mengatasinya</div>
+    <div class="bottleneck">
+      <div class="bn-header">
+        <div class="bn-icon">⚡</div>
+        <div class="bn-title">2 Case yang Bisa Bermasalah di Flow Ini</div>
+      </div>
+      <div class="bn-cases">
+
+        <div class="bn-case">
+          <div class="bn-case-q">User yang sama re-open tiket berkali-kali padahal masalah sudah selesai</div>
+          <div class="bn-case-a">Setelah re-open ke-2, sistem otomatis flag tiket dan Acoy di-cc. Acoy bisa lihat pola — apakah ini user yang genuinely punya masalah, atau ada miscommunication. Kalau pola mencurigakan (mis. user coba dapat refund dua kali untuk transaksi yang sama), Acoy bisa mark tiket sebagai "Closed - No Further Action" dan blokir re-open.</div>
+          <div class="bn-case-owner">👁️ Acoy (review tiket bermasalah) · ⚙️ Isal/Ipong (flag re-open ke-2 di sistem)</div>
+        </div>
+
+        <div class="bn-case">
+          <div class="bn-case-q">CS berbeda yang handle re-open — tidak tahu konteks sebelumnya</div>
+          <div class="bn-case-a">Sistem prioritaskan assign re-open ke CS yang sama dengan yang handle sebelumnya. Kalau CS itu sedang tidak aktif, sistem assign ke CS lain tapi dengan catatan di atas tiket: "Tiket ini sebelumnya ditangani oleh [nama CS]. Baca riwayat di bawah sebelum hubungi user." Riwayat lengkap selalu tersedia.</div>
+          <div class="bn-case-owner">⚙️ Implementasi: Irwan/Rifky (preferential assign di BE) + Isal/Ipong (banner konteks di UI)</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="rb-title">✅ Hasil Akhir Flow Ini</div>
+    <div class="rb-items">
+      <div class="rb-item">User punya jalur jelas untuk follow-up tanpa buat tiket baru dari nol</div>
+      <div class="rb-item">CS punya konteks lengkap dari interaksi sebelumnya</div>
+      <div class="rb-item">Tiket akhirnya benar-benar selesai dengan kepastian dari user</div>
+      <div class="rb-item">Pola re-open berulang terpantau oleh Acoy</div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="showPage('f04',document.querySelector('[onclick=\"showPage(\'f04\',this)\"]'))">← F04: Eskalasi</div>
+    <div class="fn-btn" onclick="showPage('welcome',document.querySelector('[onclick=\"showPage(\'welcome\',this)\"]'))">🗺️ Kembali ke Semua Flow</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  document.querySelector('.main').scrollTop = 0;
+}
+</script>
+</body>
+</html>
