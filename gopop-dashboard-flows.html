@@ -2262,6 +2262,284 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
 </div>
 
+
+<!-- ============================================================ SETTLEMENT F01 ============================================================ -->
+<div id="page-stl-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F01</div>
+    <div class="fh-title">Pantau Status Settlement Harian</div>
+    <div class="fh-desc">Settlement adalah proses di mana payment gateway (Midtrans + DOKU) mentransfer dana dari transaksi yang berhasil ke rekening bank GoPop. Agung dan Rifky perlu memantau apakah dana dari transaksi kemarin sudah masuk ke rekening hari ini.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Agung (Finance) · Rifky (Rekonsiliasi)</span>
+      <span class="pill pill-trigger">🔔 Setiap pagi — cek apakah dana settlement sudah masuk</span>
+      <span class="pill pill-time">⏱ T+1 atau T+2 tergantung payment gateway</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Agung/Rifky buka menu Settlement di dashboard</div><div class="step-desc">Tampil ringkasan settlement dengan filter per periode dan per payment gateway. Ada dua section terpisah: <strong>Midtrans</strong> dan <strong>DOKU</strong>, karena keduanya punya jadwal settlement berbeda dan masuk ke rekening yang mungkin berbeda.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Cek daftar batch settlement</div><div class="step-desc">Setiap baris mewakili satu batch settlement dengan informasi:<ul>
+          <li><strong>Tanggal transaksi:</strong> Kapan transaksi terjadi (T+0)</li>
+          <li><strong>Tanggal settlement:</strong> Kapan dana seharusnya masuk ke rekening GoPop</li>
+          <li><strong>Total transaksi:</strong> Jumlah dana bruto yang masuk dari user</li>
+          <li><strong>Fee gateway:</strong> Biaya yang dipotong Midtrans/DOKU</li>
+          <li><strong>Net settlement:</strong> Dana bersih yang diterima GoPop (total - fee)</li>
+          <li><strong>Status:</strong> Pending / Processed / Confirmed</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Konfirmasi penerimaan di rekening bank</div><div class="step-desc">Agung mencocokkan nominal settlement yang tampil di dashboard dengan mutasi rekening bank GoPop. Kalau cocok, klik "Konfirmasi Diterima" pada batch yang bersangkutan. Status berubah dari "Processed" ke "Confirmed" dan settlement dianggap selesai.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jadwal settlement berbeda per gateway:</strong>
+          <ul style="margin-top:6px;">
+            <li><strong>Midtrans:</strong> T+1 untuk weekend/libur bisa T+2 atau T+3. Jadwal resmi tercantum di dashboard Midtrans.</li>
+            <li><strong>DOKU:</strong> Jadwal settlement perlu dikonfirmasi ke DOKU — bisa berbeda dari Midtrans.</li>
+          </ul>
+          Ini penting untuk cash flow GoPop — Agung perlu tahu kapan dana bisa dipakai untuk operasional.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Dana settlement belum bisa dipakai sebelum dikonfirmasi.</strong> Meski sudah "Processed" dari sisi gateway, Agung harus konfirmasi dulu bahwa dana benar-benar sudah masuk ke rekening bank sebelum bisa diakui sebagai penerimaan kas GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Fee gateway sudah otomatis terpotong oleh Midtrans/DOKU.</strong> GoPop menerima net amount (bukan gross). Fee ini yang perlu dicatat Agung sebagai biaya operasional di laporan keuangan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Saldo reseller tidak terlibat dalam settlement.</strong> Settlement hanya untuk dana dari transaksi consumer yang bayar via Midtrans/DOKU. Saldo reseller adalah wallet internal GoPop yang terpisah dari alur settlement.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Settlement yang seharusnya masuk hari ini belum terlihat di mutasi bank</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Cek apakah hari ini adalah hari libur atau akhir pekan — settlement mungkin delay ke hari kerja berikutnya. Kalau bukan libur dan sudah lewat jam cut-off, hubungi PIC Midtrans/DOKU via email atau dashboard mereka untuk konfirmasi status settlement.</div>
+          <div class="bc-owner">PIC: Agung (konfirmasi ke gateway) · Acoy (koordinasi kalau butuh eskalasi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Nominal di dashboard tidak cocok dengan yang masuk di rekening bank</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Jangan konfirmasi dulu — ini kondisi selisih yang harus diselesaikan di F03. Tandai batch ini sebagai "Perlu Investigasi" dan lanjutkan ke flow F03 Selisih Settlement.</div>
+          <div class="bc-owner">PIC: Agung + Rifky (investigasi selisih) — lihat F03</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Konfirmasi penerimaan masih manual — Agung harus buka mutasi bank, cek angka satu per satu, baru klik konfirmasi di dashboard</div>
+          <div class="bn-a">Ke depan bisa integrasi dengan API mutasi rekening bank (misal BCA Virtual Account API atau Open Banking) agar sistem bisa otomatis mencocokkan settlement dengan penerimaan di bank. Sementara belum ada, Agung perlu disiplin cek setiap pagi sebelum jam 10.00 agar ada waktu untuk eskalasi kalau ada masalah.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (evaluasi feasibility integrasi bank API) · Agung (SOP manual sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Settlement Normal</div><div class="hasil-items"><div class="hasil-item">Dana masuk sesuai jadwal dan nominal yang benar</div><div class="hasil-item">Agung konfirmasi → status berubah ke "Confirmed"</div><div class="hasil-item">Kas GoPop tercatat bertambah sesuai net settlement</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Settlement Bermasalah</div><div class="hasil-items"><div class="hasil-item">Dana belum masuk → hubungi gateway, tunggu atau eskalasi</div><div class="hasil-item">Nominal berbeda → masuk ke flow F03 Selisih Settlement</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('role-f02',null)">← Role & Akses F02</div>
+    <div class="fn-btn next" onclick="go('stl-f02',null)">F02: Rekonsiliasi Penerimaan →</div>
+  </div>
+</div>
+
+<!-- ============================================================ SETTLEMENT F02 ============================================================ -->
+<div id="page-stl-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F02</div>
+    <div class="fh-title">Rekonsiliasi Penerimaan Dana</div>
+    <div class="fh-desc">Setelah dana settlement masuk, Rifky melakukan rekonsiliasi — memastikan total dana yang diterima dari Midtrans/DOKU sesuai dengan total transaksi sukses yang tercatat di sistem GoPop. Ini adalah financial control paling penting setiap hari.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky (Rekonsiliasi utama) · Agung (Finance — approve)</span>
+      <span class="pill pill-trigger">🔔 Setelah settlement dikonfirmasi diterima (F01)</span>
+      <span class="pill pill-time">⏱ Harian — target selesai sebelum jam 12.00</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Rifky generate laporan rekonsiliasi harian</div><div class="step-desc">Di halaman Settlement, ada tombol "Generate Rekonsiliasi" untuk periode tertentu. Sistem mengambil dua sumber data secara otomatis:<ul>
+          <li><strong>Sumber A (Internal GoPop):</strong> Semua transaksi dengan status SUCCESS untuk periode yang dipilih, dikelompokkan per payment gateway dan per metode bayar</li>
+          <li><strong>Sumber B (Gateway):</strong> Laporan settlement yang dikirim Midtrans/DOKU (bisa via API atau upload CSV laporan manual)</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Sistem cocokkan dua sumber data</div><div class="step-desc">Sistem membandingkan transaksi per transaksi berdasarkan reference ID. Hasilnya tiga kategori:<ul>
+          <li><strong>Match:</strong> Ada di kedua sumber, nominal sama — ini yang seharusnya</li>
+          <li><strong>Hanya di GoPop:</strong> Tercatat SUCCESS di GoPop tapi tidak ada di laporan gateway — mungkin gateway belum settle atau ada transaksi yang lolos</li>
+          <li><strong>Hanya di Gateway:</strong> Ada di laporan gateway tapi tidak ada di sistem GoPop — ini yang paling berbahaya, berarti ada uang masuk yang tidak tercatat</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Rifky review hasil dan tandai status</div><div class="step-desc">Kalau semua match → klik "Approve Rekonsiliasi". Kalau ada yang tidak match → masuk ke F03 Selisih untuk investigasi lebih lanjut. Rekonsiliasi yang sudah di-approve tercatat permanen dan tidak bisa diubah.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Agung approve sebagai Finance</div><div class="step-desc">Rifky selesai rekonsiliasi → notifikasi ke Agung untuk approval final. Agung review summary → approve → rekonsiliasi periode ini resmi selesai.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi harus dilakukan setiap hari tanpa kecuali.</strong> Skip satu hari membuat investigasi makin susah karena data makin banyak dan jejak makin kabur. Kalau Rifky tidak bisa, Agung yang backup.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi Midtrans dan DOKU dilakukan terpisah</strong> karena laporan mereka dalam format dan jadwal yang berbeda. Jangan digabung — ini akan mempersulit investigasi kalau ada selisih.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Transaksi yang di-refund tetap masuk rekonsiliasi</strong> tapi dengan tanda minus atau kategori terpisah "Refund". Dana refund biasanya dipotong dari batch settlement berikutnya oleh gateway.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi yang sudah di-approve tidak bisa dibuka ulang</strong> — kalau ada kesalahan setelah approval, perlu buat adjustment entry terpisah dengan alasan yang dicatat. Ini untuk menjaga integritas audit trail.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Laporan CSV dari Midtrans/DOKU formatnya berbeda dari yang diexpect sistem — tidak bisa di-parse</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Rifky perlu manual mapping atau reformatting file CSV sebelum upload. Jangka panjang, Irwan + Rifky perlu buat parser yang lebih robust yang bisa handle variasi format dari gateway. Sementara ini, Rifky simpan template mapping di folder shared.</div>
+          <div class="bc-owner">PIC: Rifky (manual mapping sementara) · Irwan + Rifky (parser yang lebih robust)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Ada transaksi di laporan gateway yang tidak ada di sistem GoPop — uang masuk tapi tidak tercatat</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini kondisi paling serius — berarti ada pembayaran user yang masuk tapi tidak ada produk yang dikirim. Tandai sebagai "Unidentified Receipt" dan investigasi segera: cek di log Midtrans/DOKU dengan reference ID, cek apakah ada webhook yang gagal masuk ke sistem GoPop. Eskalasi ke Irwan + Rifky untuk debug technical.</div>
+          <div class="bc-owner">PIC: Rifky (investigasi) · Irwan (debug webhook) · Agung (hold konfirmasi sampai jelas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Laporan dari Midtrans/DOKU masih perlu didownload manual dan upload ke dashboard — belum ada sinkronisasi otomatis</div>
+          <div class="bn-a">Midtrans dan DOKU punya API untuk pull settlement report secara otomatis tanpa perlu login ke portal mereka dan download manual. Kalau ini diimplementasi, rekonsiliasi bisa jadi jauh lebih cepat — bahkan bisa otomatis dijalankan sistem setiap hari. Ini prioritas tinggi untuk mengurangi beban manual Rifky.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi auto-pull settlement report dari Midtrans dan DOKU API)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Rekonsiliasi Bersih</div><div class="hasil-items"><div class="hasil-item">Semua transaksi match antara GoPop dan laporan gateway</div><div class="hasil-item">Rifky approve → Agung approve → selesai</div><div class="hasil-item">Catatan kas GoPop akurat untuk periode ini</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Ada Selisih</div><div class="hasil-items"><div class="hasil-item">Ada yang tidak match → masuk ke F03 Selisih Settlement</div><div class="hasil-item">Rekonsiliasi ditunda sampai selisih diselesaikan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f01',null)">← F01: Pantau Status</div>
+    <div class="fn-btn next" onclick="go('stl-f03',null)">F03: Selisih Settlement →</div>
+  </div>
+</div>
+
+<!-- ============================================================ SETTLEMENT F03 ============================================================ -->
+<div id="page-stl-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F03</div>
+    <div class="fh-title">Investigasi & Penyelesaian Selisih Settlement</div>
+    <div class="fh-desc">Ketika rekonsiliasi menemukan angka yang tidak cocok antara sistem GoPop dan laporan gateway. Ini kondisi yang jarang tapi serius — setiap selisih harus diselesaikan dan tidak boleh diabaikan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky (investigasi) · Agung (Finance — keputusan) · Irwan (debug teknikal)</span>
+      <span class="pill pill-trigger">🔔 Ditemukan selisih saat rekonsiliasi F02</span>
+      <span class="pill pill-time">⏱ Target resolusi: 1×24 jam kerja</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Tiga Jenis Selisih & Cara Handle</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔴</span><div class="rule-text"><strong>Jenis 1 — Ada di Gateway, tidak ada di GoPop (paling serius):</strong><br>
+        Berarti ada uang masuk dari user yang tidak terproseskan. Kemungkinan penyebab: webhook dari gateway gagal diterima sistem GoPop, transaksi duplicate di sisi gateway, atau bug di backend.<br><br>
+        <strong>Cara handle:</strong> Irwan cek webhook log untuk reference ID tersebut. Kalau webhook memang gagal masuk, bisa trigger manual replay dari dashboard gateway. Kalau ini transaksi yang memang tidak valid, Agung proses refund manual ke user.</div></div>
+        <div class="rule"><span>🟡</span><div class="rule-text"><strong>Jenis 2 — Ada di GoPop, tidak ada di Gateway (medium):</strong><br>
+        Transaksi tercatat SUCCESS di GoPop tapi gateway tidak settle dana-nya. Kemungkinan: transaksi di-capture di sisi GoPop tapi dibatalkan gateway karena fraud detection, atau ada timing issue.<br><br>
+        <strong>Cara handle:</strong> Cek status transaksi di portal Midtrans/DOKU menggunakan transaction reference. Kalau gateway konfirmasi memang tidak settle, Agung perlu adjustment di pembukuan — dana ini tidak akan datang.</div></div>
+        <div class="rule"><span>🟠</span><div class="rule-text"><strong>Jenis 3 — Ada di keduanya tapi nominal berbeda:</strong><br>
+        Biasanya karena perbedaan fee calculation atau ada partial refund yang dipotong di batch yang berbeda.<br><br>
+        <strong>Cara handle:</strong> Bandingkan breakdown fee di laporan gateway dengan yang tercatat di sistem. Kalau ada partial refund, cek apakah sudah tercatat di rekonsiliasi. Kalau perbedaan kecil (&lt;Rp1.000) bisa jadi rounding — catat sebagai adjustment.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setiap selisih WAJIB diselesaikan dan didokumentasikan.</strong> Tidak boleh ada selisih yang di-"maafkan" atau diabaikan tanpa alasan tertulis. Semua resolusi dicatat di sistem: penyebab, aksi yang diambil, siapa yang memutuskan, dan kapan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Selisih lebih dari Rp500.000 wajib mendapat approval Agung</strong> sebelum ada adjustment apapun. Di bawah itu Rifky bisa handle mandiri tapi tetap harus dicatat.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi yang masih punya selisih terbuka tidak bisa di-approve</strong> — harus semua diselesaikan dulu. Kalau ada selisih yang butuh waktu lebih dari 24 jam, tandai sebagai "Dalam Investigasi" dan lanjutkan rekonsiliasi periode lain. Selisih ini tetap harus diselesaikan, tidak boleh terlupakan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Selisih sudah lebih dari 3 hari tidak terselesaikan dan penyebabnya tidak diketahui</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Eskalasi ke Midtrans/DOKU melalui jalur resmi (email ke support mereka dengan bukti transaksi). Minta penjelasan tertulis dari gateway. Sementara menunggu, Agung buat "pending item" di pembukuan agar laporan keuangan tetap akurat sambil menunggu klarifikasi.</div>
+          <div class="bc-owner">PIC: Agung (eskalasi formal ke gateway) · Rifky (siapkan bukti transaksi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Selisih kumulatif dari beberapa periode menumpuk karena tidak diselesaikan tepat waktu</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini tidak boleh terjadi. Kalau sudah terjadi, Rifky dan Agung perlu blokir waktu 1–2 hari khusus untuk membereskan semua selisih yang menumpuk dari yang terlama. Buat SOP yang jelas: kalau ada selisih yang tidak bisa diselesaikan dalam 24 jam, langsung eskalasi ke Acoy untuk bantu koordinasi.</div>
+          <div class="bc-owner">PIC: Acoy (enforce SOP) · Rifky + Agung (prioritaskan resolusi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Investigasi selisih butuh akses ke banyak sistem sekaligus — dashboard GoPop, portal Midtrans, portal DOKU, dan log server — dan sekarang harus dibuka satu per satu secara manual</div>
+          <div class="bn-a">Dashboard GoPop idealnya bisa langsung deep-link ke transaksi di portal gateway menggunakan reference ID. Kalau Rifky klik satu transaksi yang berselisih, ada tombol "Cek di Midtrans" atau "Cek di DOKU" yang langsung buka halaman transaksi tersebut di portal gateway. Ini memangkas waktu investigasi dari 30 menit per selisih jadi bisa 5 menit.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (deep-link ke portal gateway dari detail transaksi) · Irwan + Rifky (URL pattern masing-masing gateway)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Selisih Terselesaikan</div><div class="hasil-items"><div class="hasil-item">Penyebab selisih diidentifikasi dan didokumentasikan</div><div class="hasil-item">Aksi korektif diambil (refund manual / adjustment pembukuan / replay webhook)</div><div class="hasil-item">Rekonsiliasi bisa dilanjutkan dan di-approve</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Selisih Tidak Terselesaikan dalam 24 Jam</div><div class="hasil-items"><div class="hasil-item">Tandai "Dalam Investigasi" → eskalasi formal ke gateway</div><div class="hasil-item">Buat pending item di pembukuan Agung</div><div class="hasil-item">Wajib diselesaikan sebelum periode tutup buku bulan ini</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f02',null)">← F02: Rekonsiliasi</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
 </main>
 </div>
 
