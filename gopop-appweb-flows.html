@@ -178,6 +178,17 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Buka Layanan Semua</span></div>
     <div class="sbi" onclick="go('f06',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F06 · Homepage Offline</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#3B82F6"></div>02 · Auth</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('a-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Login Email & Password</span></div>
+    <div class="sbi" onclick="go('a-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Login via Google</span></div>
+    <div class="sbi" onclick="go('a-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Daftar Akun Baru</span></div>
+    <div class="sbi" onclick="go('a-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Lupa Password</span></div>
+    <div class="sbi" onclick="go('a-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Logout</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -1001,7 +1012,664 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
           <div class="hasil-items">
             <div class="hasil-item">App tidak crash atau tampil layar kosong saat offline</div>
             <div class="hasil-item">User tahu sedang offline dari banner tipis di atas</div>
-            <div class="hasil-item">Pesan ramah saat tap produk — bukan error teknikal</div>
+            <div class="hasil
+<!-- ============================================================ AUTH F01: LOGIN ============================================================ -->
+<div id="page-a-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 02 — Auth <span>›</span> F01</div>
+    <div class="fh-title">Login Email & Password</div>
+    <div class="fh-desc">User yang sudah punya akun masuk ke GoPop menggunakan email dan password. Halaman login muncul sebagai modal card di atas background beranimasi khas GoPop — bukan halaman penuh terpisah.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen Login (node 1:7192)</div>
+        <div class="figma-ref-desc">Card putih dengan: judul "Selamat Datang", subjudul "Masuk ke akun gopop kamu", tombol Google OAuth, divider "atau", field Email + Password, link "Lupa password?", tombol "Masuk" (lime), dan link "Belum punya akun? Daftar sekarang"</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Login screen (1:7192)</span>
+          <span class="fs-tag-miss">OTP Verification — belum ada di Figma</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah terdaftar</span>
+      <span class="pill pill-trigger">🔔 Tap "Masuk/Daftar" dari homepage atau soft prompt setelah transaksi</span>
+      <span class="pill pill-time">⏱ Target: &lt;30 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Masuk/Daftar" dari homepage</div>
+            <div class="step-desc">Tombol "Masuk/Daftar" ada di pojok kanan atas homepage (hanya tampil kalau belum login). Tap tombol ini memunculkan halaman login. Halaman login juga bisa muncul saat user tap produk dan ingin simpan riwayat (soft prompt).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Halaman login terbuka — user lihat card "Selamat Datang"</div>
+            <div class="step-desc">Card putih muncul di tengah dengan background bergradien khas GoPop. User melihat dua opsi login: tombol Google OAuth di atas, atau form email + password di bawah. Ada link "Lupa password?" di bawah field password, dan link "Daftar sekarang" untuk yang belum punya akun.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User isi email dan password lalu tap "Masuk"</div>
+            <div class="step-desc">User ketik email di field pertama, password di field kedua (ada ikon mata untuk tampilkan/sembunyikan password). Tombol "Masuk" berwarna lime hijau — tap untuk kirim ke server. Tombol berubah jadi loading spinner selama proses verifikasi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">4</div>
+          <div class="step-body">
+            <div class="step-title">Sistem verifikasi — login berhasil</div>
+            <div class="step-desc">Server cek email dan password. Kalau cocok, sistem buat sesi login dan kirim token akses ke app. App simpan token di penyimpanan aman (bukan tempat yang mudah diakses aplikasi lain). Sesi aktif selama 30 hari atau sampai user logout manual.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">User kembali ke homepage dalam keadaan sudah login</div>
+            <div class="step-desc">Halaman login tertutup. Homepage berubah: greeting berganti dari "Selamat datang" menjadi "HAI, [NAMA USER]! 👋". Tombol "Masuk/Daftar" di pojok kanan atas digantikan ikon profil user. Semua riwayat transaksi user sekarang bisa diakses dari menu Riwayat.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Login menggunakan email, bukan nomor HP.</strong> Ini berbeda dari dashboard admin. Kenapa email? Karena GoPop support Google OAuth yang mengidentifikasi user lewat email — konsisten di kedua jalur login.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Login bukan syarat untuk transaksi.</strong> GoPop adalah guest-first — user bisa transaksi tanpa login. Login hanya dibutuhkan untuk simpan riwayat, akumulasi poin loyalty, dan akses profil.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setelah 5 kali salah password, akun terkunci 30 menit.</strong> User dapat pesan yang jelas berapa menit lagi bisa coba. CS bisa unlock lebih cepat dari dashboard.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sesi login aktif 30 hari.</strong> User tidak perlu login ulang setiap hari. Sesi hanya berakhir kalau: (1) user logout manual, (2) password diganti, atau (3) user login di perangkat lain dan memilih "keluarkan perangkat lain".</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Email benar tapi password salah</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Pesan inline di bawah field password: "Password salah. Coba lagi atau tap 'Lupa password?' untuk reset." Field password dikosongkan tapi field email tetap terisi.</div>
+          <div class="bc-handle">Tampilkan pesan kesalahan yang spesifik tapi tidak berlebihan. Jangan sebut "email tidak ditemukan" atau "password salah" secara terpisah — ini bisa dipakai untuk enumerate akun yang ada. Cukup: "Email atau password salah."</div>
+          <div class="bc-owner">PIC: Agung + Fikly (pesan error yang tepat) · Irwan + Rifky (jangan bedain error email vs password di respons API)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Akun terkunci setelah 5x salah password</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> "Akun terkunci sementara. Coba lagi dalam 28 menit, atau tap 'Lupa password?' untuk reset sekarang." Countdown timer tampil.</div>
+          <div class="bc-handle">User punya dua opsi: tunggu timer atau reset password via email. CS di dashboard juga bisa unlock manual kalau user menghubungi. Countdown harus real-time (update setiap menit).</div>
+          <div class="bc-owner">PIC: Agung + Fikly (countdown timer di FE) · Irwan + Rifky (return sisa waktu dari API)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Koneksi terputus saat proses login — server tidak merespons</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Loading spinner jalan lebih dari 5 detik, lalu muncul pesan: "Koneksi bermasalah. Cek internet kamu dan coba lagi."</div>
+          <div class="bc-handle">Timeout setelah 5 detik. Data yang sudah diisi di form tetap ada — user tidak perlu ketik ulang email. Tampilkan tombol "Coba Lagi" yang langsung hit API lagi dengan data yang sama.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (implementasi timeout + retry logic + pertahankan state form)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada screen OTP Verification di Figma — kalau sistem butuh OTP sebagai langkah extra security, Agung dan Fikly tidak ada yang diimplementasi</div>
+          <div class="bn-a">Berdasarkan Figma yang ada, login langsung masuk setelah email + password cocok — tidak ada OTP. Kalau ke depan mau tambahkan OTP untuk keamanan ekstra, Bili perlu buat screen OTP dulu di Figma sebelum bisa diimplementasi. Saat ini: asumsikan login tanpa OTP.</div>
+          <div class="bn-owner">PIC: Bili (keputusan apakah login butuh OTP) · Agung + Fikly (implementasi setelah Figma ada)</div>
+        </div>
+        <div class="bn">
+          <div class="bn-q">User yang sebelumnya daftar via Google lupa bahwa mereka tidak punya password — mencoba login dengan email + password tapi tidak bisa</div>
+          <div class="bn-a">Sistem perlu deteksi kalau email ini terdaftar via Google OAuth tapi tidak punya password. Respons API harus spesifik: "Akun ini terdaftar dengan Google. Gunakan tombol 'Lanjut dengan Google' untuk masuk." Ini mencegah frustrasi user yang tidak ingat cara daftar pertama kali.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (bedakan error "no password set" di API) · Agung + Fikly (tampilkan pesan yang kontekstual)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User berhasil login dan kembali ke homepage dengan greeting nama</div>
+            <div class="hasil-item">Riwayat transaksi lama bisa diakses</div>
+            <div class="hasil-item">Sesi aktif 30 hari — tidak perlu login ulang</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Password salah → pesan error kontekstual, form tidak dikosongkan</div>
+            <div class="hasil-item">Akun terkunci → countdown timer + opsi reset password</div>
+            <div class="hasil-item">Koneksi terputus → timeout + retry tanpa ketik ulang</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f06',null)">← Homepage F06</div>
+    <div class="fn-btn next" onclick="go('a-f02',null)">F02: Login via Google →</div>
+  </div>
+</div>
+
+<!-- AUTH F02: GOOGLE -->
+<div id="page-a-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 02 — Auth <span>›</span> F02</div>
+    <div class="fh-title">Login via Google</div>
+    <div class="fh-desc">Cara login tercepat — user tap satu tombol dan Google menangani autentikasi. Tidak perlu ingat password. Tombol "Lanjut dengan Google" ada di bagian atas card login, di atas divider "atau".</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Tombol Google: border abu tipis, ikon G berwarna, teks "Lanjut dengan Google". Ada di atas divider "atau" yang memisahkan dari form email/password.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Login screen (1:7192) — tombol Google OAuth</span>
+          <span class="fs-tag">Email List (1:8290) — popup pilih akun Google</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User dengan akun Google</span>
+      <span class="pill pill-trigger">🔔 Tap "Lanjut dengan Google"</span>
+      <span class="pill pill-time">⏱ Target: &lt;15 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Lanjut dengan Google"</div>
+            <div class="step-desc">Tap tombol membuka dialog pilih akun Google yang sudah terdaftar di perangkat. Di app mobile, dialog muncul sebagai bottom sheet native dari sistem. Di web, muncul sebagai popup baru.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User pilih akun Google yang ingin dipakai</div>
+            <div class="step-desc">Kalau ada beberapa akun Google di perangkat, user pilih salah satu dari list. Kalau hanya ada satu, langsung terpilih otomatis. Kalau tidak ada akun Google sama sekali di perangkat, user akan diminta masuk ke Google dulu.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Google verifikasi dan kirim konfirmasi ke GoPop</div>
+            <div class="step-desc">Setelah user pilih akun, Google kirim token konfirmasi ke server GoPop. Server GoPop verifikasi token ini langsung ke Google. Proses ini berlangsung di background — user hanya melihat loading sebentar.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">4</div>
+          <div class="step-body">
+            <div class="step-title">Pertama kali: akun GoPop otomatis dibuat</div>
+            <div class="step-desc">Kalau email Google ini belum pernah dipakai di GoPop, sistem otomatis buat akun baru menggunakan nama dan email dari Google. User tidak perlu isi form daftar apapun. Akun langsung aktif.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">User masuk ke homepage dalam keadaan sudah login</div>
+            <div class="step-desc">Sama seperti login email — homepage berubah dengan greeting nama user dari akun Google mereka.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Email dari Google tidak bisa diubah di profil GoPop.</strong> Email yang terikat dengan akun GoPop adalah email Google yang dipilih saat pertama login. Kalau user ingin pakai email berbeda, harus buat akun terpisah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User yang daftar via Google tidak bisa login dengan email + password.</strong> Akun mereka tidak punya password GoPop. Satu-satunya cara login adalah tombol Google. Sistem harus memberi tahu ini dengan jelas kalau user mencoba login dengan email + password.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>GoPop hanya meminta akses profil dasar dari Google</strong> (nama dan email) — tidak meminta akses ke Gmail, Google Drive, kontak, atau data sensitif lainnya. User bisa lihat ini di layar izin Google sebelum konfirmasi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User membatalkan pilih akun Google di tengah jalan (tap di luar dialog atau tap tombol Back)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Dialog Google hilang, kembali ke halaman login GoPop. Tidak ada perubahan apapun.</div>
+          <div class="bc-handle">Ini adalah flow normal — user memilih untuk tidak jadi login. Halaman login tetap terbuka, user bisa coba lagi kapan saja. Jangan tampilkan pesan error untuk kasus ini.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (jangan tampilkan error untuk Google OAuth cancel)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Google API tidak bisa diakses — gangguan layanan Google</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tap tombol Google, loading sebentar, lalu muncul pesan: "Login dengan Google tidak tersedia saat ini. Gunakan email dan password untuk masuk."</div>
+          <div class="bc-handle">Ini kondisi yang jarang tapi bisa terjadi. User diarahkan ke opsi email + password. Kalau user tidak punya password (hanya daftar via Google sebelumnya), sarankan reset password dulu lewat fitur "Lupa Password".</div>
+          <div class="bc-owner">PIC: Agung + Fikly (handle error Google OAuth gracefully) · Irwan + Rifky (timeout dan error handling di BE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User masuk dalam &lt;15 detik tanpa ingat password</div>
+            <div class="hasil-item">Akun baru otomatis dibuat kalau pertama kali</div>
+            <div class="hasil-item">Nama dari Google langsung dipakai sebagai greeting</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User batalkan → kembali ke halaman login, tidak ada error</div>
+            <div class="hasil-item">Google API down → arahkan ke login email/password</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f01',null)">← F01: Login Email</div>
+    <div class="fn-btn next" onclick="go('a-f03',null)">F03: Daftar Akun Baru →</div>
+  </div>
+</div>
+
+<!-- AUTH F03: DAFTAR -->
+<div id="page-a-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 02 — Auth <span>›</span> F03</div>
+    <div class="fh-title">Daftar Akun Baru</div>
+    <div class="fh-desc">User baru yang belum punya akun GoPop mendaftar. Bisa dari tap "Daftar sekarang" di halaman login, atau dari soft prompt setelah transaksi sukses sebagai guest.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen daftar ditemukan dari link "Daftar sekarang" di halaman login. Berdasarkan konteks bisnis: form nama, email, password, konfirmasi password. Mirip dengan tampilan login tapi dengan field tambahan.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Login screen — link "Daftar sekarang"</span>
+          <span class="fs-tag-miss">Register screen — perlu dikonfirmasi Bili</span>
+          <span class="fs-tag-miss">OTP Verification — belum ada di Figma</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User baru (belum punya akun)</span>
+      <span class="pill pill-trigger">🔔 Tap "Daftar sekarang" dari halaman login</span>
+      <span class="pill pill-time">⏱ Target: &lt;2 menit</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Daftar sekarang" dari halaman login</div>
+            <div class="step-desc">Card berganti dari tampilan login ke tampilan daftar, atau halaman baru terbuka dengan form pendaftaran. Selalu ada tombol kembali "←" di pojok kiri atas untuk kembali ke login.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User isi form pendaftaran</div>
+            <div class="step-desc">Form berisi:<ul>
+              <li><strong>Nama Lengkap</strong> — minimal 2 kata, maksimal 50 karakter</li>
+              <li><strong>Email</strong> — format email valid, belum terdaftar di GoPop</li>
+              <li><strong>Password</strong> — minimal 8 karakter, harus ada huruf dan angka</li>
+              <li><strong>Konfirmasi Password</strong> — harus sama persis dengan password di atas</li>
+            </ul>
+            Validasi format terjadi real-time saat user mengetik (misalnya indikator kekuatan password). Tombol "Buat Akun" tidak bisa diklik sampai semua field valid.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Buat Akun" — akun dibuat</div>
+            <div class="step-desc">Sistem cek apakah email sudah terdaftar. Kalau belum, akun baru dibuat langsung — tidak ada verifikasi email terpisah. User langsung masuk dalam keadaan sudah login.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User masuk ke homepage sebagai member baru</div>
+            <div class="step-desc">Homepage tampil dengan greeting nama user. Bisa ada welcome message singkat seperti: "Selamat bergabung di GoPop! 🎉 Coba transfer e-wallet pertama kamu sekarang." sebagai onboarding ringan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada verifikasi email (OTP) saat daftar.</strong> Berdasarkan design Figma yang ada — tidak ada screen OTP. Akun langsung aktif setelah daftar. Ini konsisten dengan prinsip frictionless GoPop. Kalau ke depan mau tambah verifikasi, Bili perlu buat screennya dulu.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu email hanya bisa punya satu akun GoPop.</strong> Kalau email sudah terdaftar, sistem beri tahu user untuk login atau reset password — bukan buat akun baru lagi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User yang daftar via form ini bisa juga pakai Google OAuth di kemudian hari</strong> selama emailnya sama. Sistem akan menggabungkan kedua metode ke satu akun yang sama.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Password tidak boleh mengandung nama atau email user</strong> untuk alasan keamanan dasar. Validasi ini di sisi FE untuk respons yang lebih cepat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Email yang dipakai sudah terdaftar di GoPop sebelumnya</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Buat Akun", muncul pesan di bawah field email: "Email ini sudah terdaftar. Masuk dengan akun yang ada, atau reset password kalau lupa."</div>
+          <div class="bc-handle">Tampilkan dua tombol: "Masuk Sekarang" (langsung ke halaman login dengan email sudah terisi) dan "Lupa Password?" (langsung ke form reset). Jangan biarkan user bingung — bantu mereka ke langkah selanjutnya.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (deep-link ke login dengan email pre-filled)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Password dan konfirmasi password tidak cocok</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Validasi real-time — saat user selesai ketik di field konfirmasi, langsung muncul tanda merah dan pesan "Password tidak cocok" di bawah field konfirmasi. Tombol "Buat Akun" tetap tidak aktif.</div>
+          <div class="bc-handle">Validasi ini harus real-time di FE — tidak perlu hit server. Begitu dua field cocok, pesan error langsung hilang. Ini memberikan feedback yang cepat ke user.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (real-time form validation)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Screen Daftar belum terkonfirmasi ada di Figma — Agung dan Fikly perlu konfirmasi dulu sebelum implement</div>
+          <div class="bn-a">Dari Figma yang dibaca, terlihat halaman login punya link "Daftar sekarang" tapi screen daftarnya sendiri tidak ditemukan dengan nama yang jelas. Kemungkinan: (1) ada tapi tersembunyi di dalam frame lain, atau (2) belum dibuat Bili. Perlu Bili konfirmasi.</div>
+          <div class="bn-owner">PIC: Bili (konfirmasi dan tunjukkan screen daftar di Figma, atau buat kalau belum ada)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Akun baru dibuat dan user langsung masuk tanpa langkah tambahan</div>
+            <div class="hasil-item">Homepage menyambut user dengan nama mereka</div>
+            <div class="hasil-item">Transaksi yang dilakukan sebelumnya (saat guest) tidak terhubung — dimulai fresh</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Email sudah terdaftar → arahkan ke login atau reset password</div>
+            <div class="hasil-item">Password tidak cocok → validasi real-time mencegah submit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f02',null)">← F02: Login Google</div>
+    <div class="fn-btn next" onclick="go('a-f04',null)">F04: Lupa Password →</div>
+  </div>
+</div>
+
+<!-- AUTH F04: LUPA PASSWORD -->
+<div id="page-a-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 02 — Auth <span>›</span> F04</div>
+    <div class="fh-title">Lupa Password</div>
+    <div class="fh-desc">User lupa password dan perlu reset. Figma sudah punya screen ini (node 1:7292): form berisi field email, tombol "Kirim Kode Reset", dan tombol "Kembali Masuk". Ada ikon kunci di atas sebagai visual cue.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen Lupa Password (node 1:7292)</div>
+        <div class="figma-ref-desc">Card dengan ikon kunci ungu, judul "Lupa Password?", subjudul "Masukkan nomor HP terdaftar, kami kirim link reset.", field Email (placeholder: email@kamu.com), tombol lime "Kirim Kode Reset", tombol outline "Kembali Masuk"</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Lupa Password screen (1:7292)</span>
+          <span class="fs-tag-miss">Reset Password screen (setelah klik link di email) — belum ada</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang lupa password</span>
+      <span class="pill pill-trigger">🔔 Tap "Lupa password?" dari halaman login</span>
+      <span class="pill pill-time">⏱ Target: email reset masuk dalam 2 menit</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Lupa password?" dari halaman login</div>
+            <div class="step-desc">Link "Lupa password?" ada di sebelah kanan, di bawah field password. Tap membuka screen "Lupa Password?" yang baru — card dengan ikon kunci di atas dan form email di bawah.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User masukkan email terdaftar</div>
+            <div class="step-desc">Field email dengan placeholder "email@kamu.com". Kalau user sebelumnya sudah mengisi email di halaman login, field ini bisa terisi otomatis. Validasi format email real-time.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Kirim Kode Reset" — email dikirim</div>
+            <div class="step-desc">Setelah tap, muncul pesan konfirmasi: "Email reset password sudah dikirim ke [email]. Cek inbox atau folder spam kamu." Tombol berubah nonaktif selama 60 detik untuk mencegah spam. Countdown tampil: "Kirim ulang dalam 58 detik..."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User buka email dan klik link reset</div>
+            <div class="step-desc">Email dari GoPop berisi link reset yang berlaku 1 jam. Klik link membuka browser dengan form "Buat Password Baru" — dua field: password baru dan konfirmasi. Setelah submit, password berubah dan user diarahkan login ulang.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Password berhasil direset — user login dengan password baru</div>
+            <div class="step-desc">Semua sesi aktif di perangkat lain otomatis di-logout demi keamanan. User perlu login ulang di semua perangkat dengan password baru.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sistem selalu tampilkan pesan sukses</strong> meski email tidak terdaftar. Ini untuk mencegah enumeration — orang jahat tidak bisa tahu email mana yang terdaftar dengan mencoba fitur ini. Pesannya selalu: "Kalau email ini terdaftar, kamu akan menerima instruksi reset."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Link reset berlaku hanya 1 jam.</strong> Setelah itu link expired dan user perlu minta ulang. Satu link reset hanya bisa dipakai sekali — setelah berhasil dipakai, link tidak bisa dipakai lagi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kirim ulang maksimal 3x dalam 1 jam</strong> ke email yang sama. Ini mencegah penyalahgunaan fitur sebagai spam tool.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User yang daftar via Google tidak perlu (dan tidak bisa) reset password</strong> karena mereka tidak punya password GoPop. Kalau user ini mencoba lupa password, tampilkan: "Akun ini menggunakan Google. Login dengan tombol Google."</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Email reset tidak masuk ke inbox user</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Sudah lebih dari 5 menit, tidak ada email masuk.</div>
+          <div class="bc-handle">Sarankan user cek folder Spam/Junk terlebih dahulu. Setelah 60 detik, tombol "Kirim Ulang" aktif — user bisa minta kirim ulang. Kalau sudah 3x kirim ulang dan masih tidak masuk, ini kemungkinan masalah di layanan email pengirim GoPop — Irwan + Rifky perlu investigasi.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (tampilkan hint cek spam + countdown) · Irwan + Rifky (monitor deliverability email reset)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User klik link reset setelah 1 jam — link sudah expired</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Halaman reset password di browser menampilkan: "Link ini sudah tidak berlaku. Minta link reset baru dari aplikasi GoPop."</div>
+          <div class="bc-handle">Tampilkan tombol/link yang langsung membuka halaman Lupa Password di app. Jangan biarkan user bingung harus ke mana. Ini harus dihandle di halaman web reset, bukan di app.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (expired link handling di web reset page)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Email reset terkirim dalam &lt;2 menit</div>
+            <div class="hasil-item">User berhasil buat password baru via link di email</div>
+            <div class="hasil-item">Semua sesi lain di-logout otomatis untuk keamanan</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Email tidak masuk → cek spam + kirim ulang setelah 60 detik</div>
+            <div class="hasil-item">Link expired → minta link baru dari app</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f03',null)">← F03: Daftar Akun</div>
+    <div class="fn-btn next" onclick="go('a-f05',null)">F05: Logout →</div>
+  </div>
+</div>
+
+<!-- AUTH F05: LOGOUT -->
+<div id="page-a-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 02 — Auth <span>›</span> F05</div>
+    <div class="fh-title">Logout</div>
+    <div class="fh-desc">User keluar dari akun GoPop. Setelah logout, app kembali ke mode guest — semua fitur tetap bisa digunakan tapi riwayat dan profil tidak bisa diakses sampai login lagi.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Tombol logout ada di halaman Profil. Berdasarkan icon set yang ada di Figma (privasi-keamanan, syarat-ketentuan, dll) di section profil.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Profil section — tombol Keluar/Logout</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Tap "Keluar" dari halaman Profil</span>
+      <span class="pill pill-time">⏱ Instan</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User buka halaman Profil dan tap "Keluar"</div>
+            <div class="step-desc">Tombol "Keluar" ada di bagian bawah halaman Profil — biasanya setelah semua menu pengaturan lainnya. Warnanya berbeda (merah atau abu) untuk menandakan aksi destruktif.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Konfirmasi dialog muncul</div>
+            <div class="step-desc">Muncul dialog: "Yakin ingin keluar dari GoPop?" dengan dua tombol: "Batal" (cancel) dan "Ya, Keluar" (confirm). Ini mencegah logout tidak sengaja.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User konfirmasi — sesi dihapus</div>
+            <div class="step-desc">App menghapus semua token sesi dari penyimpanan lokal. Server juga di-notifikasi untuk invalidate sesi ini. Proses ini instan.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">App kembali ke mode guest</div>
+            <div class="step-desc">User diarahkan ke homepage dalam mode guest: greeting berubah ke "Selamat datang di GoPop", tombol "Masuk/Daftar" muncul kembali di pojok kanan atas, menu Riwayat hanya tampilkan riwayat dari localStorage sesi ini (bukan dari server).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Logout tidak menghapus data apapun dari server.</strong> Semua riwayat transaksi, profil, dan pengaturan tetap tersimpan. Saat login lagi nanti, semua data kembali.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Logout hanya di perangkat ini.</strong> Kalau user login di dua perangkat, logout di satu perangkat tidak mempengaruhi perangkat lain. Hanya sesi di perangkat yang melakukan logout yang dihapus.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Wajib ada konfirmasi sebelum logout.</strong> Tidak boleh langsung logout tanpa konfirmasi — ini mencegah logout tidak sengaja yang bisa frustrasikan user.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Koneksi terputus saat proses logout — server tidak bisa di-notifikasi</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> App tetap logout secara lokal (token dihapus dari perangkat). User kembali ke mode guest.</div>
+          <div class="bc-handle">Prioritaskan logout lokal terlebih dahulu — hapus token dari perangkat meski server belum tahu. Token di server akan expired sendiri sesuai masa berlakunya. Ini trade-off keamanan yang acceptable — user di perangkat ini sudah tidak bisa akses, meski token teknisnya masih "hidup" di server untuk beberapa saat.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (local logout first strategy)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Sesi dihapus dari perangkat ini secara instan</div>
+            <div class="hasil-item">App kembali ke mode guest — semua fitur guest tetap bisa dipakai</div>
+            <div class="hasil-item">Data di server aman — login lagi kapan saja untuk akses kembali</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Koneksi putus → logout lokal tetap berhasil, server akan sync nanti</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f04',null)">← F04: Lupa Password</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+-item">Pesan ramah saat tap produk — bukan error teknikal</div>
             <div class="hasil-item">Saat online kembali, app langsung refresh tanpa restart manual</div>
           </div>
         </div>
@@ -1055,3 +1723,5 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
+<!-- ===================== MODUL 02: AUTH ===================== -->
