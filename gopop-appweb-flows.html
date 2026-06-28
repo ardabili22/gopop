@@ -231,6 +231,28 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('b-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Inquiry & Konfirmasi Tagihan</span></div>
     <div class="sbi" onclick="go('b-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Status</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#0EA5E9"></div>06 · Internet & TV</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('itv-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input ID Pelanggan & Inquiry</span></div>
+    <div class="sbi" onclick="go('itv-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Checkout & Status</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#06B6D4"></div>07 · PDAM</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('pdam-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input ID Pelanggan & Inquiry</span></div>
+    <div class="sbi" onclick="go('pdam-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Checkout & Status</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#84CC16"></div>08 · PBB</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('pbb-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input NOP & Inquiry</span></div>
+    <div class="sbi" onclick="go('pbb-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Checkout & Status</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -3944,7 +3966,513 @@ nline kembali, app langsung refresh tanpa restart manual</div>
         <div class="hasil-box hasil-ok">
           <div class="hasil-title">✅ Pembayaran BPJS Sukses</div>
           <div class="hasil-items">
-            <div class="hasil-item">Tagihan BPJS terbayar dan terupdate di sistem BPJS</div>
+            <div class="hasil-item">Tagihan BPJS 
+<!-- ============================================================ INTERNET & TV F01 ============================================================ -->
+<div id="page-itv-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 06 — Internet & TV <span>›</span> F01</div>
+    <div class="fh-title">Input ID Pelanggan & Inquiry Tagihan</div>
+    <div class="fh-desc">Pembayaran tagihan Internet & TV kabel (IndiHome, First Media, MNC Vision, Biznet, dll). User input ID pelanggan dari ISP-nya, sistem query tagihan bulan ini. Pola identik dengan BPJS — inquiry-based, nominal fixed.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 12 - Internet & TV Input (1:1793): Header "Internet & TV", field "ID Pelanggan" + tombol "Cek", area hint di bawah. Screen 13 - Inquiry (1:2532): detail tagihan tampil setelah ID ditemukan.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">12 - Internet & TV Input (1:1793)</span>
+          <span class="fs-tag">13 - Internet & TV Inquiry (1:2532)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Internet & TV" dari Layanan Semua</span>
+      <span class="pill pill-time">⏱ Inquiry &lt;5 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User input ID Pelanggan ISP</div>
+            <div class="step-desc">Field "ID Pelanggan" dengan tombol "Cek" di sebelah kanan (abu/nonaktif saat kosong). ID pelanggan berbeda-beda per provider — IndiHome pakai nomor 10-12 digit, First Media pakai angka yang tertera di tagihan kertas. Hint di bawah field: "Temukan di tagihan bulanan atau aplikasi ISP kamu."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Cek" → sistem query tagihan ke Digiflazz</div>
+            <div class="step-desc">Digiflazz meneruskan query ke database ISP terkait. Karena GoPop tidak tahu ID ini untuk ISP mana, Digiflazz yang menentukan ISP berdasarkan format ID. Loading state muncul di area bawah tombol Cek.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Detail tagihan tampil — user konfirmasi</div>
+            <div class="step-desc">Card tagihan berisi: nama pelanggan, nama ISP, ID pelanggan, paket yang digunakan (misal "IndiHome 50Mbps"), jumlah tagihan, dan periode. User verifikasi nama dan nominal sebelum lanjut bayar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk Internet & TV tersedia untuk berbagai ISP</strong> selama Digiflazz mendukungnya. GoPop tidak perlu daftar manual per ISP — Digiflazz yang handle routing berdasarkan format ID pelanggan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nominal tagihan fixed dari ISP</strong> — user tidak bisa ubah. Tagihan mungkin termasuk denda keterlambatan kalau sudah lewat jatuh tempo.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tagihan yang sudah lunas tidak bisa dibayar lagi</strong> lewat GoPop. Kalau user coba query nomor yang sudah lunas, sistem tampilkan "Tidak ada tagihan tertunggak untuk ID ini."</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">ID pelanggan tidak dikenali Digiflazz — ISP tidak support atau ID salah</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> "ID pelanggan tidak ditemukan. Pastikan ID yang kamu masukkan sudah benar."</div>
+          <div class="bc-handle">Tampilkan hint ISP mana saja yang didukung GoPop. Kalau ISP user tidak ada di daftar, sarankan bayar langsung via aplikasi ISP atau transfer ke rekening ISP. Jangan biarkan user bingung tanpa solusi alternatif.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (daftar ISP yang didukung) · Ipong (konfirmasi ISP apa saja yang ada di Digiflazz)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Inquiry Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Detail tagihan ISP tampil lengkap</div>
+            <div class="hasil-item">User konfirmasi → lanjut ke checkout F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Inquiry Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">ID tidak ditemukan → pesan + daftar ISP didukung</div>
+            <div class="hasil-item">Tagihan sudah lunas → pesan "tidak ada tagihan"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('b-f03',null)">← BPJS F03</div>
+    <div class="fn-btn next" onclick="go('itv-f02',null)">F02: Checkout & Status →</div>
+  </div>
+</div>
+
+<div id="page-itv-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 06 — Internet & TV <span>›</span> F02</div>
+    <div class="fh-title">Checkout & Status Pembayaran</div>
+    <div class="fh-desc">Checkout Internet & TV identik dengan BPJS — nominal fixed dari inquiry, pilih metode bayar, proses pembayaran. Konfirmasi pembayaran diteruskan Digiflazz ke sistem ISP.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-screens">
+          <span class="fs-tag">03e - Checkout Internet TV (1:3047)</span>
+          <span class="fs-tag">05e - Sukses Internet TV (1:3431)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User konfirmasi tagihan dari inquiry</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Identik dengan BPJS F03</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info">
+        <span>ℹ️</span>
+        <div>Flow checkout Internet & TV <strong>identik dengan BPJS F03</strong>. Nominal fixed dari inquiry, 4 metode bayar (QRIS/E-Wallet/VA/Retail), biaya pembayaran sesuai metode. Setelah bayar, status terupdate di sistem ISP via Digiflazz. Screen sukses menampilkan nomor referensi untuk bukti pembayaran.</div>
+      </div>
+      <div class="rule-list" style="margin-top:12px;">
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Satu hal unik Internet & TV:</strong> Beberapa ISP mungkin punya layanan terputus sementara setelah jatuh tempo. Pembayaran via GoPop memerlukan waktu 1–24 jam untuk layanan aktif kembali — ini bukan bug GoPop, tapi proses reaktivasi dari ISP. Informasikan ke user di screen sukses.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">2</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Pembayaran Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tagihan terbayar, diteruskan ke ISP via Digiflazz</div>
+            <div class="hasil-item">Layanan internet aktif kembali dalam 1–24 jam</div>
+            <div class="hasil-item">Bukti pembayaran via WA dikirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Layanan belum aktif setelah bayar → info reaktivasi dari ISP</div>
+            <div class="hasil-item">Inquiry expired (>15 menit) → query ulang dari F01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('itv-f01',null)">← F01: Input & Inquiry</div>
+    <div class="fn-btn next" onclick="go('pdam-f01',null)">🚰 PDAM →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PDAM F01 ============================================================ -->
+<div id="page-pdam-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 07 — PDAM <span>›</span> F01</div>
+    <div class="fh-title">Input ID Pelanggan PDAM & Inquiry Tagihan</div>
+    <div class="fh-desc">Pembayaran tagihan air PDAM. User input nomor pelanggan PDAM (berbeda-beda per kota/kabupaten), sistem query tagihan bulan ini. Pola inquiry-based sama dengan BPJS dan Internet & TV.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 17 - PDAM Input (1:3683): field "Nomor Pelanggan PDAM" + tombol "Cek". Screen 18/18b - PDAM Inquiry (1:3716, 1:3747): dua varian tampilan hasil inquiry tagihan air.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">17 - PDAM Input (1:3683)</span>
+          <span class="fs-tag">18 - PDAM Inquiry (1:3716)</span>
+          <span class="fs-tag">18b - PDAM Inquiry v2 (1:3747)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "PDAM" dari Layanan Semua → Tagihan</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User input nomor pelanggan PDAM</div>
+            <div class="step-desc">Nomor pelanggan PDAM berbeda per daerah — format dan panjang digit bervariasi. Biasanya tertera di buku tagihan PDAM atau stiker meteran air. Hint di bawah field: "Temukan di buku tagihan atau stiker meteran air kamu." Setelah cukup digit, tombol "Cek" aktif.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Sistem query tagihan PDAM ke Digiflazz</div>
+            <div class="step-desc">Digiflazz routing query ke PDAM daerah yang sesuai berdasarkan kode area di nomor pelanggan. Tagihan PDAM mungkin mencakup beberapa bulan sekaligus kalau ada tunggakan — ini akan ditampilkan semua di inquiry.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Detail tagihan tampil — nama, meter, pemakaian, jumlah</div>
+            <div class="step-desc">Card tagihan berisi: nama pelanggan, nomor sambungan, periode tagihan, pemakaian (m³), dan jumlah yang harus dibayar. Kalau ada tunggakan beberapa bulan, semuanya dijumlahkan dalam satu total. Ada 2 varian tampilan di Figma (18 dan 18b) — kemungkinan untuk single vs multiple bulan tagihan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Cakupan PDAM terbatas pada daerah yang didukung Digiflazz.</strong> Tidak semua PDAM di Indonesia terdaftar di Digiflazz. Kalau PDAM user tidak tersedia, tampilkan pesan informatif dan sarankan bayar langsung ke kantor PDAM setempat.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tagihan PDAM yang sudah tunggak beberapa bulan</strong> biasanya harus dibayar sekaligus (tidak bisa bayar per bulan). Jumlah total mungkin besar — ini normal dan bukan error.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada biaya layanan tambahan dari GoPop</strong> untuk PDAM — sama dengan BPJS dan Internet & TV. Biaya pembayaran hanya dari metode bayar yang dipilih.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">PDAM daerah user tidak terdaftar di Digiflazz</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> "Layanan PDAM untuk wilayah ini belum tersedia."</div>
+          <div class="bc-handle">Tampilkan daftar kota/kabupaten PDAM yang didukung, dan sarankan alternatif: "Bayar di kantor PDAM setempat, ATM, atau m-banking." Ini lebih membantu daripada dead-end tanpa solusi.</div>
+          <div class="bc-owner">PIC: Ipong (konfirmasi daftar PDAM yang tersedia di Digiflazz) · Agung + Fikly (tampilkan daftar kota didukung)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Inquiry Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tagihan PDAM tampil (termasuk tunggakan jika ada)</div>
+            <div class="hasil-item">User konfirmasi → lanjut ke checkout F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Inquiry Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">PDAM tidak tersedia → daftar kota didukung + alternatif</div>
+            <div class="hasil-item">Nomor tidak ditemukan → pesan ramah + bantuan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('itv-f02',null)">← Internet & TV F02</div>
+    <div class="fn-btn next" onclick="go('pdam-f02',null)">F02: Checkout & Status →</div>
+  </div>
+</div>
+
+<div id="page-pdam-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 07 — PDAM <span>›</span> F02</div>
+    <div class="fh-title">Checkout & Status Pembayaran PDAM</div>
+    <div class="fh-desc">Checkout PDAM identik dengan produk tagihan lainnya. Nominal fixed dari inquiry, pilih metode bayar, proses via Digiflazz ke sistem PDAM.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-screens">
+          <span class="fs-tag">03f - Checkout PDAM (1:3819)</span>
+          <span class="fs-tag">05f - Sukses PDAM (1:4036)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User konfirmasi tagihan dari inquiry</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Identik dengan BPJS F03</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info">
+        <span>ℹ️</span>
+        <div>Checkout PDAM <strong>identik dengan BPJS F03 dan Internet & TV F02</strong>. Nominal fixed, 4 metode bayar, biaya pembayaran sesuai metode. Konfirmasi diteruskan Digiflazz ke PDAM daerah. Screen sukses menampilkan nomor referensi dan detail pembayaran.</div>
+      </div>
+      <div class="rule-list" style="margin-top:12px;">
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Satu hal unik PDAM:</strong> Update status di sistem PDAM lebih lambat dari BPJS — bisa 1–3 hari kerja sebelum status "lunas" tampil di buku tagihan atau sistem PDAM. Informasikan ke user di screen sukses agar tidak panik kalau tagihan masih tampil di aplikasi PDAM.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">2</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Pembayaran Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tagihan PDAM terbayar via Digiflazz</div>
+            <div class="hasil-item">Status lunas muncul di sistem PDAM dalam 1–3 hari</div>
+            <div class="hasil-item">Bukti pembayaran via WA dikirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Status PDAM delay → user tunjukkan bukti WA ke PDAM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pdam-f01',null)">← F01: Input & Inquiry</div>
+    <div class="fn-btn next" onclick="go('pbb-f01',null)">🏠 PBB →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PBB F01 ============================================================ -->
+<div id="page-pbb-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 08 — PBB <span>›</span> F01</div>
+    <div class="fh-title">Input NOP & Inquiry Tagihan PBB</div>
+    <div class="fh-desc">Pembayaran Pajak Bumi dan Bangunan (PBB). User input Nomor Objek Pajak (NOP) — 18 digit unik per bidang tanah/bangunan. Sistem query tagihan PBB tahun ini. PBB adalah tagihan tahunan, bukan bulanan seperti BPJS atau PDAM.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 22 - PBB Input (1:4652): field "NOP (Nomor Objek Pajak)" + tombol "Cek". Screen 23 - PBB Inquiry (1:4685): detail objek pajak dan jumlah tagihan PBB tahun berjalan.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">22 - PBB Input (1:4652)</span>
+          <span class="fs-tag">23 - PBB Inquiry (1:4685)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "PBB" dari Layanan Semua → Tagihan</span>
+      <span class="pill pill-time">⏱ Tagihan tahunan — jatuh tempo biasanya Agustus</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User input NOP — 18 digit</div>
+            <div class="step-desc">NOP (Nomor Objek Pajak) adalah 18 digit angka yang tertera di SPPT PBB (Surat Pemberitahuan Pajak Terutang) yang dikirim pemerintah tiap tahun. Bisa juga dicari di aplikasi pajak online atau kelurahan setempat. Hint di bawah field: "Temukan NOP di surat SPPT PBB tahunan dari pemerintah." Tombol "Cek" aktif setelah 18 digit terisi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Sistem query tagihan PBB ke Digiflazz</div>
+            <div class="step-desc">Digiflazz query ke database pajak daerah berdasarkan NOP. Proses mungkin sedikit lebih lambat dari tagihan lain (3–10 detik) karena database pajak daerah bisa lambat responsnya.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Detail tagihan PBB tampil — objek, tahun, jumlah</div>
+            <div class="step-desc">Card tagihan berisi: nama wajib pajak, alamat objek pajak, tahun pajak, NJOP (Nilai Jual Objek Pajak), dan jumlah PBB terutang. Kalau ada denda keterlambatan (lewat 31 Agustus), total akan lebih besar dari SPPT.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>PBB adalah tagihan tahunan</strong> — tidak ada tagihan bulanan. User biasanya bayar sekali setahun. Kalau sudah bayar tahun ini, inquiry akan tampil "Tidak ada tagihan PBB terutang untuk tahun [tahun ini]."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>PBB yang belum dibayar lebih dari 30 hari setelah jatuh tempo</strong> dikenakan denda bunga 2% per bulan. Jumlah ini otomatis terakumulasi dan ditampilkan dalam total inquiry.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Cakupan PBB terbatas</strong> pada daerah yang database pajaknya terhubung ke Digiflazz. Beberapa kabupaten/kota terpencil mungkin belum tersedia.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bukti pembayaran PBB dari GoPop valid sebagai bukti awal</strong> tapi untuk keperluan formal (balik nama, kredit, dll), user tetap perlu minta SSKPD/STTS dari kantor pajak daerah.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">PBB daerah user tidak tersedia di Digiflazz</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> "Layanan PBB untuk wilayah ini belum tersedia."</div>
+          <div class="bc-handle">Sarankan alternatif: "Bayar PBB di kantor pajak daerah setempat, ATM Bank DKI/BJB/Bank Jatim (tergantung daerah), atau lewat aplikasi e-Samsat." Ini lebih membantu dari sekadar pesan error.</div>
+          <div class="bc-owner">PIC: Ipong (konfirmasi daerah PBB yang didukung) · Agung + Fikly (tampilkan alternatif pembayaran)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">PBB tahun ini sudah lunas — user tidak tahu</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> "Tidak ada tagihan PBB terutang untuk NOP ini di tahun [tahun ini]."</div>
+          <div class="bc-handle">Tampilkan pesan positif dengan sedikit context: "PBB kamu untuk tahun ini sudah lunas ✅. Tagihan berikutnya akan tersedia mulai Januari [tahun depan]." Ini membantu user memahami siklus tahunan PBB.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (empty state informatif untuk PBB lunas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Inquiry Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Detail PBB tampil: nama WP, objek, tahun, jumlah + denda</div>
+            <div class="hasil-item">User konfirmasi → lanjut ke checkout F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Inquiry Gagal / Kosong</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Wilayah tidak tersedia → alternatif pembayaran</div>
+            <div class="hasil-item">PBB sudah lunas → pesan positif + info tahun depan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pdam-f02',null)">← PDAM F02</div>
+    <div class="fn-btn next" onclick="go('pbb-f02',null)">F02: Checkout & Status →</div>
+  </div>
+</div>
+
+<div id="page-pbb-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 08 — PBB <span>›</span> F02</div>
+    <div class="fh-title">Checkout & Status Pembayaran PBB</div>
+    <div class="fh-desc">Checkout PBB identik dengan produk tagihan lainnya. Nominal fixed dari inquiry, pilih metode bayar. Satu hal penting: untuk nominal PBB yang besar (di atas Rp2 juta), user mungkin perlu pakai VA atau retail karena QRIS punya limit transaksi.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-screens">
+          <span class="fs-tag">03h - Checkout PBB (1:4758)</span>
+          <span class="fs-tag">05g - Sukses PBB (1:4975)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User konfirmasi tagihan PBB dari inquiry</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Identik dengan BPJS F03</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info">
+        <span>ℹ️</span>
+        <div>Checkout PBB <strong>identik dengan BPJS F03</strong>, dengan satu catatan penting di bawah.</div>
+      </div>
+      <div class="rule-list" style="margin-top:12px;">
+        <div class="rule"><span>⚠️</span><div class="rule-text"><strong>Limit QRIS per transaksi adalah Rp2.000.000 (dari BI).</strong> PBB properti dengan NJOP tinggi bisa lebih dari itu. Kalau nominal lebih dari Rp2 juta, QRIS otomatis tidak tampil atau ditandai tidak tersedia. User harus pilih VA atau Retail untuk nominal besar. Ini perlu dihandle di FE — jangan tampilkan QRIS kalau nominal melebihi limit.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bukti pembayaran PBB dari GoPop adalah bukti awal yang sah</strong> untuk menunjukkan sudah bayar. Tapi untuk dokumen resmi (balik nama tanah, KPR, dll), user tetap perlu minta tanda lunas resmi (SSPD/STTS) dari kantor Dispenda setempat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">2</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Pembayaran PBB Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">PBB terbayar, status terupdate di sistem pajak daerah</div>
+            <div class="hasil-item">Bukti pembayaran via WA sebagai bukti awal</div>
+            <div class="hasil-item">Update status di Dispenda bisa 1–3 hari</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nominal > Rp2 juta → QRIS tidak tersedia, pakai VA/Retail</div>
+            <div class="hasil-item">Butuh STTS resmi → user minta ke kantor Dispenda</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pbb-f01',null)">← F01: Input NOP</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+terbayar dan terupdate di sistem BPJS</div>
             <div class="hasil-item">Screen sukses dengan nomor referensi lengkap</div>
             <div class="hasil-item">Bukti pembayaran via WA dikirim ke user</div>
           </div>
