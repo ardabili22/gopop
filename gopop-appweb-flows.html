@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · App & Web Flow — 01 Homepage</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:#16A34A;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(22,163,74,.3);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;background:#CEF17B;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#1A1228;}
+.tb-name{font-size:15px;font-weight:800;color:#fff;}.tb-name span{color:#CEF17B;}
+.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.4);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.tb-meta{font-size:11px;color:rgba(255,255,255,.5);}
+.layout{display:flex;flex:1;}
+.sidebar{width:256px;background:#fff;border-right:1px solid #E8E4F5;flex-shrink:0;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px);}
+.sb-sec{padding:14px 12px 4px;}
+.sb-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;padding:0 6px;display:flex;align-items:center;gap:6px;}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-flow-label{font-size:10px;font-weight:700;color:#C4BADC;text-transform:uppercase;letter-spacing:1px;padding:4px 6px 2px;}
+.sbi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;margin-bottom:1px;transition:all .12s;}
+.sbi:hover{background:#F0FDF4;}
+.sbi.active{background:#16A34A;}
+.sbi-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
+.sbi-text{font-size:12px;font-weight:600;color:#574872;flex:1;line-height:1.3;}
+.sbi.active .sbi-text{color:#fff;}
+.sdiv{height:1px;background:#E8F5E9;margin:6px 12px;}
+.main{flex:1;overflow-y:auto;padding:32px 36px;max-width:860px;}
+.page{display:none;}.page.active{display:block;}
+
+/* FLOW HEADER */
+.flow-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #E8E4F5;}
+.fh-breadcrumb{font-size:11px;color:#9085AE;margin-bottom:8px;}
+.fh-breadcrumb span{color:#16A34A;font-weight:700;}
+.fh-title{font-size:22px;font-weight:800;color:#1A1228;margin-bottom:8px;letter-spacing:-.02em;}
+.fh-desc{font-size:13px;color:#574872;line-height:1.7;max-width:580px;margin-bottom:14px;}
+.fh-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid;}
+.pill-who{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+.pill-trigger{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
+.pill-time{background:#FFF7ED;border-color:#FED7AA;color:#92400E;}
+.pill-figma{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
+
+/* BLOCKS */
+.flow-block{background:#fff;border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.fb-header{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F4F2F9;cursor:pointer;user-select:none;}
+.fb-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.n1{background:#16A34A;color:#fff;}
+.n2{background:#3B82F6;color:#fff;}
+.n3{background:#F59E0B;color:#fff;}
+.n4{background:#DC2626;color:#fff;}
+.n5{background:#F59E0B;color:#fff;}
+.n6{background:#16A34A;color:#fff;}
+.fb-title{font-size:14px;font-weight:800;color:#1A1228;flex:1;}
+.fb-toggle{color:#C4BADC;font-size:16px;transition:transform .2s;}
+.fb-body{padding:18px;display:none;}
+.fb-body.open{display:block;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;}
+.step{display:flex;gap:14px;position:relative;}
+.step:not(:last-child)::before{content:'';position:absolute;left:16px;top:36px;bottom:0;width:2px;background:#DCFCE7;}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;z-index:1;margin-top:2px;}
+.sn-ok{background:#DCFCE7;color:#166534;}
+.sn-sys{background:#EDE9FE;color:#4A2D8C;}
+.sn-warn{background:#FEF3C7;color:#92400E;}
+.step-body{flex:1;padding-bottom:22px;}
+.step-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:4px;}
+.step-desc{font-size:12px;color:#574872;line-height:1.7;}
+.step-desc strong{color:#1A1228;font-weight:700;}
+.step-desc ul{padding-left:16px;margin-top:4px;}
+.step-desc li{margin-bottom:3px;}
+
+/* RULES */
+.rule-list{display:flex;flex-direction:column;gap:8px;}
+.rule{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px 14px;display:flex;gap:10px;}
+.rule-text{font-size:12px;color:#374151;line-height:1.65;}
+.rule-text strong{color:#1A1228;font-weight:700;}
+
+/* BAD CASES */
+.bad-list{display:flex;flex-direction:column;gap:10px;}
+.bad-case{background:#fff;border-radius:12px;border:1.5px solid #FECDD3;padding:16px;}
+.bc-scenario{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;}
+.bc-scenario::before{content:'⚠️';flex-shrink:0;}
+.bc-user{font-size:12px;color:#574872;margin:5px 0 5px 26px;line-height:1.6;}
+.bc-user-label{font-weight:700;color:#1A1228;}
+.bc-handle{font-size:12px;color:#166534;background:#F0FDF4;padding:8px 10px;border-radius:8px;line-height:1.65;}
+.bc-handle::before{content:'✅ Cara handle: ';font-weight:700;}
+.bc-owner{font-size:10px;color:#9085AE;margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;}
+
+/* BOTTLENECK */
+.bn-list{display:flex;flex-direction:column;gap:10px;}
+.bn{background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:14px 16px;}
+.bn-q{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:6px;display:flex;gap:8px;}
+.bn-q::before{content:'🔴';flex-shrink:0;}
+.bn-a{font-size:12px;color:#374151;line-height:1.65;display:flex;gap:8px;}
+.bn-a::before{content:'💡';flex-shrink:0;}
+.bn-owner{font-size:10px;color:#9085AE;margin-top:6px;padding-top:6px;border-top:1px solid #FDE68A;}
+
+/* HASIL */
+.hasil-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hasil-box{border-radius:12px;padding:16px;}
+.hasil-ok{background:#F0FDF4;border:1px solid #BBF7D0;}
+.hasil-fail{background:#FFF1F2;border:1px solid #FECDD3;}
+.hasil-title{font-size:12px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.hasil-ok .hasil-title{color:#166534;}
+.hasil-fail .hasil-title{color:#9F1239;}
+.hasil-items{display:flex;flex-direction:column;gap:5px;}
+.hasil-item{font-size:12px;color:#374151;display:flex;gap:7px;line-height:1.5;}
+.hasil-ok .hasil-item::before{content:'→';color:#16A34A;font-weight:800;flex-shrink:0;}
+.hasil-fail .hasil-item::before{content:'→';color:#DC2626;font-weight:800;flex-shrink:0;}
+
+/* FIGMA BADGE */
+.figma-ref{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;}
+.figma-ref-icon{font-size:18px;flex-shrink:0;}
+.figma-ref-title{font-size:12px;font-weight:700;color:#4A2D8C;margin-bottom:2px;}
+.figma-ref-desc{font-size:11px;color:#574872;line-height:1.5;}
+.figma-screens{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.fs-tag{font-size:10px;font-weight:700;background:#4A2D8C;color:#fff;padding:2px 7px;border-radius:4px;}
+.fs-tag-miss{font-size:10px;font-weight:700;background:#FEE2E2;color:#9F1239;padding:2px 7px;border-radius:4px;}
+
+/* CALLOUT */
+.co{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:10px;display:flex;gap:10px;}
+.co-warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;}
+.co-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+.co-ok{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+
+/* NAV */
+.flow-nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid #E8E4F5;}
+.fn-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
+.fn-btn:hover{border-color:#16A34A;color:#16A34A;}
+.fn-btn.next{background:#16A34A;border-color:#16A34A;color:#fff;margin-left:auto;}
+
+/* WELCOME */
+.hero{background:linear-gradient(135deg,#16A34A,#15803D);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(206,241,123,.07);border-radius:50%;}
+.hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.hero h1 span{color:#CEF17B;}
+.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.mc{background:#fff;border-radius:12px;padding:16px;border:2px solid #E8E4F5;cursor:pointer;transition:all .15s;}
+.mc:hover{border-color:#16A34A;box-shadow:0 4px 12px rgba(22,163,74,.1);}
+.mc-icon{font-size:22px;margin-bottom:8px;}
+.mc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:2px;}
+.mc-sub{font-size:11px;color:#9085AE;}
+
+@media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">G</div>
+    <div class="tb-name">Go<span>Pop</span></div>
+    <div class="tb-badge">APP & WEB FLOW</div>
+  </div>
+  <div class="tb-meta">Modul 01 — Homepage & Discovery</div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
+    <div class="sbi active" onclick="go('welcome',this)">
+      <span class="sbi-icon">🏠</span><span class="sbi-text">Halaman Utama</span>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#16A34A"></div>01 · Homepage & Discovery</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Load Homepage</span></div>
+    <div class="sbi" onclick="go('f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Filter Produk di Homepage</span></div>
+    <div class="sbi" onclick="go('f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Tap Produk dari Shortcut</span></div>
+    <div class="sbi" onclick="go('f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Tap Banner Promo</span></div>
+    <div class="sbi" onclick="go('f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Buka Layanan Semua</span></div>
+    <div class="sbi" onclick="go('f06',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F06 · Homepage Offline</span></div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- WELCOME -->
+<div id="page-welcome" class="page active">
+  <div class="hero">
+    <h1>App & Web Consumer — <span>Modul 01</span></h1>
+    <p>Flow detail untuk Homepage & Discovery — halaman pertama yang dilihat user setiap kali buka GoPop. Dibuat berdasarkan design Figma yang sudah ada dan konteks bisnis GoPop.</p>
+  </div>
+  <div class="co co-warn" style="margin-bottom:20px;">
+    <span>⚠️</span>
+    <div><strong>Catatan untuk Agung & Fikly:</strong> Ada 13+ versi "00 - Homepage" di Figma yang belum dikunci. Semua flow di dokumen ini mengacu ke versi <strong>1:5452</strong> yang sudah dibaca via Figma MCP (versi yang paling detail dan lengkap). Bili perlu konfirmasi ini sebagai versi final sebelum implementasi dimulai.</div>
+  </div>
+  <div class="sb-label" style="margin-bottom:14px;"><div class="sb-dot" style="background:#16A34A"></div>6 Flow di Modul Ini</div>
+  <div class="module-grid">
+    <div class="mc" onclick="go('f01',null)"><div class="mc-icon">🏠</div><div class="mc-title">F01 · Load Homepage</div><div class="mc-sub">Buka app pertama kali</div></div>
+    <div class="mc" onclick="go('f02',null)"><div class="mc-icon">🔽</div><div class="mc-title">F02 · Filter Produk</div><div class="mc-sub">Semua / Isi Ulang / Tagihan</div></div>
+    <div class="mc" onclick="go('f03',null)"><div class="mc-icon">👆</div><div class="mc-title">F03 · Tap Shortcut</div><div class="mc-sub">Langsung ke produk</div></div>
+    <div class="mc" onclick="go('f04',null)"><div class="mc-icon">🎯</div><div class="mc-title">F04 · Tap Banner</div><div class="mc-sub">Promo ke tujuan</div></div>
+    <div class="mc" onclick="go('f05',null)"><div class="mc-icon">📋</div><div class="mc-title">F05 · Layanan Semua</div><div class="mc-sub">Screen 28 — semua produk</div></div>
+    <div class="mc" onclick="go('f06',null)"><div class="mc-icon">📶</div><div class="mc-title">F06 · Offline</div><div class="mc-sub">Tidak ada koneksi</div></div>
+  </div>
+</div>
+
+<!-- F01: LOAD HOMEPAGE -->
+<div id="page-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F01</div>
+    <div class="fh-title">Load Homepage</div>
+    <div class="fh-desc">Flow yang terjadi setiap kali user atau guest membuka app GoPop atau mengunjungi gopop.id untuk pertama kali, atau setelah lama tidak dibuka. Homepage menampilkan greeting, shortcut produk, banner promo, dan artikel Tips & Edukasi.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">File: bwdy1MflFyrW5S7vvIDTy0 · 390px mobile portrait</div>
+        <div class="figma-screens">
+          <span class="fs-tag">00 - Homepage (1:5452)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Buka app atau kunjungi gopop.id</span>
+      <span class="pill pill-time">⏱ Target load &lt;2 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">App terbuka — langsung tampil skeleton loading</div>
+            <div class="step-desc">Sambil data dimuat dari server, app langsung tampilkan layout homepage tapi dengan konten abu-abu berkedip (skeleton). Ini supaya user tahu app tidak hang — sedang loading. Navbar bawah sudah bisa diklik selama loading.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Sistem cek status login user</div>
+            <div class="step-desc">App cek apakah ada sesi login aktif di penyimpanan lokal. Hasilnya menentukan tampilan header:<br><br>
+              <strong>Kalau sudah login:</strong> Header menampilkan "HAI, [NAMA USER]! 👋" + foto profil kecil di pojok kanan atas.<br>
+              <strong>Kalau guest/belum login:</strong> Header menampilkan "Selamat datang di GoPop 👋" + tombol "Masuk / Daftar".
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Data konten dimuat dari server secara bersamaan</div>
+            <div class="step-desc">Dua permintaan data dikirim sekaligus agar lebih cepat:<ul>
+              <li><strong>Konten CMS:</strong> Banner promo aktif dan artikel Tips & Edukasi dari dashboard Kayong/Luqman</li>
+              <li><strong>Produk populer:</strong> 8 produk untuk ditampilkan di grid shortcut</li>
+            </ul>Biasanya selesai dalam 1–2 detik kalau koneksi normal.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">Konten tampil — skeleton digantikan konten nyata</div>
+            <div class="step-desc">Berurutan dari atas ke bawah, konten muncul menggantikan skeleton:<ul>
+              <li><strong>Greeting + sub-judul "Mau bayar apa hari ini?"</strong></li>
+              <li><strong>Card produk</strong> — filter chip (Semua/Isi Ulang/Tagihan) + grid 2 baris × 4 kolom: Transfer, Pulsa, Token PLN, Paket Data, BPJS, Game, E-Money, Lainnya</li>
+              <li><strong>Strip CTA Transfer E-Wallet</strong> — "GoPay → OVO • Fee Rp 1.000" dengan tombol "Coba →"</li>
+              <li><strong>Section "Promo Spesial 🔥"</strong> — banner carousel horizontal, swipe kiri-kanan</li>
+              <li><strong>Section "Tips & Edukasi"</strong> — 2 artikel terbaru dari CMS</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Homepage siap digunakan — user bisa langsung aksi</div>
+            <div class="step-desc">Semua elemen interaktif aktif: tap produk, swipe banner, scroll ke bawah, tap artikel, atau tap menu di navbar bawah (Beranda, Layanan, Transfer, Riwayat, Profil).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Homepage bisa diakses tanpa login (guest-first).</strong> Semua konten homepage tampil penuh untuk guest — tidak ada konten yang disembunyikan atau dikunci. Guest bisa langsung tap produk dan transaksi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Konten CMS di-cache selama 5 menit.</strong> Kalau user buka homepage lagi dalam 5 menit, app tampilkan data cache dulu sambil refresh di background. Ini membuat homepage terasa lebih cepat saat re-open.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Strip CTA Transfer E-Wallet selalu tampil.</strong> Ini adalah hero product GoPop dengan fee Rp 1.000 flat. Strip ini tidak bisa dinonaktifkan dari CMS — selalu ada di homepage di bawah grid produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Banner carousel otomatis berganti tiap 3 detik.</strong> User tetap bisa swipe manual untuk berganti banner. Kalau tidak ada banner aktif dari CMS, section "Promo Spesial" tidak tampil — tidak ada placeholder kosong.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Data Tips & Edukasi juga dari CMS Kayong.</strong> Hanya artikel dengan status "Published" yang tampil. Tampilkan maksimal 2 artikel di homepage — tap "Selengkapnya" untuk ke halaman listing penuh (screen 29).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Server tidak merespons — data konten tidak dimuat sama sekali</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Skeleton terus berkedip lebih dari 5 detik, tidak ada konten yang muncul.</div>
+          <div class="bc-handle">Setelah 5 detik timeout, tampilkan homepage versi minimal: grid 8 produk yang di-hardcode (tidak dari server), tanpa banner dan tanpa artikel. User masih bisa tap produk dan lanjut transaksi. Tampilkan pesan kecil di bagian atas: "Koneksi lambat. Menampilkan konten tersimpan."</div>
+          <div class="bc-owner">PIC: Agung (App) + Fikly (Desktop) — implementasi fallback konten hardcode</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Gambar banner dari CMS gagal dimuat — gambar rusak atau ukuran salah</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Area banner menampilkan kotak kosong atau ikon gambar rusak.</div>
+          <div class="bc-handle">Tampilkan placeholder berwarna ungu (#4A2D8C) dengan logo GoPop kecil di tengah sebagai fallback. Banner tetap bisa diklik ke tujuan yang benar meski gambarnya tidak muncul. Kayong perlu compress gambar ke bawah 2MB dan pastikan format JPG/PNG saat upload ulang.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (implementasi image fallback) · Kayong (compress gambar yang bermasalah)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Sesi login expired tapi user tidak tahu — halaman tetap tampil greeting nama tapi API calls return unauthorized</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Homepage tampil normal dengan nama mereka, tapi beberapa aksi tidak bisa dilakukan.</div>
+          <div class="bc-handle">Saat ada respons "tidak terautentikasi" dari server, app otomatis coba refresh sesi di background. Kalau berhasil, user tidak perlu tahu. Kalau gagal, bersihkan data sesi dan tampilkan homepage versi guest dengan notifikasi kecil: "Sesi kamu habis. Masuk lagi untuk transaksi penuh."</div>
+          <div class="bc-owner">PIC: Agung + Fikly (implementasi auto-refresh sesi dan graceful degradation)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">CMS belum terhubung ke server — banner yang Kayong ubah tidak pernah muncul ke user</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Banner tidak berubah meski Kayong sudah update di dashboard.</div>
+          <div class="bc-handle">Ini gap kritis (D-GAP-18). Irwan + Rifky perlu menghubungkan CMS dashboard ke server sebagai prioritas tinggi. Sementara belum tersambung, homepage menampilkan banner dan artikel dummy yang di-hardcode di FE.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (hubungkan CMS ke BE) · Agung + Fikly (hardcode konten sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">13+ versi "00 - Homepage" di Figma belum dikunci — Agung dan Fikly tidak bisa mulai implement</div>
+          <div class="bn-a">Ini blocker terbesar saat ini. Agung dan Fikly tidak tahu versi mana yang harus diimplementasi. Bili perlu pilih 1 versi final, rename jadi "00 - Homepage [FINAL]", dan arsipkan sisanya. Estimasi cukup 30 menit untuk Bili melakukan ini.</div>
+          <div class="bn-owner">🎨 Bili: Action item — kunci versi final Homepage secepatnya</div>
+        </div>
+        <div class="bn">
+          <div class="bn-q">Load homepage lambat kalau koneksi user sedang buruk — user menunggu terlalu lama</div>
+          <div class="bn-a">Implementasi strategi "tampil dulu, update belakangan": selalu tampilkan data dari cache lokal dulu (meski mungkin sudah 5 menit lalu), sambil ambil data baru di background. User langsung lihat konten, bukan loading spinner. Hanya pertama kali install yang perlu loading penuh karena belum ada cache.</div>
+          <div class="bn-owner">PIC: Agung + Fikly (implementasi cache strategy di FE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Homepage tampil lengkap dalam &lt;2 detik</div>
+            <div class="hasil-item">Greeting sesuai status login (nama atau "Selamat datang")</div>
+            <div class="hasil-item">Banner dari CMS Kayong tampil dan bisa diklik</div>
+            <div class="hasil-item">Grid 8 produk shortcut siap untuk di-tap</div>
+            <div class="hasil-item">Artikel Tips & Edukasi terbaru tampil</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal / Degraded</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Server timeout → homepage minimal dengan produk hardcode</div>
+            <div class="hasil-item">Gambar banner rusak → placeholder ungu dengan logo</div>
+            <div class="hasil-item">CMS belum terhubung → banner dummy permanen sampai D-GAP-18 selesai</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('welcome',null)">← Semua Flow</div>
+    <div class="fn-btn next" onclick="go('f02',null)">F02: Filter Produk →</div>
+  </div>
+</div>
+
+<!-- F02: FILTER PRODUK -->
+<div id="page-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F02</div>
+    <div class="fh-title">Filter Produk di Homepage</div>
+    <div class="fh-desc">Di dalam card produk homepage ada tiga filter chip: Semua, Isi Ulang, dan Tagihan. User bisa tap untuk menyaring produk yang ditampilkan di grid sesuai kategori yang mereka butuhkan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Filter chip terlihat di dalam card produk homepage. Chip aktif: background ungu #4A2D8C, teks putih. Chip nonaktif: background putih, border abu.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">00 - Homepage (1:5452) — section Filter Chips</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap chip filter di card produk</span>
+      <span class="pill pill-time">⏱ Instan — tidak ada loading</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Default — chip "Semua" aktif saat homepage pertama dibuka</div>
+            <div class="step-desc">Grid menampilkan 8 produk campuran: Transfer, Pulsa, Token PLN, Paket Data, BPJS, Game, E-Money, Lainnya. Chip "Semua" tampil dengan background ungu (aktif), dua chip lain tampil dengan background putih dan border (nonaktif).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User tap chip "Isi Ulang"</div>
+            <div class="step-desc">Chip "Isi Ulang" langsung berubah jadi aktif (ungu), chip "Semua" kembali ke nonaktif. Grid produk berubah menampilkan hanya produk kategori isi ulang: Pulsa, Paket Data, Token PLN, Voucher Game. Tidak ada loading — perubahan instan karena data sudah ada di app.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User tap chip "Tagihan"</div>
+            <div class="step-desc">Grid berubah menampilkan hanya produk tagihan/postpaid: BPJS Kesehatan, BPJS Ketenagakerjaan, Internet & TV, PDAM, PBB, Listrik Pascabayar. User bisa scroll horizontal di dalam card kalau produk lebih dari 8.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User tap produk dari hasil filter — langsung ke screen produk tersebut</div>
+            <div class="step-desc">Filter tidak memengaruhi flow setelah tap produk. Setelah user masuk ke screen produk dan kembali ke homepage, filter kembali ke "Semua" (tidak mengingat pilihan terakhir).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Filter berjalan sepenuhnya di sisi app (offline).</strong> Tidak ada request ke server saat user tap chip filter — semua produk sudah dimuat saat homepage pertama dibuka. Ini membuat filter terasa instan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Strip CTA Transfer E-Wallet selalu tampil</strong> di bawah card produk, tidak peduli filter apa yang aktif. Transfer E-Wallet adalah hero product GoPop dan selalu diprioritaskan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Filter tidak disimpan</strong> saat user keluar dari homepage. Setiap kali buka homepage, filter selalu kembali ke "Semua". Ini keputusan UX yang disengaja agar user selalu melihat semua opsi dulu.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Setelah filter "Tagihan" aktif, user tap "Lainnya" yang tidak ada di kategori ini — tapi produk itu tetap perlu bisa diakses</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Chip "Tagihan" aktif, grid hanya menampilkan produk tagihan — "Lainnya" tidak ada.</div>
+          <div class="bc-handle">User bisa tap chip "Semua" untuk melihat semua produk termasuk "Lainnya". Atau tap "Layanan" di navbar bawah untuk ke screen 28 yang menampilkan semua produk tanpa filter. Pastikan ada tombol "Lihat Semua Layanan" yang selalu terlihat di bawah grid, apapun filter yang aktif.</div>
+          <div class="bc-owner">PIC: Bili (konfirmasi apakah perlu tombol "Lihat Semua" di bawah grid)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Filter "Tagihan" menghasilkan lebih dari 8 produk — grid tidak cukup tampung semua</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Hanya 8 produk pertama yang tampil, sisanya tersembunyi.</div>
+          <div class="bc-handle">Grid homepage maksimal 8 produk (2 baris × 4). Kalau produk di kategori lebih dari 8, tampilkan tombol "Lihat semua [kategori]" di bawah grid yang mengarah ke screen 28 Layanan Semua dengan filter yang sudah terisi. User tidak kehilangan akses ke produk yang tidak tampil.</div>
+          <div class="bc-owner">PIC: Bili (desain tombol "Lihat semua" per kategori) · Agung + Fikly (routing ke screen 28 dengan filter)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Kategori produk di filter chip belum terdefinisi secara formal — Agung dan Fikly tidak tahu produk mana masuk ke "Isi Ulang" dan mana ke "Tagihan"</div>
+          <div class="bn-a">Bili perlu buat daftar mapping yang jelas: produk mana saja yang masuk ke kategori "Isi Ulang" dan "Tagihan". Ini harus disepakati bersama Acoy dan Ipong (yang kelola produk di dashboard) agar konsisten antara FE dan BE. Tanpa mapping yang jelas, Agung dan Fikly bisa salah implement.</div>
+          <div class="bn-owner">PIC: Bili (buat mapping produk per kategori) · Acoy + Ipong (validasi dari sisi bisnis)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Grid produk berubah instan sesuai filter yang dipilih</div>
+            <div class="hasil-item">Strip Transfer E-Wallet tetap tampil apapun filternya</div>
+            <div class="hasil-item">User mudah menemukan produk yang dibutuhkan</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Produk tidak muncul di kategori yang benar karena mapping belum terdefinisi</div>
+            <div class="hasil-item">Grid penuh 8 produk — produk lain tersembunyi tanpa ada akses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f01',null)">← F01: Load Homepage</div>
+    <div class="fn-btn next" onclick="go('f03',null)">F03: Tap Shortcut Produk →</div>
+  </div>
+</div>
+
+<!-- F03: TAP SHORTCUT PRODUK -->
+<div id="page-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F03</div>
+    <div class="fh-title">Tap Shortcut Produk dari Grid Homepage</div>
+    <div class="fh-desc">User melihat grid produk dan tap salah satu — misalnya "Transfer" atau "Pulsa". Flow ini dari tap di homepage sampai screen produk terbuka dan siap digunakan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">00 - Homepage — Section Product Grid</span>
+          <span class="fs-tag">01 - Transfer E-Wallet Input</span>
+          <span class="fs-tag">06 - Pulsa & Data Input</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap ikon produk di grid homepage</span>
+      <span class="pill pill-time">⏱ Pindah screen instan</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap ikon produk di grid</div>
+            <div class="step-desc">Ada 8 ikon di grid. Setiap ikon membawa user ke screen yang berbeda:<ul>
+              <li><strong>Transfer</strong> → Screen 01 Transfer E-Wallet Input</li>
+              <li><strong>Pulsa</strong> → Screen 06 Pulsa & Data Input</li>
+              <li><strong>Token PLN</strong> → Screen 19 Token Listrik Input</li>
+              <li><strong>Paket Data</strong> → Screen 06 Pulsa & Data (tab Paket Data)</li>
+              <li><strong>BPJS</strong> → Pilihan screen: BPJS Kesehatan (08) atau Ketenagakerjaan (10)</li>
+              <li><strong>Game</strong> → Screen 14 Voucher Game Pilih Game</li>
+              <li><strong>E-Money</strong> → Screen 01 Transfer E-Wallet Input</li>
+              <li><strong>Lainnya</strong> → Screen 28 Layanan Semua</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Screen produk terbuka langsung</div>
+            <div class="step-desc">Navigasi ke screen baru terjadi instan — tidak ada loading di antara. Animasi slide dari kanan (standar navigasi mobile). Tombol kembali "← Beranda" ada di pojok kiri atas screen produk.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Data produk dimuat di screen tujuan</div>
+            <div class="step-desc">Begitu screen produk terbuka, data yang dibutuhkan baru dimuat (misalnya daftar nominal pulsa). Skeleton loading muncul sebentar di dalam screen produk, bukan saat transisi antar screen. Ini menjaga transisi tetap terasa cepat.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua produk di grid bisa diakses guest tanpa login.</strong> Tap produk tidak memicu prompt login. Login hanya diperlukan saat konfirmasi transaksi akhir — bukan di awal flow. Ini sesuai dengan prinsip guest-first GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk "BPJS" di grid adalah shortcut ke submenu</strong> — bukan langsung ke screen input. User akan diminta pilih antara BPJS Kesehatan atau BPJS Ketenagakerjaan karena keduanya punya screen berbeda.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tap "Lainnya" membawa user ke screen 28 Layanan Semua</strong> yang menampilkan semua produk GoPop dalam tiga tab (Transfer, Semua, Tagihan). Dari sini user bisa lihat semua produk yang mungkin tidak ada di grid homepage.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Produk yang di-tap sedang nonaktif — dinonaktifkan Ipong dari dashboard karena gangguan supplier</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tap produk tapi tidak terjadi apa-apa, atau tampil pesan kesalahan.</div>
+          <div class="bc-handle">Tampilkan bottom sheet kecil yang muncul dari bawah: "Layanan [nama produk] sedang tidak tersedia sementara. Kami sedang menangani gangguan. Coba lagi dalam beberapa saat." dengan tombol "Oke, Mengerti". Jangan tampilkan pesan teknikal seperti error code.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (implementasi pesan nonaktif yang ramah) · Ipong (kelola status produk dari dashboard)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User tap dengan cepat dua kali — screen produk terbuka dua kali (double navigation)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Dua screen produk terbuka bertumpuk — menekan "Kembali" dua kali untuk kembali ke homepage.</div>
+          <div class="bc-handle">Nonaktifkan tombol tap selama animasi navigasi berlangsung (biasanya 300ms). Satu tap = satu navigasi. Ini standar yang perlu diimplementasi di semua tombol navigasi, bukan hanya grid produk ini.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (implementasi tap debounce / navigation guard)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tap "BPJS" membawa user ke submenu pilihan — tapi tidak ada screen submenu BPJS di Figma saat ini</div>
+          <div class="bn-a">Saat ini Figma hanya punya screen 08 (BPJS Kesehatan Input) dan 10 (BPJS Ketenagakerjaan Input) — tidak ada screen "pilih dulu BPJS yang mana". Dua opsi: (1) Bili buat screen submenu BPJS baru di Figma, atau (2) langsung tampilkan bottom sheet pilihan saat user tap "BPJS" tanpa perlu screen baru. Opsi 2 lebih cepat diimplementasi.</div>
+          <div class="bn-owner">PIC: Bili (tentukan solusi UX) · Agung + Fikly (implementasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Screen produk terbuka instan dengan animasi slide</div>
+            <div class="hasil-item">Data produk dimuat di background setelah screen terbuka</div>
+            <div class="hasil-item">User siap melanjutkan ke flow transaksi produk tersebut</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Produk nonaktif → pesan ramah, bukan error teknikal</div>
+            <div class="hasil-item">Double tap → dua screen terbuka tanpa navigation guard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f02',null)">← F02: Filter Produk</div>
+    <div class="fn-btn next" onclick="go('f04',null)">F04: Tap Banner Promo →</div>
+  </div>
+</div>
+
+<!-- F04: TAP BANNER PROMO -->
+<div id="page-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F04</div>
+    <div class="fh-title">Tap Banner Promo di Homepage</div>
+    <div class="fh-desc">Section "Promo Spesial 🔥" menampilkan banner carousel yang dikelola Kayong dari CMS. User bisa swipe untuk lihat banner lain atau tap banner untuk diarahkan ke tujuan yang relevan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Banner terlihat di section "Promo Spesial 🔥" — horizontal carousel. Contoh di Figma: "Transfer DANA ke OVO - CASHBACK 5%" dan "BEBAS BIAYA ADMIN - Token PLN"</div>
+        <div class="figma-screens">
+          <span class="fs-tag">00 - Homepage (1:5452) — Section Promo Spesial</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap salah satu banner di carousel</span>
+      <span class="pill pill-time">⏱ Instan ke tujuan</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Banner carousel tampil dan auto-rotate tiap 3 detik</div>
+            <div class="step-desc">Banner pertama langsung tampil saat homepage selesai load. Setiap 3 detik berganti ke banner berikutnya secara otomatis dengan animasi slide halus. Ada indikator titik kecil di bawah banner yang menunjukkan posisi saat ini dari total banner yang ada.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User swipe atau tap banner yang diinginkan</div>
+            <div class="step-desc">Swipe kiri/kanan untuk berganti banner secara manual. Saat user mulai swipe, auto-rotate berhenti sementara dan kembali lagi setelah 5 detik tidak ada interaksi. Tap banner untuk diarahkan ke tujuan yang sudah Kayong set saat upload.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User diarahkan ke tujuan sesuai link yang diset Kayong</div>
+            <div class="step-desc">Tiga jenis tujuan yang bisa diset di CMS:<ul>
+              <li><strong>Produk GoPop:</strong> Langsung buka screen produk (misalnya tap banner Transfer DANA ke OVO → buka screen Transfer E-Wallet)</li>
+              <li><strong>Artikel:</strong> Buka halaman detail artikel Tips & Promo</li>
+              <li><strong>Tidak ada link:</strong> Tap tidak menghasilkan aksi (banner hanya untuk branding)</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Banner dikelola Kayong dari CMS dashboard.</strong> Kayong bisa upload gambar baru, set tujuan link, dan aktifkan/nonaktifkan banner kapan saja. Perubahan tampil di app user dalam maksimal 5 menit (waktu cache kadaluarsa).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Maksimal 5 banner aktif sekaligus.</strong> Kalau Kayong tambah banner ke-6 tanpa nonaktifkan yang lama, sistem tolak dengan pesan "Nonaktifkan dulu salah satu banner yang ada."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Konten banner tidak divalidasi sistem.</strong> Kayong bisa upload gambar dan teks apapun. Kayong dan tim GoPop bertanggung jawab memastikan konten sesuai dan sudah disetujui sebelum dipublish — terutama yang menyebutkan promo atau diskon spesifik.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Kayong set link banner ke produk yang sudah nonaktif — user tap banner tapi produk tidak bisa diakses</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tap banner, terbuka screen produk, tapi ada pesan "Layanan sedang tidak tersedia."</div>
+          <div class="bc-handle">Ini perilaku yang benar — screen produk tetap terbuka tapi ada pesan nonaktif. Kayong perlu update atau nonaktifkan banner tersebut dari CMS segera setelah produk dinonaktifkan. Ke depan, sistem bisa auto-nonaktifkan banner yang mengarah ke produk nonaktif.</div>
+          <div class="bc-owner">PIC: Kayong (update banner saat produk nonaktif) · Irwan + Rifky (fitur auto-nonaktif banner)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User tap banner promo cashback — tapi saat transaksi tidak dapat cashback yang dijanjikan</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Total harga tidak ada diskon cashback meski banner bilang cashback 5%.</div>
+          <div class="bc-handle">Ini masalah ekspektasi yang serius — bisa jadi keluhan ke CS. Penyebab paling umum: banner sudah kadaluarsa tapi belum dinonaktifkan, atau syarat cashback tidak terpenuhi (misalnya hanya untuk transaksi pertama). Kayong wajib selalu cantumkan syarat & ketentuan singkat di banner, dan nonaktifkan banner tepat waktu saat promo berakhir.</div>
+          <div class="bc-owner">PIC: Kayong (disiplin nonaktifkan banner saat promo selesai) · Bili (SOP content approval sebelum publish)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada sistem approval konten banner — Kayong bisa publish banner promo apapun tanpa perlu persetujuan dulu</div>
+          <div class="bn-a">Buat SOP sederhana: setiap banner yang menyebutkan angka (cashback %, diskon, atau "gratis") wajib dapat persetujuan Bili atau Acoy sebelum dipublish. Bisa lewat WA atau dicatat di sistem. Untuk banner yang hanya visual tanpa klaim khusus, Kayong bisa langsung publish.</div>
+          <div class="bn-owner">PIC: Acoy (buat dan enforce SOP approval konten) · Kayong (patuhi SOP)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Banner tampil dan auto-rotate tiap 3 detik</div>
+            <div class="hasil-item">Swipe manual berfungsi dan menghentikan auto-rotate</div>
+            <div class="hasil-item">Tap banner → navigasi ke screen produk atau artikel yang benar</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Banner mengarah ke produk nonaktif → pesan tidak tersedia</div>
+            <div class="hasil-item">Promo banner tidak sesuai realita → user komplain ke CS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f03',null)">← F03: Tap Shortcut</div>
+    <div class="fn-btn next" onclick="go('f05',null)">F05: Buka Layanan Semua →</div>
+  </div>
+</div>
+
+<!-- F05: LAYANAN SEMUA -->
+<div id="page-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F05</div>
+    <div class="fh-title">Buka Halaman Layanan Semua</div>
+    <div class="fh-desc">Screen 28 adalah direktori lengkap semua produk GoPop — dibagi tiga tab. User bisa ke sini dari navbar bawah (tap "Layanan") atau dari tap "Lainnya" di grid homepage.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">28 — Tab Transfer</span>
+          <span class="fs-tag">28b — Tab Semua</span>
+          <span class="fs-tag">28c — Tab Tagihan</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Layanan" di navbar bawah atau tap "Lainnya" di grid</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Layanan" di navbar bawah atau "Lainnya" di grid</div>
+            <div class="step-desc">Screen 28 terbuka. Default: tab "Transfer" aktif karena ini produk unggulan GoPop. Ikon "Layanan" di navbar bawah berubah menjadi aktif (warna ungu).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User melihat tiga tab: Transfer, Semua, Tagihan</div>
+            <div class="step-desc">
+              <strong>Tab Transfer:</strong> Semua produk transfer e-wallet (GoPay, OVO, DANA, ShopeePay, dll)<br><br>
+              <strong>Tab Semua:</strong> Semua produk GoPop dalam satu halaman — Transfer, Pulsa, Token PLN, Paket Data, BPJS, Voucher Game, Internet & TV, PDAM, PBB, dan lainnya<br><br>
+              <strong>Tab Tagihan:</strong> Hanya produk postpaid/tagihan — BPJS, Internet & TV, PDAM, PBB, Listrik Pascabayar
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User tap produk yang diinginkan</div>
+            <div class="step-desc">Langsung diarahkan ke screen input produk tersebut. Alur selanjutnya mengikuti flow transaksi masing-masing produk.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tab default saat masuk adalah "Transfer"</strong> — bukan "Semua". Ini memprioritaskan produk utama GoPop yaitu Transfer E-Wallet flat Rp 1.000 yang menjadi differentiator utama dari kompetitor.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk yang dinonaktifkan Ipong tidak muncul</strong> di halaman ini. User tidak akan melihat produk yang sedang gangguan — mengurangi frustrasi saat ada gangguan supplier.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Halaman ini tidak memerlukan login.</strong> Guest bisa lihat semua produk dan tap untuk mulai transaksi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Semua produk di tab "Tagihan" sedang nonaktif karena gangguan massal supplier — halaman tampil kosong</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tab "Tagihan" tampil kosong, tidak ada produk.</div>
+          <div class="bc-handle">Tampilkan pesan informasi di area yang kosong: "Layanan tagihan sedang dalam perbaikan. Kami akan kembali segera. Cek layanan isi ulang kami sementara ini." dengan link ke tab "Semua" atau "Transfer". Jangan biarkan layar kosong tanpa penjelasan.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (empty state design) · Ipong + Kayong (koordinasi update banner homepage juga)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Produk baru yang ditambahkan Ipong di dashboard perlu muncul otomatis di halaman ini — saat ini tidak ada mekanisme sinkronisasi yang jelas</div>
+          <div class="bn-a">Daftar produk di halaman Layanan harus selalu sinkron dengan yang dikelola Ipong di dashboard. Kalau Ipong aktifkan produk baru, harus langsung muncul di sini tanpa perlu Agung/Fikly deploy ulang. Ini perlu disepakati antara Irwan/Rifky (BE) dan Agung/Fikly (FE) bagaimana cara sinkronisasinya.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (API produk aktif) · Agung + Fikly (FE fetch dari API, bukan hardcode)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User menemukan semua produk GoPop dalam 3 tab yang terorganisir</div>
+            <div class="hasil-item">Produk nonaktif tidak tampil — hanya yang tersedia</div>
+            <div class="hasil-item">Tap produk langsung ke screen input produk</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tab kosong karena semua produk nonaktif → perlu empty state</div>
+            <div class="hasil-item">Produk baru tidak muncul karena FE hardcode daftar produk</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f04',null)">← F04: Tap Banner</div>
+    <div class="fn-btn next" onclick="go('f06',null)">F06: Homepage Offline →</div>
+  </div>
+</div>
+
+<!-- F06: OFFLINE -->
+<div id="page-f06" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 01 <span>›</span> F06</div>
+    <div class="fh-title">Homepage Saat Tidak Ada Koneksi Internet</div>
+    <div class="fh-desc">User membuka app tapi tidak ada koneksi internet — atau koneksi putus tiba-tiba saat sedang di homepage. App harus tetap terbuka dan memberikan pengalaman yang baik, bukan error kosong.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Buka app saat offline atau koneksi tiba-tiba putus</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-warn">1</div>
+          <div class="step-body">
+            <div class="step-title">App deteksi tidak ada koneksi</div>
+            <div class="step-desc">Saat buka app atau koneksi putus di tengah jalan, app deteksi kondisi offline. Muncul banner tipis di bagian atas layar (di bawah status bar): <strong>"Kamu sedang offline"</strong> dengan warna oranye/kuning. Banner ini tidak memblokir konten di bawahnya.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Homepage tampil dari data yang tersimpan sebelumnya</div>
+            <div class="step-desc">Kalau user pernah buka app sebelumnya dan ada data tersimpan:<ul>
+              <li>Grid 8 produk tampil dari cache (produk tidak berubah sering, aman untuk tampil dari cache)</li>
+              <li>Banner promo tampil dari cache — mungkin sudah lama, tapi lebih baik ada daripada kosong</li>
+              <li>Label kecil di bawah banner: "Konten mungkin tidak terkini"</li>
+            </ul>
+            Kalau belum pernah buka app sama sekali (pertama kali install, langsung offline): tampilkan homepage minimal dengan 8 produk hardcode saja, tanpa banner dan artikel.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-warn">3</div>
+          <div class="step-body">
+            <div class="step-title">User tap produk — muncul pesan tidak bisa lanjut</div>
+            <div class="step-desc">User masih bisa lihat homepage dan tap produk, tapi saat tap muncul bottom sheet: <strong>"Kamu sedang offline. Sambungkan ke internet untuk mulai transaksi."</strong> Tidak ada yang bisa dilakukan tanpa koneksi — transaksi butuh koneksi ke server.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">Koneksi kembali — banner offline hilang, konten diperbarui</div>
+            <div class="step-desc">Saat koneksi pulih, banner "Kamu sedang offline" menghilang dengan animasi fade. App otomatis refresh konten di background tanpa user perlu tap apapun. Setelah konten baru datang, muncul snackbar kecil: <strong>"Koneksi kembali ✓"</strong> yang menghilang sendiri dalam 2 detik.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>App tidak boleh tampil layar kosong atau error saat offline.</strong> Selalu ada konten yang bisa ditampilkan — entah dari cache atau dari data hardcode minimal. Pengalaman offline yang buruk (layar putih atau error teknikal) tidak dapat diterima.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada transaksi yang bisa dilakukan saat offline.</strong> Ini bukan limitasi teknikal yang perlu diatasi — memang harus begitu karena transaksi butuh verifikasi real-time ke server dan pembayaran ke payment gateway.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Data tersimpan dari sesi sebelumnya bisa dipakai sampai 24 jam.</strong> Lebih dari itu, terlalu basi untuk ditampilkan (harga atau promo mungkin sudah berubah signifikan).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User sedang mengisi form transaksi (sudah input nomor HP dan nominal) lalu koneksi tiba-tiba putus</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Form yang sudah diisi, banner offline muncul di atas.</div>
+          <div class="bc-handle">Simpan data form yang sudah diisi di memori app (bukan dikirim ke server). Saat koneksi kembali, data masih ada di form — user bisa langsung lanjut tanpa isi ulang dari awal. Jangan hapus data form hanya karena offline. Tampilkan pesan: "Koneksi kembali. Data kamu masih tersimpan, lanjut transaksi sekarang?"</div>
+          <div class="bc-owner">PIC: Agung + Fikly (simpan state form di memori saat offline)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">App menampilkan harga dari cache yang sudah kadaluarsa — user kecewa harga berubah saat checkout</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Harga pulsa Rp 6.500 dari cache, tapi saat online dan checkout harga berubah jadi Rp 7.000.</div>
+          <div class="bc-handle">Ini bisa terjadi kalau Ipong update harga saat user offline. Saat koneksi kembali dan user masuk ke screen produk, selalu fetch harga terbaru dari server — jangan gunakan harga dari cache untuk screen produk. Harga di homepage memang boleh dari cache, tapi saat user masuk ke screen transaksi, wajib refresh harga.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (selalu fetch harga terbaru saat masuk screen produk)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Deteksi offline yang tidak akurat — app masih berpikir online padahal koneksi sangat lambat (bukan offline tapi sama buruknya)</div>
+          <div class="bn-a">Jangan hanya cek "ada/tidak ada koneksi" — cek juga apakah server bisa dijangkau dengan timeout pendek (2 detik). Koneksi yang sangat lambat (misalnya sinyal 2G) tetap terdeteksi sebagai "online" tapi API request akan timeout. Perlakukan keduanya sama: tampilkan data dari cache sambil terus coba refresh di background.</div>
+          <div class="bn-owner">PIC: Agung + Fikly (implementasi network quality check, bukan hanya connectivity check)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">App tidak crash atau tampil layar kosong saat offline</div>
+            <div class="hasil-item">User tahu sedang offline dari banner tipis di atas</div>
+            <div class="hasil-item">Pesan ramah saat tap produk — bukan error teknikal</div>
+            <div class="hasil-item">Saat online kembali, app langsung refresh tanpa restart manual</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">App crash atau tampil layar putih kosong saat offline</div>
+            <div class="hasil-item">Data form yang sudah diisi hilang saat koneksi putus</div>
+            <div class="hasil-item">Harga dari cache berbeda dengan harga aktual saat online</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('f05',null)">← F05: Layanan Semua</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function go(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sbi').forEach(s => s.classList.remove('active'));
+  const p = document.getElementById('page-' + id);
+  if (p) p.classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    document.querySelectorAll('.sbi').forEach(s => {
+      if (s.getAttribute('onclick') && s.getAttribute('onclick').includes("'" + id + "'")) {
+        s.classList.add('active');
+      }
+    });
+  }
+  document.querySelector('.main').scrollTop = 0;
+}
+function tog(header) {
+  const body = header.nextElementSibling;
+  const t = header.querySelector('.fb-toggle');
+  const isOpen = body.classList.toggle('open');
+  t.style.transform = isOpen ? 'rotate(180deg)' : '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.fb-body').forEach(b => b.classList.add('open'));
+});
+</script>
+</body>
+</html>
