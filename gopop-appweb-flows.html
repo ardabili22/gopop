@@ -212,6 +212,16 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('t-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Proses & Status Transaksi</span></div>
     <div class="sbi" onclick="go('t-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Transfer Gagal</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#F59E0B"></div>04 · Pulsa & Paket Data</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('p-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input Nomor HP</span></div>
+    <div class="sbi" onclick="go('p-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Deteksi Operator & Pilih Nominal</span></div>
+    <div class="sbi" onclick="go('p-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Bayar</span></div>
+    <div class="sbi" onclick="go('p-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Status Sukses</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -3126,7 +3136,461 @@ come',null)">🏠 Semua Flow</div>
 </div>
 
 -item">Pesan ramah saat tap produk — bukan error teknikal</div>
-            <div class="hasil-item">Saat online kembali, app langsung refresh tanpa restart manual</div>
+            <div class="hasil-item">Saat o
+<!-- ============================================================ PULSA F01 ============================================================ -->
+<div id="page-p-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 04 — Pulsa & Paket Data <span>›</span> F01</div>
+    <div class="fh-title">Input Nomor HP</div>
+    <div class="fh-desc">Langkah pertama isi ulang pulsa atau paket data. User memasukkan nomor HP yang ingin diisi ulang. Ada tab "Pulsa" dan "Paket Data" untuk berpindah jenis produk. Sistem mendeteksi operator otomatis dari nomor yang diinput.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 06 (node 1:949)</div>
+        <div class="figma-ref-desc">Header "Pulsa & Paket Data" + subjudul "Isi ulang tanpa login". Progress bar 3 langkah step 1 aktif (lime). Card: label "Nomor Handphone", field input placeholder "08xx xxxx xxxx", section "Riwayat nomor sebelumnya" dengan pill chips (ikon operator + nomor). Tab switcher Pulsa | Paket Data (Pulsa aktif = putih, Paket Data abu). Area bawah: info hint "Masukkan nomor HP yang valid untuk melihat produk". FAB ungu pojok kanan bawah (ikon bantuan/chat).</div>
+        <div class="figma-screens">
+          <span class="fs-tag">06 - Pulsa & Data Input (1:949)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Pulsa" dari homepage atau Layanan Semua</span>
+      <span class="pill pill-time">⏱ Langkah 1 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen terbuka — user lihat form input nomor</div>
+            <div class="step-desc">Tiga elemen utama tampil: (1) field input nomor HP dengan riwayat nomor sebelumnya dalam bentuk pill chips horizontal, (2) tab switcher Pulsa / Paket Data dengan Pulsa aktif secara default, (3) area konten di bawah tab yang menampilkan hint "Masukkan nomor HP yang valid untuk melihat produk" karena belum ada nomor yang diisi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User isi nomor HP — bisa ketik manual atau tap riwayat</div>
+            <div class="step-desc">Dua cara mengisi nomor:<ul>
+              <li><strong>Ketik manual:</strong> Tap field, keyboard numerik muncul, ketik nomor yang ingin diisi ulang</li>
+              <li><strong>Tap pill riwayat:</strong> Tap salah satu pill chip dari "Riwayat nomor sebelumnya" — nomor langsung terisi di field. Pill menampilkan ikon operator + nomor (contoh di Figma: XL 081934567890, Telkomsel 081234567890)</li>
+            </ul>
+            Riwayat nomor hanya tampil untuk user yang sudah login — guest tidak punya riwayat.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Sistem deteksi operator dari awalan nomor</div>
+            <div class="step-desc">Begitu user selesai ketik minimal 4 digit, sistem otomatis deteksi operator berdasarkan awalan nomor (prefix detection):<ul>
+              <li>0811–0818, 0855–0858 → Telkomsel</li>
+              <li>0817–0819, 0859, 0877–0879 → XL/Axis</li>
+              <li>0851–0853, 0814–0816 → Indosat</li>
+              <li>0831–0833, 0895–0899 → Tri</li>
+              <li>0881–0889 → Smartfren</li>
+            </ul>
+            Ikon operator muncul di pojok kanan field (tampil dari screen 07 Figma: ikon Telkomsel merah muncul di dalam field saat nomor 081234567890 diisi).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User bisa switch tab ke "Paket Data" kapan saja</div>
+            <div class="step-desc">Tab Pulsa/Paket Data ada di atas grid produk. Switch tab tidak menghapus nomor yang sudah diisi — hanya mengganti jenis produk yang ditampilkan di langkah berikutnya. Tab aktif tampil dengan background putih dan teks ungu tebal, tab nonaktif abu.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Nomor valid & operator terdeteksi → konten produk muncul</div>
+            <div class="step-desc">Setelah nomor minimal 10 digit dan operator terdeteksi, area di bawah tab berubah dari hint menjadi daftar produk tersedia. Untuk flow Pulsa: langsung tampilkan grid nominal. Untuk Paket Data: tampilkan kategori paket (Harian, Mingguan, Bulanan, dll). User tap salah satu untuk lanjut ke F02.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Isi ulang bisa dilakukan tanpa login.</strong> Subjudul screen "Isi ulang tanpa login" menegaskan ini. Riwayat nomor hanya tersedia untuk user login — guest tidak punya riwayat tapi tetap bisa isi manual.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Deteksi operator dari prefix nomor dilakukan di sisi FE</strong> — tidak perlu hit API. Ini membuat respons instan tanpa loading. Kalau prefix tidak dikenali (misalnya nomor asing atau format aneh), tampilkan pesan "Operator tidak dikenali — pastikan nomor benar."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk yang ditampilkan dinamis dari Digiflazz</strong> berdasarkan operator yang terdeteksi. Setiap operator punya daftar produk pulsa dan paket data yang berbeda-beda. Produk yang tidak tersedia dari Digiflazz tidak akan ditampilkan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>FAB ungu (Floating Action Button) di pojok kanan bawah</strong> adalah tombol bantuan/live chat. Selalu tampil di semua screen pulsa & paket data — user yang bingung bisa langsung tap untuk ke screen 27 Live Chat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Nomor HP yang dimasukkan bukan nomor seluler aktif Indonesia (misalnya nomor fixed line atau nomor asing)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah 10+ digit diisi, operator tidak terdeteksi. Area produk tetap tampilkan hint, tidak ada produk yang muncul.</div>
+          <div class="bc-handle">Tampilkan pesan ramah: "Operator tidak terdeteksi. Pastikan nomor yang dimasukkan adalah nomor HP Indonesia yang aktif." Tombol lanjut tetap nonaktif sampai operator terdeteksi atau user memilih operator secara manual.</div>
+          <div class="bc-owner">PIC: Bili (desain state "operator tidak dikenali") · Agung + Fikly (implementasi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Produk pulsa dari Digiflazz tidak tersedia untuk operator yang terdeteksi saat ini</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Grid produk kosong atau tampil pesan "Produk sedang tidak tersedia."</div>
+          <div class="bc-handle">Tampilkan empty state yang informatif: "Produk [nama operator] sedang tidak tersedia. Coba lagi nanti atau hubungi bantuan." Sertakan tombol ke Live Chat (FAB juga tetap ada).</div>
+          <div class="bc-owner">PIC: Agung + Fikly (empty state design) · Ipong (pantau ketersediaan produk per operator di Digiflazz)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor terisi, operator terdeteksi (ikon muncul di field)</div>
+            <div class="hasil-item">Produk pulsa / paket data tersedia dari Digiflazz tampil</div>
+            <div class="hasil-item">User siap pilih nominal di F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Operator tidak terdeteksi → hint tetap tampil, tidak ada produk</div>
+            <div class="hasil-item">Produk tidak tersedia → empty state + tombol bantuan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f05',null)">← Transfer F05</div>
+    <div class="fn-btn next" onclick="go('p-f02',null)">F02: Pilih Nominal →</div>
+  </div>
+</div>
+
+<!-- PULSA F02: PILIH NOMINAL -->
+<div id="page-p-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 04 — Pulsa & Paket Data <span>›</span> F02</div>
+    <div class="fh-title">Deteksi Operator & Pilih Nominal</div>
+    <div class="fh-desc">Setelah nomor HP valid terisi, user melihat grid nominal produk yang tersedia. Setiap item menampilkan nominal dan harga jual. User tap nominal yang diinginkan untuk lanjut ke checkout.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 07 (node 1:998)</div>
+        <div class="figma-ref-desc">Nomor 081234567890 terisi di field, ikon Telkomsel merah tampil di pojok kanan field. Tab "Pulsa" aktif. Grid 2 kolom × 4 baris: Rp5.000 (Harga Rp6.500), Rp10.000 (Harga Rp11.500), Rp15.000 (Harga Rp16.500), Rp20.000 (Harga Rp21.000), Rp25.000 (Harga Rp25.750), Rp50.000 (Harga Rp50.250), Rp100.000 (Harga Rp99.750), Rp150.000 (Harga Rp149.500). Rp5.000 terpilih (border ungu aktif + shadow). Sticky bar: "Total Bayar Rp6.500" + tombol lime "Lanjut →".</div>
+        <div class="figma-screens">
+          <span class="fs-tag">07 - Pilih Nominal (1:998)</span>
+          <span class="fs-tag">07b, 07c, 07d — varian lain</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Nomor HP valid terisi + operator terdeteksi</span>
+      <span class="pill pill-time">⏱ Langkah 2 dari 3 — produk dari Digiflazz</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Grid produk tampil sesuai operator dan tab yang aktif</div>
+            <div class="step-desc">Grid 2 kolom berisi semua nominal pulsa yang tersedia untuk operator yang terdeteksi. Setiap card produk menampilkan dua baris:<ul>
+              <li><strong>Baris atas:</strong> Nominal pulsa (bold besar) — ini yang diterima penerima</li>
+              <li><strong>Baris bawah:</strong> Harga jual (abu kecil) — ini yang dibayar user</li>
+            </ul>
+            Contoh dari Figma Telkomsel: Rp5.000 (Harga Rp6.500), Rp10.000 (Harga Rp11.500), dst. Perhatikan Rp100.000 harga Rp99.750 — ini produk "harga lebih murah dari nominal" yang umum di PPOB.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User tap nominal yang diinginkan</div>
+            <div class="step-desc">Tap card produk → card mendapat border ungu aktif dengan shadow tipis (sesuai Figma: Rp5.000 terpilih tampil dengan background #F0EBFF, border ungu, dan shadow). Sticky bar bawah langsung update: "Total Bayar" berubah sesuai harga produk yang dipilih (contoh: Total Bayar Rp6.500 saat Rp5.000 dipilih).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Lanjut →" di sticky bar</div>
+            <div class="step-desc">Tombol "Lanjut →" aktif begitu ada nominal terpilih. Tap tombol membawa user ke screen checkout (F03) — serupa dengan checkout Transfer tapi untuk produk pulsa.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Harga yang ditampilkan adalah harga jual ke user (HPP + margin GoPop).</strong> Nominal yang terisi ke HP penerima adalah kolom kiri (yang lebih besar). HPP (harga beli GoPop ke Digiflazz) tidak ditampilkan ke user — hanya margin yang dimasukkan Ipong di dashboard produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada biaya layanan tambahan untuk pulsa dan paket data</strong> — berbeda dengan transfer e-wallet yang ada Rp1.000. Harga yang ditampilkan di grid sudah termasuk semua. Ini yang membuat tampilan sederhana: satu nominal, satu harga.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Daftar produk langsung dari Digiflazz</strong> — bukan dari CMS GoPop. Kalau Digiflazz tidak punya produk untuk nominal tertentu, nominal itu tidak akan muncul. Ipong tidak perlu update manual per operator.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Hanya satu nominal yang bisa dipilih sekaligus.</strong> Tap nominal lain langsung pindah pilihan — tidak ada keranjang atau multi-select.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User tap nominal tapi Digiflazz sedang gangguan — produk tersebut tidak bisa diproses</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Bisa tap nominal dan lanjut ke checkout, tapi saat proses transaksi nanti akan gagal.</div>
+          <div class="bc-handle">Idealnya produk yang sedang gangguan ditandai dengan label "Sedang Gangguan" di card-nya dan tidak bisa diklik. Ini membutuhkan Ipong update status produk di dashboard real-time saat ada gangguan. Sementara fitur ini belum ada, user mungkin baru tahu gagal di tahap proses transaksi.</div>
+          <div class="bc-owner">PIC: Ipong (update status produk saat gangguan) · Isal + Ipong (tambah indikator status produk di grid)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Harga produk berubah antara user melihat grid dan tap "Lanjut" (Ipong update harga di saat bersamaan)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Di screen checkout, harga berbeda dari yang tampil di grid tadi.</div>
+          <div class="bc-handle">Ini kondisi race condition yang jarang tapi bisa terjadi. Di screen checkout, selalu fetch ulang harga terbaru dari server — jangan pakai harga dari cache grid. Kalau harga berubah, tampilkan notifikasi kecil: "Harga produk telah diperbarui." User masih bisa lanjut dengan harga baru.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (selalu fetch ulang harga di checkout) · Irwan + Rifky (pastikan price endpoint selalu return harga terbaru)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Grid nominal tampil sesuai operator (Telkomsel, XL, dll)</div>
+            <div class="hasil-item">User tap nominal → sticky bar update total</div>
+            <div class="hasil-item">Tap "Lanjut →" → masuk ke checkout F03</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Bermasalah</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Produk gangguan tidak ditandai → user baru tahu gagal di proses</div>
+            <div class="hasil-item">Harga berubah → notifikasi di checkout, bukan block user</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('p-f01',null)">← F01: Input Nomor</div>
+    <div class="fn-btn next" onclick="go('p-f03',null)">F03: Checkout & Bayar →</div>
+  </div>
+</div>
+
+<!-- PULSA F03: CHECKOUT -->
+<div id="page-p-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 04 — Pulsa & Paket Data <span>›</span> F03</div>
+    <div class="fh-title">Checkout & Bayar</div>
+    <div class="fh-desc">Langkah terakhir sebelum transaksi diproses. User melihat ringkasan: nomor tujuan, operator, nominal, dan harga. Pilih metode pembayaran lalu tap bayar. Alur checkout identik dengan Transfer E-Wallet — metode dan biaya sama.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 03b - Checkout Pulsa (1:1400). Format sama dengan checkout Transfer: card ringkasan (produk, nomor, nominal, harga), card total, field kode promo, pilih metode bayar, sticky bar "Total Bayar + Bayar Sekarang".</div>
+        <div class="figma-screens">
+          <span class="fs-tag">03b - Checkout Pulsa (1:1400)</span>
+          <span class="fs-tag-miss">Payment Instruction — BLOCKER (sama dengan Transfer)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap "Lanjut →" dari screen nominal</span>
+      <span class="pill pill-time">⏱ Langkah 3 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen checkout terbuka dengan ringkasan transaksi</div>
+            <div class="step-desc">Card ringkasan berisi: nama produk (misal "Pulsa Telkomsel"), nomor tujuan, operator, nominal yang diterima, dan harga yang dibayar. Tidak ada biaya layanan terpisah untuk pulsa — harga sudah all-in.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User pilih metode bayar — sama persis dengan Transfer</div>
+            <div class="step-desc">4 grup metode bayar identik dengan checkout Transfer: QRIS (default, Gratis), E-Wallet (GoPay/OVO/DANA/ShopeePay, Gratis), VA (BCA/BNI/Mandiri/BRI, +Rp2.500), Gerai Retail (Alfamart/Indomaret, +Rp3.000). Total bayar update real-time saat ganti metode.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Bayar Sekarang" → transaksi diproses</div>
+            <div class="step-desc">Setelah pembayaran dikonfirmasi payment gateway, GoPop kirim request ke Digiflazz untuk proses top-up pulsa. Pulsa biasanya masuk ke HP penerima dalam 1–5 menit. User melihat screen status (F04).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Pulsa bisa diisi ke nomor HP manapun — tidak harus nomor sendiri.</strong> User bisa isi pulsa untuk anggota keluarga atau orang lain. Tidak ada verifikasi kepemilikan nomor HP tujuan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada kode promo khusus pulsa</strong> saat ini — field kode promo tampil tapi voucher pulsa belum dikonfigurasi. Ini bisa diaktifkan di masa depan dari dashboard Acoy.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Transaksi pulsa tidak bisa di-cancel setelah "Bayar Sekarang" ditap</strong> dan pembayaran dikonfirmasi. Pulsa yang sudah terkirim ke HP tidak bisa ditarik kembali. Pastikan user sudah cek nomor tujuan sebelum bayar.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User salah nomor — pulsa terkirim ke nomor yang salah</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Transaksi sukses, tapi nomor yang diisi ulang bukan yang dimaksud.</div>
+          <div class="bc-handle">Sayangnya pulsa yang sudah terkirim tidak bisa ditarik. CS bisa bantu cek apakah transaksi benar-benar terproses, tapi tidak ada cara untuk refund pulsa yang sudah masuk ke nomor lain. SOP: CS jelaskan situasi dengan empati, tidak ada yang bisa dilakukan untuk recovery. Pencegahan: tampilkan nomor tujuan dengan jelas di screen checkout dan minta user konfirmasi sebelum bayar.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (tampilkan nomor tujuan besar dan jelas di checkout) · CS (handle dengan empati)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Checkout Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pembayaran dikonfirmasi → GoPop kirim request top-up ke Digiflazz</div>
+            <div class="hasil-item">Pulsa masuk ke HP tujuan dalam 1–5 menit</div>
+            <div class="hasil-item">Notifikasi WA konfirmasi terkirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Salah nomor → tidak bisa recovery, CS handle dengan empati</div>
+            <div class="hasil-item">Top-up gagal → refund sesuai flow Transfer F05</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('p-f02',null)">← F02: Pilih Nominal</div>
+    <div class="fn-btn next" onclick="go('p-f04',null)">F04: Status Sukses →</div>
+  </div>
+</div>
+
+<!-- PULSA F04: STATUS SUKSES -->
+<div id="page-p-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 04 — Pulsa & Paket Data <span>›</span> F04</div>
+    <div class="fh-title">Status Transaksi — Sukses & Gagal</div>
+    <div class="fh-desc">Setelah bayar, user melihat status transaksi. Untuk pulsa: proses biasanya cepat (1–5 menit). Screen sukses menampilkan konfirmasi pengiriman. Screen gagal memberikan opsi untuk coba lagi atau hubungi CS.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">04b - Status Cek Transaksi Pulsa (1:1603)</span>
+          <span class="fs-tag">05b - Status Sukses Pulsa (1:1637)</span>
+          <span class="fs-tag">05h - Status Transaksi Gagal (1:11683)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah bayar</span>
+      <span class="pill pill-trigger">🔔 Setelah payment gateway konfirmasi pembayaran</span>
+      <span class="pill pill-time">⏱ Pulsa masuk 1–5 menit</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Sukses</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen "Sedang Diproses" tampil</div>
+            <div class="step-desc">Setelah pembayaran dikonfirmasi, screen 04b tampil dengan animasi loading dan pesan "Sedang mengirimkan pulsa ke 08xxxx..." User tidak perlu melakukan apa-apa — proses berjalan otomatis.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Digiflazz konfirmasi — pulsa terkirim</div>
+            <div class="step-desc">Digiflazz memproses top-up dan konfirmasi ke GoPop. Status DB berubah ke "sukses". Screen otomatis berganti ke layar sukses (screen 05b).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses tampil — transaksi selesai</div>
+            <div class="step-desc">Screen 05b menampilkan: ikon centang hijau, detail transaksi (produk, nomor tujuan, nominal, harga yang dibayar), nomor referensi, dan dua tombol: "Isi Ulang Lagi" dan "Lihat Riwayat". Notifikasi WA juga terkirim ke nomor yang digunakan untuk bayar (nomor user, bukan nomor tujuan).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau proses terlalu lama (lebih dari 5 menit), ini kondisi "pending"</strong> — bukan langsung gagal. Beberapa operator kadang butuh waktu lebih lama. Tampilkan pesan yang menyakinkan: "Proses sedikit lebih lama dari biasanya. Pulsa akan masuk dalam beberapa menit. Jika belum masuk dalam 30 menit, hubungi bantuan."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau gagal, refund diproses otomatis</strong> — sama dengan flow Transfer F05. User mendapat notifikasi WA konfirmasi bahwa refund sedang diproses.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nomor referensi wajib tampil di screen sukses maupun gagal.</strong> Ini satu-satunya identifikasi yang bisa CS gunakan untuk trace transaksi di dashboard.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Transaksi Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pulsa/data masuk ke HP tujuan dalam 1–5 menit</div>
+            <div class="hasil-item">Screen sukses tampil dengan nomor ref</div>
+            <div class="hasil-item">Notifikasi WA terkirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Transaksi Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Refund otomatis diproses</div>
+            <div class="hasil-item">Notifikasi WA konfirmasi refund</div>
+            <div class="hasil-item">User bisa coba lagi atau hubungi CS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('p-f03',null)">← F03: Checkout</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+nline kembali, app langsung refresh tanpa restart manual</div>
           </div>
         </div>
         <div class="hasil-box hasil-fail">
