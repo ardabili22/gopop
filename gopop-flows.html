@@ -149,7 +149,7 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 @media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
 
 
-/* === Dashboard additions === */
+/* === Dashboard CSS === */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
@@ -302,7 +302,6 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 @media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
 
 
-/* Tab switcher */
 .tab-switcher{display:flex;gap:4px;padding:10px 12px 8px;background:#fff;border-bottom:1px solid #E8E4F5;position:sticky;top:0;z-index:10;}
 .tab-btn{flex:1;padding:8px 0;border-radius:9px;border:1.5px solid #E8E4F5;background:#F4F2F9;color:#9085AE;font-size:11px;font-weight:800;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;}
 .tab-btn.active{background:#4A2D8C;border-color:#4A2D8C;color:#fff;}
@@ -311,7 +310,6 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="tb-brand">
     <div class="tb-logo">G</div>
@@ -320,12 +318,11 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
   <div class="tb-meta">Dashboard · App &amp; Web Consumer</div>
 </div>
-
 <div class="layout">
 <nav class="sidebar">
   <div class="tab-switcher">
-    <button class="tab-btn active" id="tab-dash" onclick="switchTab('dash',this)">📊 Dashboard</button>
-    <button class="tab-btn" id="tab-app" onclick="switchTab('app',this)">📱 App &amp; Web</button>
+    <button class="tab-btn active" onclick="switchTab('dash',this)">📊 Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('app',this)">📱 App &amp; Web</button>
   </div>
   <div class="tab-section active" id="nav-dash">
 
@@ -469,17 +466,6 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 
   <div class="sdiv"></div>
   <div class="sb-sec">
-    <div class="sb-label"><div class="sb-dot" style="background:#8B5CF6"></div>03 · Transfer E-Wallet</div>
-    <div class="sb-flow-label">Flow</div>
-    <div class="sbi" onclick="go('t-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Pilih E-Wallet & Input Data</span></div>
-    <div class="sbi" onclick="go('t-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Inquiry Nama Penerima</span></div>
-    <div class="sbi" onclick="go('t-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Pilih Bayar</span></div>
-    <div class="sbi" onclick="go('t-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Proses & Status Transaksi</span></div>
-    <div class="sbi" onclick="go('t-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Transfer Gagal</span></div>
-  </div>
-
-  <div class="sdiv"></div>
-  <div class="sb-sec">
     <div class="sb-label"><div class="sb-dot" style="background:#F59E0B"></div>04 · Pulsa & Paket Data</div>
     <div class="sb-flow-label">Flow</div>
     <div class="sbi" onclick="go('p-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input Nomor HP</span></div>
@@ -578,7 +564,6 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 
   </div>
 </nav>
-
 <main class="main">
 
 
@@ -9967,44 +9952,30 @@ terbayar dan terupdate di sistem BPJS</div>
 
 </main>
 </div>
-
 <script>
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
-  document.querySelectorAll('.tab-section').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById('nav-' + tab).classList.add('active');
-  if (tab === 'dash') go('d-welcome', null);
-  else go('welcome', null);
+  document.querySelectorAll('.tab-section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('nav-'+tab).classList.add('active');
+  go(tab==='dash'?'d-welcome':'welcome',null);
 }
-
-function go(id, el) {
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.sbi').forEach(function(s){ s.classList.remove('active'); });
-  var p = document.getElementById('page-' + id);
-  if (p) p.classList.add('active');
-  if (el) {
-    el.classList.add('active');
-  } else {
-    document.querySelectorAll('.sbi').forEach(function(s){
-      var oc = s.getAttribute('onclick');
-      if (oc && oc.indexOf("'" + id + "'") !== -1) s.classList.add('active');
-    });
-  }
-  var m = document.querySelector('.main');
-  if (m) m.scrollTop = 0;
+function go(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.sbi').forEach(function(s){s.classList.remove('active');});
+  var p=document.getElementById('page-'+id);
+  if(p)p.classList.add('active');
+  if(el){el.classList.add('active');}
+  else{document.querySelectorAll('.sbi').forEach(function(s){var o=s.getAttribute('onclick');if(o&&o.indexOf("'"+id+"'")!==-1)s.classList.add('active');});}
+  var m=document.querySelector('.main');if(m)m.scrollTop=0;
 }
-
-function tog(header) {
-  var body = header.nextElementSibling;
-  var t = header.querySelector('.fb-toggle');
-  var isOpen = body.classList.toggle('open');
-  if (t) t.style.transform = isOpen ? 'rotate(180deg)' : '';
+function tog(h){
+  var b=h.nextElementSibling,t=h.querySelector('.fb-toggle'),o=b.classList.toggle('open');
+  if(t)t.style.transform=o?'rotate(180deg)':'';
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.fb-body').forEach(function(b){ b.classList.add('open'); });
-  go('d-welcome', null);
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.fb-body').forEach(function(b){b.classList.add('open');});
+  go('d-welcome',null);
 });
 </script>
 </body>
