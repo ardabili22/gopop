@@ -222,6 +222,15 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('p-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Bayar</span></div>
     <div class="sbi" onclick="go('p-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Status Sukses</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#EF4444"></div>05 · BPJS</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('b-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input No. Kartu & Cek Tagihan</span></div>
+    <div class="sbi" onclick="go('b-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Inquiry & Konfirmasi Tagihan</span></div>
+    <div class="sbi" onclick="go('b-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Status</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -3594,6 +3603,369 @@ nline kembali, app langsung refresh tanpa restart manual</div>
           </div>
         </div>
         <div class="hasil-box hasil-fail">
+<!-- ============================================================ BPJS F01 ============================================================ -->
+<div id="page-b-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 05 — BPJS <span>›</span> F01</div>
+    <div class="fh-title">Input Nomor Kartu & Cek Tagihan</div>
+    <div class="fh-desc">BPJS punya dua produk terpisah — Kesehatan dan Ketenagakerjaan — masing-masing punya screen input sendiri (08 dan 10). Flow ini sama untuk keduanya: user input nomor kartu lalu tap "Cek" untuk lihat tagihan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 08 — BPJS Kesehatan Input (1:1727): Header "BPJS Kesehatan" + subjudul "Bayar tagihan tanpa login". Progress bar 3 langkah step 1. Card: label "No. Kartu BPJS", field input + tombol "Cek" (abu, nonaktif). Area bawah: hint "Masukkan nomor BPJS". FAB bantuan pojok kanan bawah. Screen 10 — BPJS Ketenagakerjaan (1:1760): identik tapi dengan label "Masukkan nomor BPJS Ketenagakerjaan".</div>
+        <div class="figma-screens">
+          <span class="fs-tag">08 - BPJS Kesehatan Input (1:1727)</span>
+          <span class="fs-tag">10 - BPJS Ketenagakerjaan Input (1:1760)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "BPJS" dari homepage atau Layanan Semua</span>
+      <span class="pill pill-time">⏱ Langkah 1 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:12px;">
+        <span>ℹ️</span>
+        <div><strong>Dua jalur masuk ke BPJS:</strong> Dari homepage, tap "BPJS" membuka submenu pilihan (Kesehatan atau Ketenagakerjaan). Setelah pilih, screen input masing-masing terbuka. Kedua screen identik strukturnya, hanya berbeda label dan nomor kartu yang diterima.</div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User tap jenis BPJS yang ingin dibayar</div>
+            <div class="step-desc">Dari submenu pilihan (bisa berupa bottom sheet atau screen tersendiri — belum ada di Figma, perlu dikonfirmasi Bili): user pilih "BPJS Kesehatan" atau "BPJS Ketenagakerjaan". Pilihan ini menentukan screen input mana yang terbuka dan endpoint mana yang dipanggil ke Digiflazz.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User input nomor kartu BPJS</div>
+            <div class="step-desc">Field input dengan label "No. Kartu BPJS" dan placeholder sama. Nomor kartu BPJS Kesehatan: 13 digit. Nomor kartu BPJS Ketenagakerjaan: bervariasi tapi umumnya 11 digit. Keyboard numerik muncul otomatis. Tombol "Cek" di sebelah kanan field masih abu (nonaktif) selama field kosong atau belum cukup digit.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Nomor cukup digit → tombol "Cek" aktif</div>
+            <div class="step-desc">Begitu nomor kartu mencapai panjang minimum yang valid, tombol "Cek" berubah dari abu menjadi aktif (warna ungu atau lime). User tap "Cek" untuk query tagihan ke Digiflazz.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>BPJS Kesehatan dan Ketenagakerjaan adalah produk berbeda</strong> dengan endpoint API Digiflazz yang berbeda. Kedua produk punya screen input tersendiri — tidak bisa satu screen untuk keduanya.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tagihan BPJS bersifat inquiry-based</strong> — tidak ada nominal yang bisa dipilih user. User tidak pilih berapa yang mau dibayar; sistem yang menampilkan tagihan yang harus dibayar dari database BPJS via Digiflazz. Ini berbeda dari Pulsa di mana user memilih nominal.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bayar tagihan BPJS bisa dilakukan tanpa login</strong> — subjudul screen "Bayar tagihan tanpa login" menegaskan ini. Guest tetap bisa bayar BPJS untuk diri sendiri atau anggota keluarga.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu nomor kartu bisa punya lebih dari satu anggota tanggungan</strong> (misalnya kepala keluarga + istri + anak dalam satu nomor virtual account). Ini akan ditampilkan di screen inquiry (F02).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User tidak tahu nomor kartu BPJS — kartu fisik tidak ada di tangan</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Field kosong, tidak tahu harus isi apa.</div>
+          <div class="bc-handle">Tambahkan hint di bawah label field: "Nomor 13 digit yang tertera di kartu BPJS atau aplikasi Mobile JKN." Ini mengurangi tiket bantuan dari user yang bingung harus isi nomor apa.</div>
+          <div class="bc-owner">PIC: Bili (tambahkan hint text di bawah label field nomor kartu)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Nomor kartu BPJS yang dimasukkan tidak valid (format salah atau tidak terdaftar)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Cek", muncul pesan: "Nomor BPJS tidak ditemukan. Pastikan nomor yang kamu masukkan sudah benar."</div>
+          <div class="bc-handle">Tampilkan pesan ramah dengan link ke bantuan: "Hubungi CS kami kalau butuh bantuan menemukan nomor BPJS kamu." Jangan tampilkan error code teknikal dari Digiflazz.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (translate error Digiflazz ke pesan ramah) · Irwan + Rifky (handle error response dari Digiflazz)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada screen submenu pilihan BPJS (Kesehatan vs Ketenagakerjaan) di Figma — Agung dan Fikly tidak tahu harus implement submenu seperti apa</div>
+          <div class="bn-a">Saat ini dari homepage, tap "BPJS" tidak punya landing point yang jelas. Dua opsi: (1) Bili buat screen submenu baru, atau (2) tampilkan bottom sheet sederhana dengan dua pilihan. Opsi 2 lebih cepat dan tidak perlu screen baru.</div>
+          <div class="bn-owner">PIC: Bili (tentukan solusi UX untuk submenu BPJS) · Agung + Fikly (implementasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor kartu valid terisi, tombol "Cek" aktif</div>
+            <div class="hasil-item">Tap "Cek" → query tagihan ke Digiflazz → lanjut ke F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor tidak valid → pesan ramah + link bantuan</div>
+            <div class="hasil-item">Digiflazz timeout → pesan retry + bantuan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('p-f04',null)">← Pulsa F04</div>
+    <div class="fn-btn next" onclick="go('b-f02',null)">F02: Inquiry Tagihan →</div>
+  </div>
+</div>
+
+<!-- BPJS F02: INQUIRY -->
+<div id="page-b-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 05 — BPJS <span>›</span> F02</div>
+    <div class="fh-title">Inquiry & Konfirmasi Tagihan BPJS</div>
+    <div class="fh-desc">Setelah tap "Cek", sistem query tagihan BPJS dari Digiflazz. Hasilnya menampilkan nama peserta, nomor virtual account, jumlah tagihan, dan periode pembayaran. User perlu konfirmasi sebelum lanjut bayar.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 09 — BPJS Kesehatan Inquiry (1:2389): Menampilkan detail tagihan peserta setelah nomor kartu ditemukan. Screen 11 — BPJS Ketenagakerjaan Inquiry (1:2460): identik strukturnya.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">09 - BPJS Kesehatan Inquiry (1:2389)</span>
+          <span class="fs-tag">11 - BPJS Ketenagakerjaan Inquiry (1:2460)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Cek" dari F01 — nomor kartu valid</span>
+      <span class="pill pill-time">⏱ Langkah 2 dari 3 — query Digiflazz &lt;5 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Sistem query tagihan BPJS ke Digiflazz</div>
+            <div class="step-desc">Server GoPop kirim nomor kartu ke Digiflazz untuk inquiry tagihan. Loading state tampil di area bawah field nomor. Biasanya selesai dalam 2–5 detik.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Hasil inquiry tampil — detail tagihan lengkap</div>
+            <div class="step-desc">Card tagihan muncul berisi:<ul>
+              <li><strong>Nama Peserta:</strong> Nama pemegang kartu BPJS</li>
+              <li><strong>Nomor Virtual Account:</strong> Nomor VA BPJS untuk referensi</li>
+              <li><strong>Jumlah Tagihan:</strong> Total yang harus dibayar bulan ini</li>
+              <li><strong>Jumlah Peserta:</strong> Berapa anggota yang ditanggung</li>
+              <li><strong>Periode:</strong> Bulan tagihan (misal: Januari 2025)</li>
+            </ul>
+            Progress bar bergerak ke step 2. Tombol "Bayar Tagihan" aktif di sticky bar bawah.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User verifikasi detail lalu tap "Bayar Tagihan"</div>
+            <div class="step-desc">User pastikan nama peserta dan jumlah tagihan sesuai. Tap "Bayar Tagihan" membawa user ke screen checkout (F03) — sama strukturnya dengan checkout produk lain.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jumlah tagihan BPJS tidak bisa diubah user.</strong> Berbeda dari pulsa di mana user pilih nominal, tagihan BPJS sudah ditentukan oleh sistem BPJS. User hanya bisa bayar sesuai tagihan yang muncul — tidak kurang, tidak lebih.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>BPJS Kesehatan dengan banyak peserta tanggungan</strong> (misal kepala keluarga + 3 anggota) punya tagihan yang lebih besar. Card tagihan perlu menampilkan breakdown jumlah peserta agar user tidak kaget dengan total yang besar.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada biaya layanan tambahan dari GoPop untuk pembayaran BPJS</strong> — harga yang tampil sudah all-in. Tapi biaya pembayaran tetap berlaku sesuai metode bayar yang dipilih di checkout (QRIS Gratis, VA +Rp2.500, Retail +Rp3.000).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tagihan yang sudah lewat jatuh tempo tetap bisa dibayar</strong> lewat GoPop. Digiflazz akan tampilkan total termasuk denda keterlambatan jika ada.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Tagihan BPJS bulan ini sudah lunas — tidak ada tagihan yang perlu dibayar</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Inquiry berhasil tapi tidak ada tagihan yang tampil, atau tagihan Rp0.</div>
+          <div class="bc-handle">Tampilkan pesan yang jelas dan positif: "Tagihan BPJS kamu untuk periode ini sudah lunas ✅. Tidak ada yang perlu dibayar sekarang." Dengan tombol "Kembali ke Beranda". Jangan tampilkan layar kosong atau pesan error.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (empty state "tagihan lunas" yang positif)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Sistem BPJS sedang maintenance — Digiflazz tidak bisa query tagihan</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Loading lebih dari 5 detik lalu pesan error.</div>
+          <div class="bc-handle">Tampilkan: "Layanan BPJS sedang gangguan sementara. Coba lagi dalam beberapa menit." dengan tombol "Coba Lagi" dan link ke bantuan. Ini sering terjadi saat sistem BPJS maintenance rutin — biasanya singkat.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (handle timeout gracefully) · Kayong (update banner homepage kalau gangguan lama)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Inquiry Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Detail tagihan tampil: nama, VA, jumlah, periode</div>
+            <div class="hasil-item">User konfirmasi → lanjut ke checkout F03</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Inquiry Gagal / Kosong</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tagihan lunas → pesan positif "sudah lunas ✅"</div>
+            <div class="hasil-item">BPJS maintenance → pesan ramah + retry</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('b-f01',null)">← F01: Input Nomor</div>
+    <div class="fn-btn next" onclick="go('b-f03',null)">F03: Checkout & Status →</div>
+  </div>
+</div>
+
+<!-- BPJS F03: CHECKOUT & STATUS -->
+<div id="page-b-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 05 — BPJS <span>›</span> F03</div>
+    <div class="fh-title">Checkout & Status Pembayaran BPJS</div>
+    <div class="fh-desc">Checkout BPJS identik dengan produk lain — ringkasan transaksi, pilih metode bayar, lalu bayar. Bedanya: nominal sudah fixed dari inquiry, tidak bisa diubah. Setelah bayar, status dikonfirmasi dan langsung terupdate ke sistem BPJS.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">03c - Checkout BPJS Kes. (1:2613)</span>
+          <span class="fs-tag">03d - Checkout BPJS TK (1:2830)</span>
+          <span class="fs-tag">05c - Sukses BPJS Kes. (1:3264)</span>
+          <span class="fs-tag">05d - Sukses BPJS TK (1:3347)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap "Bayar Tagihan" dari inquiry</span>
+      <span class="pill pill-time">⏱ Langkah 3 dari 3 — konfirmasi ke BPJS real-time</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Checkout terbuka — nominal sudah terisi otomatis</div>
+            <div class="step-desc">Card ringkasan menampilkan: jenis BPJS (Kesehatan / Ketenagakerjaan), nama peserta, nomor kartu, jumlah tagihan dari inquiry, dan periode pembayaran. User tidak bisa ubah nominal — sudah fixed dari sistem BPJS.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User pilih metode bayar dan tap "Bayar Sekarang"</div>
+            <div class="step-desc">Identik dengan checkout produk lain: QRIS (Gratis, default), E-Wallet (Gratis), VA (+Rp2.500), Retail (+Rp3.000). Total bayar = tagihan BPJS + biaya pembayaran yang dipilih.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Pembayaran dikonfirmasi → GoPop kirim ke Digiflazz → BPJS terupdate</div>
+            <div class="step-desc">Setelah payment gateway konfirmasi, Digiflazz memproses pembayaran ke sistem BPJS. Status tagihan peserta di database BPJS otomatis terupdate menjadi lunas untuk periode tersebut. Proses biasanya 1–3 menit.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses — bukti pembayaran BPJS</div>
+            <div class="step-desc">Screen 05c/05d menampilkan konfirmasi pembayaran berhasil dengan detail lengkap: nama peserta, periode yang dibayar, nomor referensi transaksi, dan nomor referensi pembayaran BPJS. Notifikasi WA dikirim ke user sebagai bukti pembayaran digital.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Pembayaran BPJS tidak bisa dibatalkan atau di-refund setelah berhasil.</strong> Berbeda dari transfer e-wallet yang bisa gagal di tengah jalan, pembayaran tagihan BPJS yang sudah dikonfirmasi Digiflazz langsung masuk ke sistem BPJS dan tidak bisa ditarik kembali.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tagihan BPJS inquiry bisa expired</strong> jika terlalu lama di screen checkout (lebih dari 15 menit). Kalau expired, user perlu kembali ke F01 dan query ulang nomor kartu untuk mendapat data tagihan terbaru.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bukti pembayaran penting</strong> — user sering butuh untuk keperluan administrasi (klaim, dsb). Nomor referensi transaksi dan nomor referensi BPJS wajib tampil jelas di screen sukses dan terkirim via WA.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User sudah bayar tapi status BPJS tidak terupdate — Digiflazz konfirmasi tapi sistem BPJS sedang error</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Transaksi GoPop sukses, tapi status BPJS di aplikasi Mobile JKN masih belum lunas.</div>
+          <div class="bc-handle">GoPop tidak bisa kontrol sistem internal BPJS. Yang bisa dilakukan: (1) Notifikasi WA dikirim dengan nomor referensi yang bisa dipakai user untuk konfirmasi ke BPJS langsung, (2) CS GoPop bisa bantu verifikasi bukti pembayaran ke Digiflazz. Biasanya sistem BPJS update dalam 1×24 jam meski ada delay.</div>
+          <div class="bc-owner">PIC: CS (bantu user dengan bukti referensi dari Digiflazz) · Irwan + Rifky (simpan referensi Digiflazz di transaksi untuk trace)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Pembayaran BPJS Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tagihan BPJS terbayar dan terupdate di sistem BPJS</div>
+            <div class="hasil-item">Screen sukses dengan nomor referensi lengkap</div>
+            <div class="hasil-item">Bukti pembayaran via WA dikirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">BPJS update delay → user bisa tunjukkan bukti WA ke BPJS</div>
+            <div class="hasil-item">Inquiry expired → user perlu query ulang dari F01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('b-f02',null)">← F02: Inquiry Tagihan</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+
           <div class="hasil-title">❌ Flow Gagal</div>
           <div class="hasil-items">
             <div class="hasil-item">App crash atau tampil layar putih kosong saat offline</div>
