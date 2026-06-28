@@ -8,64 +8,83 @@
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
-.topbar{background:#16A34A;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(22,163,74,.3);}
+
+.topbar{background:#4A2D8C;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(74,45,140,.4);}
 .tb-brand{display:flex;align-items:center;gap:10px;}
 .tb-logo{width:32px;height:32px;background:#CEF17B;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#1A1228;}
 .tb-name{font-size:15px;font-weight:800;color:#fff;}.tb-name span{color:#CEF17B;}
-.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.4);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.3);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
 .tb-meta{font-size:11px;color:rgba(255,255,255,.5);}
+
 .layout{display:flex;flex:1;}
+
+/* SIDEBAR */
 .sidebar{width:256px;background:#fff;border-right:1px solid #E8E4F5;flex-shrink:0;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px);}
-.sb-sec{padding:14px 12px 4px;}
-.sb-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;padding:0 6px;display:flex;align-items:center;gap:6px;}
+.sb-section{padding:14px 12px 4px;}
+.sb-section-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;padding:0 6px;display:flex;align-items:center;gap:6px;}
 .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.sb-flow-label{font-size:10px;font-weight:700;color:#C4BADC;text-transform:uppercase;letter-spacing:1px;padding:4px 6px 2px;}
+.sb-flow{padding:6px 8px 2px;}
+.sb-flow-label{font-size:10px;font-weight:700;color:#C4BADC;text-transform:uppercase;letter-spacing:1px;padding:4px 4px 2px;}
 .sbi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;margin-bottom:1px;transition:all .12s;}
-.sbi:hover{background:#F0FDF4;}
-.sbi.active{background:#16A34A;}
-.sbi-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
-.sbi-text{font-size:12px;font-weight:600;color:#574872;flex:1;line-height:1.3;}
+.sbi:hover{background:#F0EBFF;}
+.sbi.active{background:#4A2D8C;}
+.sbi-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0;}
+.sbi-text{font-size:12px;font-weight:600;color:#574872;line-height:1.3;flex:1;}
 .sbi.active .sbi-text{color:#fff;}
-.sdiv{height:1px;background:#E8F5E9;margin:6px 12px;}
+.sdiv{height:1px;background:#F0EBFF;margin:6px 12px;}
+
+/* MAIN */
 .main{flex:1;overflow-y:auto;padding:32px 36px;max-width:860px;}
 .page{display:none;}.page.active{display:block;}
 
-/* FLOW HEADER */
+/* WELCOME */
+.hero{background:linear-gradient(135deg,#4A2D8C,#6B3FA0);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(206,241,123,.07);border-radius:50%;}
+.hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.hero h1 span{color:#CEF17B;}
+.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:4px;}
+.module-card{background:#fff;border-radius:12px;padding:16px;border:2px solid #E8E4F5;cursor:pointer;transition:all .15s;}
+.module-card:hover{border-color:#4A2D8C;box-shadow:0 4px 14px rgba(74,45,140,.1);}
+.mc-icon{font-size:22px;margin-bottom:8px;}
+.mc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:3px;}
+.mc-flows{font-size:11px;color:#9085AE;}
+
+/* FLOW PAGE */
 .flow-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #E8E4F5;}
 .fh-breadcrumb{font-size:11px;color:#9085AE;margin-bottom:8px;}
-.fh-breadcrumb span{color:#16A34A;font-weight:700;}
+.fh-breadcrumb span{color:#4A2D8C;font-weight:700;}
 .fh-title{font-size:22px;font-weight:800;color:#1A1228;margin-bottom:8px;letter-spacing:-.02em;}
 .fh-desc{font-size:13px;color:#574872;line-height:1.7;max-width:580px;margin-bottom:14px;}
 .fh-pills{display:flex;gap:7px;flex-wrap:wrap;}
 .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid;}
-.pill-who{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+.pill-who{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
 .pill-trigger{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
-.pill-time{background:#FFF7ED;border-color:#FED7AA;color:#92400E;}
-.pill-figma{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
+.pill-time{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
 
-/* BLOCKS */
-.flow-block{background:#fff;border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+/* SECTION BLOCKS */
+.flow-block{background:#fff;border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .fb-header{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F4F2F9;cursor:pointer;user-select:none;}
 .fb-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
-.n1{background:#16A34A;color:#fff;}
+.n1{background:#4A2D8C;color:#fff;}
 .n2{background:#3B82F6;color:#fff;}
 .n3{background:#F59E0B;color:#fff;}
 .n4{background:#DC2626;color:#fff;}
 .n5{background:#F59E0B;color:#fff;}
 .n6{background:#16A34A;color:#fff;}
 .fb-title{font-size:14px;font-weight:800;color:#1A1228;flex:1;}
-.fb-toggle{color:#C4BADC;font-size:16px;transition:transform .2s;}
+.fb-toggle{color:#C4BADC;transition:transform .2s;font-size:16px;}
+.fb-toggle.open{transform:rotate(180deg);}
 .fb-body{padding:18px;display:none;}
 .fb-body.open{display:block;}
 
-/* STEPS */
-.steps{display:flex;flex-direction:column;}
+/* STEP LIST */
+.steps{display:flex;flex-direction:column;gap:0;}
 .step{display:flex;gap:14px;position:relative;}
-.step:not(:last-child)::before{content:'';position:absolute;left:16px;top:36px;bottom:0;width:2px;background:#DCFCE7;}
-.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;z-index:1;margin-top:2px;}
+.step:not(:last-child)::before{content:'';position:absolute;left:17px;top:38px;bottom:0;width:2px;background:#E8E4F5;}
+.step-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;z-index:1;margin-top:2px;}
 .sn-ok{background:#DCFCE7;color:#166534;}
 .sn-sys{background:#EDE9FE;color:#4A2D8C;}
-.sn-warn{background:#FEF3C7;color:#92400E;}
 .step-body{flex:1;padding-bottom:22px;}
 .step-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:4px;}
 .step-desc{font-size:12px;color:#574872;line-height:1.7;}
@@ -73,20 +92,31 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 .step-desc ul{padding-left:16px;margin-top:4px;}
 .step-desc li{margin-bottom:3px;}
 
-/* RULES */
+/* WHO TAGS */
+.who-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.who{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.w-admin{background:#EDE9FE;color:#4A2D8C;}
+.w-cs{background:#F0FDF4;color:#166534;}
+.w-ops{background:#FFF7ED;color:#92400E;}
+.w-fin{background:#EFF6FF;color:#1E40AF;}
+.w-sys{background:#F5F3FF;color:#4A2D8C;}
+.w-user{background:#DBEAFE;color:#1E40AF;}
+
+/* ATURAN BISNIS */
 .rule-list{display:flex;flex-direction:column;gap:8px;}
 .rule{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px 14px;display:flex;gap:10px;}
+.rule-icon{font-size:16px;flex-shrink:0;}
 .rule-text{font-size:12px;color:#374151;line-height:1.65;}
 .rule-text strong{color:#1A1228;font-weight:700;}
 
 /* BAD CASES */
 .bad-list{display:flex;flex-direction:column;gap:10px;}
 .bad-case{background:#fff;border-radius:12px;border:1.5px solid #FECDD3;padding:16px;}
-.bc-scenario{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;}
+.bc-scenario{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:3px;display:flex;gap:8px;align-items:flex-start;}
 .bc-scenario::before{content:'⚠️';flex-shrink:0;}
-.bc-user{font-size:12px;color:#574872;margin:5px 0 5px 26px;line-height:1.6;}
-.bc-user-label{font-weight:700;color:#1A1228;}
-.bc-handle{font-size:12px;color:#166534;background:#F0FDF4;padding:8px 10px;border-radius:8px;line-height:1.65;}
+.bc-user{font-size:12px;color:#574872;margin:6px 0 6px 28px;line-height:1.6;}
+.bc-user::before{content:'👤 User lihat: ';font-weight:700;color:#1A1228;}
+.bc-handle{font-size:12px;color:#166534;background:#F0FDF4;padding:8px 10px;border-radius:8px;line-height:1.6;margin-left:0;}
 .bc-handle::before{content:'✅ Cara handle: ';font-weight:700;}
 .bc-owner{font-size:10px;color:#9085AE;margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;}
 
@@ -99,12 +129,12 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 .bn-a::before{content:'💡';flex-shrink:0;}
 .bn-owner{font-size:10px;color:#9085AE;margin-top:6px;padding-top:6px;border-top:1px solid #FDE68A;}
 
-/* HASIL */
+/* HASIL AKHIR */
 .hasil-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .hasil-box{border-radius:12px;padding:16px;}
 .hasil-ok{background:#F0FDF4;border:1px solid #BBF7D0;}
 .hasil-fail{background:#FFF1F2;border:1px solid #FECDD3;}
-.hasil-title{font-size:12px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.hasil-title{font-size:12px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 .hasil-ok .hasil-title{color:#166534;}
 .hasil-fail .hasil-title{color:#9F1239;}
 .hasil-items{display:flex;flex-direction:column;gap:5px;}
@@ -112,39 +142,17 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 .hasil-ok .hasil-item::before{content:'→';color:#16A34A;font-weight:800;flex-shrink:0;}
 .hasil-fail .hasil-item::before{content:'→';color:#DC2626;font-weight:800;flex-shrink:0;}
 
-/* FIGMA BADGE */
-.figma-ref{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;}
-.figma-ref-icon{font-size:18px;flex-shrink:0;}
-.figma-ref-title{font-size:12px;font-weight:700;color:#4A2D8C;margin-bottom:2px;}
-.figma-ref-desc{font-size:11px;color:#574872;line-height:1.5;}
-.figma-screens{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
-.fs-tag{font-size:10px;font-weight:700;background:#4A2D8C;color:#fff;padding:2px 7px;border-radius:4px;}
-.fs-tag-miss{font-size:10px;font-weight:700;background:#FEE2E2;color:#9F1239;padding:2px 7px;border-radius:4px;}
+/* NAV */
+.flow-nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid #E8E4F5;}
+.fn-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
+.fn-btn:hover{border-color:#4A2D8C;color:#4A2D8C;}
+.fn-btn.next{background:#4A2D8C;border-color:#4A2D8C;color:#fff;margin-left:auto;}
 
 /* CALLOUT */
 .co{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:10px;display:flex;gap:10px;}
 .co-warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;}
 .co-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
 .co-ok{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
-
-/* NAV */
-.flow-nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid #E8E4F5;}
-.fn-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
-.fn-btn:hover{border-color:#16A34A;color:#16A34A;}
-.fn-btn.next{background:#16A34A;border-color:#16A34A;color:#fff;margin-left:auto;}
-
-/* WELCOME */
-.hero{background:linear-gradient(135deg,#16A34A,#15803D);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(206,241,123,.07);border-radius:50%;}
-.hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
-.hero h1 span{color:#CEF17B;}
-.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
-.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
-.mc{background:#fff;border-radius:12px;padding:16px;border:2px solid #E8E4F5;cursor:pointer;transition:all .15s;}
-.mc:hover{border-color:#16A34A;box-shadow:0 4px 12px rgba(22,163,74,.1);}
-.mc-icon{font-size:22px;margin-bottom:8px;}
-.mc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:2px;}
-.mc-sub{font-size:11px;color:#9085AE;}
 
 @media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
 
@@ -159,22 +167,22 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 </head>
 <body>
 
-<div class="topbar" style="background:#4A2D8C;box-shadow:0 2px 8px rgba(74,45,140,.3);">
+<div class="topbar">
   <div class="tb-brand">
-    <div class="tb-logo" style="background:#CEF17B;">G</div>
-    <div class="tb-name">Go<span style="color:#CEF17B;">Pop</span></div>
-    <div class="tb-badge" style="background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.4);color:#CEF17B;">FLOW DOCS</div>
+    <div class="tb-logo">G</div>
+    <div class="tb-name">Go<span>Pop</span></div>
+    <div class="tb-badge">FLOW DOCS</div>
   </div>
-  <div class="tb-meta">Dashboard · App & Web Consumer</div>
+  <div class="tb-meta">Dashboard · App &amp; Web Consumer</div>
 </div>
 
 <div class="layout">
 <nav class="sidebar">
   <div class="tab-switcher">
-    <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
-    <button class="tab-btn" onclick="switchTab('appweb',this)">📱 App & Web</button>
+    <button class="tab-btn active" id="tab-dash" onclick="switchTab('dash',this)">📊 Dashboard</button>
+    <button class="tab-btn" id="tab-app" onclick="switchTab('app',this)">📱 App &amp; Web</button>
   </div>
-  <div class="tab-section active" id="nav-dashboard">
+  <div class="tab-section active" id="nav-dash">
 
   <div class="sb-section">
     <div class="sb-section-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
@@ -271,7 +279,7 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
 
   </div>
-  <div class="tab-section" id="nav-appweb">
+  <div class="tab-section" id="nav-app">
 
   <div class="sb-sec">
     <div class="sb-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
@@ -427,7 +435,6 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 </nav>
 
 <main class="main">
-
 
 
 <!-- WELCOME -->
@@ -2423,6 +2430,1769 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
 </div>
 
+
+<!-- ============================================================ SETTLEMENT F01 ============================================================ -->
+<div id="page-stl-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F01</div>
+    <div class="fh-title">Pantau Status Settlement Harian</div>
+    <div class="fh-desc">Settlement adalah proses di mana payment gateway (Midtrans + DOKU) mentransfer dana dari transaksi yang berhasil ke rekening bank GoPop. Agung dan Rifky perlu memantau apakah dana dari transaksi kemarin sudah masuk ke rekening hari ini.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Agung (Finance) · Rifky (Rekonsiliasi)</span>
+      <span class="pill pill-trigger">🔔 Setiap pagi — cek apakah dana settlement sudah masuk</span>
+      <span class="pill pill-time">⏱ T+1 atau T+2 tergantung payment gateway</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Agung/Rifky buka menu Settlement di dashboard</div><div class="step-desc">Tampil ringkasan settlement dengan filter per periode dan per payment gateway. Ada dua section terpisah: <strong>Midtrans</strong> dan <strong>DOKU</strong>, karena keduanya punya jadwal settlement berbeda dan masuk ke rekening yang mungkin berbeda.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Cek daftar batch settlement</div><div class="step-desc">Setiap baris mewakili satu batch settlement dengan informasi:<ul>
+          <li><strong>Tanggal transaksi:</strong> Kapan transaksi terjadi (T+0)</li>
+          <li><strong>Tanggal settlement:</strong> Kapan dana seharusnya masuk ke rekening GoPop</li>
+          <li><strong>Total transaksi:</strong> Jumlah dana bruto yang masuk dari user</li>
+          <li><strong>Fee gateway:</strong> Biaya yang dipotong Midtrans/DOKU</li>
+          <li><strong>Net settlement:</strong> Dana bersih yang diterima GoPop (total - fee)</li>
+          <li><strong>Status:</strong> Pending / Processed / Confirmed</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Konfirmasi penerimaan di rekening bank</div><div class="step-desc">Agung mencocokkan nominal settlement yang tampil di dashboard dengan mutasi rekening bank GoPop. Kalau cocok, klik "Konfirmasi Diterima" pada batch yang bersangkutan. Status berubah dari "Processed" ke "Confirmed" dan settlement dianggap selesai.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jadwal settlement berbeda per gateway:</strong>
+          <ul style="margin-top:6px;">
+            <li><strong>Midtrans:</strong> T+1 untuk weekend/libur bisa T+2 atau T+3. Jadwal resmi tercantum di dashboard Midtrans.</li>
+            <li><strong>DOKU:</strong> Jadwal settlement perlu dikonfirmasi ke DOKU — bisa berbeda dari Midtrans.</li>
+          </ul>
+          Ini penting untuk cash flow GoPop — Agung perlu tahu kapan dana bisa dipakai untuk operasional.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Dana settlement belum bisa dipakai sebelum dikonfirmasi.</strong> Meski sudah "Processed" dari sisi gateway, Agung harus konfirmasi dulu bahwa dana benar-benar sudah masuk ke rekening bank sebelum bisa diakui sebagai penerimaan kas GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Fee gateway sudah otomatis terpotong oleh Midtrans/DOKU.</strong> GoPop menerima net amount (bukan gross). Fee ini yang perlu dicatat Agung sebagai biaya operasional di laporan keuangan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Saldo reseller tidak terlibat dalam settlement.</strong> Settlement hanya untuk dana dari transaksi consumer yang bayar via Midtrans/DOKU. Saldo reseller adalah wallet internal GoPop yang terpisah dari alur settlement.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Settlement yang seharusnya masuk hari ini belum terlihat di mutasi bank</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Cek apakah hari ini adalah hari libur atau akhir pekan — settlement mungkin delay ke hari kerja berikutnya. Kalau bukan libur dan sudah lewat jam cut-off, hubungi PIC Midtrans/DOKU via email atau dashboard mereka untuk konfirmasi status settlement.</div>
+          <div class="bc-owner">PIC: Agung (konfirmasi ke gateway) · Acoy (koordinasi kalau butuh eskalasi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Nominal di dashboard tidak cocok dengan yang masuk di rekening bank</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Jangan konfirmasi dulu — ini kondisi selisih yang harus diselesaikan di F03. Tandai batch ini sebagai "Perlu Investigasi" dan lanjutkan ke flow F03 Selisih Settlement.</div>
+          <div class="bc-owner">PIC: Agung + Rifky (investigasi selisih) — lihat F03</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Konfirmasi penerimaan masih manual — Agung harus buka mutasi bank, cek angka satu per satu, baru klik konfirmasi di dashboard</div>
+          <div class="bn-a">Ke depan bisa integrasi dengan API mutasi rekening bank (misal BCA Virtual Account API atau Open Banking) agar sistem bisa otomatis mencocokkan settlement dengan penerimaan di bank. Sementara belum ada, Agung perlu disiplin cek setiap pagi sebelum jam 10.00 agar ada waktu untuk eskalasi kalau ada masalah.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (evaluasi feasibility integrasi bank API) · Agung (SOP manual sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Settlement Normal</div><div class="hasil-items"><div class="hasil-item">Dana masuk sesuai jadwal dan nominal yang benar</div><div class="hasil-item">Agung konfirmasi → status berubah ke "Confirmed"</div><div class="hasil-item">Kas GoPop tercatat bertambah sesuai net settlement</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Settlement Bermasalah</div><div class="hasil-items"><div class="hasil-item">Dana belum masuk → hubungi gateway, tunggu atau eskalasi</div><div class="hasil-item">Nominal berbeda → masuk ke flow F03 Selisih Settlement</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('role-f02',null)">← Role & Akses F02</div>
+    <div class="fn-btn next" onclick="go('stl-f02',null)">F02: Rekonsiliasi Penerimaan →</div>
+  </div>
+</div>
+
+<!-- ============================================================ SETTLEMENT F02 ============================================================ -->
+<div id="page-stl-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F02</div>
+    <div class="fh-title">Rekonsiliasi Penerimaan Dana</div>
+    <div class="fh-desc">Setelah dana settlement masuk, Rifky melakukan rekonsiliasi — memastikan total dana yang diterima dari Midtrans/DOKU sesuai dengan total transaksi sukses yang tercatat di sistem GoPop. Ini adalah financial control paling penting setiap hari.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky (Rekonsiliasi utama) · Agung (Finance — approve)</span>
+      <span class="pill pill-trigger">🔔 Setelah settlement dikonfirmasi diterima (F01)</span>
+      <span class="pill pill-time">⏱ Harian — target selesai sebelum jam 12.00</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Rifky generate laporan rekonsiliasi harian</div><div class="step-desc">Di halaman Settlement, ada tombol "Generate Rekonsiliasi" untuk periode tertentu. Sistem mengambil dua sumber data secara otomatis:<ul>
+          <li><strong>Sumber A (Internal GoPop):</strong> Semua transaksi dengan status SUCCESS untuk periode yang dipilih, dikelompokkan per payment gateway dan per metode bayar</li>
+          <li><strong>Sumber B (Gateway):</strong> Laporan settlement yang dikirim Midtrans/DOKU (bisa via API atau upload CSV laporan manual)</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Sistem cocokkan dua sumber data</div><div class="step-desc">Sistem membandingkan transaksi per transaksi berdasarkan reference ID. Hasilnya tiga kategori:<ul>
+          <li><strong>Match:</strong> Ada di kedua sumber, nominal sama — ini yang seharusnya</li>
+          <li><strong>Hanya di GoPop:</strong> Tercatat SUCCESS di GoPop tapi tidak ada di laporan gateway — mungkin gateway belum settle atau ada transaksi yang lolos</li>
+          <li><strong>Hanya di Gateway:</strong> Ada di laporan gateway tapi tidak ada di sistem GoPop — ini yang paling berbahaya, berarti ada uang masuk yang tidak tercatat</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Rifky review hasil dan tandai status</div><div class="step-desc">Kalau semua match → klik "Approve Rekonsiliasi". Kalau ada yang tidak match → masuk ke F03 Selisih untuk investigasi lebih lanjut. Rekonsiliasi yang sudah di-approve tercatat permanen dan tidak bisa diubah.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Agung approve sebagai Finance</div><div class="step-desc">Rifky selesai rekonsiliasi → notifikasi ke Agung untuk approval final. Agung review summary → approve → rekonsiliasi periode ini resmi selesai.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi harus dilakukan setiap hari tanpa kecuali.</strong> Skip satu hari membuat investigasi makin susah karena data makin banyak dan jejak makin kabur. Kalau Rifky tidak bisa, Agung yang backup.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi Midtrans dan DOKU dilakukan terpisah</strong> karena laporan mereka dalam format dan jadwal yang berbeda. Jangan digabung — ini akan mempersulit investigasi kalau ada selisih.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Transaksi yang di-refund tetap masuk rekonsiliasi</strong> tapi dengan tanda minus atau kategori terpisah "Refund". Dana refund biasanya dipotong dari batch settlement berikutnya oleh gateway.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi yang sudah di-approve tidak bisa dibuka ulang</strong> — kalau ada kesalahan setelah approval, perlu buat adjustment entry terpisah dengan alasan yang dicatat. Ini untuk menjaga integritas audit trail.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Laporan CSV dari Midtrans/DOKU formatnya berbeda dari yang diexpect sistem — tidak bisa di-parse</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Rifky perlu manual mapping atau reformatting file CSV sebelum upload. Jangka panjang, Irwan + Rifky perlu buat parser yang lebih robust yang bisa handle variasi format dari gateway. Sementara ini, Rifky simpan template mapping di folder shared.</div>
+          <div class="bc-owner">PIC: Rifky (manual mapping sementara) · Irwan + Rifky (parser yang lebih robust)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Ada transaksi di laporan gateway yang tidak ada di sistem GoPop — uang masuk tapi tidak tercatat</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini kondisi paling serius — berarti ada pembayaran user yang masuk tapi tidak ada produk yang dikirim. Tandai sebagai "Unidentified Receipt" dan investigasi segera: cek di log Midtrans/DOKU dengan reference ID, cek apakah ada webhook yang gagal masuk ke sistem GoPop. Eskalasi ke Irwan + Rifky untuk debug technical.</div>
+          <div class="bc-owner">PIC: Rifky (investigasi) · Irwan (debug webhook) · Agung (hold konfirmasi sampai jelas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Laporan dari Midtrans/DOKU masih perlu didownload manual dan upload ke dashboard — belum ada sinkronisasi otomatis</div>
+          <div class="bn-a">Midtrans dan DOKU punya API untuk pull settlement report secara otomatis tanpa perlu login ke portal mereka dan download manual. Kalau ini diimplementasi, rekonsiliasi bisa jadi jauh lebih cepat — bahkan bisa otomatis dijalankan sistem setiap hari. Ini prioritas tinggi untuk mengurangi beban manual Rifky.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi auto-pull settlement report dari Midtrans dan DOKU API)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Rekonsiliasi Bersih</div><div class="hasil-items"><div class="hasil-item">Semua transaksi match antara GoPop dan laporan gateway</div><div class="hasil-item">Rifky approve → Agung approve → selesai</div><div class="hasil-item">Catatan kas GoPop akurat untuk periode ini</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Ada Selisih</div><div class="hasil-items"><div class="hasil-item">Ada yang tidak match → masuk ke F03 Selisih Settlement</div><div class="hasil-item">Rekonsiliasi ditunda sampai selisih diselesaikan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f01',null)">← F01: Pantau Status</div>
+    <div class="fn-btn next" onclick="go('stl-f03',null)">F03: Selisih Settlement →</div>
+  </div>
+</div>
+
+<!-- ============================================================ SETTLEMENT F03 ============================================================ -->
+<div id="page-stl-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">💰 Settlement <span>›</span> F03</div>
+    <div class="fh-title">Investigasi & Penyelesaian Selisih Settlement</div>
+    <div class="fh-desc">Ketika rekonsiliasi menemukan angka yang tidak cocok antara sistem GoPop dan laporan gateway. Ini kondisi yang jarang tapi serius — setiap selisih harus diselesaikan dan tidak boleh diabaikan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky (investigasi) · Agung (Finance — keputusan) · Irwan (debug teknikal)</span>
+      <span class="pill pill-trigger">🔔 Ditemukan selisih saat rekonsiliasi F02</span>
+      <span class="pill pill-time">⏱ Target resolusi: 1×24 jam kerja</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Tiga Jenis Selisih & Cara Handle</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔴</span><div class="rule-text"><strong>Jenis 1 — Ada di Gateway, tidak ada di GoPop (paling serius):</strong><br>
+        Berarti ada uang masuk dari user yang tidak terproseskan. Kemungkinan penyebab: webhook dari gateway gagal diterima sistem GoPop, transaksi duplicate di sisi gateway, atau bug di backend.<br><br>
+        <strong>Cara handle:</strong> Irwan cek webhook log untuk reference ID tersebut. Kalau webhook memang gagal masuk, bisa trigger manual replay dari dashboard gateway. Kalau ini transaksi yang memang tidak valid, Agung proses refund manual ke user.</div></div>
+        <div class="rule"><span>🟡</span><div class="rule-text"><strong>Jenis 2 — Ada di GoPop, tidak ada di Gateway (medium):</strong><br>
+        Transaksi tercatat SUCCESS di GoPop tapi gateway tidak settle dana-nya. Kemungkinan: transaksi di-capture di sisi GoPop tapi dibatalkan gateway karena fraud detection, atau ada timing issue.<br><br>
+        <strong>Cara handle:</strong> Cek status transaksi di portal Midtrans/DOKU menggunakan transaction reference. Kalau gateway konfirmasi memang tidak settle, Agung perlu adjustment di pembukuan — dana ini tidak akan datang.</div></div>
+        <div class="rule"><span>🟠</span><div class="rule-text"><strong>Jenis 3 — Ada di keduanya tapi nominal berbeda:</strong><br>
+        Biasanya karena perbedaan fee calculation atau ada partial refund yang dipotong di batch yang berbeda.<br><br>
+        <strong>Cara handle:</strong> Bandingkan breakdown fee di laporan gateway dengan yang tercatat di sistem. Kalau ada partial refund, cek apakah sudah tercatat di rekonsiliasi. Kalau perbedaan kecil (&lt;Rp1.000) bisa jadi rounding — catat sebagai adjustment.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setiap selisih WAJIB diselesaikan dan didokumentasikan.</strong> Tidak boleh ada selisih yang di-"maafkan" atau diabaikan tanpa alasan tertulis. Semua resolusi dicatat di sistem: penyebab, aksi yang diambil, siapa yang memutuskan, dan kapan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Selisih lebih dari Rp500.000 wajib mendapat approval Agung</strong> sebelum ada adjustment apapun. Di bawah itu Rifky bisa handle mandiri tapi tetap harus dicatat.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Rekonsiliasi yang masih punya selisih terbuka tidak bisa di-approve</strong> — harus semua diselesaikan dulu. Kalau ada selisih yang butuh waktu lebih dari 24 jam, tandai sebagai "Dalam Investigasi" dan lanjutkan rekonsiliasi periode lain. Selisih ini tetap harus diselesaikan, tidak boleh terlupakan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Selisih sudah lebih dari 3 hari tidak terselesaikan dan penyebabnya tidak diketahui</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Eskalasi ke Midtrans/DOKU melalui jalur resmi (email ke support mereka dengan bukti transaksi). Minta penjelasan tertulis dari gateway. Sementara menunggu, Agung buat "pending item" di pembukuan agar laporan keuangan tetap akurat sambil menunggu klarifikasi.</div>
+          <div class="bc-owner">PIC: Agung (eskalasi formal ke gateway) · Rifky (siapkan bukti transaksi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Selisih kumulatif dari beberapa periode menumpuk karena tidak diselesaikan tepat waktu</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini tidak boleh terjadi. Kalau sudah terjadi, Rifky dan Agung perlu blokir waktu 1–2 hari khusus untuk membereskan semua selisih yang menumpuk dari yang terlama. Buat SOP yang jelas: kalau ada selisih yang tidak bisa diselesaikan dalam 24 jam, langsung eskalasi ke Acoy untuk bantu koordinasi.</div>
+          <div class="bc-owner">PIC: Acoy (enforce SOP) · Rifky + Agung (prioritaskan resolusi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Investigasi selisih butuh akses ke banyak sistem sekaligus — dashboard GoPop, portal Midtrans, portal DOKU, dan log server — dan sekarang harus dibuka satu per satu secara manual</div>
+          <div class="bn-a">Dashboard GoPop idealnya bisa langsung deep-link ke transaksi di portal gateway menggunakan reference ID. Kalau Rifky klik satu transaksi yang berselisih, ada tombol "Cek di Midtrans" atau "Cek di DOKU" yang langsung buka halaman transaksi tersebut di portal gateway. Ini memangkas waktu investigasi dari 30 menit per selisih jadi bisa 5 menit.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (deep-link ke portal gateway dari detail transaksi) · Irwan + Rifky (URL pattern masing-masing gateway)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Selisih Terselesaikan</div><div class="hasil-items"><div class="hasil-item">Penyebab selisih diidentifikasi dan didokumentasikan</div><div class="hasil-item">Aksi korektif diambil (refund manual / adjustment pembukuan / replay webhook)</div><div class="hasil-item">Rekonsiliasi bisa dilanjutkan dan di-approve</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Selisih Tidak Terselesaikan dalam 24 Jam</div><div class="hasil-items"><div class="hasil-item">Tandai "Dalam Investigasi" → eskalasi formal ke gateway</div><div class="hasil-item">Buat pending item di pembukuan Agung</div><div class="hasil-item">Wajib diselesaikan sebelum periode tutup buku bulan ini</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f02',null)">← F02: Rekonsiliasi</div>
+    <div class="fn-btn" onclick="go('d-welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ MASTER DATA WELCOME ============================================================ -->
+<div id="page-md-welcome" class="page">
+  <div class="hero">
+    <h1>Master Data — <span>7 Sub-Menu</span></h1>
+    <p>Master Data adalah fondasi dari semua produk dan layanan yang tampil di app GoPop. Setiap perubahan di sini berdampak langsung ke apa yang bisa dilihat dan dibeli user. Dikelola terutama oleh Ipong (Aggregator/Produk).</p>
+  </div>
+  <div class="co co-warn" style="margin-bottom:20px;">
+    <span>⚠️</span>
+    <div><strong>Penting:</strong> Master Data adalah data referensi yang dipakai oleh seluruh sistem GoPop. Perubahan yang salah bisa menyebabkan produk tidak tampil, harga salah, atau transaksi gagal. Selalu double-check sebelum simpan.</div>
+  </div>
+  <div class="module-grid">
+    <div class="mc" onclick="go('md-f01',null)"><div class="mc-icon">📦</div><div class="mc-title">F01 · Kategori Produk</div><div class="mc-sub">Pulsa, Token, Transfer, Game, dll</div></div>
+    <div class="mc" onclick="go('md-f02',null)"><div class="mc-icon">📡</div><div class="mc-title">F02 · Operator & Provider</div><div class="mc-sub">Telkomsel, XL, Indosat, dll</div></div>
+    <div class="mc" onclick="go('md-f03',null)"><div class="mc-icon">💳</div><div class="mc-title">F03 · Bank & E-Wallet</div><div class="mc-sub">BCA, GoPay, OVO, DANA, dll</div></div>
+    <div class="mc" onclick="go('md-f04',null)"><div class="mc-icon">🗺️</div><div class="mc-title">F04 · Wilayah & PDAM</div><div class="mc-sub">Kota/kabupaten yang didukung</div></div>
+    <div class="mc" onclick="go('md-f05',null)"><div class="mc-icon">🔢</div><div class="mc-title">F05 · Denom & Preset</div><div class="mc-sub">Nominal preset di app user</div></div>
+    <div class="mc" onclick="go('md-f06',null)"><div class="mc-icon">📄</div><div class="mc-title">F06 · Konten Statis</div><div class="mc-sub">S&K, FAQ, Tentang GoPop</div></div>
+    <div class="mc" onclick="go('md-f07',null)"><div class="mc-icon">🔄</div><div class="mc-title">F07 · Sync dari Digiflazz</div><div class="mc-sub">Update produk otomatis dari biller</div></div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F01: KATEGORI PRODUK ============================================================ -->
+<div id="page-md-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F01</div>
+    <div class="fh-title">Kelola Kategori Produk</div>
+    <div class="fh-desc">Kategori adalah pengelompokan produk yang tampil di app — tab filter homepage (Semua/Isi Ulang/Tagihan) dan grid ikon produk bergantung pada kategori ini. Ipong mengelola kategori yang aktif dan urutan tampilannya.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Ada kategori produk baru atau perlu direstrukturisasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Kategori Produk</div><div class="step-desc">Tampil semua kategori yang ada beserta status (aktif/nonaktif) dan jumlah produk di dalamnya. Kategori aktif saat ini: Transfer E-Wallet, Pulsa, Paket Data, Token Listrik, BPJS, Voucher Game, Internet & TV, PDAM, PBB.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit kategori atau tambah yang baru</div><div class="step-desc">Setiap kategori punya:<ul>
+          <li><strong>Nama kategori</strong> — tampil di app dan dashboard</li>
+          <li><strong>Slug/kode</strong> — identifier unik untuk sistem (tidak bisa diubah setelah dibuat)</li>
+          <li><strong>Ikon</strong> — ikon yang tampil di grid homepage app</li>
+          <li><strong>Tipe</strong> — "Isi Ulang" atau "Tagihan" (menentukan filter chip di homepage)</li>
+          <li><strong>Urutan tampil</strong> — angka urutan di grid homepage (1 = paling kiri atas)</li>
+          <li><strong>Status</strong> — Aktif atau Nonaktif</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Simpan — berlaku langsung ke app</div><div class="step-desc">Perubahan kategori (nama, ikon, urutan, status) berlaku langsung ke app user tanpa perlu deploy ulang. Kalau kategori dinonaktifkan, semua produk di dalamnya juga tidak tampil ke user (tapi tidak dihapus).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Slug kategori tidak bisa diubah setelah dibuat</strong> karena slug dipakai sebagai referensi di banyak tempat (URL app, API response, filter system). Kalau harus berubah, buat kategori baru dan migrate produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kategori yang punya produk aktif tidak bisa langsung dihapus</strong> — harus pindahkan semua produknya ke kategori lain dulu, baru bisa hapus. Ini mencegah produk "yatim" yang tidak masuk kategori manapun.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Urutan tampil menentukan posisi di grid homepage.</strong> Grid homepage hanya tampilkan 8 slot (2 baris × 4 kolom). Kategori dengan urutan 9+ tidak tampil di homepage tapi tetap bisa diakses dari Layanan Semua (screen 28).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tipe kategori menentukan filter chip di homepage.</strong> "Isi Ulang" → tampil saat user tap chip "Isi Ulang". "Tagihan" → tampil saat chip "Tagihan". Pastikan setiap kategori masuk ke tipe yang benar agar filter chip berfungsi dengan baik.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Ipong salah atur urutan — kategori penting terdorong ke slot 9+ dan tidak tampil di homepage</div>
+          <div class="bc-user">User tidak menemukan kategori yang biasa mereka pakai di homepage.</div>
+          <div class="bc-handle">Perbaiki urutan langsung — perubahan berlaku dalam hitungan menit. Ke depan, tambahkan preview tampilan homepage saat Ipong mengedit urutan agar bisa lihat hasilnya sebelum simpan.</div>
+          <div class="bc-owner">PIC: Ipong (perbaiki urutan) · Isal + Ipong (preview homepage di halaman edit urutan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Kategori baru tampil di app sesuai urutan yang diset</div><div class="hasil-item">Filter chip homepage berfungsi sesuai tipe kategori</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Slug diubah → referensi di sistem rusak</div><div class="hasil-item">Urutan salah → kategori penting tidak tampil di homepage</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f03',null)">← Settlement F03</div>
+    <div class="fn-btn next" onclick="go('md-f02',null)">F02: Operator & Provider →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F02: OPERATOR ============================================================ -->
+<div id="page-md-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F02</div>
+    <div class="fh-title">Kelola Operator & Provider</div>
+    <div class="fh-desc">Data semua operator telekomunikasi (Telkomsel, XL, Indosat, Tri, Smartfren) beserta pola prefix nomor mereka. Data ini dipakai oleh sistem untuk deteksi operator otomatis saat user input nomor HP di screen Pulsa & Paket Data.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Ada operator baru, perubahan prefix, atau merger operator</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Operator & Provider</div><div class="step-desc">Daftar semua operator dengan detail: nama operator, logo, daftar prefix nomor (misal Telkomsel: 0811, 0812, 0813, 0821, 0822, 0823, 0851, 0852, 0853), kode Digiflazz (kode yang dipakai saat request ke biller), dan status aktif/nonaktif.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit operator atau tambah prefix baru</div><div class="step-desc">Kalau ada prefix baru dari regulator (misal Kemkominfo merilis prefix baru untuk suatu operator), Ipong tambahkan ke daftar prefix operator yang bersangkutan. Ini memastikan deteksi otomatis tetap akurat.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Simpan — deteksi operator langsung terupdate</div><div class="step-desc">Prefix baru langsung aktif untuk transaksi berikutnya. Tidak perlu restart sistem.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kode Digiflazz per operator harus sama persis dengan dokumentasi API Digiflazz.</strong> Kalau kode salah, request ke Digiflazz akan gagal dan transaksi pulsa/paket data tidak bisa diproses. Ipong perlu konfirmasi kode yang benar dari portal Digiflazz.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu prefix hanya boleh dimiliki satu operator.</strong> Tidak boleh ada prefix yang terdaftar di dua operator berbeda — ini akan menyebabkan deteksi otomatis ambiguous dan salah tujuan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Operator nonaktif tidak menghapus produknya.</strong> Kalau Ipong nonaktifkan operator (misal karena merger dengan operator lain), produk pulsa/paket untuk operator tersebut otomatis tidak tampil ke user, tapi riwayat transaksi lama tetap ada.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Prefix baru dari regulator belum ditambahkan — user dengan nomor prefix baru tidak bisa terdeteksi operatornya</div>
+          <div class="bc-user">User input nomor HP di Pulsa, tapi tidak ada operator yang terdeteksi — tombol "Lanjut" tidak aktif.</div>
+          <div class="bc-handle">Ipong perlu rutin pantau pengumuman Kemkominfo atau Digiflazz terkait alokasi prefix baru. Tambahkan prefix ke database segera setelah ada pengumuman resmi. Sementara belum ditambahkan, CS bisa kasih tahu user untuk hubungi operator mereka konfirmasi prefix yang benar.</div>
+          <div class="bc-owner">PIC: Ipong (monitor dan update prefix) · CS (inform user sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Semua prefix nomor HP terdeteksi dengan benar</div><div class="hasil-item">Request ke Digiflazz pakai kode operator yang tepat</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Kode Digiflazz salah → transaksi pulsa gagal</div><div class="hasil-item">Prefix baru belum ditambah → user tidak bisa lanjut</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f01',null)">← F01: Kategori</div>
+    <div class="fn-btn next" onclick="go('md-f03',null)">F03: Bank & E-Wallet →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F03: BANK & E-WALLET ============================================================ -->
+<div id="page-md-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F03</div>
+    <div class="fh-title">Kelola Bank & E-Wallet</div>
+    <div class="fh-desc">Data semua bank dan e-wallet yang didukung GoPop — baik sebagai tujuan transfer (GoPay, OVO, DANA, ShopeePay) maupun sebagai metode pembayaran (VA BCA, BNI, dll). Juga mencakup konfigurasi biaya admin per metode bayar.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator) · Agung (Finance — konfirmasi fee)</span>
+      <span class="pill pill-trigger">🔔 Ada e-wallet baru, perubahan fee gateway, atau bank VA baru</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Bank & E-Wallet</div><div class="step-desc">Ada dua tab: <strong>E-Wallet Tujuan Transfer</strong> (GoPay, OVO, DANA, ShopeePay) dan <strong>Metode Pembayaran</strong> (QRIS, E-Wallet bayar, VA, Retail). Setiap item punya: nama, logo, kode gateway, biaya admin, dan status aktif/nonaktif.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Update biaya admin atau tambah metode baru</div><div class="step-desc">Kalau Midtrans/DOKU mengubah fee VA (misal BCA VA dari Rp2.500 jadi Rp3.000), Ipong update angka di sini dan dikonfirmasi Agung. Perubahan langsung berlaku di screen checkout app user — total bayar akan terupdate sesuai fee terbaru.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Aktifkan/nonaktifkan metode bayar sesuai kontrak gateway</div><div class="step-desc">Kalau GoPop belum punya kontrak untuk metode tertentu (misal belum aktifkan Gerai Retail), Ipong bisa nonaktifkan agar tidak tampil ke user — mencegah user memilih metode yang sebenarnya tidak tersedia.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan fee admin wajib dikonfirmasi Agung (Finance) sebelum disimpan.</strong> Fee yang salah bisa membuat GoPop merugi (kalau fee di-set lebih murah dari yang gateway charge) atau membuat user overpay (kalau fee di-set lebih mahal). Selalu update dari dokumen resmi Midtrans/DOKU.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>E-wallet tujuan transfer (GoPay, OVO, dll) dan metode pembayaran e-wallet adalah dua hal berbeda.</strong> GoPay sebagai tujuan transfer = kemana uang dikirim. GoPay sebagai metode bayar = cara user membayar di checkout. Keduanya bisa aktif/nonaktif secara independen.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>QRIS limit Rp2.000.000 per transaksi dari regulasi BI.</strong> Ini tidak bisa diubah dari Master Data — sudah hardcode. Kalau transaksi melebihi limit, QRIS otomatis tidak tampil di checkout sebagai pilihan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Fee VA di-update salah (misal angka kelebihan satu digit) — user bayar Rp25.000 untuk VA padahal seharusnya Rp2.500</div>
+          <div class="bc-user">User komplain biaya pembayaran terlalu mahal.</div>
+          <div class="bc-handle">Perbaiki fee segera dan perlu keputusan Agung apakah user yang sudah terlanjur bayar fee salah akan di-refund selisihnya. Ini memperkuat keharusan konfirmasi Agung sebelum update fee apapun.</div>
+          <div class="bc-owner">PIC: Ipong (perbaiki fee segera) · Agung (keputusan refund selisih) · CS (handle komplain user)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Fee yang tampil di checkout akurat sesuai kontrak gateway</div><div class="hasil-item">Metode bayar yang tidak tersedia tidak tampil ke user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Fee salah → user overpay atau GoPop rugi</div><div class="hasil-item">Metode tidak aktif di gateway tapi aktif di Master Data → transaksi gagal saat diproses</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f02',null)">← F02: Operator</div>
+    <div class="fn-btn next" onclick="go('md-f04',null)">F04: Wilayah & PDAM →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F04: WILAYAH ============================================================ -->
+<div id="page-md-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F04</div>
+    <div class="fh-title">Kelola Wilayah & Cakupan PDAM/PBB</div>
+    <div class="fh-desc">Data wilayah (provinsi, kota/kabupaten) yang menentukan cakupan layanan PDAM dan PBB di GoPop. Tidak semua daerah didukung Digiflazz — Master Data ini menentukan pesan yang tampil ke user saat wilayah mereka belum tersedia.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Digiflazz tambah coverage daerah baru atau ada daerah yang drop</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Wilayah & PDAM</div><div class="step-desc">Daftar semua kota/kabupaten yang terdaftar, dengan kolom: nama daerah, kode PDAM di Digiflazz, kode PBB di Digiflazz, status (Didukung / Tidak Didukung), dan tanggal terakhir diupdate.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Update saat Digiflazz tambah/hapus coverage</div><div class="step-desc">Ipong pantau update dari Digiflazz (biasanya via email atau changelog portal Digiflazz). Kalau ada daerah baru yang didukung, tambahkan kode daerahnya dan set status "Didukung". Kalau ada yang drop, ubah ke "Tidak Didukung" agar user mendapat pesan yang informatif bukan error teknikal.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Update pesan untuk daerah tidak didukung</div><div class="step-desc">Setiap daerah yang "Tidak Didukung" punya pesan custom yang tampil ke user: "Layanan PDAM untuk [nama kota] belum tersedia. Coba bayar di [alternatif]." Ipong bisa edit teks ini per daerah agar lebih relevan.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kode daerah di Digiflazz berbeda untuk PDAM dan PBB.</strong> Satu daerah bisa punya kode PDAM tapi tidak ada kode PBB (atau sebaliknya) — tergantung data yang Digiflazz punya. Ipong perlu update keduanya secara terpisah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Daerah yang "Tidak Didukung" tetap boleh dicoba user</strong> — sistem akan memberi tahu mereka dengan pesan yang sesuai, bukan error. Jangan block user dari mencoba; berikan informasi dan alternatif.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Daerah baru yang didukung Digiflazz langsung bisa dipakai user</div><div class="hasil-item">Daerah tidak didukung tampilkan pesan informatif + alternatif</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Kode daerah salah → transaksi PDAM/PBB selalu gagal</div><div class="hasil-item">Daerah drop tidak diupdate → user dapat error teknikal bukan pesan informatif</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f03',null)">← F03: Bank & E-Wallet</div>
+    <div class="fn-btn next" onclick="go('md-f05',null)">F05: Denom & Preset →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F05: DENOM & PRESET ============================================================ -->
+<div id="page-md-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F05</div>
+    <div class="fh-title">Kelola Denominasi & Nominal Preset</div>
+    <div class="fh-desc">Nominal preset adalah tombol cepat yang muncul di screen Transfer E-Wallet (Rp20k, Rp50k, Rp100k, dll) dan nominal quick pick lainnya. Ipong bisa mengubah daftar preset ini tanpa perlu update app.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator) · Bili (UX — konfirmasi perubahan preset)</span>
+      <span class="pill pill-trigger">🔔 Perlu update preset berdasarkan data transaksi paling sering</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Denominasi & Preset</div><div class="step-desc">Daftar preset per jenis produk. Transfer E-Wallet saat ini: Rp20.000, Rp50.000, Rp100.000, Rp150.000, Rp200.000, Rp500.000 (6 preset, 2 kolom × 3 baris sesuai Figma screen 01).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit atau tambah nominal preset</div><div class="step-desc">Ipong bisa ubah urutan preset, hapus yang jarang dipakai, atau tambah nominal baru. Setiap preset punya: nilai nominal, label tampil (misal "Rp50.000"), dan urutan. Maksimal 6 preset per produk (sesuai layout 2×3 di Figma).</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Simpan — preset langsung terupdate di app</div><div class="step-desc">User yang buka screen Transfer berikutnya akan langsung lihat preset terbaru. Tidak perlu update app.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Preset transfer harus dalam range yang valid per e-wallet.</strong> Jangan tambah preset Rp5.000 untuk Transfer E-Wallet kalau minimum transfer GoPay adalah Rp10.000 — user akan dapat error saat memilih preset tersebut.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan preset sebaiknya berdasarkan data transaksi.</strong> Kalau data menunjukkan 80% transaksi transfer antara Rp50.000–Rp200.000, preset idealnya di range itu. Ipong bisa minta Rifky pull data distribusi nominal transaksi untuk panduan update preset.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Preset tidak menggantikan input manual.</strong> User tetap bisa ketik nominal bebas — preset hanya shortcut untuk mempercepat input. Jadi menghapus preset tidak menghilangkan kemampuan user untuk transfer nominal tersebut.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Preset terbaru langsung tampil di app tanpa update</div><div class="hasil-item">Preset mencerminkan nominal yang paling sering dipakai user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Preset di bawah minimum e-wallet → error saat user pilih preset</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f04',null)">← F04: Wilayah</div>
+    <div class="fn-btn next" onclick="go('md-f06',null)">F06: Konten Statis →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F06: KONTEN STATIS ============================================================ -->
+<div id="page-md-f06" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F06</div>
+    <div class="fh-title">Kelola Konten Statis</div>
+    <div class="fh-desc">Halaman informasi yang jarang berubah tapi wajib ada: Syarat & Ketentuan, Kebijakan Privasi, Tentang GoPop, dan FAQ umum. Konten ini tampil di app (Profil → Syarat & Ketentuan) dan bisa juga diakses via web browser.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Bili (konten + approval) · Acoy (publish)</span>
+      <span class="pill pill-trigger">🔔 Ada perubahan kebijakan, update legal, atau FAQ baru perlu ditambah</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Konten Statis</div><div class="step-desc">Daftar semua halaman statis: Syarat & Ketentuan (S&K), Kebijakan Privasi, Tentang GoPop, FAQ & Bantuan Umum. Setiap halaman menampilkan: versi terakhir, tanggal update, dan siapa yang terakhir edit.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Bili edit konten</div><div class="step-desc">Editor teks dengan format dasar (bold, list, heading). Bili mengupdate konten sesuai kebutuhan — misal update S&K karena ada fitur baru, atau tambah FAQ baru yang sering ditanyakan ke CS. Setiap save otomatis increment versi (misal dari v1.2 ke v1.3).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Acoy review dan publish</div><div class="step-desc">Setelah Bili selesai edit, Acoy review konten. Kalau ada perubahan besar di S&K atau Kebijakan Privasi, Acoy set flag "Perlu Acceptance Ulang" — user akan diminta accept versi baru sebelum bisa transaksi lagi. Untuk perubahan minor, publish langsung tanpa perlu acceptance ulang.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan substantif pada S&K atau Kebijakan Privasi WAJIB minta acceptance ulang dari user.</strong> Ini kewajiban legal — user harus tahu dan setuju dengan perubahan yang mempengaruhi hak-hak mereka. Perubahan minor (typo, format) tidak perlu acceptance ulang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua versi historis konten tersimpan permanen</strong> dan tidak bisa dihapus. Ini penting untuk keperluan legal kalau ada dispute — GoPop perlu bisa tunjukkan versi S&K yang berlaku pada tanggal transaksi tertentu.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>S&K dan Kebijakan Privasi harus direview minimal 1x per tahun</strong> oleh Bili dan dikonsultasikan dengan konsultan hukum jika ada perubahan signifikan terkait data user atau model bisnis.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Konten terbaru tampil di app versi terkini</div><div class="hasil-item">User yang perlu accept ulang mendapat prompt sebelum transaksi</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Perubahan S&K tanpa acceptance ulang → masalah legal</div><div class="hasil-item">Konten outdated → user komplain informasi tidak akurat</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f05',null)">← F05: Denom & Preset</div>
+    <div class="fn-btn next" onclick="go('md-f07',null)">F07: Sync dari Digiflazz →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F07: SYNC DIGIFLAZZ ============================================================ -->
+<div id="page-md-f07" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F07</div>
+    <div class="fh-title">Sync Master Data dari Digiflazz</div>
+    <div class="fh-desc">Digiflazz adalah biller utama GoPop. Mereka punya ratusan produk (pulsa, paket data, token, voucher game, dll) yang terus berubah. Flow ini memungkinkan Ipong menarik daftar produk terbaru dari Digiflazz dan menyinkronkannya ke database GoPop tanpa input manual satu per satu.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Digiflazz update produk, ada produk baru, atau harga berubah massal</span>
+      <span class="pill pill-time">⏱ Idealnya dijalankan otomatis harian — saat ini masih manual</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Sync Digiflazz → tap "Sync Sekarang"</div><div class="step-desc">Sistem query API Digiflazz untuk pull daftar produk terbaru. Proses ini bisa memakan 30–60 detik tergantung jumlah produk. Progress bar tampil selama proses berlangsung.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Sistem bandingkan data dari Digiflazz vs database GoPop</div><div class="step-desc">Hasilnya tiga kategori perubahan:<ul>
+          <li><strong>Produk baru:</strong> Ada di Digiflazz tapi belum ada di GoPop — Ipong bisa pilih mana yang mau diaktifkan</li>
+          <li><strong>Perubahan HPP:</strong> Produk yang sudah ada tapi HPP-nya berubah di Digiflazz — harga jual GoPop perlu dievaluasi ulang</li>
+          <li><strong>Produk dihapus/nonaktif:</strong> Ada di GoPop tapi sudah tidak ada di Digiflazz — perlu dinonaktifkan di GoPop</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Ipong review dan konfirmasi perubahan</div><div class="step-desc">Ipong tidak harus accept semua perubahan secara otomatis. Untuk produk baru, Ipong pilih mana yang mau diaktifkan dan set harga jual. Untuk perubahan HPP, Ipong review dan update harga jual supaya margin tetap positif. Untuk produk yang dihapus, nonaktifkan satu klik.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Apply perubahan — produk terupdate di app</div><div class="step-desc">Setelah Ipong konfirmasi, perubahan langsung berlaku. User yang cek produk berikutnya akan lihat daftar produk terbaru.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sync tidak otomatis apply semua perubahan.</strong> Ipong harus review dan konfirmasi sebelum apply — terutama untuk perubahan HPP yang bisa mempengaruhi margin. Tidak ada auto-apply tanpa review manusia.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau HPP Digiflazz naik, Ipong WAJIB update harga jual GoPop</strong> agar margin tidak jadi negatif. Sistem akan alert Ipong kalau ada produk yang HPP-nya naik melebihi harga jual yang ada.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk yang dihapus dari Digiflazz tapi masih ada transaksi yang sedang berjalan</strong> tidak bisa langsung dinonaktifkan — transaksi yang sudah PAID harus diselesaikan dulu (sukses atau gagal+refund), baru nonaktifkan produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sync sebaiknya dilakukan di luar jam sibuk</strong> (misal pagi sebelum jam 07.00 atau malam setelah jam 22.00) agar kalau ada masalah tidak langsung berdampak ke traffic tinggi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Digiflazz naik HPP massal untuk pulsa semua operator — Ipong tidak sadar dan tidak update harga jual</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Sistem harus alert Ipong dengan banner merah di dashboard kalau ada produk yang margin jadi negatif setelah sync HPP. Ipong tidak bisa klik "Apply" kalau masih ada produk dengan margin negatif — forced review. Akoy juga mendapat notifikasi kalau ada margin negatif yang belum ditangani lebih dari 1 jam.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (forced review sebelum apply kalau ada margin negatif) · Acoy (notif kalau tidak ditangani)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Sync gagal di tengah jalan — sebagian produk terupdate, sebagian tidak</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Sync harus atomik — kalau gagal di tengah, rollback semua perubahan ke kondisi sebelumnya. Jangan biarkan database dalam state setengah-setengah. Tampilkan pesan error yang jelas ke Ipong dan log error untuk Irwan investigasi.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (implementasi atomic sync dengan rollback) · Ipong (coba sync ulang setelah error)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Sync masih manual — Ipong harus ingat dan jalankan sendiri setiap hari. Kalau lupa, produk baru dari Digiflazz tidak tampil ke user</div>
+          <div class="bn-a">Idealnya ada scheduler yang otomatis pull data Digiflazz setiap malam jam 02.00 (saat traffic rendah), deteksi perubahan, dan kirim ringkasan ke Ipong via WA: "Ada 3 produk baru dan 2 perubahan HPP dari Digiflazz. Buka dashboard untuk review." Ipong tinggal review dan approve dari dashboard tanpa harus ingat untuk sync manual.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi auto-scheduler sync Digiflazz + notif WA ke Ipong)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Sync Sukses</div><div class="hasil-items"><div class="hasil-item">Produk baru dari Digiflazz tersedia di app setelah Ipong review + apply</div><div class="hasil-item">HPP terupdate — Ipong sudah sesuaikan harga jual</div><div class="hasil-item">Produk yang discontinued sudah dinonaktifkan</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">HPP naik tidak terdeteksi → margin negatif → jual rugi</div><div class="hasil-item">Sync gagal setengah jalan → database inconsistent</div><div class="hasil-item">Lupa sync manual → produk baru tidak tersedia</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f06',null)">← F06: Konten Statis</div>
+    <div class="fn-btn" onclick="go('d-welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ PENGATURAN SISTEM F01: UMUM ============================================================ -->
+<div id="page-ps-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F01</div>
+    <div class="fh-title">Pengaturan Umum</div>
+    <div class="fh-desc">Konfigurasi dasar platform GoPop — nama platform, timezone, mode maintenance, dan pengaturan global lainnya. Ini adalah halaman pertama yang terbuka saat Acoy masuk ke Pengaturan Sistem.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin)</span>
+      <span class="pill pill-trigger">🔔 Ada perubahan konfigurasi dasar platform</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Konfigurasi yang Tersedia</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔧</span><div class="rule-text"><strong>Nama & Identitas Platform:</strong> Nama platform ("GoPop"), tagline, URL website, email kontak resmi, nomor WA CS. Data ini dipakai di template WA notif, email, dan footer halaman.</div></div>
+        <div class="rule"><span>🔧</span><div class="rule-text"><strong>Timezone & Locale:</strong> Default WIB (UTC+7). Semua timestamp di dashboard dan notifikasi mengikuti timezone ini. Penting untuk rekonsiliasi agar cut-off hari sama antara sistem GoPop dan laporan gateway.</div></div>
+        <div class="rule"><span>🔧</span><div class="rule-text"><strong>Mode Maintenance:</strong> Toggle yang jika diaktifkan akan menampilkan halaman maintenance ke semua user app/web — transaksi tidak bisa dilakukan. Untuk maintenance terjadwal (misal update server). Harus ada konfirmasi "Ya, saya yakin" sebelum aktif karena dampaknya besar.</div></div>
+        <div class="rule"><span>🔧</span><div class="rule-text"><strong>Batas Transaksi Harian per User:</strong> Jumlah maksimal transaksi atau nominal total yang bisa dilakukan satu user dalam satu hari. Untuk pencegahan fraud. Default: tidak ada limit kecuali yang sudah diset per metode bayar.</div></div>
+        <div class="rule"><span>🔧</span><div class="rule-text"><strong>Versi App Minimum:</strong> Versi minimum app Android/iOS yang masih didukung. User dengan versi lebih lama akan dapat prompt untuk update. Acoy set ini setelah koordinasi dengan tim FE.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Mode Maintenance wajib dikomunikasikan ke tim sebelum diaktifkan.</strong> Kayong perlu pasang banner di CMS dulu, CS perlu siap-siap terima pertanyaan user. Jangan aktifkan mendadak tanpa koordinasi — kecuali kondisi darurat.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua perubahan di Pengaturan Umum dicatat di Audit Log</strong> — siapa yang mengubah, apa yang diubah, dan kapan. Ini penting karena perubahan di sini berdampak ke seluruh platform.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Hanya Super Admin (Acoy) yang bisa akses Pengaturan Sistem.</strong> Role lain (CS, Finance, Marketing) tidak punya akses ke menu ini sama sekali.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Mode Maintenance diaktifkan tidak sengaja — semua user tidak bisa transaksi</div>
+          <div class="bc-user">User membuka app dan melihat halaman maintenance tanpa tahu kenapa.</div>
+          <div class="bc-handle">Matikan Mode Maintenance segera. Toggle maintenance harus punya double-confirmation yang jelas ("Platform akan tidak bisa diakses oleh semua user. Lanjutkan?") dan menampilkan countdown berapa lama sudah dalam mode maintenance. Kirim notifikasi WA ke Kayong untuk update status di CMS.</div>
+          <div class="bc-owner">PIC: Acoy (matikan segera) · Kayong (update CMS)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Konfigurasi Tersimpan</div><div class="hasil-items"><div class="hasil-item">Semua template WA/email pakai nama & kontak terbaru</div><div class="hasil-item">Timestamp seluruh sistem konsisten di WIB</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko Tinggi</div><div class="hasil-items"><div class="hasil-item">Mode Maintenance aktif tidak sengaja → semua user tidak bisa transaksi</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f07',null)">← Master Data F07</div>
+    <div class="fn-btn next" onclick="go('ps-f02',null)">F02: Saldo & Limit Biller →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F02: SALDO & LIMIT BILLER ============================================================ -->
+<div id="page-ps-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F02</div>
+    <div class="fh-title">Saldo & Limit Biller</div>
+    <div class="fh-desc">Halaman paling kompleks dan paling kritis di Pengaturan Sistem. Menampilkan saldo prepaid GoPop di setiap supplier/biller (Supplier A, B, C, D), mengatur zonasi alert, dan mengontrol aksi otomatis saat saldo mendekati habis. Dari screenshot dashboard production yang terlihat, ini tampilan yang sudah berjalan live.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Ipong (Aggregator — pantau rutin)</span>
+      <span class="pill pill-trigger">🔔 Saldo supplier mendekati batas alert / perlu isi ulang saldo</span>
+      <span class="pill pill-time">⏱ Dipantau real-time sepanjang jam operasional</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Anatomi Halaman — dari Screenshot Production</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info">
+        <span>📸</span>
+        <div>Berdasarkan screenshot dashboard production, halaman Saldo & Limit Biller berisi empat card supplier secara horizontal. Berikut breakdown setiap elemen yang terlihat.</div>
+      </div>
+      <div class="rule-list" style="margin-top:12px;">
+        <div class="rule"><span>🟢</span><div class="rule-text"><strong>Status Saldo per Supplier — 4 Level:</strong>
+          <ul style="margin-top:6px;">
+            <li><span style="background:#1A1228;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;">⚫ Blackout</span> — Saldo habis atau sangat kritis, transaksi ke supplier ini tidak bisa diproses</li>
+            <li><span style="background:#DC2626;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;">🔴 Danger</span> — Saldo sangat rendah, perlu top-up segera dalam hitungan jam</li>
+            <li><span style="background:#F59E0B;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;">🟡 Warning</span> — Saldo mulai menipis, perlu perhatian dan rencana top-up</li>
+            <li><span style="background:#16A34A;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;">🟢 Aman</span> — Saldo cukup untuk operasional normal</li>
+          </ul>
+        </div></div>
+        <div class="rule"><span>📊</span><div class="rule-text"><strong>Progress Bar Saldo:</strong> Visual bar di tiap card supplier menunjukkan proporsi saldo tersisa vs total kapasitas. Warna bar mengikuti status (hijau → kuning → merah → hitam).</div></div>
+        <div class="rule"><span>🔢</span><div class="rule-text"><strong>Threshold Alert per Supplier (3 level):</strong> Setiap supplier punya tiga batas yang bisa diset Acoy:
+          <ul style="margin-top:6px;">
+            <li>Batas Danger (merah): misal Rp500.000 — saldo di bawah ini = status Danger</li>
+            <li>Batas Warning (kuning): misal Rp1.000.000 — saldo di bawah ini = status Warning</li>
+            <li>Batas Aman (hijau): misal Rp3.000.000 — saldo di atas ini = status Aman</li>
+          </ul>
+          Dari screenshot: Supplier A threshold Rp500k/Rp1jt/Rp3jt; Supplier B Rp500k/Rp1jt/Rp3jt; Supplier C rata-rata harian Rp1,8jt (Rp450k/Rp900k/Rp2,7jt); Supplier D Rp500k/Rp1jt/Rp3jt.
+        </div></div>
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Toggle Manual / Otomatis per Supplier:</strong> Dua mode operasi:
+          <ul style="margin-top:6px;">
+            <li><strong>Manual:</strong> Acoy/Ipong yang memutuskan kapan top-up saldo — sistem hanya alert tapi tidak aksi otomatis</li>
+            <li><strong>Otomatis:</strong> Sistem otomatis top-up saldo ketika mencapai threshold Danger/Blackout, tanpa perlu intervensi manual. Butuh konfigurasi nominal top-up otomatis dan metode pembayaran yang sudah tersimpan.</li>
+          </ul>
+          Dari screenshot: Supplier D mode Otomatis aktif (toggle hijau). Supplier lain masih Manual. Ada field "Limit maks per transaksi saat kritis" untuk Supplier D (Rp200.000).
+        </div></div>
+        <div class="rule"><span>🔔</span><div class="rule-text"><strong>Aksi Pop-up per Status:</strong> Setiap supplier bisa dikonfigurasi untuk tampilkan pop-up ke user app/web saat saldo masuk status tertentu:
+          <ul style="margin-top:6px;">
+            <li>Toggle "Tampilkan pop-up saat Blackout" — default ON di semua supplier</li>
+            <li>Toggle "Tampilkan pop-up saat Danger" — bisa ON atau OFF per supplier</li>
+            <li>Toggle "Tampilkan pop-up saat Warning" — opsional</li>
+            <li>Toggle "Tampilkan pop-up saat Aman" — biasanya OFF (tidak perlu notif kalau aman)</li>
+          </ul>
+          Pop-up ini muncul di app user sebagai banner atau modal yang memberitahu layanan tertentu sedang gangguan/terbatas.
+        </div></div>
+        <div class="rule"><span>⚠️</span><div class="rule-text"><strong>Badge "Traffic Tinggi":</strong> Dari screenshot, Supplier D punya badge "⚠️ Traffic Tinggi" di pojok kanan atas card-nya. Ini indikator bahwa volume transaksi ke supplier ini sedang tinggi — kombinasi dengan saldo Blackout berarti situasi kritis yang perlu perhatian segera.</div></div>
+        <div class="rule"><span>📢</span><div class="rule-text"><strong>Banner Info di Atas:</strong> Dari screenshot terlihat banner kuning yang menampilkan produk mana yang sedang aktif menampilkan pop-up ke end-user app:
+          <ul style="margin-top:6px;">
+            <li>"Danger: Supplier A — PDAM Surya Sembada Surabaya, Token Listrik PLN 100.000, Pulsa Telkomsel 10.000"</li>
+            <li>"Blackout: Supplier D — Pulsa Telkomsel 100.000, Token Listrik PLN 100.000, XL Hot Rod 12GB 30 Hari"</li>
+          </ul>
+          Ini penting agar Acoy/Ipong tahu persis produk mana yang sedang berdampak ke user.
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Normal — Top-up Saldo Supplier</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Acoy/Ipong melihat status saldo semua supplier</div><div class="step-desc">Buka Pengaturan Sistem → Saldo & Limit Biller. Langsung terlihat kondisi keempat supplier sekaligus. Card dengan status Danger atau Blackout tampil lebih mencolok (border merah, badge status besar).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Identifikasi supplier yang perlu top-up</div><div class="step-desc">Prioritaskan supplier dengan status Blackout terlebih dahulu (transaksi sudah tidak bisa jalan), lalu Danger (akan segera tidak bisa). Lihat juga badge "Traffic Tinggi" — kalau saldo rendah + traffic tinggi = situasi kritis yang perlu ditangani dalam hitungan menit.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Proses top-up saldo ke supplier</div><div class="step-desc">Top-up saldo ke Digiflazz/supplier dilakukan di luar dashboard GoPop — biasanya via transfer bank ke rekening supplier atau melalui portal supplier tersebut. Setelah transfer dikonfirmasi, saldo di dashboard akan terupdate (bisa otomatis via API atau manual refresh tergantung supplier).</div></div></div>
+        <div class="step"><div class="step-num sn-sys">4</div><div class="step-body"><div class="step-title">Saldo terupdate — status kembali normal</div><div class="step-desc">Setelah saldo di-refresh, status card supplier berubah dari Blackout/Danger ke Warning atau Aman. Pop-up yang sebelumnya tampil ke user app otomatis menghilang (kalau toggle pop-up Aman = OFF). Banner info di atas halaman juga terupdate.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">3</div><div class="fb-title">Alur — Konfigurasi Alert & Threshold</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Acoy set threshold per supplier</div><div class="step-desc">Klik tombol edit di card supplier → muncul form threshold: field Rp untuk Danger, Warning, dan batas Aman. Nilai threshold sebaiknya berdasarkan rata-rata pemakaian harian supplier tersebut. Dari screenshot Supplier C ada info "Rata-rata harian: Rp1.800.000" yang membantu Acoy menentukan threshold yang tepat.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Set toggle Manual atau Otomatis</div><div class="step-desc">Kalau supplier punya integrasi API top-up, set ke Otomatis dan konfigurasi nominal top-up otomatis (misal auto top-up Rp5.000.000 kalau saldo jatuh ke Danger). Kalau tidak ada API, tetap Manual dan pastikan Acoy/Ipong rutin pantau.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Set toggle pop-up per status per supplier</div><div class="step-desc">Tentukan status mana yang akan tampilkan pop-up ke user app. Rekomendasi: pop-up Blackout = SELALU ON (user harus tahu produk tidak bisa dipakai), pop-up Danger = ON untuk produk-produk kritis, pop-up Warning = opsional (bisa bikin user overthinking kalau terlalu sering).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">4</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Saldo supplier adalah uang GoPop yang diparkir di biller untuk memudahkan transaksi real-time.</strong> Ini bukan pendapatan — ini modal kerja. Terlalu sedikit = transaksi gagal. Terlalu banyak = modal kerja idle yang tidak efisien. Agung perlu terlibat dalam keputusan berapa saldo ideal per supplier.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Pop-up ke user app adalah komunikasi krisis</strong> — jangan dipakai berlebihan. Kalau pop-up terlalu sering muncul (karena threshold Warning terlalu tinggi), user akan mulai mengabaikannya. Simpan pop-up untuk kondisi yang benar-benar berdampak ke user.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Supplier D dengan mode Otomatis butuh pemantauan berbeda.</strong> Kalau auto top-up gagal (misal rekening sumber dana tidak ada, atau API supplier error), saldo bisa tetap di Blackout meski mode Otomatis aktif. Acoy perlu cek log auto top-up secara berkala.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Badge "Traffic Tinggi" adalah early warning system.</strong> Kalau saldo Aman tapi traffic tinggi, saldo bisa cepat habis. Acoy/Ipong perlu proaktif top-up lebih awal dari biasanya saat traffic sedang tinggi (akhir bulan, tanggal gajian, event promo).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>"Auto-turunkan limit saat Danger/Blackout"</strong> — dari screenshot terlihat ada toggle ini. Artinya kalau saldo masuk Danger, sistem otomatis turunkan limit maksimum per transaksi ke nilai yang lebih kecil (misal dari Rp1.000.000 ke Rp200.000 seperti di Supplier D) untuk memperpanjang umur saldo yang tersisa sambil menunggu top-up.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">5</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Saldo semua supplier Blackout bersamaan — semua transaksi tidak bisa diproses</div>
+          <div class="bc-user">User tidak bisa transaksi apapun di GoPop.</div>
+          <div class="bc-handle">Ini kondisi terburuk. Prioritas: (1) Acoy aktifkan Mode Maintenance dari F01 agar user dapat pesan yang jelas, (2) Kayong update banner CMS, (3) Ipong proses top-up ke semua supplier secepat mungkin dengan urutan prioritas supplier yang paling banyak transaksinya, (4) Acoy kirim notif WA ke semua reseller aktif. Setelah saldo masuk, matikan maintenance mode.</div>
+          <div class="bc-owner">PIC: Acoy (koordinasi umum) · Ipong (proses top-up) · Kayong (komunikasi ke user)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Auto top-up Supplier D gagal tapi Acoy tidak tahu — saldo terus turun sampai Blackout</div>
+          <div class="bc-user">Transaksi ke Supplier D mulai gagal padahal mode Otomatis aktif.</div>
+          <div class="bc-handle">Sistem wajib kirim alert WA ke Acoy dan Ipong kalau auto top-up gagal, bukan hanya log error di sistem. Kalau alert tidak sampai dalam 30 menit setelah auto top-up gagal, eskalasi ke nomor WA backup. Auto top-up yang gagal harus dicoba ulang otomatis dengan interval tertentu sebelum benar-benar menyerah dan alert manual.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (implementasi alert auto top-up gagal + retry logic) · Acoy (set nomor WA backup untuk eskalasi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Threshold Warning terlalu tinggi — pop-up muncul ke user terlalu sering padahal saldo masih cukup untuk hours ke depan</div>
+          <div class="bc-user">User melihat pop-up "layanan terbatas" terlalu sering → kehilangan kepercayaan pada GoPop.</div>
+          <div class="bc-handle">Acoy turunkan threshold Warning ke nilai yang lebih realistis berdasarkan rata-rata konsumsi per jam (bukan per hari). Gunakan info "Rata-rata harian" yang sudah tampil di halaman ini untuk kalkulasi threshold yang tepat.</div>
+          <div class="bc-owner">PIC: Acoy (kalibrasi ulang threshold) · Ipong (monitor dan rekomendasikan nilai berdasarkan pola traffic)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">6</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Top-up saldo ke supplier masih dilakukan di luar dashboard GoPop — Acoy/Ipong harus buka portal supplier terpisah, transfer bank, tunggu konfirmasi, baru refresh di dashboard</div>
+          <div class="bn-a">Idealnya ada integrasi langsung: tombol "Top-Up Saldo" di card supplier yang langsung membuka form transfer atau menghubungi API supplier untuk request top-up. Minimal, ada shortcut link langsung ke portal supplier yang bersangkutan. Ini memangkas waktu response dari 15–30 menit jadi 2–5 menit saat kondisi kritis.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (integrasi API top-up supplier / shortcut ke portal) · Agung (integrasi rekening bank GoPop)</div>
+        </div>
+        <div class="bn">
+          <div class="bn-q">Tidak ada proyeksi "estimasi saldo habis" — Acoy harus hitung manual kapan saldo akan habis berdasarkan rata-rata harian</div>
+          <div class="bn-a">Tampilkan di setiap card supplier: "Estimasi saldo habis: ~4 jam lagi (berdasarkan rata-rata 3 jam terakhir)". Kalkulasi ini bisa dilakukan dari data traffic realtime. Ini membantu Acoy/Ipong mengambil keputusan top-up berdasarkan data, bukan intuisi.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (tampilkan estimasi di card supplier) · Irwan + Rifky (kalkulasi dari data traffic realtime)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">7</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Operasional Normal</div><div class="hasil-items"><div class="hasil-item">Semua supplier status Aman — transaksi berjalan lancar</div><div class="hasil-item">Alert terkalibrasi dengan baik — tidak terlalu sering, tidak terlambat</div><div class="hasil-item">Auto top-up Supplier D berjalan tanpa intervensi manual</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Kondisi Kritis</div><div class="hasil-items"><div class="hasil-item">Blackout semua supplier → maintenance mode + top-up darurat</div><div class="hasil-item">Auto top-up gagal tanpa alert → saldo habis tanpa diketahui</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f01',null)">← F01: Pengaturan Umum</div>
+    <div class="fn-btn next" onclick="go('ps-f03',null)">F03: Payment Gateway →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F03: PAYMENT GATEWAY ============================================================ -->
+<div id="page-ps-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F03</div>
+    <div class="fh-title">Konfigurasi Payment Gateway</div>
+    <div class="fh-desc">Pengaturan koneksi ke Midtrans dan DOKU — API keys, webhook URL, mode (sandbox/production), dan metode pembayaran yang diaktifkan per gateway. Ini adalah konfigurasi teknikal sensitif yang jarang diubah kecuali ada perubahan kontrak atau rotasi API key.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Irwan + Rifky (BE — implementasi)</span>
+      <span class="pill pill-trigger">🔔 Rotasi API key, perubahan kontrak gateway, atau onboarding metode bayar baru</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Konfigurasi yang Tersedia per Gateway</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔑</span><div class="rule-text"><strong>API Keys (Midtrans & DOKU):</strong> Server Key dan Client Key untuk production. Ditampilkan masked (****) dengan tombol "Salin" — tidak pernah tampil plaintext di dashboard. Ada tombol "Rotate Key" untuk memicu rotasi jika ada indikasi kebocoran.</div></div>
+        <div class="rule"><span>🌐</span><div class="rule-text"><strong>Webhook URL:</strong> URL endpoint GoPop yang didaftarkan ke Midtrans/DOKU untuk menerima callback pembayaran. Kalau URL ini berubah (misal domain ganti), harus diupdate di portal Midtrans/DOKU dan di sini secara bersamaan. Webhook yang salah = transaksi tidak pernah terkonfirmasi.</div></div>
+        <div class="rule"><span>🔄</span><div class="rule-text"><strong>Mode Sandbox / Production:</strong> Toggle untuk switch antara environment testing (sandbox) dan live (production). JANGAN aktifkan Sandbox di production — transaksi akan "sukses" di sistem tapi uang tidak benar-benar bergerak.</div></div>
+        <div class="rule"><span>💳</span><div class="rule-text"><strong>Metode Pembayaran Aktif:</strong> Checklist metode yang diaktifkan per gateway — QRIS, VA BCA/BNI/Mandiri/BRI, E-wallet, Retail (Alfamart/Indomaret). Hanya aktifkan yang ada dalam kontrak dengan gateway.</div></div>
+        <div class="rule"><span>⏱</span><div class="rule-text"><strong>Timeout VA:</strong> Durasi VA berlaku sebelum expired (default 24 jam). Bisa diubah per kebijakan bisnis — lebih pendek = user lebih terdorong bayar cepat, lebih panjang = lebih nyaman tapi dana floating lebih lama.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>API Key TIDAK PERNAH boleh dicommit ke repository code.</strong> Harus selalu disimpan sebagai environment variable di server, bukan di config file yang masuk ke Git. Kalau API Key pernah terekspos di repository (bahkan sudah dihapus dari commit), anggap sudah bocor dan rotate segera.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setiap perubahan konfigurasi gateway harus ditest dulu di sandbox</strong> sebelum apply ke production. Kalau ada perubahan yang tidak bisa ditest di sandbox (misal ganti API Key production), lakukan di luar jam sibuk dan monitor webhook callback selama 30 menit setelahnya.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Webhook signature verification wajib aktif.</strong> Midtrans dan DOKU mengirim signature di setiap callback untuk verifikasi bahwa callback benar-benar dari mereka. Kalau signature verification dinonaktifkan, sistem rentan terhadap serangan palsu callback yang bisa memicu transaksi sukses tanpa bayar.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">API Key production terekspos atau dicurigai bocor</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Langkah segera: (1) Rotate API Key baru dari portal Midtrans/DOKU, (2) Update di dashboard GoPop, (3) Monitor transaksi 24 jam ke belakang untuk deteksi transaksi unauthorized, (4) Lapor ke Midtrans/DOKU security team. Jangan tunda — setiap menit API Key bocor adalah risiko fraud.</div>
+          <div class="bc-owner">PIC: Irwan (rotate key segera) · Acoy (update di dashboard + monitor) · Rifky (audit transaksi mencurigakan)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Webhook URL berubah (domain baru) tapi lupa update di portal Midtrans/DOKU — semua pembayaran tidak terkonfirmasi</div>
+          <div class="bc-user">User sudah bayar tapi status transaksi tetap "Menunggu Pembayaran" selamanya.</div>
+          <div class="bc-handle">Update webhook URL di portal Midtrans/DOKU segera. Untuk transaksi yang sudah bayar tapi tidak terkonfirmasi, Rifky bisa manual pull status dari API gateway dan trigger update status secara batch. SOP: setiap kali ada perubahan domain/infrastruktur, webhook URL adalah salah satu item wajib yang dicek.</div>
+          <div class="bc-owner">PIC: Irwan (update webhook URL di portal gateway) · Rifky (batch update status transaksi yang tertahan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Gateway Terkonfigurasi Benar</div><div class="hasil-items"><div class="hasil-item">Webhook callback diterima dan diverifikasi dengan benar</div><div class="hasil-item">Semua metode bayar yang aktif sesuai kontrak</div><div class="hasil-item">API Key aman, tidak terekspos di mana pun</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Kondisi Berbahaya</div><div class="hasil-items"><div class="hasil-item">API Key bocor → rotate segera, audit transaksi</div><div class="hasil-item">Webhook salah → transaksi tidak terkonfirmasi</div><div class="hasil-item">Mode Sandbox aktif di production → uang tidak bergerak</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f02',null)">← F02: Saldo & Limit Biller</div>
+    <div class="fn-btn next" onclick="go('ps-f04',null)">F04: Fee & Biaya Admin →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F04: FEE & BIAYA ADMIN ============================================================ -->
+<div id="page-ps-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F04</div>
+    <div class="fh-title">Fee & Biaya Admin</div>
+    <div class="fh-desc">Pengaturan terpusat untuk semua biaya yang GoPop kenakan ke user — biaya layanan transfer e-wallet (Rp1.000 flat), biaya pembayaran per metode, dan biaya admin produk-produk tertentu. Berbeda dari Master Data yang hanya mengatur biaya per bank/e-wallet, ini mengatur kebijakan fee secara keseluruhan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Agung (Finance — konfirmasi perubahan fee) · Bili (Product — keputusan strategis)</span>
+      <span class="pill pill-trigger">🔔 Ada keputusan perubahan fee layanan atau fee pembayaran</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Struktur Fee yang Dapat Dikonfigurasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>💸</span><div class="rule-text"><strong>Biaya Layanan Transfer E-Wallet:</strong> Saat ini Rp1.000 flat per transaksi — ini adalah hero differentiator GoPop. Nilai ini bisa diubah dari sini, tapi butuh approval Bili dan Agung sebelum berlaku. Perubahan nilai ini berdampak langsung ke margin GoPop dan positioning kompetitif.</div></div>
+        <div class="rule"><span>💳</span><div class="rule-text"><strong>Biaya Pembayaran per Metode:</strong> Fee yang dikenakan ke user berdasarkan metode bayar yang dipilih. Ini merefleksikan biaya yang GoPop bayar ke gateway, bisa dengan markup atau tanpa markup:
+          <ul style="margin-top:6px;">
+            <li>QRIS: Rp0 (Gratis) — GoPop absorb biaya MDR dari gateway</li>
+            <li>E-Wallet (GoPay/OVO/DANA/ShopeePay): Rp0 (Gratis)</li>
+            <li>Virtual Account: Rp2.500 — dikenakan ke user untuk cover biaya gateway</li>
+            <li>Gerai Retail (Alfamart/Indomaret): Rp3.000</li>
+          </ul>
+        </div></div>
+        <div class="rule"><span>🎁</span><div class="rule-text"><strong>Fee Waiver untuk Promo:</strong> Bisa set kondisi di mana biaya layanan di-waive (misalnya: transaksi pertama user gratis biaya layanan, atau produk tertentu bebas biaya layanan selama periode promo). Ini terhubung ke modul Promo & Voucher (F05).</div></div>
+        <div class="rule"><span>🏪</span><div class="rule-text"><strong>Biaya Admin Khusus Produk:</strong> Beberapa produk punya biaya admin dari biller yang dipassthrough ke user — misal biaya admin PLN Rp1.600 untuk Token Listrik. Ini bisa dikonfigurasi di sini apakah dipisah tampil ke user atau sudah include dalam harga produk.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan biaya layanan transfer (Rp1.000) adalah keputusan strategis, bukan operasional.</strong> Harus ada persetujuan Bili (product strategy) dan Agung (financial impact) sebelum Acoy bisa apply perubahan. Dashboard bisa minta approval workflow sebelum perubahan ini berlaku.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya pembayaran yang dikenakan ke user tidak boleh lebih kecil dari biaya yang GoPop bayar ke gateway.</strong> Kalau MDR QRIS naik tapi fee QRIS di dashboard tetap Rp0, GoPop yang nombok selisihnya. Agung perlu review secara berkala.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua perubahan fee langsung berlaku ke transaksi baru</strong> — tidak berlaku retroaktif ke transaksi yang sudah dalam proses. Ini mencegah confusion di mana user sudah lihat harga A di checkout tapi kena charge harga B.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Fee Terkonfigurasi Benar</div><div class="hasil-items"><div class="hasil-item">Biaya layanan Rp1.000 menjaga posisi kompetitif GoPop</div><div class="hasil-item">Fee pembayaran cover biaya gateway — GoPop tidak nombok</div><div class="hasil-item">Biaya admin produk tampil transparan ke user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Fee gateway naik tapi fee user tidak update → GoPop nombok</div><div class="hasil-item">Fee layanan berubah tanpa komunikasi → user complain</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f03',null)">← F03: Payment Gateway</div>
+    <div class="fn-btn next" onclick="go('ps-f05',null)">F05: Promo & Voucher →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F05: PROMO & VOUCHER ============================================================ -->
+<div id="page-ps-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F05</div>
+    <div class="fh-title">Promo & Voucher</div>
+    <div class="fh-desc">Kelola kode promo, cashback, dan voucher diskon yang bisa dipakai user di checkout. Mencakup pembuatan kode promo baru, setting syarat & ketentuan promo, batas pemakaian, dan monitoring penggunaan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Kayong/Luqman (Marketing — request promo) · Acoy (Super Admin — create & approve) · Agung (Finance — budget promo)</span>
+      <span class="pill pill-trigger">🔔 Ada campaign marketing baru atau promo seasonal</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Buat Kode Promo Baru</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Kayong request promo ke Acoy</div><div class="step-desc">Kayong mengajukan proposal promo: jenis promo (cashback/diskon/gratis biaya layanan), nilai, target user, periode, dan estimasi budget ke Agung. Setelah Agung dan Bili setuju, Acoy yang buat kode promo di dashboard.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Acoy buat kode promo di dashboard</div><div class="step-desc">Form pembuatan promo berisi:<ul>
+          <li><strong>Kode promo:</strong> Custom (misal "GOPOP50") atau generate otomatis</li>
+          <li><strong>Jenis benefit:</strong> Cashback % / Cashback nominal / Diskon biaya layanan / Gratis biaya bayar</li>
+          <li><strong>Nilai benefit:</strong> Misal cashback 10% max Rp5.000</li>
+          <li><strong>Syarat minimum:</strong> Minimum transaksi Rp50.000 untuk pakai promo ini</li>
+          <li><strong>Kategori produk:</strong> Berlaku untuk semua / hanya transfer / hanya pulsa / dll</li>
+          <li><strong>Periode berlaku:</strong> Tanggal mulai dan berakhir promo</li>
+          <li><strong>Limit pemakaian:</strong> Berapa kali total promo bisa dipakai (misal 1000 kali) dan berapa kali per user (misal 1x per user)</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Kayong publish kode promo ke channel marketing</div><div class="step-desc">Setelah promo aktif di dashboard, Kayong share kode ke Instagram, WA broadcast reseller, banner CMS, dll. Promo mulai bisa dipakai user segera setelah periode mulai aktif.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Monitor penggunaan promo</div><div class="step-desc">Di halaman promo ada analytics real-time: berapa kali dipakai, total nilai cashback yang sudah keluar, sisa kuota, dan tren pemakaian per hari. Kalau ada promo yang meledak melebihi ekspektasi, Acoy bisa nonaktifkan segera sebelum budget habis.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setiap promo WAJIB punya budget cap.</strong> Tidak boleh ada promo tanpa limit penggunaan — ini bisa membuat GoPop merugi tak terbatas kalau promo bocor atau viral tanpa kontrol. Minimal ada total limit penggunaan atau budget maksimum dalam Rupiah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Promo cashback dicairkan ke saldo internal GoPop user atau langsung dipotong dari total bayar?</strong> Perlu keputusan Bili dan Agung — keduanya punya implikasi UX dan cash flow yang berbeda. Sebaiknya dikonsistensikan sebelum ada promo pertama yang live.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kode promo dari Figma yang terlihat di mock ("COBA: MUURAH5") harus dinonaktifkan</strong> setelah app live — kode testing yang terekspos di UI bisa dipakai user nyata untuk dapat diskon yang tidak seharusnya.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Promo viral di luar dugaan — 10.000 user pakai dalam 2 jam, budget habis tapi promo masih aktif karena sistem tidak stop otomatis</div>
+          <div class="bc-user">User yang sudah viral-share promo menjadi kecewa karena tiba-tiba tidak bisa dipakai.</div>
+          <div class="bc-handle">Sistem harus otomatis nonaktifkan promo saat limit tercapai — tidak ada promo yang bisa dipakai melebihi kuota yang diset. Acoy juga perlu monitoring real-time dan siap nonaktifkan manual kalau ada anomali. Untuk komunikasi ke user: banner di app "Promo [kode] sudah habis kuotanya" lebih baik dari error tiba-tiba saat checkout.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (auto-disable promo saat limit) · Acoy (monitor real-time) · Kayong (komunikasi ke user)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Promo Berjalan Sesuai Rencana</div><div class="hasil-items"><div class="hasil-item">Promo aktif sesuai periode dan kuota yang diset</div><div class="hasil-item">Budget terkontrol — tidak melebihi yang disetujui Agung</div><div class="hasil-item">Analytics real-time tersedia untuk monitoring</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Promo tanpa limit → potensi rugi tak terbatas</div><div class="hasil-item">Kode testing masih aktif di production → diskon bocor</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f04',null)">← F04: Fee & Biaya Admin</div>
+    <div class="fn-btn next" onclick="go('ps-f06',null)">F06: Notifikasi Sistem →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F06: NOTIFIKASI ============================================================ -->
+<div id="page-ps-f06" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F06</div>
+    <div class="fh-title">Notifikasi Sistem</div>
+    <div class="fh-desc">Konfigurasi template pesan WA yang dikirim sistem ke user — untuk konfirmasi transaksi, notif gagal, refund, dan lainnya. Juga mengatur koneksi ke WA Business API provider dan pengaturan anti-spam.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Kayong (Marketing — copy template) · Irwan + Rifky (BE — integrasi WA API)</span>
+      <span class="pill pill-trigger">🔔 Perubahan template WA, onboarding WA Business API, atau update copy notifikasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Yang Bisa Dikonfigurasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📱</span><div class="rule-text"><strong>WA Business API Config:</strong> Nomor WA pengirim GoPop, API token provider WA (Wablas/Zenziva/dll atau self-managed), dan status koneksi (aktif/error). Ada tombol "Test Kirim WA" untuk verifikasi koneksi sebelum live.</div></div>
+        <div class="rule"><span>✉️</span><div class="rule-text"><strong>Template Pesan per Event:</strong> Setiap jenis notifikasi punya template teks dengan variabel (misal {{nama_user}}, {{nominal}}, {{ref_id}}). Event yang ada templatenya:<ul style="margin-top:6px;">
+          <li>Transaksi Sukses (per jenis produk)</li>
+          <li>Transaksi Gagal + info refund</li>
+          <li>Refund Diproses / Selesai</li>
+          <li>OTP Registrasi / Reset Password</li>
+          <li>Tiket Komplain Diterima</li>
+          <li>VA Akan Expired (1 jam sebelum)</li>
+          <li>Saldo Reseller Hampir Habis</li>
+          <li>Notif Bonus Jaringan Harian</li>
+        </ul></div></div>
+        <div class="rule"><span>🛡️</span><div class="rule-text"><strong>Anti-Spam Config:</strong> Maksimal berapa pesan WA per user per hari (default: tidak ada limit kecuali OTP). Kalau user sudah dapat X pesan hari ini, pesan berikutnya diqueue untuk besok (kecuali pesan kritis seperti OTP dan transaksi gagal yang selalu dikirim langsung).</div></div>
+        <div class="rule"><span>🔕</span><div class="rule-text"><strong>Opt-out Management:</strong> User yang reply "STOP" ke WA GoPop bisa masuk daftar opt-out untuk notif marketing. Notif transaksional (sukses/gagal/refund) tetap dikirim meski opt-out — ini bukan spam, ini informasi penting transaksi mereka.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Notifikasi transaksional (sukses/gagal/refund/OTP) tidak bisa di-opt-out user.</strong> Ini adalah informasi yang user butuhkan untuk keamanan dan bukti transaksi mereka. Yang bisa di-opt-out hanya notifikasi marketing dan promo.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Template WA harus sudah diapprove oleh Meta (WhatsApp Business)</strong> sebelum bisa dipakai. Kalau template diubah signifikan, perlu submit ulang untuk approval dan bisa memakan waktu 24–72 jam. Jangan ubah template sembarangan kalau belum ada pengganti yang sudah approved.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Pesan WA mengandung nomor referensi transaksi</strong> sebagai bukti yang bisa digunakan user dan CS untuk trace. Pastikan variabel {{ref_id}} selalu ada di semua template transaksional.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-trigger">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Notifikasi Berjalan Normal</div><div class="hasil-items"><div class="hasil-item">Semua pesan transaksional terkirim ke user dalam &lt;1 menit</div><div class="hasil-item">Template WA sudah diapprove Meta</div><div class="hasil-item">Anti-spam mencegah flood pesan ke user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">WA API error → user tidak dapat konfirmasi transaksi</div><div class="hasil-item">Template belum diapprove → pesan tidak terkirim</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f05',null)">← F05: Promo & Voucher</div>
+    <div class="fn-btn next" onclick="go('ps-f07',null)">F07: SEO & Meta →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGATURAN SISTEM F07: SEO ============================================================ -->
+<div id="page-ps-f07" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">⚙️ Pengaturan Sistem <span>›</span> F07</div>
+    <div class="fh-title">SEO & Meta</div>
+    <div class="fh-desc">Pengaturan meta tag, Open Graph, dan konten SEO untuk gopop.id — agar halaman web GoPop bisa ditemukan di Google dan tampil menarik saat dibagikan di WhatsApp/media sosial. Dikelola Kayong untuk konten, Irwan untuk implementasi teknikal.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Kayong/Luqman (Marketing — konten SEO) · Acoy (approve) · Irwan (implementasi teknikal)</span>
+      <span class="pill pill-trigger">🔔 Launch fitur baru, rebranding, atau campaign SEO</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Yang Bisa Dikonfigurasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Meta Title & Description per Halaman:</strong> Judul dan deskripsi yang muncul di hasil pencarian Google untuk homepage, halaman produk Transfer, Pulsa, Token, dll. Kayong bisa tulis copy yang mengandung keyword relevan ("transfer e-wallet murah", "beli pulsa online", dll).</div></div>
+        <div class="rule"><span>📸</span><div class="rule-text"><strong>Open Graph Image:</strong> Gambar yang muncul saat link gopop.id dibagikan di WhatsApp, Twitter, atau Facebook. Ukuran ideal: 1200×630px. Kayong upload gambar yang menarik untuk meningkatkan click-rate saat link dibagikan.</div></div>
+        <div class="rule"><span>🤖</span><div class="rule-text"><strong>Robots.txt & Sitemap:</strong> Kontrol halaman mana yang boleh/tidak boleh di-crawl Google. Halaman admin dashboard tidak boleh di-crawl. Sitemap XML membantu Google menemukan semua halaman konten GoPop lebih cepat.</div></div>
+        <div class="rule"><span>📊</span><div class="rule-text"><strong>Google Analytics & Tag Manager:</strong> Masukkan tracking ID Google Analytics atau GTM Container ID agar data traffic web GoPop bisa dianalisis Kayong untuk keperluan marketing.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Meta title maksimal 60 karakter, meta description maksimal 160 karakter.</strong> Lebih dari itu akan terpotong di hasil pencarian Google. Dashboard sebaiknya punya counter karakter dan warning kalau melebihi batas.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan SEO tidak langsung terlihat di Google</strong> — bisa memakan waktu beberapa hari sampai Google re-crawl halaman. Kalau butuh force update, bisa submit URL di Google Search Console (akses terpisah dari dashboard).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>URL halaman dashboard admin tidak boleh masuk sitemap.</strong> Verifikasi bahwa semua URL yang dimasukkan ke sitemap adalah URL public yang boleh diakses tanpa login.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ SEO Terkonfigurasi</div><div class="hasil-items"><div class="hasil-item">Halaman GoPop muncul di Google dengan title & description yang relevan</div><div class="hasil-item">Link GoPop tampil menarik saat dibagikan di WA/sosmed</div><div class="hasil-item">Analytics tracking aktif untuk laporan marketing Kayong</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">URL dashboard masuk sitemap → Google index halaman internal</div><div class="hasil-item">OG Image tidak ada → preview link bland/kosong saat dibagikan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f06',null)">← F06: Notifikasi Sistem</div>
+    <div class="fn-btn" onclick="go('d-welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ ROLE & TIM F01 ============================================================ -->
+<div id="page-rt-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">👥 Role & Tim <span>›</span> F01</div>
+    <div class="fh-title">Kelola Role & Permission</div>
+    <div class="fh-desc">Role adalah sekumpulan permission (hak akses) yang diberikan ke sekelompok admin. GoPop punya beberapa role berbeda yang mencerminkan fungsi kerja tim: Super Admin, Operasional, Finance, CS, Marketing. Setiap role menentukan menu apa yang bisa dilihat dan aksi apa yang bisa dilakukan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin — satu-satunya yang bisa kelola role)</span>
+      <span class="pill pill-trigger">🔔 Ada kebutuhan role baru, perubahan scope akses, atau audit permission</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Struktur Role yang Ada</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:12px;">
+        <span>ℹ️</span>
+        <div>Ini adalah role yang sudah ada di dashboard berdasarkan struktur tim GoPop. Acoy bisa tambah role baru atau edit permission role yang ada.</div>
+      </div>
+      <div class="rule-list">
+        <div class="rule"><span>👑</span><div class="rule-text"><strong>Super Admin (Acoy):</strong> Akses penuh ke semua modul termasuk Pengaturan Sistem, Role & Tim, dan Audit Log. Hanya ada satu Super Admin — tidak bisa diassign ke multiple orang. Tidak ada aksi yang tidak bisa dilakukan Super Admin.</div></div>
+        <div class="rule"><span>⚙️</span><div class="rule-text"><strong>Admin Operasional:</strong> Akses ke Monitoring Transaksi, Komplain & Tiket, dan Manajemen Reseller. Bisa lihat semua transaksi, handle komplain, dan manage reseller. Tidak bisa akses konfigurasi sistem atau keuangan.<br><em>Contoh: Acoy (sebagai ops juga) — diperlukan untuk tim yang handle operasional sehari-hari.</em></div></div>
+        <div class="rule"><span>💰</span><div class="rule-text"><strong>Admin Finance:</strong> Akses ke Settlement, Rekonsiliasi, Laporan Keuangan, dan bisa approve perubahan fee. Tidak bisa lihat data user atau transaksi detail per user (privacy).<br><em>Contoh: Agung.</em></div></div>
+        <div class="rule"><span>🎫</span><div class="rule-text"><strong>Admin CS (Customer Service):</strong> Akses ke Komplain & Tiket dan Monitoring Transaksi (read-only). Bisa update status tiket, tambah catatan, dan lihat detail transaksi untuk keperluan investigasi komplain. Tidak bisa ubah data transaksi atau setting apapun.<br><em>Contoh: tim CS yang handle komplain user.</em></div></div>
+        <div class="rule"><span>📣</span><div class="rule-text"><strong>Admin Marketing:</strong> Akses ke CMS (Konten Homepage), Promo & Voucher, Tips & Edukasi, dan SEO & Meta. Bisa publish konten dan buat kode promo (setelah diapprove Acoy). Tidak bisa lihat data transaksi atau user.<br><em>Contoh: Kayong, Luqman.</em></div></div>
+        <div class="rule"><span>📦</span><div class="rule-text"><strong>Admin Produk/Aggregator:</strong> Akses ke Produk & Harga, Master Data, dan Sync Digiflazz. Bisa kelola semua konfigurasi produk dan harga. Tidak bisa akses data user atau keuangan.<br><em>Contoh: Ipong.</em></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Normal — Edit Permission Role</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Acoy buka Role & Tim → pilih role yang akan diedit</div><div class="step-desc">Tampil daftar semua role dengan jumlah admin yang menggunakannya. Klik salah satu role untuk lihat dan edit permission-nya.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Review matrix permission</div><div class="step-desc">Tampil dalam format matrix: baris = modul dashboard (Monitoring, Komplain, Reseller, dll), kolom = level akses (Tidak Bisa Akses / Lihat / Lihat + Aksi / Full). Acoy centang level yang sesuai per modul untuk role yang sedang diedit.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Simpan — perubahan berlaku segera</div><div class="step-desc">Setelah save, semua admin dengan role tersebut langsung mendapat permission baru di sesi mereka berikutnya. Kalau admin sedang aktif, perubahan berlaku setelah mereka refresh atau login ulang.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Role Super Admin tidak bisa diedit permission-nya</strong> — selalu punya akses penuh. Ini mencegah Acoy tidak sengaja mengunci diri dari sistem.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Minimal harus ada satu Super Admin aktif setiap saat.</strong> Acoy tidak bisa menghapus akun sendiri atau mendowngrade role sendiri ke non-Super Admin kecuali ada Super Admin lain. Ini mencegah dashboard terkunci tanpa admin.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setiap perubahan permission dicatat di Audit Log</strong> — termasuk role mana yang diubah, permission apa yang berubah, dan siapa yang mengubah. Ini penting untuk compliance dan investigasi kalau ada insiden keamanan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Prinsip Least Privilege:</strong> Setiap role hanya mendapat akses minimum yang dibutuhkan untuk pekerjaan mereka. Admin Marketing tidak perlu lihat data transaksi user. Admin CS tidak perlu akses konfigurasi sistem. Ini mengurangi risiko keamanan dan human error.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Acoy mengedit permission role Admin CS dan tidak sengaja memberikan akses ke modul Pengaturan Sistem</div>
+          <div class="bc-user">Admin CS bisa mengubah konfigurasi kritis tanpa seharusnya.</div>
+          <div class="bc-handle">Harus ada warning sebelum save kalau ada permission yang diberikan ke role yang "tidak biasanya" punya akses tersebut — misal: "Kamu memberikan akses Pengaturan Sistem ke role CS. Ini tidak biasa. Yakin?" Perubahan juga tercatat di Audit Log untuk bisa di-trace dan di-rollback kalau perlu.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (warning anomali permission) · Acoy (review Audit Log secara berkala)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Admin dengan role yang permission-nya diubah sedang aktif bekerja — akses tiba-tiba berubah tanpa tahu kenapa</div>
+          <div class="bc-user">Admin merasa kebingungan karena menu yang biasa ada tiba-tiba hilang atau muncul.</div>
+          <div class="bc-handle">Kalau perubahan permission menyebabkan pengurangan akses, kirim notifikasi ke admin yang terdampak: "Hak akses kamu telah diperbarui oleh Super Admin. Silakan refresh dashboard." Jangan biarkan admin bingung tanpa penjelasan.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (notifikasi real-time ke admin yang terdampak perubahan role)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Role Terkonfigurasi Benar</div><div class="hasil-items"><div class="hasil-item">Setiap admin hanya bisa akses modul yang relevan dengan pekerjaan mereka</div><div class="hasil-item">Least privilege diterapkan — risiko human error dan keamanan minimal</div><div class="hasil-item">Semua perubahan permission tercatat di Audit Log</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Permission terlalu luas → admin bisa akses data atau fitur yang tidak seharusnya</div><div class="hasil-item">Tidak ada Super Admin aktif → dashboard terkunci</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('ps-f07',null)">← Pengaturan Sistem F07</div>
+    <div class="fn-btn next" onclick="go('rt-f02',null)">F02: Kelola Akun Admin →</div>
+  </div>
+</div>
+
+<!-- ============================================================ ROLE & TIM F02 ============================================================ -->
+<div id="page-rt-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">👥 Role & Tim <span>›</span> F02</div>
+    <div class="fh-title">Kelola Akun Admin</div>
+    <div class="fh-desc">Manajemen semua akun yang bisa login ke dashboard GoPop — siapa yang punya akses, role apa yang dipakai, status aktif/nonaktif, dan kapan terakhir login. Acoy bisa tambah admin baru, suspend yang tidak aktif, dan reset password kalau diperlukan.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin)</span>
+      <span class="pill pill-trigger">🔔 Ada anggota tim baru, admin keluar, atau perlu suspend akses</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Lihat Daftar Admin</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Role & Tim → tab "Anggota Tim"</div><div class="step-desc">Tabel semua akun admin dengan kolom: nama, email, role, status (Aktif/Suspended/Invited), dan last login. Bisa difilter per role atau status untuk mudah menemukan akun tertentu.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik akun untuk lihat detail atau lakukan aksi</div><div class="step-desc">Detail akun menampilkan: info pribadi, role yang diassign, riwayat login terakhir (5 sesi terakhir dengan IP dan device), dan log aksi yang pernah dilakukan admin ini. Aksi yang tersedia: Edit Role, Suspend, Reset Password, Hapus Akun.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur — Suspend atau Nonaktifkan Admin</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Pilih akun → klik "Suspend"</div><div class="step-desc">Konfirmasi dialog: "Akun [nama] akan disuspend. Mereka tidak bisa login sampai disuspend dibuka." Klik konfirmasi → akun langsung tidak bisa login. Kalau admin sedang aktif, sesi mereka langsung diakhiri.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Suspend vs Hapus — dua pilihan berbeda</div><div class="step-desc"><ul>
+          <li><strong>Suspend:</strong> Akun masih ada di sistem, tidak bisa login. Bisa diaktifkan kembali kapan saja. Pakai ini untuk admin yang cuti panjang atau sedang dalam investigasi.</li>
+          <li><strong>Hapus:</strong> Akun dihapus permanen dari sistem. Data historis aksi mereka tetap ada di Audit Log (tidak dihapus). Pakai ini untuk admin yang sudah keluar dari tim.</li>
+        </ul></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Akun admin yang keluar dari tim WAJIB di-suspend atau dihapus segera</strong> — tidak boleh dibiarkan aktif. Akun admin yang ditinggalkan adalah celah keamanan serius. SOP offboarding: hari terakhir kerja = suspend akun sebelum jam tutup kantor.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu email hanya bisa untuk satu akun admin.</strong> Tidak boleh ada dua admin dengan email yang sama. Kalau seseorang punya dua role berbeda, tetap satu akun tapi bisa diassign multiple role (kalau sistem mendukung) atau pakai role yang paling senior.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Last login yang terlalu lama (lebih dari 90 hari)</strong> harus ditinjau Acoy — kemungkinan admin tersebut sudah tidak aktif dan akun perlu di-suspend untuk keamanan. Dashboard bisa tampilkan alert untuk akun yang sudah lama tidak login.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Reset password oleh Acoy mengirim link reset ke email admin</strong>, bukan Acoy yang set password baru. Ini menjaga privasi — Acoy tidak pernah tahu password admin lain. Link reset berlaku 24 jam.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Admin yang sudah keluar dari tim tapi akun-nya lupa di-suspend masih bisa login dan akses data</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Suspend segera setelah diketahui. Cek Audit Log untuk lihat apakah ada aksi yang dilakukan setelah tanggal keluar. Kalau ada aksi mencurigakan, eskalasi sebagai insiden keamanan. Buat SOP offboarding yang eksplisit: suspen akun = bagian dari checklist hari terakhir kerja.</div>
+          <div class="bc-owner">PIC: Acoy (suspend segera + audit) · Rifky (cek Audit Log untuk aksi mencurigakan)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Akun admin di-hack — orang tidak dikenal login dengan credentials admin</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Suspend akun segera dari Role & Tim. Cek riwayat login (IP address) di detail akun — kalau ada login dari IP/lokasi tidak biasa, ini konfirmasi akun dicompromise. Reset password, cek Audit Log untuk lihat aksi apa yang sudah dilakukan, dan pertimbangkan apakah perlu eskalasi ke keamanan siber. Aktifkan 2FA untuk semua admin kalau belum ada.</div>
+          <div class="bc-owner">PIC: Acoy (suspend + reset password) · Irwan (implementasi 2FA untuk admin) · Rifky (Audit Log forensics)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Tim Terkelola Baik</div><div class="hasil-items"><div class="hasil-item">Hanya admin aktif yang punya akses ke dashboard</div><div class="hasil-item">Akun admin keluar langsung di-suspend di hari yang sama</div><div class="hasil-item">Last login terpantau — akun idle terdeteksi dan ditinjau</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko Keamanan</div><div class="hasil-items"><div class="hasil-item">Akun ex-admin masih aktif → akses tidak sah ke sistem</div><div class="hasil-item">Akun di-hack → suspend segera + audit log forensics</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rt-f01',null)">← F01: Kelola Role</div>
+    <div class="fn-btn next" onclick="go('rt-f03',null)">F03: Onboarding Admin Baru →</div>
+  </div>
+</div>
+
+<!-- ============================================================ ROLE & TIM F03 ============================================================ -->
+<div id="page-rt-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">👥 Role & Tim <span>›</span> F03</div>
+    <div class="fh-title">Onboarding Admin Baru</div>
+    <div class="fh-desc">Flow lengkap ketika ada anggota tim baru yang perlu akses ke dashboard GoPop — dari undangan awal sampai admin siap bekerja. Ini adalah flow yang paling sering dijalankan di modul Role & Tim.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin — buat undangan) · Admin Baru (terima undangan)</span>
+      <span class="pill pill-trigger">🔔 Ada anggota tim baru yang perlu akses dashboard</span>
+      <span class="pill pill-time">⏱ 5 menit setup, berlaku segera setelah admin baru set password</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Acoy klik "Tambah Admin" di halaman Role & Tim</div><div class="step-desc">Form undangan: nama lengkap, email kerja, dan role yang akan diassign. Pilih role dari dropdown yang berisi semua role aktif. Klik "Kirim Undangan".</div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Sistem kirim email undangan ke admin baru</div><div class="step-desc">Email berisi: sambutan dari GoPop, link "Set Password & Aktivasi Akun" yang berlaku 48 jam, dan informasi role yang akan diassign. Admin baru muncul di daftar tim dengan status "Invited".</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Admin baru klik link → set password → akun aktif</div><div class="step-desc">Admin baru buka link di email, set password baru (wajib memenuhi syarat: minimal 8 karakter, ada angka dan huruf besar), konfirmasi password, klik "Aktifkan Akun". Status berubah dari "Invited" ke "Aktif" dan admin baru bisa langsung login.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Admin baru login pertama kali — lihat dashboard sesuai role</div><div class="step-desc">Dashboard yang tampil disesuaikan dengan role yang diassign. Admin Marketing hanya lihat menu CMS, Promo, dan SEO. Admin CS hanya lihat Komplain & Tiket dan Monitoring. Tidak ada konfigurasi tambahan yang diperlukan — role sudah handle semua.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Acoy brief admin baru tentang SOP dan akses yang dimiliki</div><div class="step-desc">Technical setup selesai, tapi Acoy tetap perlu brief admin baru tentang: SOP penggunaan dashboard, apa yang boleh dan tidak boleh dilakukan, cara eskalasi kalau ada masalah, dan siapa yang harus dihubungi untuk pertanyaan teknikal. Ini di luar sistem, tapi penting.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Link undangan berlaku 48 jam.</strong> Kalau admin baru belum aktivasi dalam 48 jam, Acoy perlu kirim ulang undangan. Link yang expired tidak bisa dipakai — ini mencegah link undangan yang terlupakan dipakai orang lain.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Admin baru tidak bisa memilih role sendiri</strong> — role ditentukan Acoy saat membuat undangan. Kalau role perlu diubah setelah akun aktif, Acoy edit dari halaman detail akun admin tersebut.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu undangan = satu email = satu akun.</strong> Tidak bisa kirim undangan ke email yang sudah punya akun aktif atau pending. Kalau perlu ubah email admin yang ada, suspend akun lama dan buat undangan baru.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Akun admin baru langsung aktif tanpa perlu approval tambahan</strong> setelah admin set password. Tidak ada approval workflow — kepercayaan bahwa Acoy sudah memverifikasi identitas orang yang diundang sebelum mengirim undangan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Admin baru salah email saat onboarding — undangan ke email yang salah</div>
+          <div class="bc-user">Admin baru tidak menerima email undangan.</div>
+          <div class="bc-handle">Acoy batalkan undangan yang salah (dari halaman tim, admin dengan status "Invited" bisa di-cancel), lalu buat undangan baru dengan email yang benar. Tampilkan email tujuan undangan dengan jelas di halaman konfirmasi sebelum kirim, agar Acoy bisa double-check.</div>
+          <div class="bc-owner">PIC: Acoy (batalkan + buat ulang undangan) · Isal + Ipong (tambah konfirmasi email sebelum kirim undangan)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Link undangan expired sebelum admin baru sempat aktivasi (lebih dari 48 jam)</div>
+          <div class="bc-user">Admin baru klik link → dapat pesan "Link undangan sudah kadaluarsa".</div>
+          <div class="bc-handle">Acoy perlu kirim ulang undangan dari halaman tim — tombol "Kirim Ulang Undangan" di samping admin yang masih berstatus "Invited". Link baru fresh 48 jam. Admin baru tidak perlu melakukan apapun selain tunggu email baru.</div>
+          <div class="bc-owner">PIC: Acoy (kirim ulang undangan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Onboarding Sukses</div><div class="hasil-items"><div class="hasil-item">Admin baru bisa login dan langsung kerja sesuai role</div><div class="hasil-item">Dashboard tampil sesuai scope akses role yang diassign</div><div class="hasil-item">Status di daftar tim berubah dari "Invited" ke "Aktif"</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Terhambat</div><div class="hasil-items"><div class="hasil-item">Email salah → batalkan + buat undangan baru</div><div class="hasil-item">Link expired → kirim ulang undangan dari dashboard</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rt-f02',null)">← F02: Kelola Akun Admin</div>
+    <div class="fn-btn" onclick="go('d-welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ AUDIT LOG F01 ============================================================ -->
+<div id="page-al-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F01</div>
+    <div class="fh-title">Baca & Filter Audit Log</div>
+    <div class="fh-desc">Audit Log mencatat semua aksi yang dilakukan oleh admin di dashboard GoPop — siapa melakukan apa, kapan, dan dari mana. Ini adalah lapisan keamanan dan akuntabilitas terakhir. Kalau ada yang aneh terjadi di sistem, Audit Log adalah tempat pertama untuk diperiksa.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin — akses penuh) · Rifky (bisa akses untuk keperluan rekonsiliasi)</span>
+      <span class="pill pill-trigger">🔔 Ada insiden keamanan, audit berkala, atau investigasi anomali</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Yang Dicatat di Audit Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:12px;">
+        <span>ℹ️</span>
+        <div>Setiap entri Audit Log berisi: <strong>Timestamp</strong> (tanggal + jam presisi detik), <strong>Admin</strong> (nama + email), <strong>IP Address</strong>, <strong>Modul</strong>, <strong>Aksi</strong>, <strong>Target</strong> (objek yang diubah), dan <strong>Detail</strong> (nilai sebelum dan sesudah perubahan).</div>
+      </div>
+      <div class="rule-list">
+        <div class="rule"><span>🔐</span><div class="rule-text"><strong>Autentikasi:</strong> Login berhasil, login gagal (termasuk IP dan device), logout, reset password, perubahan password.</div></div>
+        <div class="rule"><span>👥</span><div class="rule-text"><strong>Role & Tim:</strong> Tambah admin baru, ubah role, suspend/hapus akun, perubahan permission role.</div></div>
+        <div class="rule"><span>⚙️</span><div class="rule-text"><strong>Pengaturan Sistem:</strong> Semua perubahan di Pengaturan Umum, Saldo & Limit Biller (threshold, toggle otomatis, pop-up), Payment Gateway (rotasi API key, perubahan webhook), Fee & Biaya Admin, Promo & Voucher.</div></div>
+        <div class="rule"><span>📦</span><div class="rule-text"><strong>Produk & Harga:</strong> Update HPP, update harga jual, aktifkan/nonaktifkan produk, sync Digiflazz.</div></div>
+        <div class="rule"><span>🏪</span><div class="rule-text"><strong>Manajemen Reseller:</strong> Ubah tier reseller, suspend/aktifkan reseller, perubahan limit reseller.</div></div>
+        <div class="rule"><span>🎫</span><div class="rule-text"><strong>Komplain & Tiket:</strong> Update status tiket, assign tiket, tambah catatan, resolve tiket.</div></div>
+        <div class="rule"><span>💰</span><div class="rule-text"><strong>Rekonsiliasi & Settlement:</strong> Approve rekonsiliasi, konfirmasi penerimaan settlement, tambah adjustment entry.</div></div>
+        <div class="rule"><span>📣</span><div class="rule-text"><strong>CMS & Konten:</strong> Publish/unpublish artikel, update banner, ubah konten statis.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Normal — Baca & Filter Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Audit Log — tampil log terbaru</div><div class="step-desc">Default tampil 50 entri terbaru, diurutkan dari yang paling baru ke lama. Setiap baris berisi: timestamp, nama admin, modul, dan ringkasan aksi. Klik baris untuk lihat detail lengkap termasuk nilai sebelum/sesudah perubahan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Filter sesuai kebutuhan investigasi</div><div class="step-desc">Filter yang tersedia dan bisa dikombinasikan:<ul>
+          <li><strong>Periode:</strong> Tanggal mulai dan akhir (range picker)</li>
+          <li><strong>Admin:</strong> Dropdown pilih admin tertentu atau "Semua Admin"</li>
+          <li><strong>Modul:</strong> Filter per modul (Pengaturan Sistem, Reseller, dll)</li>
+          <li><strong>Jenis Aksi:</strong> Create / Update / Delete / Login / Export</li>
+          <li><strong>IP Address:</strong> Filter aksi dari IP tertentu (berguna untuk investigasi akses tidak dikenal)</li>
+        </ul>
+        Filter bisa dikombinasikan — misal: "Semua aksi oleh Agung di modul Settlement bulan ini".</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Klik entri untuk lihat detail perubahan</div><div class="step-desc">Detail log menampilkan diff yang jelas: nilai field sebelum (merah) dan sesudah (hijau) perubahan. Misal kalau Ipong update harga jual produk: <em>"Harga Jual: Rp6.500 → Rp7.000"</em>. Ini memudahkan investigasi tanpa harus cross-check ke sumber lain.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log tidak bisa diedit atau dihapus oleh siapapun</strong> — termasuk Super Admin. Ini adalah immutable record. Kalau ada entri yang perlu "dikoreksi", buat correction entry baru — jangan hapus yang lama. Integritas Audit Log adalah fondasi dari kepercayaan sistem.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log disimpan minimal 2 tahun.</strong> Ini standar minimum untuk keperluan audit keuangan dan keamanan. Setelah 2 tahun, log lama bisa diarsipkan ke cold storage tapi tidak boleh dihapus permanen.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Akses Audit Log sendiri juga dicatat.</strong> Kalau Acoy membuka Audit Log dan memfilter log admin tertentu, aksi ini juga tercatat. Ini mencegah "cover track" — tidak ada yang bisa melihat log orang lain secara diam-diam tanpa meninggalkan jejak sendiri.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log hanya bisa diakses Super Admin dan role yang secara eksplisit diberi izin Acoy.</strong> Tidak semua admin perlu lihat apa yang dilakukan admin lain — ini menjaga privasi dan mencegah informasi sensitif tersebar ke yang tidak berhak.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Volume log sangat besar — mencari satu kejadian spesifik seperti "mencari jarum di tumpukan jerami"</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Filter kombinasi adalah kuncinya — mulai dari filter yang paling spesifik (admin tertentu + modul tertentu + range waktu sempit). Kalau masih terlalu banyak, gunakan search by keyword di kolom "Detail". Ke depan bisa tambahkan full-text search di seluruh log untuk kemudahan investigasi.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (full-text search di Audit Log) · Irwan + Rifky (indexing yang efisien untuk query cepat)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Audit Log tidak mencatat aksi tertentu — ada "blind spot" di sistem logging</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Kalau ditemukan aksi penting yang tidak tercatat (misal: perubahan password tidak muncul di log), ini adalah bug kritis yang harus diperbaiki segera. Irwan perlu audit semua endpoint BE untuk memastikan setiap state-changing action punya logging middleware yang terpasang. Lakukan security review logging setiap 6 bulan.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (audit logging coverage di semua endpoint) · Acoy (identifikasi blind spot dari pengalaman investigasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Audit Log Berfungsi</div><div class="hasil-items"><div class="hasil-item">Semua aksi admin tercatat dengan detail sebelum/sesudah</div><div class="hasil-item">Filter kombinasi memudahkan investigasi cepat</div><div class="hasil-item">Log immutable — tidak bisa diedit atau dihapus</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Blind spot di logging → aksi tidak tercatat → tidak bisa diinvestigasi</div><div class="hasil-item">Volume terlalu besar tanpa filter yang baik → investigasi lambat</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rt-f03',null)">← Role & Tim F03</div>
+    <div class="fn-btn next" onclick="go('al-f02',null)">F02: Investigasi Aktivitas Mencurigakan →</div>
+  </div>
+</div>
+
+<!-- ============================================================ AUDIT LOG F02 ============================================================ -->
+<div id="page-al-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F02</div>
+    <div class="fh-title">Investigasi Aktivitas Mencurigakan</div>
+    <div class="fh-desc">Ketika ada indikasi bahwa sesuatu yang tidak normal terjadi di sistem — entah dari alert otomatis, laporan tim, atau Acoy yang menemukan anomali saat review rutin. Audit Log adalah tool utama untuk investigasi.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Rifky (forensics teknikal)</span>
+      <span class="pill pill-trigger">🔔 Alert anomali, laporan dari tim, atau review rutin menemukan sesuatu yang aneh</span>
+      <span class="pill pill-time">⏱ Investigasi ringan 15–30 menit, kasus serius bisa 1–2 hari</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Skenario Investigasi yang Umum</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 1: Admin yang sudah tidak aktif ternyata masih login</strong><br>
+        Filter: admin tersebut + jenis aksi "Login" + 30 hari terakhir. Kalau muncul login setelah tanggal offboarding → insiden keamanan. Langkah: suspend akun segera, cek semua aksi yang dilakukan setelah tanggal offboarding, evaluasi apakah ada data yang diakses atau perubahan yang dilakukan.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 2: Harga produk berubah tapi tidak ada yang mengakui</strong><br>
+        Filter: modul "Produk & Harga" + jenis aksi "Update" + range waktu sejak perubahan diketahui. Langsung ketahuan siapa yang mengubah, jam berapa, nilai sebelum dan sesudahnya. Tidak ada yang bisa menyangkal karena log tidak bisa diedit.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 3: Login dari IP yang tidak dikenal</strong><br>
+        Filter: IP address yang mencurigakan + semua admin. Kalau ada login dari IP asing (misal luar negeri padahal semua tim ada di Indonesia), ini red flag. Cek aksi apa yang dilakukan dari IP tersebut. Kalau ada perubahan setting atau akses data sensitif → insiden keamanan serius.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 4: Ada data reseller yang diubah secara massal tanpa alasan jelas</strong><br>
+        Filter: modul "Manajemen Reseller" + jenis aksi "Update" + range waktu tertentu. Kalau ada ratusan perubahan dalam waktu singkat oleh satu admin → kemungkinan bug, script yang salah, atau penyalahgunaan akses. Rollback perubahan kalau memungkinkan dan investigasi penyebabnya.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 5: Pengaturan Sistem berubah tapi tidak ada yang aware</strong><br>
+        Ini kasus paling serius. Filter: modul "Pengaturan Sistem" + semua admin + tanggal terakhir bulan. Setiap perubahan di Pengaturan Sistem harus ada alasan yang tercatat. Kalau ada perubahan yang tidak bisa dijelaskan (misal API Key diganti tapi Acoy tidak melakukannya) → eskalasi segera ke level insiden keamanan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Investigasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Identifikasi scope — apa yang dicurigai dan kapan</div><div class="step-desc">Sebelum mulai filter, tentukan dulu: apa anomali yang terdeteksi? Kapan pertama kali diketahui? Siapa yang mungkin terlibat? Ini menentukan filter apa yang paling efektif untuk digunakan pertama.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Filter Audit Log dengan parameter yang tepat</div><div class="step-desc">Mulai dari filter yang paling sempit berdasarkan hipotesis awal. Kalau tidak menemukan apa-apa, perluas range waktu atau ganti filter. Dokumentasikan setiap query filter yang digunakan — ini penting untuk laporan investigasi.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Kumpulkan bukti — screenshot dan export log</div><div class="step-desc">Setiap entri yang relevan di-screenshot atau di-export. Jangan mengandalkan ingatan — bukti dalam format yang bisa dibagikan ke tim atau pihak eksternal kalau diperlukan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Ambil tindakan sesuai temuan</div><div class="step-desc">
+          <ul>
+            <li><strong>Akses tidak sah terdeteksi:</strong> Suspend akun, rotate API key, reset semua password admin, dan dokumentasikan insiden</li>
+            <li><strong>Human error terdeteksi:</strong> Rollback perubahan jika memungkinkan, brief admin yang bersangkutan, update SOP untuk mencegah terulang</li>
+            <li><strong>Bug sistem terdeteksi:</strong> Eskalasi ke Irwan + Rifky untuk fix, sambil freeze aksi yang bermasalah sementara</li>
+          </ul>
+        </div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Dokumentasikan hasil investigasi</div><div class="step-desc">Tulis incident report singkat: apa yang terjadi, kapan ditemukan, siapa yang terlibat, aksi yang sudah diambil, dan langkah pencegahan ke depan. Simpan di tempat yang bisa diakses tim (Notion, Google Docs, dll).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Investigasi tidak boleh mengubah atau menghapus log apapun</strong> — bahkan kalau log tersebut "memalukan" bagi GoPop. Keutuhan log adalah prioritas utama. Semua tindakan korektif dilakukan di luar log, bukan dengan memanipulasi log.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau investigasi menemukan indikasi fraud eksternal atau internal yang serius</strong>, Acoy perlu konsultasi dengan penasihat hukum sebelum mengambil tindakan lebih lanjut. Beberapa tindakan (misal memecat karyawan karena temuan di Audit Log) memerlukan prosedur legal yang benar agar tidak berbalik menjadi masalah bagi GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Investigasi rutin bulanan direkomendasikan</strong> — bukan hanya saat ada masalah. Acoy jadwalkan 30 menit per bulan untuk review Audit Log: cek apakah ada login dari IP tidak biasa, perubahan setting tidak terduga, atau pola aksi yang anomali. Pencegahan lebih baik dari investigasi darurat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Investigasi Berhasil</div><div class="hasil-items"><div class="hasil-item">Penyebab anomali teridentifikasi dari Audit Log</div><div class="hasil-item">Tindakan korektif diambil dan didokumentasikan</div><div class="hasil-item">Incident report tersimpan untuk referensi ke depan</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Investigasi Terhambat</div><div class="hasil-items"><div class="hasil-item">Blind spot di logging → aksi kritis tidak tercatat → investigasi buntu</div><div class="hasil-item">Log tidak ada diff sebelum/sesudah → sulit tentukan dampak perubahan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('al-f01',null)">← F01: Baca & Filter Log</div>
+    <div class="fn-btn next" onclick="go('al-f03',null)">F03: Export untuk Compliance →</div>
+  </div>
+</div>
+
+<!-- ============================================================ AUDIT LOG F03 ============================================================ -->
+<div id="page-al-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F03</div>
+    <div class="fh-title">Export Log untuk Compliance & Audit Eksternal</div>
+    <div class="fh-desc">Ketika ada keperluan audit eksternal (auditor keuangan, regulator, atau due diligence investor), Audit Log perlu bisa diekspor dalam format yang bisa dibaca pihak luar. Flow ini juga mencakup penyimpanan arsip log jangka panjang.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Agung (Finance — kebutuhan audit keuangan)</span>
+      <span class="pill pill-trigger">🔔 Audit eksternal, due diligence investor, atau kebutuhan compliance regulasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Export Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Tentukan scope export — periode dan modul</div><div class="step-desc">Acoy atau Agung tentukan: periode yang dibutuhkan auditor (misal Jan–Des 2024), modul yang relevan (misal hanya Settlement dan Rekonsiliasi untuk audit keuangan), dan level detail yang diperlukan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Export Log" — pilih format</div><div class="step-desc">Dua format export tersedia:<ul>
+          <li><strong>CSV:</strong> Untuk analisis di Excel atau tool audit. Setiap baris adalah satu entri log dengan semua field sebagai kolom.</li>
+          <li><strong>PDF:</strong> Untuk laporan formal ke auditor atau regulator. Format lebih rapi dengan header GoPop dan timestamp export.</li>
+        </ul>
+        Ukuran file tergantung range waktu — kalau export setahun penuh bisa besar, sistem akan buat file di background dan kirim link download ke email Acoy.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Verifikasi keaslian export (opsional)</div><div class="step-desc">File export bisa disertai digital signature atau hash checksum yang bisa diverifikasi auditor bahwa file tidak dimodifikasi setelah export. Ini penting kalau auditor memerlukan jaminan integritas data.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Bagikan ke auditor dengan aman</div><div class="step-desc">Jangan kirim via email biasa kalau file mengandung data sensitif. Gunakan link download yang terproteksi password atau platform berbagi file yang aman (Google Drive dengan akses terbatas). Catat siapa yang mendapat akses ke file ini dan untuk keperluan apa.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Arsip Log Jangka Panjang</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Log lebih dari 2 tahun dipindah ke cold storage otomatis</div><div class="step-desc">Sistem otomatis memindahkan log yang sudah lebih dari 2 tahun ke cold storage (biaya penyimpanan lebih murah). Log di cold storage masih bisa diakses tapi butuh waktu lebih lama (bisa 1–24 jam) untuk di-retrieve. Acoy mendapat notifikasi setiap kali ada batch log yang dipindah ke arsip.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Request retrieve log dari arsip kalau diperlukan</div><div class="step-desc">Kalau butuh log yang sudah diarsipkan (misal auditor minta log dari 3 tahun lalu), Acoy submit request retrieve dari halaman Audit Log. Sistem akan proses dalam background dan kirim notifikasi ke Acoy saat log sudah bisa diakses kembali.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Aksi export sendiri dicatat di Audit Log</strong> — siapa yang export, kapan, range waktu apa, dan format apa. Ini mencegah penyalahgunaan export untuk keperluan yang tidak sah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Log yang diarsipkan tidak boleh dihapus</strong> — hanya dipindah ke storage yang lebih murah. GoPop wajib menyimpan log minimal 2 tahun, idealnya 5 tahun untuk keperluan audit keuangan jangka panjang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Export log yang mengandung data pribadi user</strong> (email, nomor HP) perlu persetujuan khusus dan harus diperlakukan sebagai data sensitif sesuai kebijakan privasi GoPop dan regulasi yang berlaku (UU PDP Indonesia).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau ada subpoena atau permintaan resmi dari aparat penegak hukum</strong> untuk data log, Acoy tidak boleh memenuhi sendiri tanpa konsultasi hukum terlebih dahulu. Ini prosedur legal yang memerlukan verifikasi keabsahan permintaan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Export log dalam jumlah besar (setahun penuh) bisa timeout atau terlalu lama — auditor menunggu terlalu lama</div>
+          <div class="bn-a">Implementasikan async export: klik "Export" → sistem buat job di background → kirim link download ke email Acoy saat sudah selesai. Jangan paksa user menunggu di halaman sampai export selesai. Ini juga lebih reliabel karena tidak terpotong oleh timeout browser.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (async export job + email notification) · Isal + Ipong (progress indicator di dashboard)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Export & Arsip Berjalan Baik</div><div class="hasil-items"><div class="hasil-item">Auditor mendapat file log dalam format yang dibutuhkan</div><div class="hasil-item">Log lama terarsip otomatis — tidak makan storage produksi</div><div class="hasil-item">Integritas file export bisa diverifikasi dengan hash/signature</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Export timeout → log tidak bisa diakses auditor tepat waktu</div><div class="hasil-item">Log dihapus sebelum 2 tahun → compliance violation</div><div class="hasil-item">Data pribadi di log tidak dilindungi → pelanggaran UU PDP</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('al-f02',null)">← F02: Investigasi Aktivitas</div>
+    <div class="fn-btn" onclick="go('d-welcome',null)">🏠 Halaman Utama — Dashboard Selesai 🎉</div>
+  </div>
+</div>
 
 
 
@@ -8050,48 +9820,48 @@ terbayar dan terupdate di sistem BPJS</div>
 </div>
 
 
-
 </main>
 </div>
 
 <script>
-var currentTab = 'dashboard';
+var currentTab = 'dash';
 
 function switchTab(tab, el) {
   currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   el.classList.add('active');
-  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-section').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('nav-' + tab).classList.add('active');
-  if (tab === 'dashboard') go('d-welcome', null);
+  if (tab === 'dash') go('d-welcome', null);
   else go('welcome', null);
 }
 
 function go(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sbi').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.sbi').forEach(function(s){ s.classList.remove('active'); });
   var p = document.getElementById('page-' + id);
-  if (p) p.classList.add('active');
+  if (p) { p.classList.add('active'); }
   if (el) {
     el.classList.add('active');
   } else {
-    document.querySelectorAll('.sbi').forEach(s => {
+    document.querySelectorAll('.sbi').forEach(function(s){
       var oc = s.getAttribute('onclick');
-      if (oc && oc.includes("'" + id + "'")) s.classList.add('active');
+      if (oc && oc.indexOf("'" + id + "'") !== -1) s.classList.add('active');
     });
   }
-  document.querySelector('.main').scrollTop = 0;
+  var m = document.querySelector('.main');
+  if (m) m.scrollTop = 0;
 }
 
 function tog(header) {
   var body = header.nextElementSibling;
   var t = header.querySelector('.fb-toggle');
   var isOpen = body.classList.toggle('open');
-  t.style.transform = isOpen ? 'rotate(180deg)' : '';
+  if (t) t.style.transform = isOpen ? 'rotate(180deg)' : '';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.fb-body').forEach(function(b) { b.classList.add('open'); });
+  document.querySelectorAll('.fb-body').forEach(function(b){ b.classList.add('open'); });
   go('d-welcome', null);
 });
 </script>
