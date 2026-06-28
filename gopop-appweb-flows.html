@@ -253,6 +253,45 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('pbb-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input NOP & Inquiry</span></div>
     <div class="sbi" onclick="go('pbb-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Checkout & Status</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#6366F1"></div>11 · Status Transaksi</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('st-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Status Processing</span></div>
+    <div class="sbi" onclick="go('st-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Status Sukses</span></div>
+    <div class="sbi" onclick="go('st-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Status Gagal & Refund</span></div>
+    <div class="sbi" onclick="go('st-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Cek Status via Link WA</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#8B5CF6"></div>12 · Riwayat Transaksi</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('rw-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Lihat Daftar Riwayat</span></div>
+    <div class="sbi" onclick="go('rw-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Detail Transaksi</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#F59E0B"></div>13 · Tips & Promo</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('tp-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Listing Artikel</span></div>
+    <div class="sbi" onclick="go('tp-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Detail Artikel</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#EF4444"></div>14 · Pusat Bantuan</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('pb-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Form Komplain</span></div>
+    <div class="sbi" onclick="go('pb-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Live Chat</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#10B981"></div>15 · Profil & Akun</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('pr-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Lihat & Edit Profil</span></div>
+    <div class="sbi" onclick="go('pr-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Ganti Password</span></div>
+    <div class="sbi" onclick="go('pr-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Notifikasi & Pengaturan</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -4439,7 +4478,1289 @@ nline kembali, app langsung refresh tanpa restart manual</div>
       </div>
       <div class="rule-list" style="margin-top:12px;">
         <div class="rule"><span>⚠️</span><div class="rule-text"><strong>Limit QRIS per transaksi adalah Rp2.000.000 (dari BI).</strong> PBB properti dengan NJOP tinggi bisa lebih dari itu. Kalau nominal lebih dari Rp2 juta, QRIS otomatis tidak tampil atau ditandai tidak tersedia. User harus pilih VA atau Retail untuk nominal besar. Ini perlu dihandle di FE — jangan tampilkan QRIS kalau nominal melebihi limit.</div></div>
-        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bukti pembayaran PBB dari GoPop adalah bukti awal yang sah</strong> untuk menunjukkan sudah bayar. Tapi untuk dokumen resmi (balik nama tanah, KPR, dll), user tetap perlu minta tanda lunas resmi (SSPD/STTS) dari kantor Dispenda setempat.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Bukti pembayaran PBB dari GoPop adalah bukti awal yang sah</strong> untuk menunjukkan sudah bayar. Tapi untuk dokumen resmi (balik nama tanah, KPR, dll), user tetap per
+<!-- ============================================================ STATUS TRANSAKSI ============================================================ -->
+<div id="page-st-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 11 — Status Transaksi <span>›</span> F01</div>
+    <div class="fh-title">Status Processing — Transaksi Sedang Diproses</div>
+    <div class="fh-desc">Screen yang muncul segera setelah user bayar — sebelum konfirmasi dari payment gateway atau Digiflazz datang. User melihat animasi loading dengan pesan meyakinkan bahwa transaksi sedang berjalan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 04 (1:829) & 04b (1:1603): animasi loading/spinner, teks "Sedang Diproses", detail transaksi yang sedang menunggu konfirmasi. Dua varian — 04 untuk Transfer, 04b untuk Pulsa.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">04 - Status Cek Transaksi (1:829)</span>
+          <span class="fs-tag">04b - Status Cek Transaksi Pulsa (1:1603)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang baru saja bayar</span>
+      <span class="pill pill-trigger">🔔 Segera setelah "Bayar Sekarang" dikonfirmasi</span>
+      <span class="pill pill-time">⏱ Biasanya 5–30 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen processing muncul otomatis setelah bayar</div>
+            <div class="step-desc">Begitu payment gateway konfirmasi pembayaran masuk, screen checkout berganti ke screen processing. Animasi loading berputar. Pesan: "Transaksi kamu sedang diproses. Mohon jangan tutup app ini."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">App polling status setiap 3 detik</div>
+            <div class="step-desc">FE melakukan request status ke server setiap 3 detik. Tidak perlu user melakukan apa-apa. Begitu status berubah ke "sukses" atau "gagal", screen otomatis berganti. User tidak perlu refresh manual.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Status update → screen berganti otomatis</div>
+            <div class="step-desc">Kalau sukses → screen F02 (Status Sukses). Kalau gagal → screen F03 (Status Gagal). Transisi dengan animasi singkat agar user tahu ada perubahan status.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User tidak boleh bisa tap "Back" saat proses berjalan.</strong> Kalau user tap back dan keluar dari screen processing, mereka mungkin panik mengira transaksi batal — padahal transaksi tetap berjalan di server. Nonaktifkan tombol back selama proses berlangsung, atau tampilkan konfirmasi dulu.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setelah 5 menit masih processing</strong>, tampilkan opsi tambahan: tombol "Cek Status" yang refresh manual, dan link "Hubungi CS" dengan nomor referensi otomatis terisi. Jangan biarkan user stuck di loading tanpa solusi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Status flow di DB:</strong> paid → processing → pending → sukses/gagal. Status "pending" di antara processing dan sukses berarti Digiflazz sedang handle — bisa memakan waktu beberapa menit lebih lama dari biasanya.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User menutup app saat transaksi masih processing</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat saat buka app lagi:</span> Transaksi di riwayat dengan status terakhir yang tertera (processing/sukses/gagal).</div>
+          <div class="bc-handle">Transaksi tetap berjalan di server meski app ditutup — ini behavior yang benar. Saat user buka app lagi, tampilkan status terkini. Kalau ada transaksi yang sukses saat app tertutup, tampilkan notifikasi push (kalau diizinkan) atau snackbar saat app dibuka: "Transfer kamu ke Dewi Lestari berhasil ✅"</div>
+          <div class="bc-owner">PIC: Agung + Fikly (push notif atau in-app snackbar saat buka app setelah transaksi selesai)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Koneksi internet putus saat polling status — tidak bisa tahu apakah sukses atau gagal</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Loading terus, tidak ada update status.</div>
+          <div class="bc-handle">Setelah 3x polling gagal karena koneksi, tampilkan banner "Koneksi terputus. Status transaksi akan diperbarui saat koneksi kembali." dengan tombol "Cek Riwayat" untuk ke halaman riwayat di mana status terkini bisa dilihat setelah koneksi kembali.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (offline state saat polling + arahkan ke riwayat)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Processing Normal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Screen muncul otomatis setelah bayar</div>
+            <div class="hasil-item">Polling berjalan, screen berganti otomatis saat ada update</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Processing Bermasalah</div>
+          <div class="hasil-items">
+            <div class="hasil-item">&gt;5 menit → tampilkan opsi CS + cek manual</div>
+            <div class="hasil-item">Koneksi putus → banner offline + link ke riwayat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pbb-f02',null)">← PBB F02</div>
+    <div class="fn-btn next" onclick="go('st-f02',null)">F02: Status Sukses →</div>
+  </div>
+</div>
+
+<div id="page-st-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 11 — Status Transaksi <span>›</span> F02</div>
+    <div class="fh-title">Status Sukses</div>
+    <div class="fh-desc">Konfirmasi akhir bahwa transaksi berhasil. Screen ini tampil setelah Digiflazz konfirmasi produk sudah terkirim. Ada banyak varian screen sukses di Figma — satu per jenis produk — semua punya struktur serupa tapi konten berbeda.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — 8 varian screen sukses</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05 - Sukses Transfer (1:866)</span>
+          <span class="fs-tag">05b - Sukses Pulsa (1:1637)</span>
+          <span class="fs-tag">05c - Sukses BPJS Kes. (1:3264)</span>
+          <span class="fs-tag">05d - Sukses BPJS TK (1:3347)</span>
+          <span class="fs-tag">05e - Sukses Internet TV (1:3431)</span>
+          <span class="fs-tag">05f - Sukses PDAM (1:4036)</span>
+          <span class="fs-tag">05g - Sukses PBB (1:4975)</span>
+          <span class="fs-tag">05i/05j - Sukses Game ML/FF</span>
+          <span class="fs-tag">05k - Sukses Token Listrik</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang transaksinya berhasil</span>
+      <span class="pill pill-trigger">🔔 Digiflazz konfirmasi produk terkirim</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses muncul — ikon centang hijau besar</div>
+            <div class="step-desc">Animasi singkat: ikon centang hijau muncul dengan animasi scale-in. Judul "Transaksi Berhasil!" atau variasinya per produk. Warna dominan hijau sebagai visual cue positif.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Detail transaksi tampil lengkap</div>
+            <div class="step-desc">Card detail berisi info spesifik per produk:<ul>
+              <li><strong>Transfer:</strong> E-wallet tujuan, nomor penerima, nama penerima, nominal yang diterima</li>
+              <li><strong>Pulsa:</strong> Operator, nomor HP tujuan, nominal pulsa terisi</li>
+              <li><strong>BPJS:</strong> Jenis BPJS, nama peserta, periode yang dibayar</li>
+              <li><strong>Token Listrik:</strong> Nomor meter, token 20 digit yang harus dimasukkan ke meteran</li>
+              <li><strong>Game:</strong> Nama game, ID akun, item yang didapat</li>
+            </ul>
+            Plus di semua varian: <strong>Nomor referensi transaksi</strong> untuk keperluan komplain.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Notifikasi WA terkirim ke user</div>
+            <div class="step-desc">Bersamaan dengan screen sukses tampil, notifikasi WA dikirim ke nomor yang digunakan untuk transaksi. Isi WA = ringkasan lengkap transaksi sebagai bukti digital.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">Dua tombol aksi di bawah</div>
+            <div class="step-desc">Tombol utama (lime): "Buat Transaksi Baru" — kembali ke homepage. Tombol sekunder (outline): "Lihat Riwayat" — ke halaman riwayat transaksi. Pilihan ini memudahkan user untuk langsung aksi selanjutnya.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Token Listrik adalah kasus khusus</strong> — token 20 digit yang muncul di screen sukses HARUS juga terkirim via WA. Kalau user tidak sempat mencatat token sebelum keluar dari screen, mereka masih bisa lihat di notifikasi WA atau di riwayat transaksi. Token ini tidak bisa di-regenerate — sekali keluar tetap sama.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Screen sukses bisa di-screenshot user</strong> sebagai bukti sementara. Pastikan semua info penting tampil dengan font yang cukup besar dan readable di screenshot.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User tidak bisa kembali ke screen checkout dari screen sukses.</strong> Transaksi sudah final. Kalau user tap back, diarahkan ke homepage — bukan ke checkout lagi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User keluar dari screen sukses sebelum mencatat Token Listrik 20 digit</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tidak ingat tokennya dan tidak bisa kembali ke screen sukses.</div>
+          <div class="bc-handle">Token tetap tersedia di: (1) notifikasi WA yang sudah terkirim, (2) halaman detail riwayat transaksi. Tampilkan reminder di screen sukses Token Listrik: "Catat atau screenshot token ini. Token juga dikirim ke WA kamu." Tapi pastikan selalu ada fallback via WA dan riwayat.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (reminder khusus untuk screen sukses Token Listrik) · Irwan + Rifky (pastikan token tersimpan di detail transaksi BE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Screen Sukses Ideal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Animasi centang hijau + detail transaksi lengkap</div>
+            <div class="hasil-item">Nomor referensi tampil untuk backup komplain</div>
+            <div class="hasil-item">Notifikasi WA terkirim sebagai bukti digital</div>
+            <div class="hasil-item">Dua tombol aksi jelas: "Baru" atau "Riwayat"</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">⚠️ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Token Listrik tidak dicatat → fallback via WA + riwayat</div>
+            <div class="hasil-item">WA tidak terkirim → user panik, hubungi CS dengan ref ID</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('st-f01',null)">← F01: Processing</div>
+    <div class="fn-btn next" onclick="go('st-f03',null)">F03: Status Gagal →</div>
+  </div>
+</div>
+
+<div id="page-st-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 11 — Status Transaksi <span>›</span> F03</div>
+    <div class="fh-title">Status Gagal & Refund</div>
+    <div class="fh-desc">Transaksi gagal setelah user sudah bayar. Ini situasi paling sensitif — user kehilangan kepercayaan kalau tidak ditangani dengan cepat dan transparan. Screen harus meyakinkan user bahwa uangnya aman dan akan kembali.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 05h - Status Transaksi Gagal (1:11683): ikon silang merah/oranye, pesan transaksi gagal, detail transaksi yang gagal, tombol "Coba Lagi" dan "Hubungi CS".</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05h - Transaksi Gagal (1:11683)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang transaksinya gagal setelah bayar</span>
+      <span class="pill pill-trigger">🔔 Digiflazz return status gagal</span>
+      <span class="pill pill-time">⏱ Refund: QRIS/E-Wallet 1–3 jam, VA/Retail 1x24 jam kerja</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Gagal + Refund</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Screen gagal tampil — pesan ramah, bukan error teknikal</div>
+            <div class="step-desc">Ikon silang atau X oranye/merah. Judul: "Transaksi Tidak Berhasil". Pesan: "Layanan sedang mengalami gangguan sementara. Dana kamu <strong>aman</strong> dan akan dikembalikan." Detail transaksi tetap tampil — nomor referensi wajib ada.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Refund diproses otomatis</div>
+            <div class="step-desc">GoPop wajib refund karena user sudah bayar tapi produk tidak terkirim. Timeline per metode:<ul>
+              <li><strong>QRIS / E-Wallet:</strong> Refund otomatis ke sumber dalam 1–3 jam</li>
+              <li><strong>Virtual Account:</strong> Refund manual ke rekening dalam 1×24 jam kerja</li>
+              <li><strong>Gerai Retail:</strong> User hubungi CS dengan struk sebagai bukti, diproses manual</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">4</div>
+          <div class="step-body">
+            <div class="step-title">Notifikasi WA refund dikirim ke user</div>
+            <div class="step-desc">"Dana Rp[X] untuk transaksi [ref] sedang dikembalikan ke [metode]. Estimasi masuk dalam [timeline]." Ini mengurangi tiket CS "mana uang saya?"</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Dua opsi untuk user: Coba Lagi atau Hubungi CS</div>
+            <div class="step-desc">Tombol "Coba Lagi" membuka form transaksi baru dengan data yang sudah terisi (nomor tujuan dan produk sama seperti yang gagal — user hanya perlu pilih metode bayar ulang). Tombol "Hubungi CS" membuka WhatsApp atau Live Chat dengan nomor referensi sudah terpaste di pesan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kata kunci di pesan gagal: "Dana kamu AMAN".</strong> Ini yang paling penting disampaikan. User yang panik melihat "transaksi gagal" pertama yang mereka pikirkan adalah "apakah uang saya hilang?". Reassurance ini mencegah banjir komplain CS.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jangan tampilkan pesan teknikal</strong> seperti "Error Code 5032" atau "Digiflazz timeout". Terjemahkan semua error menjadi bahasa yang bisa dipahami orang awam.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua transaksi gagal tercatat di dashboard Monitoring</strong> dan harus ditindaklanjuti Acoy dalam 2 jam. Ada alert otomatis ke tim kalau ada lonjakan transaksi gagal.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Gagal Tertangani Baik</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pesan ramah: "Dana aman, akan dikembalikan"</div>
+            <div class="hasil-item">Refund otomatis sesuai timeline metode bayar</div>
+            <div class="hasil-item">Notifikasi WA konfirmasi refund dikirim</div>
+            <div class="hasil-item">User bisa coba lagi atau hubungi CS dengan mudah</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Gagal Tidak Tertangani</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pesan error teknikal → user panik</div>
+            <div class="hasil-item">Refund &gt;24 jam → eskalasi ke Agung + CS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('st-f02',null)">← F02: Status Sukses</div>
+    <div class="fn-btn next" onclick="go('st-f04',null)">F04: Cek via Link WA →</div>
+  </div>
+</div>
+
+<div id="page-st-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 11 — Status Transaksi <span>›</span> F04</div>
+    <div class="fh-title">Cek Status Transaksi via Link di WA</div>
+    <div class="fh-desc">User yang menutup app sebelum transaksi selesai, atau guest yang tidak punya akun, masih bisa cek status transaksi lewat link yang dikirim di notifikasi WA. Link ini membuka halaman status di browser tanpa perlu login.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 Semua user — terutama guest</span>
+      <span class="pill pill-trigger">🔔 Tap link "Cek Status" dari notifikasi WA GoPop</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User terima WA dari GoPop dengan link status</div>
+            <div class="step-desc">Semua notifikasi WA transaksi menyertakan link: "Cek status transaksi kamu: gopop.id/status/[ref_id]". Link ini unik per transaksi dan berlaku 30 hari.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Link dibuka di browser — tampil halaman status</div>
+            <div class="step-desc">Halaman web sederhana menampilkan status terkini transaksi: nomor referensi, produk, nominal, status (processing/sukses/gagal), dan timestamp. Tidak perlu login. Desain mobile-first karena mayoritas dibuka dari WA di HP.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User mendapat informasi yang dibutuhkan</div>
+            <div class="step-desc">Kalau sukses: detail produk yang diterima. Kalau gagal: status refund dan estimasi waktu. Kalau masih processing: pesan "masih diproses" dengan opsi hubungi CS kalau sudah lebih dari 1 jam.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Halaman status via link tidak memerlukan login.</strong> Ini sangat penting untuk user guest yang tidak punya akun — satu-satunya cara mereka membuktikan transaksi adalah via link WA dan nomor referensi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Link berlaku 30 hari</strong> setelah transaksi. Setelah itu halaman tampil "Data transaksi tidak lagi tersedia. Untuk pertanyaan lebih lanjut, hubungi CS dengan nomor referensi kamu."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Link status tidak bisa dipakai untuk refund atau aksi lain</strong> — hanya untuk melihat status. Ini mencegah penyalahgunaan link oleh pihak lain yang mungkin dapat akses ke WA user.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User — termasuk guest — bisa cek status tanpa login</div>
+            <div class="hasil-item">Informasi status lengkap dan mudah dipahami</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Link expired &gt;30 hari → arahkan ke CS dengan ref ID</div>
+            <div class="hasil-item">WA notif tidak terkirim → user tidak punya link → hubungi CS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('st-f03',null)">← F03: Status Gagal</div>
+    <div class="fn-btn next" onclick="go('rw-f01',null)">📋 Riwayat Transaksi →</div>
+  </div>
+</div>
+
+<!-- ============================================================ RIWAYAT TRANSAKSI ============================================================ -->
+<div id="page-rw-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 12 — Riwayat Transaksi <span>›</span> F01</div>
+    <div class="fh-title">Lihat Daftar Riwayat Transaksi</div>
+    <div class="fh-desc">User yang login bisa lihat semua riwayat transaksi mereka di GoPop. Bisa difilter, dicari, dan diurutkan. Ini juga pintu masuk untuk melihat detail dan mengajukan komplain kalau ada masalah.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 24 - Riwayat Transaksi (1:6134 dan 1:6373 — dua varian). List item berisi: ikon produk, nama produk, detail singkat, jumlah, status (sukses/gagal/pending), dan timestamp.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">24 - Riwayat Transaksi (1:6134)</span>
+          <span class="fs-tag">24 - Riwayat v2 (1:6373)</span>
+          <span class="fs-tag">32/32b - Riwayat Voucher Game</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Tap "Riwayat" di navbar bawah</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Riwayat" di navbar — daftar transaksi tampil</div>
+            <div class="step-desc">List semua transaksi user dari yang terbaru ke terlama. Setiap item menampilkan:<ul>
+              <li>Ikon produk (transfer, pulsa, BPJS, dll) di kiri</li>
+              <li>Nama produk + detail singkat (misal "Transfer GoPay · 08124xxx")</li>
+              <li>Jumlah yang dibayar di kanan</li>
+              <li>Status: label hijau "Sukses", merah "Gagal", atau abu "Diproses"</li>
+              <li>Waktu transaksi (misal "2 jam lalu" atau "12 Jan 2025")</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User bisa filter dan cari</div>
+            <div class="step-desc">Filter tersedia: Semua / Sukses / Gagal / Pending. Fitur pencarian di atas list untuk cari berdasarkan nomor referensi atau nama produk. Pagination atau infinite scroll untuk load transaksi lebih lama.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Tap item → masuk ke detail transaksi (F02)</div>
+            <div class="step-desc">Tap salah satu item di list membuka screen detail transaksi yang menampilkan informasi lengkap.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Riwayat hanya tersedia untuk user yang login.</strong> Guest tidak punya riwayat di app — mereka hanya bisa cek status via link WA. Ini salah satu insentif utama untuk mendorong user daftar akun GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Riwayat disimpan permanen</strong> di akun user — tidak ada batas waktu atau jumlah transaksi yang disimpan. Ini berguna untuk keperluan administrasi user jangka panjang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Voucher Game punya section riwayat tersendiri</strong> (screen 32/32b) di halaman riwayat — terpisah dari riwayat transaksi umum karena punya info khusus (kode voucher, akun game, dll).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User belum login mencoba akses riwayat</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Halaman riwayat menampilkan prompt login.</div>
+          <div class="bc-handle">Tampilkan ilustrasi kosong yang menarik dengan pesan: "Masuk untuk lihat riwayat transaksi kamu" dan tombol "Masuk / Daftar". Jangan tampilkan error — ini bukan kesalahan user, hanya belum login.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (empty state menarik untuk guest di halaman riwayat)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Semua riwayat transaksi tampil dengan status jelas</div>
+            <div class="hasil-item">Filter dan pencarian memudahkan navigasi</div>
+            <div class="hasil-item">Tap item → detail lengkap tersedia</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Guest akses riwayat → prompt login yang ramah</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('st-f04',null)">← Status F04</div>
+    <div class="fn-btn next" onclick="go('rw-f02',null)">F02: Detail Transaksi →</div>
+  </div>
+</div>
+
+<div id="page-rw-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 12 — Riwayat Transaksi <span>›</span> F02</div>
+    <div class="fh-title">Detail Transaksi</div>
+    <div class="fh-desc">Halaman detail menampilkan semua informasi satu transaksi secara lengkap — berguna untuk verifikasi, screenshot bukti, atau dasar komplain ke CS.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 25 (1:6643) dan 25b (1:6748): detail lengkap transaksi. Dua varian dengan sedikit perbedaan layout. Berisi header status, card detail produk, card pembayaran, nomor referensi, dan tombol aksi.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">25 - Detail Transaksi (1:6643)</span>
+          <span class="fs-tag">25b - Detail Transaksi v2 (1:6748)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Tap item di daftar riwayat</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Halaman detail terbuka — semua info satu transaksi</div>
+            <div class="step-desc">Struktur halaman:<ul>
+              <li><strong>Header status:</strong> Label besar sukses/gagal/pending dengan warna sesuai</li>
+              <li><strong>Card produk:</strong> Semua detail produk spesifik (sama dengan screen sukses)</li>
+              <li><strong>Card pembayaran:</strong> Metode bayar, subtotal, biaya layanan, biaya pembayaran, total</li>
+              <li><strong>Nomor referensi:</strong> Besar dan mudah di-copy</li>
+              <li><strong>Timestamp:</strong> Tanggal dan waktu transaksi lengkap</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Tombol aksi di bawah sesuai status transaksi</div>
+            <div class="step-desc">
+              <strong>Kalau Sukses:</strong> "Beli Lagi" (buka transaksi baru produk yang sama) + "Bagikan Bukti" (share screenshot atau PDF bukti)<br><br>
+              <strong>Kalau Gagal:</strong> "Coba Lagi" (buka transaksi baru) + "Hubungi CS" (WA/live chat dengan ref ID otomatis terisi)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nomor referensi harus bisa di-copy dengan satu tap.</strong> User sering butuh nomor ini untuk komplain ke CS atau verifikasi ke pihak lain. Jangan paksa user ketik ulang angka panjang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Token Listrik tampil di halaman detail</strong> selama transaksi sukses — bahkan setelah user keluar dari screen sukses. Ini fallback penting kalau user lupa catat token.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Fitur "Bagikan Bukti"</strong> menghasilkan screenshot atau PDF yang rapi — bisa dibagikan ke WhatsApp, email, dsb. Format yang rapi penting karena sering dipakai untuk laporan ke perusahaan atau klaim asuransi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Semua detail transaksi lengkap dan mudah dibaca</div>
+            <div class="hasil-item">Nomor ref bisa di-copy satu tap</div>
+            <div class="hasil-item">Token Listrik tersimpan dan bisa dilihat kembali</div>
+            <div class="hasil-item">Tombol aksi kontekstual sesuai status</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Halaman tidak bisa dibuka karena data loading error → retry</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rw-f01',null)">← F01: Daftar Riwayat</div>
+    <div class="fn-btn next" onclick="go('tp-f01',null)">📰 Tips & Promo →</div>
+  </div>
+</div>
+
+<!-- ============================================================ TIPS & PROMO ============================================================ -->
+<div id="page-tp-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 13 — Tips & Promo <span>›</span> F01</div>
+    <div class="fh-title">Listing Artikel Tips & Promo</div>
+    <div class="fh-desc">Halaman listing semua artikel Tips & Edukasi yang dipublish Kayong dari CMS. Ada dua kategori: Tips Keuangan dan Panduan produk GoPop. User bisa scroll dan tap artikel yang menarik.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 29 - Tips & Promo Listing (1:10000 dan 1:10194 — dua varian): list artikel dengan card horizontal berisi ikon kategori berwarna, label kategori, judul artikel, dan estimasi waktu baca.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">29 - Tips Listing (1:10000)</span>
+          <span class="fs-tag">29 - Tips Listing v2 (1:10194)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Selengkapnya" dari homepage atau navbar Tips</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Halaman listing terbuka — semua artikel tersedia</div>
+            <div class="step-desc">Card artikel horizontal (dari Figma) berisi: (1) ikon kategori dalam kotak berwarna (ungu untuk Tips Keuangan, kuning untuk Panduan), (2) label kategori kecil berwarna, (3) judul artikel bold, (4) estimasi waktu baca dengan ikon jam kecil. Diurutkan dari yang terbaru ke lama.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User scroll dan tap artikel yang menarik</div>
+            <div class="step-desc">Tap card artikel → masuk ke detail artikel (F02). Artikel dari Figma contoh: "5 Cara Atur Pengeluaran Bulanan Anti Boros (4 mnt baca)" dan "Cara Cek & Bayar Tagihan PLN Tanpa Antre (3 mnt baca)".</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Artikel dikelola Kayong dari CMS dashboard.</strong> Hanya artikel dengan status "Published" yang tampil. Artikel "Draft" tidak tampil ke user. Kayong bisa kapan saja publish artikel baru atau nonaktifkan yang lama.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Dua jenis konten di Tips & Promo:</strong> (1) Tips Keuangan — konten edukasi general, (2) Panduan Produk — cara pakai layanan GoPop spesifik. Kedua tipe ini ditampilkan dalam satu daftar tapi bisa dibedakan dari warna label.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Artikel bisa dipakai sebagai destination link banner promo</strong> di homepage. Kalau Kayong set banner yang mengarah ke artikel tertentu, tap banner langsung buka artikel tersebut.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Tidak ada artikel yang dipublish Kayong — halaman kosong</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Halaman kosong tanpa konten.</div>
+          <div class="bc-handle">Tampilkan empty state yang ramah: "Konten Tips & Edukasi sedang dalam persiapan. Pantau terus GoPop untuk tips keuangan terbaru!" Jangan layar kosong total.</div>
+          <div class="bc-owner">PIC: Kayong (selalu ada minimal 2–3 artikel published) · Agung + Fikly (empty state design)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">List artikel tampil dari CMS Kayong</div>
+            <div class="hasil-item">Tap artikel → ke detail F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Kosong</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tidak ada artikel published → empty state ramah</div>
+            <div class="hasil-item">CMS belum terhubung (D-GAP-18) → konten tidak update</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rw-f02',null)">← Riwayat F02</div>
+    <div class="fn-btn next" onclick="go('tp-f02',null)">F02: Detail Artikel →</div>
+  </div>
+</div>
+
+<div id="page-tp-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 13 — Tips & Promo <span>›</span> F02</div>
+    <div class="fh-title">Detail Artikel</div>
+    <div class="fh-desc">User membaca artikel Tips & Edukasi secara penuh. Screen scrollable dengan konten artikel, gambar ilustrasi, dan tombol aksi di akhir artikel.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 31 - Tips Detail Artikel (1:9824): header artikel, konten artikel scrollable, section rekomendasi produk GoPop yang relevan di bagian akhir artikel.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">31 - Tips Detail Artikel (1:9824)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap artikel dari listing atau banner homepage</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Artikel terbuka — header + konten lengkap</div>
+            <div class="step-desc">Header artikel berisi: judul besar, label kategori, estimasi waktu baca, dan tanggal publish. Konten artikel di bawahnya bisa berupa teks, gambar ilustrasi, dan list poin.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Rekomendasi produk GoPop di bagian akhir artikel</div>
+            <div class="step-desc">Di bawah konten artikel ada section CTA: "Coba Sekarang di GoPop" dengan shortcut langsung ke produk yang relevan. Contoh: artikel tentang bayar tagihan PLN → ada tombol "Bayar Token Listrik Sekarang". Ini adalah funnel dari konten ke transaksi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Tombol share artikel</div>
+            <div class="step-desc">User bisa share artikel via WhatsApp, copy link, atau platform lain. Link artikel yang dishare bisa dibuka di browser tanpa perlu app GoPop — ini membantu spreading awareness.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Konten artikel harus akurat dan tidak menyesatkan.</strong> Kayong bertanggung jawab atas keakuratan konten. Artikel yang menyebut fitur atau harga GoPop harus dikonfirmasi ke Bili atau Acoy sebelum publish.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Link artikel bisa dibuka di browser</strong> tanpa perlu install app. Ini penting untuk SEO dan memperluas jangkauan GoPop melalui konten.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Artikel terbaca penuh, konten informatif</div>
+            <div class="hasil-item">CTA produk relevan di akhir artikel → funnel ke transaksi</div>
+            <div class="hasil-item">Share artikel → awareness GoPop meluas</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Konten outdated (harga/fitur berubah) → Kayong update artikel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('tp-f01',null)">← F01: Listing</div>
+    <div class="fn-btn next" onclick="go('pb-f01',null)">🆘 Pusat Bantuan →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PUSAT BANTUAN ============================================================ -->
+<div id="page-pb-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 14 — Pusat Bantuan <span>›</span> F01</div>
+    <div class="fh-title">Form Komplain & Bantuan</div>
+    <div class="fh-desc">User yang mengalami masalah bisa minta bantuan lewat form di screen 26. Form ini membuat tiket yang masuk ke dashboard CS GoPop. User wajib menyertakan nomor WA agar CS bisa follow up.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 26 - Pusat Bantuan (1:7043): form komplain dengan field nomor transaksi, jenis masalah, deskripsi, nomor WA. Tombol kirim. Ada tombol WhatsApp langsung dan Live Chat di bagian bawah sebagai alternatif cepat.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">26 - Pusat Bantuan (1:7043)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Bantuan" dari navbar, profil, atau screen gagal</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen Pusat Bantuan terbuka</div>
+            <div class="step-desc">Dua jalur bantuan tersedia:<ul>
+              <li><strong>Form Komplain:</strong> Untuk masalah yang butuh investigasi (transaksi gagal, refund, dll)</li>
+              <li><strong>Live Chat / WA Langsung:</strong> Untuk pertanyaan cepat atau darurat</li>
+            </ul>
+            Di atas form ada tombol shortcut "Chat via WhatsApp" dan "Live Chat" untuk user yang mau respons lebih cepat.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User isi form komplain</div>
+            <div class="step-desc">Field form:<ul>
+              <li><strong>Nomor Referensi Transaksi:</strong> Opsional tapi sangat disarankan</li>
+              <li><strong>Jenis Masalah:</strong> Dropdown — Transaksi Gagal, Refund, Produk Tidak Terkirim, Lainnya</li>
+              <li><strong>Deskripsi:</strong> Text area untuk cerita lengkap masalah</li>
+              <li><strong>Nomor WhatsApp:</strong> Wajib diisi — CS akan follow up via WA</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Tiket dibuat — CS akan follow up via WA</div>
+            <div class="step-desc">Setelah submit, tiket masuk ke dashboard Komplain & Tiket (yang dikelola CS di Modul 02 Dashboard). User mendapat konfirmasi: "Komplain kamu diterima! CS kami akan menghubungi [nomor WA] dalam 1×24 jam kerja." Nomor tiket dikirim ke WA user sebagai referensi.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nomor WhatsApp wajib diisi.</strong> Ini satu-satunya cara CS menghubungi user. Kalau nomor WA tidak valid atau tidak aktif, tiket tidak bisa ditindaklanjuti — ini loss bagi user dan GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>SLA CS: 1×24 jam kerja.</strong> User harus diberitahu ekspektasi ini dari awal agar tidak menunggu balasan dalam 1 jam. Kalau darurat (dana tertahan), sarankan langsung live chat atau WA.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Form komplain bisa diakses tanpa login.</strong> Guest yang mengalami masalah harus tetap bisa minta bantuan — mereka tidak punya akun tapi tetap bayar dan berhak dapat CS.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User submit form tanpa nomor referensi transaksi — CS kesulitan investigasi</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Form berhasil submit, tapi CS tidak bisa temukan transaksinya.</div>
+          <div class="bc-handle">Tampilkan prompt saat user kosongkan field nomor referensi: "Nomor referensi membantu CS menyelesaikan masalah lebih cepat. Yakin ingin lanjut tanpa nomor referensi?" Ini bukan blocking — user tetap bisa submit — tapi nudge untuk isi nomor ref dulu.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (soft prompt untuk nomor referensi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tiket dibuat di dashboard CS</div>
+            <div class="hasil-item">User dapat konfirmasi + nomor tiket via WA</div>
+            <div class="hasil-item">CS follow up dalam 1×24 jam kerja</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Tanpa nomor ref → CS investigasi lebih lama</div>
+            <div class="hasil-item">WA tidak aktif → tiket tidak bisa ditindaklanjuti</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('tp-f02',null)">← Tips F02</div>
+    <div class="fn-btn next" onclick="go('pb-f02',null)">F02: Live Chat →</div>
+  </div>
+</div>
+
+<div id="page-pb-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 14 — Pusat Bantuan <span>›</span> F02</div>
+    <div class="fh-title">Live Chat</div>
+    <div class="fh-desc">Alternatif bantuan real-time untuk user yang butuh respons cepat. Screen 27 menampilkan antarmuka chat langsung dengan CS GoPop.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 27 - Live Chat (1:7130): UI chat dengan bubble pesan, input field di bawah, tombol kirim. Ada ikon WhatsApp sebagai alternatif kalau live chat offline.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">27 - Live Chat (1:7130)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap FAB bantuan atau "Live Chat" dari Pusat Bantuan</span>
+      <span class="pill pill-time">⏱ Jam operasional CS (perlu dikonfirmasi tim)</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen live chat terbuka</div>
+            <div class="step-desc">UI chat standar: pesan CS di kiri (bubble abu), pesan user di kanan (bubble ungu/lime). Field input di bawah dengan tombol kirim. Kalau CS sedang online, ada indikator "CS sedang online". Kalau di luar jam kerja, tampilkan estimasi kapan CS aktif lagi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Pesan pertama otomatis dari bot</div>
+            <div class="step-desc">Begitu chat dibuka, bot mengirim pesan otomatis: "Halo! Ada yang bisa kami bantu? Tolong ceritakan masalah kamu di sini. Jangan lupa sertakan nomor referensi transaksi kalau ada." Ini membimbing user untuk langsung ke inti masalah.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">CS masuk dan handle chat</div>
+            <div class="step-desc">CS yang sedang bertugas menerima notifikasi di dashboard dan masuk ke chat. Dari sisi CS di dashboard, mereka bisa lihat riwayat transaksi user (kalau login) untuk konteks lebih cepat.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jam operasional live chat perlu ditetapkan</strong> (misal Senin–Sabtu 08.00–22.00). Di luar jam ini, live chat menampilkan pesan "CS kami sedang tidak aktif. Kirim pesan dan kami akan balas di jam operasional." dengan estimasi waktu balasan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>WhatsApp sebagai fallback.</strong> Dari Figma screen 26, ada ikon WhatsApp di Pusat Bantuan. Kalau live chat tidak tersedia atau user prefer WA, ada tombol shortcut "Chat via WhatsApp" yang membuka wa.me dengan nomor GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Riwayat chat tersimpan</strong> — user bisa buka kembali chat sebelumnya. Ini membantu kalau ada follow-up dari masalah yang sedang ditangani.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Chat Terhubung</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User terhubung langsung dengan CS saat jam operasional</div>
+            <div class="hasil-item">Masalah bisa diselesaikan real-time</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ CS Offline</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Di luar jam operasional → pesan + estimasi balasan</div>
+            <div class="hasil-item">Fallback ke WhatsApp tersedia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pb-f01',null)">← F01: Form Komplain</div>
+    <div class="fn-btn next" onclick="go('pr-f01',null)">👤 Profil & Akun →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PROFIL & AKUN ============================================================ -->
+<div id="page-pr-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 15 — Profil & Akun <span>›</span> F01</div>
+    <div class="fh-title">Lihat & Edit Profil</div>
+    <div class="fh-desc">Halaman Profil adalah hub pengaturan akun user. Berisi info profil, menu navigasi ke pengaturan lain, dan tombol logout. Dari Figma, ada ikon-ikon menu di profil: jadi reseller, riwayat, notifikasi, privasi, bantuan, syarat.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Dari metadata Figma: ada nodes bernama "jadi-reseller 1", "riwayat-transaksi 1", "notifikasi 1", "privasi-keamanan 1", "bantuan-dukungan 1", "syarat-ketentuan 1" — ini menu items di halaman Profil. Field "Ganti Password" juga ada di text nodes.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Profil section — navbar "Profil"</span>
+          <span class="fs-tag">Edit Profil screen</span>
+          <span class="fs-tag">Ganti Password — field "Konfirmasi Password"</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Tap "Profil" di navbar bawah</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Halaman Profil terbuka — info + menu</div>
+            <div class="step-desc">Bagian atas: foto profil (placeholder avatar kalau belum upload), nama lengkap, email. Di bawahnya menu list:<ul>
+              <li>🏪 Jadi Reseller</li>
+              <li>📋 Riwayat Transaksi (shortcut)</li>
+              <li>🔔 Notifikasi</li>
+              <li>🔒 Privasi & Keamanan</li>
+              <li>🆘 Bantuan & Dukungan (shortcut ke Pusat Bantuan)</li>
+              <li>📄 Syarat & Ketentuan</li>
+              <li>🚪 Keluar</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User tap area foto/nama → masuk Edit Profil</div>
+            <div class="step-desc">Di Edit Profil, user bisa ubah: nama lengkap, nomor HP (dengan verifikasi OTP), dan foto profil. Email tidak bisa diubah — ini identifier utama akun. Kalau daftar via Google, nama bisa diubah tapi email tetap dari Google.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Simpan perubahan</div>
+            <div class="step-desc">Tap "Simpan" → data diupdate di server → halaman profil kembali tampil dengan info terbaru. Nama baru langsung tampil di greeting homepage juga.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Menu "Jadi Reseller" dari Profil</strong> adalah jalur untuk user yang mau upgrade jadi reseller GoPop. Ini mengarah ke form pendaftaran reseller atau penjelasan program reseller. Penting sebagai funnel B2B dari consumer app.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Email tidak bisa diubah</strong> karena dipakai sebagai identifier unik akun. Kalau user mau pakai email lain, harus buat akun baru.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Profil untuk guest</strong> — navbar "Profil" tetap bisa diklik guest, tapi menampilkan prompt login + informasi manfaat punya akun GoPop (riwayat tersimpan, kode promo, dsb).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Info profil tampil dengan benar</div>
+            <div class="hasil-item">Edit nama/HP berhasil disimpan</div>
+            <div class="hasil-item">Nama baru langsung tampil di greeting homepage</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Guest akses Profil → prompt login yang menarik</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pb-f02',null)">← Bantuan F02</div>
+    <div class="fn-btn next" onclick="go('pr-f02',null)">F02: Ganti Password →</div>
+  </div>
+</div>
+
+<div id="page-pr-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 15 — Profil & Akun <span>›</span> F02</div>
+    <div class="fh-title">Ganti Password</div>
+    <div class="fh-desc">User yang mau update password dari dalam app (berbeda dengan reset password via email yang tanpa login). Dari Profil → Privasi & Keamanan → Ganti Password.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Dari text nodes: "Ganti Password", "Konfirmasi Password Baru", "Konfirmasi Password" — form ganti password di halaman Privasi & Keamanan.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">Privasi & Keamanan → Ganti Password</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Profil → Privasi & Keamanan → Ganti Password</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Form Ganti Password terbuka</div>
+            <div class="step-desc">Tiga field: (1) Password Sekarang, (2) Password Baru, (3) Konfirmasi Password Baru. Semua field punya ikon mata untuk tampilkan/sembunyikan. Validasi kekuatan password real-time di field password baru.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User isi ketiga field dan tap "Simpan"</div>
+            <div class="step-desc">Sistem verifikasi password lama dulu sebelum update ke yang baru. Kalau password lama salah, muncul pesan error. Kalau benar dan password baru valid, password diupdate.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Password berhasil diubah — sesi lain di-logout</div>
+            <div class="step-desc">Semua sesi aktif di perangkat lain otomatis di-logout demi keamanan. Sesi di perangkat ini tetap aktif. Notifikasi WA dikirim: "Password GoPop kamu baru saja diubah. Kalau bukan kamu, segera hubungi CS."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User yang login via Google tidak bisa ganti password</strong> di GoPop — mereka tidak punya password GoPop. Menu "Ganti Password" tidak tampil untuk akun Google, atau ditampilkan dengan pesan: "Akun kamu menggunakan Google. Ubah password di pengaturan akun Google kamu."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Notifikasi keamanan wajib dikirim via WA</strong> setiap kali password berhasil diubah. Ini early warning kalau ada akses tidak sah ke akun user.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Password baru tidak boleh sama dengan password lama</strong> — sistem validasi ini di BE untuk mencegah "ganti password" yang tidak benar-benar ganti.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Ganti Password Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Password baru aktif</div>
+            <div class="hasil-item">Sesi lain di-logout, sesi ini tetap aktif</div>
+            <div class="hasil-item">Notifikasi WA dikirim sebagai early warning</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Password lama salah → pesan error, coba lagi</div>
+            <div class="hasil-item">Akun Google → tidak ada menu ganti password GoPop</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pr-f01',null)">← F01: Edit Profil</div>
+    <div class="fn-btn next" onclick="go('pr-f03',null)">F03: Notifikasi & Pengaturan →</div>
+  </div>
+</div>
+
+<div id="page-pr-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 15 — Profil & Akun <span>›</span> F03</div>
+    <div class="fh-title">Notifikasi & Pengaturan Lainnya</div>
+    <div class="fh-desc">Pengaturan notifikasi, preferensi, dan halaman informatif (Syarat & Ketentuan, Privasi). Ini halaman-halaman yang jarang dibuka tapi penting ada sebagai kelengkapan legal dan UX.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah login</span>
+      <span class="pill pill-trigger">🔔 Profil → Notifikasi / Syarat & Ketentuan / Privasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Menu Notifikasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User bisa atur preferensi notifikasi</div>
+            <div class="step-desc">Toggle-toggle untuk jenis notifikasi yang ingin diterima:<ul>
+              <li>✅ Notifikasi transaksi (Sukses / Gagal) — default ON, tidak direkomendasikan dimatikan</li>
+              <li>📢 Promo dan penawaran — default ON, bisa dimatikan</li>
+              <li>📰 Artikel Tips terbaru — default ON, bisa dimatikan</li>
+            </ul>
+            Perubahan toggle langsung tersimpan — tidak perlu tap "Simpan" terpisah.</div>
+          </div>
+        </div>
+      </div>
+      <div class="co co-warn" style="margin-top:10px;">
+        <span>⚠️</span>
+        <div><strong>Penting:</strong> Notifikasi transaksi via WA <strong>tidak bisa dimatikan dari sini</strong> — WA notification tetap terkirim untuk semua transaksi. Yang bisa diatur di sini adalah notifikasi push in-app, bukan WA.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Menu Syarat & Ketentuan / Privasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Halaman informatif — konten statis dari BE/CMS</div>
+            <div class="step-desc">Syarat & Ketentuan dan Kebijakan Privasi ditampilkan sebagai halaman teks panjang yang bisa discroll. Konten ini wajib ada dan diupdate kalau ada perubahan kebijakan GoPop. Bisa juga dibuka sebagai WebView yang mengarah ke halaman web gopop.id/terms.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Versi Syarat & Ketentuan harus tertera</strong> (misal "v1.2 — terakhir diperbarui 1 Januari 2025"). Kalau ada update besar ke S&K, user perlu di-notif dan diminta accept versi baru sebelum bisa transaksi lagi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Pengaturan notifikasi hanya mengatur push notification in-app.</strong> WA notification untuk transaksi selalu dikirim terlepas dari pengaturan ini — ini tidak bisa dimatikan karena merupakan fitur keamanan dan bukti transaksi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Preferensi notifikasi tersimpan real-time</div>
+            <div class="hasil-item">S&K dan Privasi bisa dibaca kapan saja</div>
+            <div class="hasil-item">Semua halaman profil lengkap tersedia</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">⚠️ Catatan</div>
+          <div class="hasil-items">
+            <div class="hasil-item">WA notif transaksi tidak bisa dimatikan — ini fitur keamanan</div>
+            <div class="hasil-item">S&K update → user perlu accept versi baru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pr-f02',null)">← F02: Ganti Password</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow — SELESAI 🎉</div>
+  </div>
+</div>
+
+lu minta tanda lunas resmi (SSPD/STTS) dari kantor Dispenda setempat.</div></div>
       </div>
     </div>
   </div>
