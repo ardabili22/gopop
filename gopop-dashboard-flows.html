@@ -2540,6 +2540,460 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
 </div>
 
+
+<!-- ============================================================ MASTER DATA WELCOME ============================================================ -->
+<div id="page-md-welcome" class="page">
+  <div class="hero">
+    <h1>Master Data — <span>7 Sub-Menu</span></h1>
+    <p>Master Data adalah fondasi dari semua produk dan layanan yang tampil di app GoPop. Setiap perubahan di sini berdampak langsung ke apa yang bisa dilihat dan dibeli user. Dikelola terutama oleh Ipong (Aggregator/Produk).</p>
+  </div>
+  <div class="co co-warn" style="margin-bottom:20px;">
+    <span>⚠️</span>
+    <div><strong>Penting:</strong> Master Data adalah data referensi yang dipakai oleh seluruh sistem GoPop. Perubahan yang salah bisa menyebabkan produk tidak tampil, harga salah, atau transaksi gagal. Selalu double-check sebelum simpan.</div>
+  </div>
+  <div class="module-grid">
+    <div class="mc" onclick="go('md-f01',null)"><div class="mc-icon">📦</div><div class="mc-title">F01 · Kategori Produk</div><div class="mc-sub">Pulsa, Token, Transfer, Game, dll</div></div>
+    <div class="mc" onclick="go('md-f02',null)"><div class="mc-icon">📡</div><div class="mc-title">F02 · Operator & Provider</div><div class="mc-sub">Telkomsel, XL, Indosat, dll</div></div>
+    <div class="mc" onclick="go('md-f03',null)"><div class="mc-icon">💳</div><div class="mc-title">F03 · Bank & E-Wallet</div><div class="mc-sub">BCA, GoPay, OVO, DANA, dll</div></div>
+    <div class="mc" onclick="go('md-f04',null)"><div class="mc-icon">🗺️</div><div class="mc-title">F04 · Wilayah & PDAM</div><div class="mc-sub">Kota/kabupaten yang didukung</div></div>
+    <div class="mc" onclick="go('md-f05',null)"><div class="mc-icon">🔢</div><div class="mc-title">F05 · Denom & Preset</div><div class="mc-sub">Nominal preset di app user</div></div>
+    <div class="mc" onclick="go('md-f06',null)"><div class="mc-icon">📄</div><div class="mc-title">F06 · Konten Statis</div><div class="mc-sub">S&K, FAQ, Tentang GoPop</div></div>
+    <div class="mc" onclick="go('md-f07',null)"><div class="mc-icon">🔄</div><div class="mc-title">F07 · Sync dari Digiflazz</div><div class="mc-sub">Update produk otomatis dari biller</div></div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F01: KATEGORI PRODUK ============================================================ -->
+<div id="page-md-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F01</div>
+    <div class="fh-title">Kelola Kategori Produk</div>
+    <div class="fh-desc">Kategori adalah pengelompokan produk yang tampil di app — tab filter homepage (Semua/Isi Ulang/Tagihan) dan grid ikon produk bergantung pada kategori ini. Ipong mengelola kategori yang aktif dan urutan tampilannya.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Ada kategori produk baru atau perlu direstrukturisasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Kategori Produk</div><div class="step-desc">Tampil semua kategori yang ada beserta status (aktif/nonaktif) dan jumlah produk di dalamnya. Kategori aktif saat ini: Transfer E-Wallet, Pulsa, Paket Data, Token Listrik, BPJS, Voucher Game, Internet & TV, PDAM, PBB.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit kategori atau tambah yang baru</div><div class="step-desc">Setiap kategori punya:<ul>
+          <li><strong>Nama kategori</strong> — tampil di app dan dashboard</li>
+          <li><strong>Slug/kode</strong> — identifier unik untuk sistem (tidak bisa diubah setelah dibuat)</li>
+          <li><strong>Ikon</strong> — ikon yang tampil di grid homepage app</li>
+          <li><strong>Tipe</strong> — "Isi Ulang" atau "Tagihan" (menentukan filter chip di homepage)</li>
+          <li><strong>Urutan tampil</strong> — angka urutan di grid homepage (1 = paling kiri atas)</li>
+          <li><strong>Status</strong> — Aktif atau Nonaktif</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Simpan — berlaku langsung ke app</div><div class="step-desc">Perubahan kategori (nama, ikon, urutan, status) berlaku langsung ke app user tanpa perlu deploy ulang. Kalau kategori dinonaktifkan, semua produk di dalamnya juga tidak tampil ke user (tapi tidak dihapus).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Slug kategori tidak bisa diubah setelah dibuat</strong> karena slug dipakai sebagai referensi di banyak tempat (URL app, API response, filter system). Kalau harus berubah, buat kategori baru dan migrate produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kategori yang punya produk aktif tidak bisa langsung dihapus</strong> — harus pindahkan semua produknya ke kategori lain dulu, baru bisa hapus. Ini mencegah produk "yatim" yang tidak masuk kategori manapun.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Urutan tampil menentukan posisi di grid homepage.</strong> Grid homepage hanya tampilkan 8 slot (2 baris × 4 kolom). Kategori dengan urutan 9+ tidak tampil di homepage tapi tetap bisa diakses dari Layanan Semua (screen 28).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tipe kategori menentukan filter chip di homepage.</strong> "Isi Ulang" → tampil saat user tap chip "Isi Ulang". "Tagihan" → tampil saat chip "Tagihan". Pastikan setiap kategori masuk ke tipe yang benar agar filter chip berfungsi dengan baik.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Ipong salah atur urutan — kategori penting terdorong ke slot 9+ dan tidak tampil di homepage</div>
+          <div class="bc-user">User tidak menemukan kategori yang biasa mereka pakai di homepage.</div>
+          <div class="bc-handle">Perbaiki urutan langsung — perubahan berlaku dalam hitungan menit. Ke depan, tambahkan preview tampilan homepage saat Ipong mengedit urutan agar bisa lihat hasilnya sebelum simpan.</div>
+          <div class="bc-owner">PIC: Ipong (perbaiki urutan) · Isal + Ipong (preview homepage di halaman edit urutan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Kategori baru tampil di app sesuai urutan yang diset</div><div class="hasil-item">Filter chip homepage berfungsi sesuai tipe kategori</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Slug diubah → referensi di sistem rusak</div><div class="hasil-item">Urutan salah → kategori penting tidak tampil di homepage</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('stl-f03',null)">← Settlement F03</div>
+    <div class="fn-btn next" onclick="go('md-f02',null)">F02: Operator & Provider →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F02: OPERATOR ============================================================ -->
+<div id="page-md-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F02</div>
+    <div class="fh-title">Kelola Operator & Provider</div>
+    <div class="fh-desc">Data semua operator telekomunikasi (Telkomsel, XL, Indosat, Tri, Smartfren) beserta pola prefix nomor mereka. Data ini dipakai oleh sistem untuk deteksi operator otomatis saat user input nomor HP di screen Pulsa & Paket Data.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Ada operator baru, perubahan prefix, atau merger operator</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Operator & Provider</div><div class="step-desc">Daftar semua operator dengan detail: nama operator, logo, daftar prefix nomor (misal Telkomsel: 0811, 0812, 0813, 0821, 0822, 0823, 0851, 0852, 0853), kode Digiflazz (kode yang dipakai saat request ke biller), dan status aktif/nonaktif.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit operator atau tambah prefix baru</div><div class="step-desc">Kalau ada prefix baru dari regulator (misal Kemkominfo merilis prefix baru untuk suatu operator), Ipong tambahkan ke daftar prefix operator yang bersangkutan. Ini memastikan deteksi otomatis tetap akurat.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Simpan — deteksi operator langsung terupdate</div><div class="step-desc">Prefix baru langsung aktif untuk transaksi berikutnya. Tidak perlu restart sistem.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kode Digiflazz per operator harus sama persis dengan dokumentasi API Digiflazz.</strong> Kalau kode salah, request ke Digiflazz akan gagal dan transaksi pulsa/paket data tidak bisa diproses. Ipong perlu konfirmasi kode yang benar dari portal Digiflazz.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu prefix hanya boleh dimiliki satu operator.</strong> Tidak boleh ada prefix yang terdaftar di dua operator berbeda — ini akan menyebabkan deteksi otomatis ambiguous dan salah tujuan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Operator nonaktif tidak menghapus produknya.</strong> Kalau Ipong nonaktifkan operator (misal karena merger dengan operator lain), produk pulsa/paket untuk operator tersebut otomatis tidak tampil ke user, tapi riwayat transaksi lama tetap ada.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Prefix baru dari regulator belum ditambahkan — user dengan nomor prefix baru tidak bisa terdeteksi operatornya</div>
+          <div class="bc-user">User input nomor HP di Pulsa, tapi tidak ada operator yang terdeteksi — tombol "Lanjut" tidak aktif.</div>
+          <div class="bc-handle">Ipong perlu rutin pantau pengumuman Kemkominfo atau Digiflazz terkait alokasi prefix baru. Tambahkan prefix ke database segera setelah ada pengumuman resmi. Sementara belum ditambahkan, CS bisa kasih tahu user untuk hubungi operator mereka konfirmasi prefix yang benar.</div>
+          <div class="bc-owner">PIC: Ipong (monitor dan update prefix) · CS (inform user sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Semua prefix nomor HP terdeteksi dengan benar</div><div class="hasil-item">Request ke Digiflazz pakai kode operator yang tepat</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Kode Digiflazz salah → transaksi pulsa gagal</div><div class="hasil-item">Prefix baru belum ditambah → user tidak bisa lanjut</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f01',null)">← F01: Kategori</div>
+    <div class="fn-btn next" onclick="go('md-f03',null)">F03: Bank & E-Wallet →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F03: BANK & E-WALLET ============================================================ -->
+<div id="page-md-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F03</div>
+    <div class="fh-title">Kelola Bank & E-Wallet</div>
+    <div class="fh-desc">Data semua bank dan e-wallet yang didukung GoPop — baik sebagai tujuan transfer (GoPay, OVO, DANA, ShopeePay) maupun sebagai metode pembayaran (VA BCA, BNI, dll). Juga mencakup konfigurasi biaya admin per metode bayar.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator) · Agung (Finance — konfirmasi fee)</span>
+      <span class="pill pill-trigger">🔔 Ada e-wallet baru, perubahan fee gateway, atau bank VA baru</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Bank & E-Wallet</div><div class="step-desc">Ada dua tab: <strong>E-Wallet Tujuan Transfer</strong> (GoPay, OVO, DANA, ShopeePay) dan <strong>Metode Pembayaran</strong> (QRIS, E-Wallet bayar, VA, Retail). Setiap item punya: nama, logo, kode gateway, biaya admin, dan status aktif/nonaktif.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Update biaya admin atau tambah metode baru</div><div class="step-desc">Kalau Midtrans/DOKU mengubah fee VA (misal BCA VA dari Rp2.500 jadi Rp3.000), Ipong update angka di sini dan dikonfirmasi Agung. Perubahan langsung berlaku di screen checkout app user — total bayar akan terupdate sesuai fee terbaru.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Aktifkan/nonaktifkan metode bayar sesuai kontrak gateway</div><div class="step-desc">Kalau GoPop belum punya kontrak untuk metode tertentu (misal belum aktifkan Gerai Retail), Ipong bisa nonaktifkan agar tidak tampil ke user — mencegah user memilih metode yang sebenarnya tidak tersedia.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan fee admin wajib dikonfirmasi Agung (Finance) sebelum disimpan.</strong> Fee yang salah bisa membuat GoPop merugi (kalau fee di-set lebih murah dari yang gateway charge) atau membuat user overpay (kalau fee di-set lebih mahal). Selalu update dari dokumen resmi Midtrans/DOKU.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>E-wallet tujuan transfer (GoPay, OVO, dll) dan metode pembayaran e-wallet adalah dua hal berbeda.</strong> GoPay sebagai tujuan transfer = kemana uang dikirim. GoPay sebagai metode bayar = cara user membayar di checkout. Keduanya bisa aktif/nonaktif secara independen.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>QRIS limit Rp2.000.000 per transaksi dari regulasi BI.</strong> Ini tidak bisa diubah dari Master Data — sudah hardcode. Kalau transaksi melebihi limit, QRIS otomatis tidak tampil di checkout sebagai pilihan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Fee VA di-update salah (misal angka kelebihan satu digit) — user bayar Rp25.000 untuk VA padahal seharusnya Rp2.500</div>
+          <div class="bc-user">User komplain biaya pembayaran terlalu mahal.</div>
+          <div class="bc-handle">Perbaiki fee segera dan perlu keputusan Agung apakah user yang sudah terlanjur bayar fee salah akan di-refund selisihnya. Ini memperkuat keharusan konfirmasi Agung sebelum update fee apapun.</div>
+          <div class="bc-owner">PIC: Ipong (perbaiki fee segera) · Agung (keputusan refund selisih) · CS (handle komplain user)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Fee yang tampil di checkout akurat sesuai kontrak gateway</div><div class="hasil-item">Metode bayar yang tidak tersedia tidak tampil ke user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Fee salah → user overpay atau GoPop rugi</div><div class="hasil-item">Metode tidak aktif di gateway tapi aktif di Master Data → transaksi gagal saat diproses</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f02',null)">← F02: Operator</div>
+    <div class="fn-btn next" onclick="go('md-f04',null)">F04: Wilayah & PDAM →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F04: WILAYAH ============================================================ -->
+<div id="page-md-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F04</div>
+    <div class="fh-title">Kelola Wilayah & Cakupan PDAM/PBB</div>
+    <div class="fh-desc">Data wilayah (provinsi, kota/kabupaten) yang menentukan cakupan layanan PDAM dan PBB di GoPop. Tidak semua daerah didukung Digiflazz — Master Data ini menentukan pesan yang tampil ke user saat wilayah mereka belum tersedia.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Digiflazz tambah coverage daerah baru atau ada daerah yang drop</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Wilayah & PDAM</div><div class="step-desc">Daftar semua kota/kabupaten yang terdaftar, dengan kolom: nama daerah, kode PDAM di Digiflazz, kode PBB di Digiflazz, status (Didukung / Tidak Didukung), dan tanggal terakhir diupdate.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Update saat Digiflazz tambah/hapus coverage</div><div class="step-desc">Ipong pantau update dari Digiflazz (biasanya via email atau changelog portal Digiflazz). Kalau ada daerah baru yang didukung, tambahkan kode daerahnya dan set status "Didukung". Kalau ada yang drop, ubah ke "Tidak Didukung" agar user mendapat pesan yang informatif bukan error teknikal.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Update pesan untuk daerah tidak didukung</div><div class="step-desc">Setiap daerah yang "Tidak Didukung" punya pesan custom yang tampil ke user: "Layanan PDAM untuk [nama kota] belum tersedia. Coba bayar di [alternatif]." Ipong bisa edit teks ini per daerah agar lebih relevan.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kode daerah di Digiflazz berbeda untuk PDAM dan PBB.</strong> Satu daerah bisa punya kode PDAM tapi tidak ada kode PBB (atau sebaliknya) — tergantung data yang Digiflazz punya. Ipong perlu update keduanya secara terpisah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Daerah yang "Tidak Didukung" tetap boleh dicoba user</strong> — sistem akan memberi tahu mereka dengan pesan yang sesuai, bukan error. Jangan block user dari mencoba; berikan informasi dan alternatif.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Daerah baru yang didukung Digiflazz langsung bisa dipakai user</div><div class="hasil-item">Daerah tidak didukung tampilkan pesan informatif + alternatif</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Kode daerah salah → transaksi PDAM/PBB selalu gagal</div><div class="hasil-item">Daerah drop tidak diupdate → user dapat error teknikal bukan pesan informatif</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f03',null)">← F03: Bank & E-Wallet</div>
+    <div class="fn-btn next" onclick="go('md-f05',null)">F05: Denom & Preset →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F05: DENOM & PRESET ============================================================ -->
+<div id="page-md-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F05</div>
+    <div class="fh-title">Kelola Denominasi & Nominal Preset</div>
+    <div class="fh-desc">Nominal preset adalah tombol cepat yang muncul di screen Transfer E-Wallet (Rp20k, Rp50k, Rp100k, dll) dan nominal quick pick lainnya. Ipong bisa mengubah daftar preset ini tanpa perlu update app.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator) · Bili (UX — konfirmasi perubahan preset)</span>
+      <span class="pill pill-trigger">🔔 Perlu update preset berdasarkan data transaksi paling sering</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Denominasi & Preset</div><div class="step-desc">Daftar preset per jenis produk. Transfer E-Wallet saat ini: Rp20.000, Rp50.000, Rp100.000, Rp150.000, Rp200.000, Rp500.000 (6 preset, 2 kolom × 3 baris sesuai Figma screen 01).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Edit atau tambah nominal preset</div><div class="step-desc">Ipong bisa ubah urutan preset, hapus yang jarang dipakai, atau tambah nominal baru. Setiap preset punya: nilai nominal, label tampil (misal "Rp50.000"), dan urutan. Maksimal 6 preset per produk (sesuai layout 2×3 di Figma).</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Simpan — preset langsung terupdate di app</div><div class="step-desc">User yang buka screen Transfer berikutnya akan langsung lihat preset terbaru. Tidak perlu update app.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Preset transfer harus dalam range yang valid per e-wallet.</strong> Jangan tambah preset Rp5.000 untuk Transfer E-Wallet kalau minimum transfer GoPay adalah Rp10.000 — user akan dapat error saat memilih preset tersebut.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan preset sebaiknya berdasarkan data transaksi.</strong> Kalau data menunjukkan 80% transaksi transfer antara Rp50.000–Rp200.000, preset idealnya di range itu. Ipong bisa minta Rifky pull data distribusi nominal transaksi untuk panduan update preset.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Preset tidak menggantikan input manual.</strong> User tetap bisa ketik nominal bebas — preset hanya shortcut untuk mempercepat input. Jadi menghapus preset tidak menghilangkan kemampuan user untuk transfer nominal tersebut.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Preset terbaru langsung tampil di app tanpa update</div><div class="hasil-item">Preset mencerminkan nominal yang paling sering dipakai user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Preset di bawah minimum e-wallet → error saat user pilih preset</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f04',null)">← F04: Wilayah</div>
+    <div class="fn-btn next" onclick="go('md-f06',null)">F06: Konten Statis →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F06: KONTEN STATIS ============================================================ -->
+<div id="page-md-f06" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F06</div>
+    <div class="fh-title">Kelola Konten Statis</div>
+    <div class="fh-desc">Halaman informasi yang jarang berubah tapi wajib ada: Syarat & Ketentuan, Kebijakan Privasi, Tentang GoPop, dan FAQ umum. Konten ini tampil di app (Profil → Syarat & Ketentuan) dan bisa juga diakses via web browser.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Bili (konten + approval) · Acoy (publish)</span>
+      <span class="pill pill-trigger">🔔 Ada perubahan kebijakan, update legal, atau FAQ baru perlu ditambah</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Konten Statis</div><div class="step-desc">Daftar semua halaman statis: Syarat & Ketentuan (S&K), Kebijakan Privasi, Tentang GoPop, FAQ & Bantuan Umum. Setiap halaman menampilkan: versi terakhir, tanggal update, dan siapa yang terakhir edit.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Bili edit konten</div><div class="step-desc">Editor teks dengan format dasar (bold, list, heading). Bili mengupdate konten sesuai kebutuhan — misal update S&K karena ada fitur baru, atau tambah FAQ baru yang sering ditanyakan ke CS. Setiap save otomatis increment versi (misal dari v1.2 ke v1.3).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Acoy review dan publish</div><div class="step-desc">Setelah Bili selesai edit, Acoy review konten. Kalau ada perubahan besar di S&K atau Kebijakan Privasi, Acoy set flag "Perlu Acceptance Ulang" — user akan diminta accept versi baru sebelum bisa transaksi lagi. Untuk perubahan minor, publish langsung tanpa perlu acceptance ulang.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Perubahan substantif pada S&K atau Kebijakan Privasi WAJIB minta acceptance ulang dari user.</strong> Ini kewajiban legal — user harus tahu dan setuju dengan perubahan yang mempengaruhi hak-hak mereka. Perubahan minor (typo, format) tidak perlu acceptance ulang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua versi historis konten tersimpan permanen</strong> dan tidak bisa dihapus. Ini penting untuk keperluan legal kalau ada dispute — GoPop perlu bisa tunjukkan versi S&K yang berlaku pada tanggal transaksi tertentu.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>S&K dan Kebijakan Privasi harus direview minimal 1x per tahun</strong> oleh Bili dan dikonsultasikan dengan konsultan hukum jika ada perubahan signifikan terkait data user atau model bisnis.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Konten terbaru tampil di app versi terkini</div><div class="hasil-item">User yang perlu accept ulang mendapat prompt sebelum transaksi</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Perubahan S&K tanpa acceptance ulang → masalah legal</div><div class="hasil-item">Konten outdated → user komplain informasi tidak akurat</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f05',null)">← F05: Denom & Preset</div>
+    <div class="fn-btn next" onclick="go('md-f07',null)">F07: Sync dari Digiflazz →</div>
+  </div>
+</div>
+
+<!-- ============================================================ MASTER DATA F07: SYNC DIGIFLAZZ ============================================================ -->
+<div id="page-md-f07" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🗄️ Master Data <span>›</span> F07</div>
+    <div class="fh-title">Sync Master Data dari Digiflazz</div>
+    <div class="fh-desc">Digiflazz adalah biller utama GoPop. Mereka punya ratusan produk (pulsa, paket data, token, voucher game, dll) yang terus berubah. Flow ini memungkinkan Ipong menarik daftar produk terbaru dari Digiflazz dan menyinkronkannya ke database GoPop tanpa input manual satu per satu.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Ipong (Aggregator/Produk)</span>
+      <span class="pill pill-trigger">🔔 Digiflazz update produk, ada produk baru, atau harga berubah massal</span>
+      <span class="pill pill-time">⏱ Idealnya dijalankan otomatis harian — saat ini masih manual</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Master Data → Sync Digiflazz → tap "Sync Sekarang"</div><div class="step-desc">Sistem query API Digiflazz untuk pull daftar produk terbaru. Proses ini bisa memakan 30–60 detik tergantung jumlah produk. Progress bar tampil selama proses berlangsung.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Sistem bandingkan data dari Digiflazz vs database GoPop</div><div class="step-desc">Hasilnya tiga kategori perubahan:<ul>
+          <li><strong>Produk baru:</strong> Ada di Digiflazz tapi belum ada di GoPop — Ipong bisa pilih mana yang mau diaktifkan</li>
+          <li><strong>Perubahan HPP:</strong> Produk yang sudah ada tapi HPP-nya berubah di Digiflazz — harga jual GoPop perlu dievaluasi ulang</li>
+          <li><strong>Produk dihapus/nonaktif:</strong> Ada di GoPop tapi sudah tidak ada di Digiflazz — perlu dinonaktifkan di GoPop</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Ipong review dan konfirmasi perubahan</div><div class="step-desc">Ipong tidak harus accept semua perubahan secara otomatis. Untuk produk baru, Ipong pilih mana yang mau diaktifkan dan set harga jual. Untuk perubahan HPP, Ipong review dan update harga jual supaya margin tetap positif. Untuk produk yang dihapus, nonaktifkan satu klik.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Apply perubahan — produk terupdate di app</div><div class="step-desc">Setelah Ipong konfirmasi, perubahan langsung berlaku. User yang cek produk berikutnya akan lihat daftar produk terbaru.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sync tidak otomatis apply semua perubahan.</strong> Ipong harus review dan konfirmasi sebelum apply — terutama untuk perubahan HPP yang bisa mempengaruhi margin. Tidak ada auto-apply tanpa review manusia.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau HPP Digiflazz naik, Ipong WAJIB update harga jual GoPop</strong> agar margin tidak jadi negatif. Sistem akan alert Ipong kalau ada produk yang HPP-nya naik melebihi harga jual yang ada.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Produk yang dihapus dari Digiflazz tapi masih ada transaksi yang sedang berjalan</strong> tidak bisa langsung dinonaktifkan — transaksi yang sudah PAID harus diselesaikan dulu (sukses atau gagal+refund), baru nonaktifkan produk.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Sync sebaiknya dilakukan di luar jam sibuk</strong> (misal pagi sebelum jam 07.00 atau malam setelah jam 22.00) agar kalau ada masalah tidak langsung berdampak ke traffic tinggi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Digiflazz naik HPP massal untuk pulsa semua operator — Ipong tidak sadar dan tidak update harga jual</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Sistem harus alert Ipong dengan banner merah di dashboard kalau ada produk yang margin jadi negatif setelah sync HPP. Ipong tidak bisa klik "Apply" kalau masih ada produk dengan margin negatif — forced review. Akoy juga mendapat notifikasi kalau ada margin negatif yang belum ditangani lebih dari 1 jam.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (forced review sebelum apply kalau ada margin negatif) · Acoy (notif kalau tidak ditangani)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Sync gagal di tengah jalan — sebagian produk terupdate, sebagian tidak</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Sync harus atomik — kalau gagal di tengah, rollback semua perubahan ke kondisi sebelumnya. Jangan biarkan database dalam state setengah-setengah. Tampilkan pesan error yang jelas ke Ipong dan log error untuk Irwan investigasi.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (implementasi atomic sync dengan rollback) · Ipong (coba sync ulang setelah error)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Sync masih manual — Ipong harus ingat dan jalankan sendiri setiap hari. Kalau lupa, produk baru dari Digiflazz tidak tampil ke user</div>
+          <div class="bn-a">Idealnya ada scheduler yang otomatis pull data Digiflazz setiap malam jam 02.00 (saat traffic rendah), deteksi perubahan, dan kirim ringkasan ke Ipong via WA: "Ada 3 produk baru dan 2 perubahan HPP dari Digiflazz. Buka dashboard untuk review." Ipong tinggal review dan approve dari dashboard tanpa harus ingat untuk sync manual.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi auto-scheduler sync Digiflazz + notif WA ke Ipong)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Sync Sukses</div><div class="hasil-items"><div class="hasil-item">Produk baru dari Digiflazz tersedia di app setelah Ipong review + apply</div><div class="hasil-item">HPP terupdate — Ipong sudah sesuaikan harga jual</div><div class="hasil-item">Produk yang discontinued sudah dinonaktifkan</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">HPP naik tidak terdeteksi → margin negatif → jual rugi</div><div class="hasil-item">Sync gagal setengah jalan → database inconsistent</div><div class="hasil-item">Lupa sync manual → produk baru tidak tersedia</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('md-f06',null)">← F06: Konten Statis</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
 </main>
 </div>
 
