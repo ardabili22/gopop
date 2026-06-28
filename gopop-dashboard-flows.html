@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoPop · Dashboard Flow Detail</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F2F9;color:#1A1228;min-height:100vh;display:flex;flex-direction:column;}
+
+.topbar{background:#4A2D8C;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(74,45,140,.4);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;background:#CEF17B;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#1A1228;}
+.tb-name{font-size:15px;font-weight:800;color:#fff;}.tb-name span{color:#CEF17B;}
+.tb-badge{background:rgba(206,241,123,.2);border:1px solid rgba(206,241,123,.3);color:#CEF17B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.tb-meta{font-size:11px;color:rgba(255,255,255,.5);}
+
+.layout{display:flex;flex:1;}
+
+/* SIDEBAR */
+.sidebar{width:256px;background:#fff;border-right:1px solid #E8E4F5;flex-shrink:0;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px);}
+.sb-section{padding:14px 12px 4px;}
+.sb-section-label{font-size:10px;font-weight:800;color:#9085AE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;padding:0 6px;display:flex;align-items:center;gap:6px;}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-flow{padding:6px 8px 2px;}
+.sb-flow-label{font-size:10px;font-weight:700;color:#C4BADC;text-transform:uppercase;letter-spacing:1px;padding:4px 4px 2px;}
+.sbi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;margin-bottom:1px;transition:all .12s;}
+.sbi:hover{background:#F0EBFF;}
+.sbi.active{background:#4A2D8C;}
+.sbi-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0;}
+.sbi-text{font-size:12px;font-weight:600;color:#574872;line-height:1.3;flex:1;}
+.sbi.active .sbi-text{color:#fff;}
+.sdiv{height:1px;background:#F0EBFF;margin:6px 12px;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:32px 36px;max-width:860px;}
+.page{display:none;}.page.active{display:block;}
+
+/* WELCOME */
+.hero{background:linear-gradient(135deg,#4A2D8C,#6B3FA0);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(206,241,123,.07);border-radius:50%;}
+.hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.hero h1 span{color:#CEF17B;}
+.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;max-width:500px;}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:4px;}
+.module-card{background:#fff;border-radius:12px;padding:16px;border:2px solid #E8E4F5;cursor:pointer;transition:all .15s;}
+.module-card:hover{border-color:#4A2D8C;box-shadow:0 4px 14px rgba(74,45,140,.1);}
+.mc-icon{font-size:22px;margin-bottom:8px;}
+.mc-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:3px;}
+.mc-flows{font-size:11px;color:#9085AE;}
+
+/* FLOW PAGE */
+.flow-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #E8E4F5;}
+.fh-breadcrumb{font-size:11px;color:#9085AE;margin-bottom:8px;}
+.fh-breadcrumb span{color:#4A2D8C;font-weight:700;}
+.fh-title{font-size:22px;font-weight:800;color:#1A1228;margin-bottom:8px;letter-spacing:-.02em;}
+.fh-desc{font-size:13px;color:#574872;line-height:1.7;max-width:580px;margin-bottom:14px;}
+.fh-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid;}
+.pill-who{background:#F5F3FF;border-color:#DDD6FE;color:#4A2D8C;}
+.pill-trigger{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
+.pill-time{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+
+/* SECTION BLOCKS */
+.flow-block{background:#fff;border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.fb-header{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F4F2F9;cursor:pointer;user-select:none;}
+.fb-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.n1{background:#4A2D8C;color:#fff;}
+.n2{background:#3B82F6;color:#fff;}
+.n3{background:#F59E0B;color:#fff;}
+.n4{background:#DC2626;color:#fff;}
+.n5{background:#F59E0B;color:#fff;}
+.n6{background:#16A34A;color:#fff;}
+.fb-title{font-size:14px;font-weight:800;color:#1A1228;flex:1;}
+.fb-toggle{color:#C4BADC;transition:transform .2s;font-size:16px;}
+.fb-toggle.open{transform:rotate(180deg);}
+.fb-body{padding:18px;display:none;}
+.fb-body.open{display:block;}
+
+/* STEP LIST */
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:14px;position:relative;}
+.step:not(:last-child)::before{content:'';position:absolute;left:17px;top:38px;bottom:0;width:2px;background:#E8E4F5;}
+.step-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;z-index:1;margin-top:2px;}
+.sn-ok{background:#DCFCE7;color:#166534;}
+.sn-sys{background:#EDE9FE;color:#4A2D8C;}
+.step-body{flex:1;padding-bottom:22px;}
+.step-title{font-size:13px;font-weight:800;color:#1A1228;margin-bottom:4px;}
+.step-desc{font-size:12px;color:#574872;line-height:1.7;}
+.step-desc strong{color:#1A1228;font-weight:700;}
+.step-desc ul{padding-left:16px;margin-top:4px;}
+.step-desc li{margin-bottom:3px;}
+
+/* WHO TAGS */
+.who-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.who{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.w-admin{background:#EDE9FE;color:#4A2D8C;}
+.w-cs{background:#F0FDF4;color:#166534;}
+.w-ops{background:#FFF7ED;color:#92400E;}
+.w-fin{background:#EFF6FF;color:#1E40AF;}
+.w-sys{background:#F5F3FF;color:#4A2D8C;}
+.w-user{background:#DBEAFE;color:#1E40AF;}
+
+/* ATURAN BISNIS */
+.rule-list{display:flex;flex-direction:column;gap:8px;}
+.rule{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px 14px;display:flex;gap:10px;}
+.rule-icon{font-size:16px;flex-shrink:0;}
+.rule-text{font-size:12px;color:#374151;line-height:1.65;}
+.rule-text strong{color:#1A1228;font-weight:700;}
+
+/* BAD CASES */
+.bad-list{display:flex;flex-direction:column;gap:10px;}
+.bad-case{background:#fff;border-radius:12px;border:1.5px solid #FECDD3;padding:16px;}
+.bc-scenario{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:3px;display:flex;gap:8px;align-items:flex-start;}
+.bc-scenario::before{content:'⚠️';flex-shrink:0;}
+.bc-user{font-size:12px;color:#574872;margin:6px 0 6px 28px;line-height:1.6;}
+.bc-user::before{content:'👤 User lihat: ';font-weight:700;color:#1A1228;}
+.bc-handle{font-size:12px;color:#166534;background:#F0FDF4;padding:8px 10px;border-radius:8px;line-height:1.6;margin-left:0;}
+.bc-handle::before{content:'✅ Cara handle: ';font-weight:700;}
+.bc-owner{font-size:10px;color:#9085AE;margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;}
+
+/* BOTTLENECK */
+.bn-list{display:flex;flex-direction:column;gap:10px;}
+.bn{background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:14px 16px;}
+.bn-q{font-size:12px;font-weight:700;color:#1A1228;margin-bottom:6px;display:flex;gap:8px;}
+.bn-q::before{content:'🔴';flex-shrink:0;}
+.bn-a{font-size:12px;color:#374151;line-height:1.65;display:flex;gap:8px;}
+.bn-a::before{content:'💡';flex-shrink:0;}
+.bn-owner{font-size:10px;color:#9085AE;margin-top:6px;padding-top:6px;border-top:1px solid #FDE68A;}
+
+/* HASIL AKHIR */
+.hasil-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hasil-box{border-radius:12px;padding:16px;}
+.hasil-ok{background:#F0FDF4;border:1px solid #BBF7D0;}
+.hasil-fail{background:#FFF1F2;border:1px solid #FECDD3;}
+.hasil-title{font-size:12px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.hasil-ok .hasil-title{color:#166534;}
+.hasil-fail .hasil-title{color:#9F1239;}
+.hasil-items{display:flex;flex-direction:column;gap:5px;}
+.hasil-item{font-size:12px;color:#374151;display:flex;gap:7px;line-height:1.5;}
+.hasil-ok .hasil-item::before{content:'→';color:#16A34A;font-weight:800;flex-shrink:0;}
+.hasil-fail .hasil-item::before{content:'→';color:#DC2626;font-weight:800;flex-shrink:0;}
+
+/* NAV */
+.flow-nav{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid #E8E4F5;}
+.fn-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1.5px solid #E8E4F5;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#574872;transition:all .15s;}
+.fn-btn:hover{border-color:#4A2D8C;color:#4A2D8C;}
+.fn-btn.next{background:#4A2D8C;border-color:#4A2D8C;color:#fff;margin-left:auto;}
+
+/* CALLOUT */
+.co{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:10px;display:flex;gap:10px;}
+.co-warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;}
+.co-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+.co-ok{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+
+@media(max-width:700px){.sidebar{display:none;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">G</div>
+    <div class="tb-name">Go<span>Pop</span></div>
+    <div class="tb-badge">DASHBOARD FLOW DETAIL</div>
+  </div>
+  <div class="tb-meta">v1.0 · Juni 2026 · Untuk Tim Internal GoPop</div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#9085AE"></div>Overview</div>
+    <div class="sbi active" onclick="go('welcome',this)">
+      <span class="sbi-icon">🏠</span><span class="sbi-text">Halaman Utama</span>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#4A2D8C"></div>🔐 Login Admin</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('login-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Login & Masuk Dashboard</span></div>
+      <div class="sbi" onclick="go('login-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Sesi Habis / Auto-Logout</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#3B82F6"></div>📊 Monitoring Transaksi</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('trx-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Lihat & Filter Transaksi</span></div>
+      <div class="sbi" onclick="go('trx-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Lihat Detail Transaksi</span></div>
+      <div class="sbi" onclick="go('trx-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Handle Transaksi Bermasalah</span></div>
+      <div class="sbi" onclick="go('trx-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Proses Refund Manual</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#FF6B4A"></div>🎫 Komplain & Tiket</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('cmp-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · User Submit Tiket</span></div>
+      <div class="sbi" onclick="go('cmp-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · CS Terima & Review Tiket</span></div>
+      <div class="sbi" onclick="go('cmp-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · CS Investigate & Resolve</span></div>
+      <div class="sbi" onclick="go('cmp-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Eskalasi ke Ops/Finance</span></div>
+      <div class="sbi" onclick="go('cmp-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Tiket Re-open</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#16A34A"></div>🏪 Manajemen Reseller</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('rsl-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Approve / Reject Reseller Baru</span></div>
+      <div class="sbi" onclick="go('rsl-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Monitor Saldo & Omzet</span></div>
+      <div class="sbi" onclick="go('rsl-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Suspend & Reaktivasi</span></div>
+      <div class="sbi" onclick="go('rsl-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Top Up Saldo Manual</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#7C5CBF"></div>🔄 Rekonsiliasi</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('rek-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Upload & Cocokkan Laporan</span></div>
+      <div class="sbi" onclick="go('rek-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Tindak Lanjut Item Selisih</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#F59E0B"></div>📦 Produk & Harga</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('prd-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Kelola Produk & Harga</span></div>
+      <div class="sbi" onclick="go('prd-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Switch Biller Saat Gangguan</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#EC4899"></div>📣 CMS</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('cms-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Update Banner & Artikel</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#6B7280"></div>👤 Pengguna</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('usr-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Cari & Lihat Profil User</span></div>
+      <div class="sbi" onclick="go('usr-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Handle Akun Bermasalah</span></div>
+    </div>
+  </div>
+  <div class="sdiv"></div>
+
+  <div class="sb-section">
+    <div class="sb-section-label"><div class="sb-dot" style="background:#DC2626"></div>🛡️ Role & Akses</div>
+    <div class="sb-flow">
+      <div class="sbi" onclick="go('role-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Kelola Role & Permission Tim</span></div>
+      <div class="sbi" onclick="go('role-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Tambah & Nonaktifkan Anggota</span></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- WELCOME -->
+<div id="page-welcome" class="page active">
+  <div class="hero">
+    <h1>Dashboard Admin — <span>Flow Detail</span></h1>
+    <p>Dokumentasi lengkap semua alur kerja tim internal GoPop. Setiap flow menjelaskan: alur normal, aturan bisnis, skenario buruk, bottleneck, dan hasil akhir. Dibuat untuk Acoy dan seluruh tim agar meminimalisir miskomunikasi.</p>
+  </div>
+  <div class="co co-info" style="margin-bottom:20px;">
+    <span style="font-size:18px">💡</span>
+    <div><strong>Cara baca:</strong> Pilih modul dan flow di sidebar kiri. Setiap flow terdiri dari 6 bagian: Header, Alur Normal, Aturan Bisnis, Bad Cases, Bottleneck, dan Hasil Akhir. Klik judul bagian untuk buka/tutup.</div>
+  </div>
+  <div class="module-grid">
+    <div class="module-card" onclick="go('login-f01',null)"><div class="mc-icon">🔐</div><div class="mc-title">Login Admin</div><div class="mc-flows">2 flow</div></div>
+    <div class="module-card" onclick="go('trx-f01',null)"><div class="mc-icon">📊</div><div class="mc-title">Monitoring Transaksi</div><div class="mc-flows">4 flow</div></div>
+    <div class="module-card" onclick="go('cmp-f01',null)"><div class="mc-icon">🎫</div><div class="mc-title">Komplain & Tiket</div><div class="mc-flows">5 flow</div></div>
+    <div class="module-card" onclick="go('rsl-f01',null)"><div class="mc-icon">🏪</div><div class="mc-title">Manajemen Reseller</div><div class="mc-flows">4 flow</div></div>
+    <div class="module-card" onclick="go('rek-f01',null)"><div class="mc-icon">🔄</div><div class="mc-title">Rekonsiliasi</div><div class="mc-flows">2 flow</div></div>
+    <div class="module-card" onclick="go('prd-f01',null)"><div class="mc-icon">📦</div><div class="mc-title">Produk & Harga</div><div class="mc-flows">2 flow</div></div>
+    <div class="module-card" onclick="go('cms-f01',null)"><div class="mc-icon">📣</div><div class="mc-title">CMS</div><div class="mc-flows">1 flow</div></div>
+    <div class="module-card" onclick="go('usr-f01',null)"><div class="mc-icon">👤</div><div class="mc-title">Pengguna</div><div class="mc-flows">2 flow</div></div>
+    <div class="module-card" onclick="go('role-f01',null)"><div class="mc-icon">🛡️</div><div class="mc-title">Role & Akses</div><div class="mc-flows">2 flow</div></div>
+  </div>
+</div>
+
+
+<!-- ============================================================ LOGIN ============================================================ -->
+<!-- LOGIN F01 -->
+<div id="page-login-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🔐 Login Admin <span>›</span> F01</div>
+    <div class="fh-title">Login & Masuk Dashboard</div>
+    <div class="fh-desc">Titik masuk pertama semua anggota tim internal — dari Super Admin sampai CS. Login menggunakan email dan password, bukan nomor HP.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Semua role admin</span>
+      <span class="pill pill-trigger">🔔 Buka gopop-lilac.vercel.app</span>
+      <span class="pill pill-time">⏱ &lt;30 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)">
+      <div class="fb-num n1">1</div>
+      <div class="fb-title">Alur Normal</div>
+      <div class="fb-toggle">▾</div>
+    </div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Admin buka dashboard di browser</div>
+            <div class="step-desc">Ketik alamat dashboard di browser. Kalau belum pernah login atau sesi sudah habis, langsung diarahkan ke halaman login.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Masukkan email dan password</div>
+            <div class="step-desc">Admin isi email kerja dan password. Email bersifat unik per anggota tim — tidak bisa dua orang pakai email yang sama.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Klik "Masuk" — sistem verifikasi identitas</div>
+            <div class="step-desc">Sistem cek apakah email terdaftar dan password cocok. Kalau benar, sistem buat sesi login untuk admin ini.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">4</div>
+          <div class="step-body">
+            <div class="step-title">Dashboard terbuka sesuai role</div>
+            <div class="step-desc">Admin masuk ke halaman utama dashboard. <strong>Menu yang muncul di sidebar berbeda-beda tergantung role:</strong><br><br>
+              <ul>
+                <li><strong>Super Admin:</strong> Lihat dan akses semua menu</li>
+                <li><strong>Ops (Acoy):</strong> Monitoring, Komplain, Reseller, Rekonsiliasi, Produk</li>
+                <li><strong>Finance (Agung):</strong> Monitoring (read), Rekonsiliasi, Laporan</li>
+                <li><strong>CS:</strong> Komplain, Pengguna (read-only), Monitoring (read-only)</li>
+                <li><strong>IT:</strong> Semua menu untuk keperluan teknikal</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)">
+      <div class="fb-num n2">2</div>
+      <div class="fb-title">Aturan Bisnis</div>
+      <div class="fb-toggle">▾</div>
+    </div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Login admin menggunakan <strong>email</strong>, bukan nomor HP. Ini berbeda dari login consumer/reseller yang pakai nomor HP.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setelah <strong>5 kali salah password</strong> dalam satu sesi, akun terkunci sementara selama 30 menit. Super Admin bisa unlock lebih cepat dari menu Role & Akses.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Sesi login aktif selama <strong>8 jam</strong>. Setelah itu, admin harus login ulang. Tidak ada opsi "ingat saya" untuk alasan keamanan.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu akun admin <strong>tidak boleh dipakai bergantian</strong> oleh dua orang berbeda. Setiap anggota tim punya akun masing-masing agar semua aksi tercatat per individu.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)">
+      <div class="fb-num n4">3</div>
+      <div class="fb-title">Bad Cases</div>
+      <div class="fb-toggle">▾</div>
+    </div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Password salah berkali-kali — akun terkunci</div>
+          <div class="bc-user">"Akun kamu terkunci sementara. Coba lagi dalam 30 menit atau hubungi Super Admin untuk buka lebih cepat."</div>
+          <div class="bc-handle">Super Admin buka dari menu Role & Akses → cari nama admin → klik "Unlock Akun". Atau tunggu 30 menit otomatis terbuka.</div>
+          <div class="bc-owner">PIC: Super Admin (Acoy) untuk unlock manual</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Admin lupa password</div>
+          <div class="bc-user">Klik "Lupa Password" di halaman login → isi email → cek email untuk link reset.</div>
+          <div class="bc-handle">Link reset password dikirim ke email terdaftar, berlaku 1 jam. Kalau email tidak masuk, cek folder spam atau minta Super Admin reset manual dari dashboard.</div>
+          <div class="bc-owner">PIC: Admin sendiri (via email) atau Super Admin (reset manual)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Admin baru tidak bisa login — akun belum dibuat</div>
+          <div class="bc-user">"Email tidak terdaftar."</div>
+          <div class="bc-handle">Super Admin buat akun baru dari menu Role & Akses → Tim → Tambah Anggota. Isi email, tentukan role, dan kirim undangan. Admin baru dapat email untuk set password pertama kali.</div>
+          <div class="bc-owner">PIC: Super Admin (Acoy)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)">
+      <div class="fb-num n5">4</div>
+      <div class="fb-title">Bottleneck</div>
+      <div class="fb-toggle">▾</div>
+    </div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Satu akun dipakai bergantian oleh beberapa orang — tidak ada jejak siapa yang melakukan apa</div>
+          <div class="bn-a">Tegaskan aturan: satu akun = satu orang. Kalau ada anggota baru, buatkan akun baru jangan pinjam akun lama. Ini penting karena semua aksi di dashboard (refund, suspend reseller, update status transaksi) dicatat atas nama akun yang login.</div>
+          <div class="bn-owner">PIC: Acoy (pastikan SOP ini dijalankan)</div>
+        </div>
+        <div class="bn">
+          <div class="bn-q">Admin tidak logout saat meninggalkan komputer — risiko akses tidak sah</div>
+          <div class="bn-a">Sistem otomatis logout setelah tidak ada aktivitas selama 2 jam. Tapi lebih baik admin selalu logout manual saat meninggalkan meja. Tambahkan kebiasaan ini ke SOP onboarding tim.</div>
+          <div class="bn-owner">PIC: Acoy (SOP tim)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)">
+      <div class="fb-num n6">5</div>
+      <div class="fb-title">Hasil Akhir</div>
+      <div class="fb-toggle">▾</div>
+    </div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Admin masuk ke dashboard dengan menu sesuai role-nya</div>
+            <div class="hasil-item">Semua aksi admin tercatat atas nama akun yang login</div>
+            <div class="hasil-item">Sesi aktif 8 jam, setelah itu perlu login ulang</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Akun terkunci karena salah password 5x — perlu tunggu 30 menit atau minta Super Admin unlock</div>
+            <div class="hasil-item">Email tidak terdaftar — perlu Super Admin buat akun dulu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('welcome',null)">← Semua Modul</div>
+    <div class="fn-btn next" onclick="go('login-f02',null)">F02: Sesi Habis →</div>
+  </div>
+</div>
+
+<!-- LOGIN F02 -->
+<div id="page-login-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🔐 Login Admin <span>›</span> F02</div>
+    <div class="fh-title">Sesi Habis / Auto-Logout</div>
+    <div class="fh-desc">Sesi login admin tidak berlangsung selamanya. Flow ini menjelaskan apa yang terjadi saat sesi habis dan bagaimana admin kembali masuk tanpa kehilangan pekerjaannya.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Semua role admin</span>
+      <span class="pill pill-trigger">🔔 Sesi 8 jam habis atau idle 2 jam</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Sistem deteksi sesi admin akan habis</div><div class="step-desc">15 menit sebelum sesi berakhir, muncul notifikasi kecil di pojok kanan atas: <strong>"Sesi kamu akan berakhir dalam 15 menit. Klik di sini untuk perpanjang."</strong></div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Admin bisa perpanjang sesi</div><div class="step-desc">Klik notifikasi → sesi diperpanjang 8 jam lagi tanpa perlu input password ulang. Ini untuk menghindari admin terpaksa login ulang di tengah pekerjaan penting.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Kalau tidak diperpanjang — sesi habis</div><div class="step-desc">Dashboard otomatis redirect ke halaman login dengan pesan: <strong>"Sesi kamu sudah berakhir. Silakan masuk kembali untuk melanjutkan."</strong> Halaman yang sedang dibuka sebelumnya disimpan — setelah login, admin diarahkan kembali ke halaman yang sama.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Admin login ulang</div><div class="step-desc">Masukkan password → langsung kembali ke halaman yang sedang dikerjakan sebelum sesi habis.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Sesi aktif maksimal <strong>8 jam</strong> sejak login terakhir, atau <strong>2 jam sejak terakhir ada aktivitas</strong> (whichever comes first).</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Saat sesi habis di tengah pengisian form (misal sedang isi form refund), <strong>data yang belum disimpan akan hilang</strong>. Admin perlu isi ulang. Ini trade-off keamanan yang disengaja.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Admin bisa logout manual kapan saja dari menu profil di pojok kanan atas. Disarankan selalu logout saat meninggalkan komputer.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Admin sedang proses refund besar — tiba-tiba sesi habis sebelum submit</div>
+          <div class="bc-user">Dashboard redirect ke login. Data refund yang sedang diisi hilang.</div>
+          <div class="bc-handle">Admin login ulang → kembali ke halaman refund → isi ulang data. Ke depannya, sistem perlu simpan draft form secara otomatis setiap 30 detik untuk menghindari kehilangan data.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (implementasi auto-save draft)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Admin tidak tahu sesi akan habis — tiba-tiba ter-logout saat sedang kerja</div>
+          <div class="bn-a">Notifikasi 15 menit sebelum habis harus jelas dan tidak mudah terlewat. Kalau admin sedang fokus ke pekerjaan lain, notifikasi perlu ada suara atau visual yang mencolok bukan hanya teks kecil.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (perbaiki UI notifikasi sesi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Admin berhasil perpanjang sesi tanpa login ulang</div><div class="hasil-item">Atau: login ulang dan kembali ke halaman yang sama</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Data form yang sedang diisi hilang karena sesi habis mendadak</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('login-f01',null)">← F01: Login</div>
+    <div class="fn-btn next" onclick="go('trx-f01',null)">📊 Monitoring Transaksi →</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ MONITORING TRANSAKSI ============================================================ -->
+<!-- TRX F01 -->
+<div id="page-trx-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📊 Monitoring Transaksi <span>›</span> F01</div>
+    <div class="fh-title">Lihat & Filter Transaksi</div>
+    <div class="fh-desc">Halaman utama Monitoring — tempat Rifky dan Acoy memantau semua transaksi yang masuk. Bisa disaring berdasarkan status, tanggal, produk, dan kata kunci.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky · Acoy · CS (read)</span>
+      <span class="pill pill-trigger">🔔 Setiap hari — pemantauan rutin</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu Monitoring Transaksi</div><div class="step-desc">Klik menu "Monitoring" di sidebar. Halaman langsung menampilkan daftar transaksi terbaru, diurutkan dari yang paling baru di atas. Ada ringkasan angka di bagian atas: total transaksi hari ini, berapa yang sukses, gagal, dan sedang diproses.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Gunakan filter untuk mempersempit hasil</div><div class="step-desc">Tersedia filter:<br><ul><li><strong>Status:</strong> Semua / Menunggu Pembayaran / Diproses / Sukses / Gagal / Refunded / Dibatalkan / Perlu Review Manual</li><li><strong>Tanggal:</strong> Hari ini / 7 hari / 30 hari / atau pilih rentang custom</li><li><strong>Produk:</strong> Pulsa, Token Listrik, Transfer E-Wallet, dll</li><li><strong>Pencarian:</strong> Ketik ID transaksi atau nomor HP user</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Lihat daftar transaksi yang terfilter</div><div class="step-desc">Setiap baris menampilkan: waktu transaksi, nama user dan nomor HP, produk yang dibeli, nominal, status saat ini, dan nama supplier (biller) yang dipakai. Klik baris mana saja untuk lihat detail lengkapnya.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Export ke CSV kalau perlu</div><div class="step-desc">Klik tombol "Export CSV" di pojok kanan atas untuk download semua data yang sedang ditampilkan (sesuai filter aktif) ke dalam file Excel. Berguna untuk laporan harian Rifky.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>CS hanya bisa lihat, tidak bisa aksi.</strong> CS tidak punya tombol refund, retry, atau update status. Mereka hanya bisa baca informasi untuk bantu jawab pertanyaan user.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Status <strong>"Perlu Review Manual"</strong> artinya ada sesuatu yang tidak bisa diselesaikan otomatis oleh sistem — transaksi ini butuh perhatian Rifky atau Acoy segera.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Data transaksi tersedia real-time. Tidak perlu refresh manual — halaman update otomatis setiap 30 detik selama halaman dibuka.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Filter tidak menghasilkan transaksi yang dicari — ID transaksi tidak ditemukan</div>
+          <div class="bc-user">Tabel kosong dengan pesan "Tidak ada transaksi yang cocok."</div>
+          <div class="bc-handle">Pastikan ID transaksi yang diketik benar (bisa cek dari screenshot atau WA yang diterima user). Coba juga cari dengan nomor HP user sebagai alternatif. Kalau masih tidak ketemu, mungkin transaksi belum selesai dibuat (status draft).</div>
+          <div class="bc-owner">PIC: CS atau Rifky yang sedang investigasi</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Terlalu banyak transaksi "Perlu Review Manual" menumpuk</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini tanda ada masalah di sisi supplier atau payment gateway. Rifky dan Acoy perlu segera cek satu per satu. Kalau jumlahnya banyak sekaligus, kemungkinan ada gangguan massal dari satu supplier — perlu koordinasi dengan Ipong untuk switch ke supplier backup.</div>
+          <div class="bc-owner">PIC: Rifky + Acoy (investigasi) · Ipong (koordinasi supplier)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada tab khusus untuk transaksi yang butuh tindakan segera — tercampur dengan semua transaksi</div>
+          <div class="bn-a">Perlu ditambahkan tab "Perlu Perhatian" yang otomatis menampilkan: transaksi berstatus "Perlu Review Manual", transaksi yang sudah "Diproses" lebih dari 15 menit tanpa update, dan transaksi "Gagal" yang belum di-refund. Rifky tidak perlu filter manual setiap kali — tinggal klik satu tab.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (tambah tab khusus di Monitoring)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Tim punya gambaran jelas kondisi transaksi hari ini</div><div class="hasil-item">Transaksi bermasalah teridentifikasi dan bisa segera ditangani</div><div class="hasil-item">Export CSV tersedia untuk laporan</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Transaksi yang dicari tidak ditemukan karena ID salah atau data belum sync</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('login-f02',null)">← Login F02</div>
+    <div class="fn-btn next" onclick="go('trx-f02',null)">F02: Detail Transaksi →</div>
+  </div>
+</div>
+
+<!-- TRX F02 -->
+<div id="page-trx-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📊 Monitoring Transaksi <span>›</span> F02</div>
+    <div class="fh-title">Lihat Detail Transaksi</div>
+    <div class="fh-desc">Setelah menemukan transaksi yang dicari, admin buka detail lengkapnya. Di sini terlihat seluruh riwayat apa yang terjadi pada transaksi tersebut dari awal sampai akhir.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Rifky · Acoy · CS</span>
+      <span class="pill pill-trigger">🔔 Klik baris transaksi di Monitoring</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Klik baris transaksi — halaman detail terbuka</div><div class="step-desc">Halaman detail menampilkan semua informasi transaksi dalam satu tampilan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Baca informasi transaksi</div><div class="step-desc">Informasi yang tersedia:<br><ul>
+          <li><strong>Identitas:</strong> ID transaksi, waktu dibuat</li>
+          <li><strong>User:</strong> Nama, nomor HP, tipe akun (consumer/reseller/guest)</li>
+          <li><strong>Produk:</strong> Nama produk, nominal, tujuan (nomor HP/ID pelanggan)</li>
+          <li><strong>Pembayaran:</strong> Metode bayar, jumlah yang dibayar, waktu bayar</li>
+          <li><strong>Supplier:</strong> Nama biller yang dipakai, referensi dari supplier</li>
+          <li><strong>Status:</strong> Status saat ini beserta waktu terakhir berubah</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Lihat timeline riwayat transaksi</div><div class="step-desc">Di bawah info utama ada timeline yang menampilkan setiap perubahan status dari awal sampai sekarang. Contoh: <em>14:30 Transaksi dibuat → 14:31 Pembayaran diterima → 14:31 Dikirim ke supplier → 14:32 Sukses.</em><br>Kalau ada admin yang pernah lakukan aksi manual (retry, refund, update status), juga tercatat di sini beserta nama adminnya.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Detail transaksi bersifat <strong>read-only</strong> untuk CS. Mereka bisa lihat semua info tapi tidak ada tombol aksi. Tombol aksi (refund, retry, update status) hanya muncul untuk Ops dan Super Admin.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Timeline riwayat tidak bisa dimanipulasi. Semua yang tercatat di timeline adalah fakta permanen — berguna sebagai bukti kalau ada dispute dengan user atau supplier.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau transaksi punya tiket komplain terkait, ada link langsung ke tiket tersebut di halaman detail. CS tidak perlu cari manual di menu Komplain.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Timeline kosong atau tidak lengkap — tidak ada riwayat yang bisa dibaca</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini tanda ada masalah teknikal dalam pencatatan riwayat transaksi. Rifky perlu catat ID transaksi yang bermasalah dan laporkan ke Irwan/Rifky BE untuk investigasi. Sementara itu, status transaksi masih bisa dibaca dari field status utama.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (investigasi pencatatan timeline)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">CS perlu tahu detail transaksi tapi tidak punya akses — harus minta ke Rifky setiap saat</div>
+          <div class="bn-a">CS seharusnya bisa lihat detail transaksi (read-only) tanpa perlu koordinasi. Akses read-only ke Monitoring sudah cukup — CS tidak perlu bisa aksi apapun. Ini mengurangi beban Rifky dari pertanyaan yang bisa dijawab sendiri oleh CS.</div>
+          <div class="bn-owner">PIC: Acoy (pastikan role CS punya akses read-only ke Monitoring)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Admin punya gambaran lengkap apa yang terjadi pada transaksi ini</div><div class="hasil-item">Timeline lengkap tersedia sebagai bukti audit</div><div class="hasil-item">Link ke tiket komplain terkait mudah diakses</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Timeline kosong — informasi riwayat tidak bisa dibaca</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('trx-f01',null)">← F01: List Transaksi</div>
+    <div class="fn-btn next" onclick="go('trx-f03',null)">F03: Handle Transaksi Bermasalah →</div>
+  </div>
+</div>
+
+<!-- TRX F03 -->
+<div id="page-trx-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📊 Monitoring Transaksi <span>›</span> F03</div>
+    <div class="fh-title">Handle Transaksi Bermasalah</div>
+    <div class="fh-desc">Transaksi dengan status "Perlu Review Manual" atau yang stuck terlalu lama di "Diproses" perlu ditangani secara manual oleh Acoy atau Rifky. Flow ini menjelaskan langkah-langkahnya.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy · Rifky</span>
+      <span class="pill pill-trigger">🔔 Transaksi stuck / Perlu Review Manual</span>
+      <span class="pill pill-time">⏱ Target selesai dalam 1 jam kerja</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Identifikasi transaksi yang bermasalah</div><div class="step-desc">Buka tab "Perlu Perhatian" di Monitoring — semua transaksi yang butuh tindakan sudah terkumpul di sini. Atau cari spesifik dengan filter status "Perlu Review Manual".</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Buka detail dan pahami situasinya</div><div class="step-desc">Baca timeline transaksi. Lihat di mana tepatnya macet: apakah macet di pembayaran, di pengiriman ke supplier, atau supplier tidak memberi konfirmasi? Informasi ini menentukan aksi apa yang tepat.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Pilih aksi yang tepat</div><div class="step-desc">Ada beberapa pilihan aksi tergantung situasi:<br><ul>
+          <li><strong>Cek Status ke Supplier:</strong> Tanya langsung ke sistem supplier apakah transaksi ini sukses atau gagal di sisi mereka</li>
+          <li><strong>Tandai Sukses Manual:</strong> Kalau sudah konfirmasi dari supplier bahwa produk terkirim tapi sistem belum update — gunakan ini. Wajib isi alasan.</li>
+          <li><strong>Tandai Gagal & Proses Refund:</strong> Kalau sudah dipastikan gagal — ubah status ke gagal dan langsung proses refund ke user</li>
+        </ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Isi alasan aksi — submit</div><div class="step-desc">Setiap aksi manual wajib disertai alasan singkat (minimal 10 kata). Ini penting untuk audit trail. Contoh: <em>"Konfirmasi dari Digiflazz via email bahwa pulsa sudah terkirim jam 14:35, referensi #DGF-88821."</em></div></div></div>
+        <div class="step"><div class="step-num sn-sys">5</div><div class="step-body"><div class="step-title">Sistem catat aksi dan update status</div><div class="step-desc">Status transaksi berubah. Aksi Rifky/Acoy tercatat di timeline beserta waktu dan nama. Kalau ada tiket komplain terkait transaksi ini, status tiket juga otomatis diupdate.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Wajib konfirmasi ke supplier sebelum tandai sukses manual.</strong> Jangan pernah tandai transaksi sukses hanya berdasarkan asumsi — harus ada bukti dari supplier bahwa produk benar-benar terkirim.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Aksi "Cek Status ke Supplier" bisa dilakukan maksimal <strong>3 kali dalam 1 jam</strong> untuk transaksi yang sama. Lebih dari itu berarti ada masalah serius di supplier yang perlu Ipong tangani langsung.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau memilih "Tandai Gagal", refund akan diproses otomatis jika user sudah membayar. <strong>Tidak perlu proses refund terpisah.</strong></div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Semua aksi manual dicatat permanen. Tidak bisa dihapus atau diubah setelah disubmit. Pastikan yakin sebelum klik submit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Rifky tandai sukses manual — ternyata produk tidak terkirim ke user</div>
+          <div class="bc-user">User WA ke CS: "Pulsa saya belum masuk tapi status sudah Sukses."</div>
+          <div class="bc-handle">Ini situasi kritis. CS eskalasi ke Acoy segera. Acoy perlu hubungi supplier langsung untuk klarifikasi. Kalau terbukti produk tidak terkirim, perlu koordinasi dengan Agung untuk proses kompensasi manual ke user. Timeline di sistem akan tercatat semua perubahan ini sebagai bukti.</div>
+          <div class="bc-owner">PIC: Acoy (koordinasi) · Agung (kompensasi) · Ipong (klarifikasi ke supplier)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Transaksi sudah ditandai selesai tapi refund tidak bisa diproses karena nominal tidak cocok</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini terjadi kalau ada selisih antara nominal yang dibayar user dan nominal di sistem. Agung perlu investigasi manual dan proses refund via metode alternatif sambil koordinasi dengan Irwan untuk investigasi penyebab selisih.</div>
+          <div class="bc-owner">PIC: Agung + Irwan + Rifky</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada standar berapa lama transaksi boleh stuck sebelum perlu diintervensi manual</div>
+          <div class="bn-a">Perlu ada SLA yang jelas: transaksi "Diproses" lebih dari 15 menit otomatis masuk ke tab "Perlu Perhatian" dan Rifky mendapat notifikasi. Tanpa standar ini, transaksi bisa stuck berhari-hari tanpa ada yang handle.</div>
+          <div class="bn-owner">PIC: Acoy (tetapkan SLA) · Irwan + Rifky (implementasi notifikasi otomatis)</div>
+        </div>
+        <div class="bn">
+          <div class="bn-q">Rifky tidak tahu harus hubungi siapa di supplier untuk klarifikasi cepat</div>
+          <div class="bn-a">Buat dan simpan kontak PIC dari setiap supplier (Digiflazz) di tempat yang mudah diakses tim — bisa di halaman Produk & Harga atau dokumen internal. Jangan sampai waktu terbuang hanya untuk cari kontak saat situasi darurat.</div>
+          <div class="bn-owner">PIC: Ipong (maintain kontak supplier)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Transaksi berhasil diklarifikasi dan status diupdate dengan tepat</div><div class="hasil-item">Aksi tercatat lengkap di timeline sebagai audit trail</div><div class="hasil-item">User mendapat kepastian — sukses atau refund diproses</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Tandai sukses tapi produk tidak terkirim — user komplain</div><div class="hasil-item">Supplier tidak responsif — status tidak bisa dikonfirmasi</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('trx-f02',null)">← F02: Detail Transaksi</div>
+    <div class="fn-btn next" onclick="go('trx-f04',null)">F04: Refund Manual →</div>
+  </div>
+</div>
+
+<!-- TRX F04 -->
+<div id="page-trx-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📊 Monitoring Transaksi <span>›</span> F04</div>
+    <div class="fh-title">Proses Refund Manual</div>
+    <div class="fh-desc">Refund manual dilakukan ketika refund otomatis gagal atau tidak berjalan. Ini adalah proses yang melibatkan Agung (Finance) karena menyangkut pengembalian dana ke user.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Agung (Finance) · Acoy (approve)</span>
+      <span class="pill pill-trigger">🔔 Refund otomatis gagal atau transaksi ditandai Gagal</span>
+      <span class="pill pill-time">⏱ Target: Dana kembali dalam 1×24 jam</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Identifikasi transaksi yang perlu refund</div><div class="step-desc">Bisa berasal dari dua jalur: (1) CS eskalasi tiket komplain yang butuh refund, atau (2) Rifky/Acoy menemukan transaksi gagal yang belum di-refund saat monitoring rutin.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Buka detail transaksi — klik "Proses Refund"</div><div class="step-desc">Tombol "Proses Refund" hanya muncul kalau: (1) transaksi statusnya Gagal, dan (2) user sudah membayar (status pembayaran bukan Expired atau Dibatalkan). Kalau tidak memenuhi syarat, tombol tidak muncul.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Isi detail refund dan submit</div><div class="step-desc">Form refund berisi:<ul><li><strong>Nominal refund:</strong> Terisi otomatis sesuai jumlah yang dibayar user. Agung bisa ubah kalau ada alasan khusus (refund parsial).</li><li><strong>Alasan refund:</strong> Wajib diisi. Contoh: "Transaksi gagal dari sisi supplier Digiflazz, produk tidak terkirim."</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-sys">4</div><div class="step-body"><div class="step-title">Sistem proses refund via payment gateway</div><div class="step-desc">Sistem kirim permintaan refund ke Midtrans/DOKU sesuai metode bayar asal. Status transaksi berubah ke "Refunded". WA otomatis dikirim ke user: <em>"Dana Rp [nominal] sedang kami kembalikan ke [metode bayar]. Estimasi masuk 1–3 hari kerja."</em></div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Monitor konfirmasi refund selesai</div><div class="step-desc">Beberapa jam kemudian, payment gateway mengirim konfirmasi bahwa refund sudah selesai. Status transaksi berubah final. WA kedua dikirim ke user: <em>"Dana sudah kembali ke akun kamu."</em></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>GoPop tidak memotong biaya apapun saat refund.</strong> User mendapat kembali 100% jumlah yang dibayar. Biaya admin yang sudah dibayar ke payment gateway tidak ditagihkan ke user.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Refund hanya bisa diproses ke <strong>metode bayar yang sama</strong> dengan yang dipakai saat transaksi. Tidak bisa refund ke rekening berbeda atau metode berbeda.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Refund untuk transaksi yang sudah berstatus <strong>Sukses tidak bisa diproses</strong> dari dashboard biasa — butuh persetujuan Super Admin dan prosedur khusus karena berarti ada dispute tentang kualitas produk.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu transaksi <strong>hanya bisa di-refund satu kali</strong>. Sistem akan tolak percobaan refund kedua untuk transaksi yang sama.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Refund gagal di sisi payment gateway — Midtrans/DOKU menolak permintaan</div>
+          <div class="bc-user">User belum menerima dana kembali meski sudah dijanjikan.</div>
+          <div class="bc-handle">Agung cek alasan penolakan dari log dashboard. Biasanya karena akun user sudah tidak aktif atau metode bayar sudah kadaluarsa. Agung perlu hubungi user via WA untuk cari solusi alternatif (transfer manual ke rekening user). Koordinasi dengan Irwan untuk investigasi kenapa gateway menolak.</div>
+          <div class="bc-owner">PIC: Agung (handle ke user) · Irwan (investigasi gateway)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User claim refund tidak masuk setelah 3 hari kerja</div>
+          <div class="bc-user">User WA CS: "Katanya sudah direfund tapi tidak masuk ke OVO saya."</div>
+          <div class="bc-handle">CS cek di detail transaksi apakah ada konfirmasi refund selesai dari gateway. Kalau ada konfirmasi, berarti masalah di sisi user (cek saldo OVO, cek di akun yang terdaftar). Kalau tidak ada konfirmasi, eskalasi ke Agung untuk investigasi ke Midtrans/DOKU langsung.</div>
+          <div class="bc-owner">PIC: CS (cek status) → Agung (eskalasi ke gateway kalau perlu)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Agung tidak selalu online — refund terlambat diproses saat Agung sedang tidak di dashboard</div>
+          <div class="bn-a">Perlu ada mekanisme notifikasi WA ke Agung saat ada refund yang perlu diproses — terutama kalau nominalnya besar atau sudah menunggu lebih dari 2 jam. Untuk refund di bawah nominal tertentu (misalnya di bawah Rp 100.000), Acoy bisa diberikan akses untuk proses tanpa perlu tunggu Agung.</div>
+          <div class="bn-owner">PIC: Acoy (tentukan threshold) · Irwan + Rifky (implementasi notifikasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Dana kembali 100% ke metode bayar asal user dalam 1–3 hari kerja</div><div class="hasil-item">User menerima WA konfirmasi di dua tahap: saat diproses dan saat selesai</div><div class="hasil-item">Status transaksi berubah ke Refunded — tercatat permanen</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Gateway menolak refund — perlu solusi alternatif manual</div><div class="hasil-item">User claim tidak menerima dana setelah 3 hari — perlu investigasi lanjut</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('trx-f03',null)">← F03: Handle Bermasalah</div>
+    <div class="fn-btn next" onclick="go('cmp-f01',null)">🎫 Komplain & Tiket →</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ KOMPLAIN ============================================================ -->
+<!-- CMP F01 -->
+<div id="page-cmp-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🎫 Komplain & Tiket <span>›</span> F01</div>
+    <div class="fh-title">User Submit Tiket dari Pusat Bantuan</div>
+    <div class="fh-desc">Flow dimulai dari sisi user — mereka punya masalah dan ingin melapor. Bisa dilakukan lewat app, web, atau reseller app. Tidak perlu login — guest pun bisa komplain.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 User · Guest · Reseller</span>
+      <span class="pill pill-trigger">🔔 User punya masalah dengan transaksi atau akun</span>
+      <span class="pill pill-time">⏱ 2–3 menit pengisian form</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">User buka Pusat Bantuan</div><div class="step-desc">Dari menu navigasi bawah atau dari shortcut di screen transaksi gagal.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Isi form komplain</div><div class="step-desc">Tiga field utama yang wajib diisi:<ul><li><strong>Nomor WhatsApp Aktif</strong> — nomor yang bisa dihubungi CS. Kalau sudah login, terisi otomatis dari profil.</li><li><strong>Kategori Masalah</strong> — pilih dari dropdown: Transaksi Gagal, Saldo Tidak Masuk, Masalah Akun/Login, Lainnya</li><li><strong>Deskripsi</strong> — ceritakan masalahnya dengan kata-kata sendiri</li></ul>Ada satu field opsional: ID Transaksi — kalau user ingat dan mau cantumkan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Tap "Kirim Laporan"</div><div class="step-desc">Tombol tidak bisa diklik dua kali — mencegah tiket duplikat. Loading sebentar (1–2 detik) saat sistem memproses.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">4</div><div class="step-body"><div class="step-title">Tiket dibuat — user dapat konfirmasi</div><div class="step-desc">Dua konfirmasi sekaligus:<ul><li><strong>Di app/web:</strong> Screen "Laporan Terkirim" dengan nomor tiket, misalnya <em>#TKT-20240628-001</em>, dan estimasi respons dalam 1×24 jam.</li><li><strong>Via WhatsApp:</strong> Pesan otomatis ke nomor yang diisi user berisi nomor tiket dan instruksi simpan nomor tiket.</li></ul></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Nomor WhatsApp adalah satu-satunya cara CS menghubungi user.</strong> Tidak ada balasan via app atau email — semua komunikasi CS ke user melalui WA ke nomor yang diisi di form.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Tiket yang dibuat guest (tanpa login) tetap valid dan mendapat penanganan yang sama. Nomor WA menjadi identifikasi utama guest.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Sistem otomatis tentukan <strong>prioritas tiket</strong> berdasarkan kategori: "Transaksi Gagal" dapat prioritas Tinggi, kategori lain dapat prioritas Normal.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Tiket yang sama dari user yang sama dalam <strong>waktu kurang dari 30 menit</strong> akan ditolak sistem sebagai duplikat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User isi nomor WA yang salah — CS tidak bisa menghubungi</div>
+          <div class="bc-user">User tidak mendapat WA konfirmasi dan tidak ada yang menghubungi dalam 24 jam.</div>
+          <div class="bc-handle">User perlu submit tiket baru dengan nomor WA yang benar. Sayangnya tidak ada cara edit tiket yang sudah submit. Ke depan, tambahkan langkah konfirmasi OTP ringan saat isi nomor WA agar user tahu nomornya benar sebelum submit.</div>
+          <div class="bc-owner">PIC: Bili (pertimbangkan tambah verifikasi nomor WA) · Agung + Fikly (implementasi FE)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">WA konfirmasi tidak terkirim karena layanan WA belum terintegrasi</div>
+          <div class="bc-user">Tiket berhasil dibuat dan nomor tiket muncul di screen, tapi tidak ada WA yang masuk.</div>
+          <div class="bc-handle">Sementara ini, pastikan screen konfirmasi di app menampilkan nomor tiket dengan jelas agar user tetap punya bukti. Sampaikan ke user (via onboarding atau FAQ) bahwa konfirmasi WA mungkin sedikit terlambat. Prioritaskan implementasi integrasi WA.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (integrasi WA Business API)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">User tidak tahu status tiket mereka setelah submit — harus tunggu WA dari CS</div>
+          <div class="bn-a">Tambahkan halaman "Riwayat Tiket" di app/web yang bisa diakses tanpa login (cukup dengan nomor tiket + nomor WA). User bisa cek sendiri apakah tiket sudah diproses, sedang diproses, atau sudah selesai — tanpa harus menunggu dihubungi CS.</div>
+          <div class="bn-owner">PIC: Bili (desain screen) · Agung + Fikly (implementasi FE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Tiket tersimpan di sistem dengan nomor unik</div><div class="hasil-item">CS on-duty otomatis menerima notifikasi tiket baru</div><div class="hasil-item">User mendapat nomor tiket sebagai bukti laporan diterima</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Nomor WA yang diisi salah — CS tidak bisa follow up</div><div class="hasil-item">WA konfirmasi tidak terkirim karena layanan WA belum ready</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('trx-f04',null)">← Refund Manual</div>
+    <div class="fn-btn next" onclick="go('cmp-f02',null)">F02: CS Terima Tiket →</div>
+  </div>
+</div>
+
+<!-- CMP F02 -->
+<div id="page-cmp-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🎫 Komplain & Tiket <span>›</span> F02</div>
+    <div class="fh-title">CS Terima & Review Tiket Baru</div>
+    <div class="fh-desc">Tiket yang baru masuk perlu segera diterima dan di-review oleh CS. Flow ini dimulai dari sisi dashboard — CS mendapat notifikasi dan membuka tiket untuk dipahami.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 CS · Acoy (monitor)</span>
+      <span class="pill pill-trigger">🔔 Tiket baru masuk dari user</span>
+      <span class="pill pill-time">⏱ Target review pertama: &lt;1 jam</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Sistem assign tiket ke CS on-duty</div><div class="step-desc">Tiket otomatis di-assign ke CS yang sedang aktif (online di dashboard). Sistem distribusi bergiliran — tidak selalu ke CS yang sama agar beban merata.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">CS mendapat notifikasi di dashboard</div><div class="step-desc">Badge merah di menu Komplain bertambah. Ada pop-up kecil di pojok kanan bawah: <em>"📥 Tiket baru: Transaksi Gagal dari +62812xxxx"</em>. Tiket prioritas Tinggi punya notifikasi yang lebih mencolok.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">CS buka list tiket — cari yang belum ditangani</div><div class="step-desc">Di halaman Komplain & Tiket, CS bisa filter: "Milik Saya" atau "Belum Ditangani". Tiket baru muncul di bagian paling atas dengan label hijau "BARU". Tiket prioritas Tinggi ada label merah.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">CS buka detail tiket dan baca semua informasi</div><div class="step-desc">Panel detail menampilkan: deskripsi masalah user, kategori, nomor WA user, dan kalau ada ID transaksi — otomatis muncul ringkasan transaksi tersebut (produk, nominal, status, waktu). CS tidak perlu pindah ke menu Monitoring untuk cek transaksi terkait.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">CS tap "Mulai Proses" — tiket terkunci ke CS ini</div><div class="step-desc">Status tiket berubah dari <strong>Baru</strong> ke <strong>Sedang Diproses</strong>. Nama CS tercatat sebagai PIC. CS lain bisa lihat tiket tapi tidak bisa ambil alih kecuali dilepas oleh CS ini atau oleh Acoy.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Tiket yang belum dibuka dalam <strong>30 menit</strong> setelah masuk akan di-reassign ke CS lain yang sedang aktif. Kalau semua CS offline, Acoy mendapat notifikasi sebagai monitor.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu tiket hanya bisa aktif di satu CS sekaligus. <strong>Tidak bisa dua CS handle tiket yang sama bersamaan</strong> — saat CS pertama klik "Mulai Proses", tiket terkunci untuk mereka.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Waktu "pertama kali dibuka" dicatat otomatis untuk keperluan laporan SLA response time.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Tiket tidak memiliki ID transaksi — CS tidak tahu kasus mana yang dimaksud user</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">CS gunakan fitur "Cari Transaksi" di dalam detail tiket: masukkan nomor HP user atau perkiraan waktu kejadian → sistem tampilkan kandidat transaksi. CS pilih yang paling relevan dan link ke tiket ini.</div>
+          <div class="bc-owner">PIC: CS (investigasi manual) · Isal + Ipong (pastikan fitur cari transaksi di detail tiket tersedia)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">CS sibuk — tiket menumpuk tidak ada yang handle</div>
+          <div class="bc-user">User tidak mendapat respons dalam 24 jam.</div>
+          <div class="bc-handle">Acoy sebagai monitor harus pantau dashboard Komplain setiap hari untuk pastikan tidak ada tiket yang terlalu lama "Baru" tanpa diambil CS. Kalau beban terlalu berat, Acoy bisa re-assign tiket ke CS yang lebih available atau handle sendiri yang urgent.</div>
+          <div class="bc-owner">PIC: Acoy (monitor distribusi beban CS)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Auto-assign tidak bekerja kalau semua CS offline di luar jam kerja — tiket menunggu tidak ada yang tangani</div>
+          <div class="bn-a">Tentukan jam operasional CS yang jelas dan sampaikan ke user (misalnya 08.00–22.00 WIB). Di luar jam operasional, tiket yang masuk tetap diterima tapi responnya di hari/shift berikutnya. Tambahkan pesan otomatis WA ke user: "Terima kasih, kami akan merespons pada jam operasional berikutnya (besok jam 08.00 WIB)."</div>
+          <div class="bn-owner">PIC: Acoy (tentukan jam operasional) · Irwan + Rifky (implementasi auto-reply WA di luar jam operasional)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">CS paham masalah user dan siap untuk investigate</div><div class="hasil-item">Tiket berstatus "Sedang Diproses" dengan PIC yang jelas</div><div class="hasil-item">Response time pertama tercatat untuk laporan SLA</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Tiket tidak diambil CS dalam 30 menit — user menunggu tanpa kabar</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cmp-f01',null)">← F01: User Submit</div>
+    <div class="fn-btn next" onclick="go('cmp-f03',null)">F03: Investigate & Resolve →</div>
+  </div>
+</div>
+
+<!-- CMP F03, F04, F05 - condensed for space -->
+<div id="page-cmp-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🎫 Komplain & Tiket <span>›</span> F03</div>
+    <div class="fh-title">CS Investigate & Selesaikan Tiket</div>
+    <div class="fh-desc">CS sudah baca tiket dan mulai proses. Sekarang CS perlu investigate masalahnya, hubungi user via WA, dan selesaikan tiket dengan resolusi yang tepat.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 CS</span><span class="pill pill-trigger">🔔 Tiket status "Sedang Diproses"</span><span class="pill pill-time">⏱ Target selesai: &lt;24 jam</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">CS cek status transaksi terkait</div><div class="step-desc">Klik "Lihat Detail Transaksi" di dalam tiket → langsung ke halaman detail transaksi di Monitoring. CS baca timeline: di mana macetnya, sudah berapa kali retry, apakah refund sudah berjalan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Hubungi user via WhatsApp</div><div class="step-desc">Klik tombol "Hubungi via WA" → nomor WA user langsung terbuka. CS pilih template pesan yang sesuai situasi:<ul><li><em>"Dana kamu aman, sedang kami proses. Estimasi selesai [waktu]."</em></li><li><em>"Transaksi kamu sudah sukses — [produk] sudah terkirim ke [tujuan]."</em></li><li><em>"Kami perlu eskalasi ke tim terkait. Estimasi 2×24 jam."</em></li></ul>Setelah menghubungi, klik "Tandai Sudah Dihubungi" — waktu kontak dicatat.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Kalau masalah bisa diselesaikan sendiri — tutup tiket</div><div class="step-desc">Klik "Tutup Tiket" → pilih jenis resolusi (wajib):<ul><li>Transaksi Berhasil</li><li>Refund Diproses</li><li>Edukasi User</li><li>Tidak Ada Masalah</li><li>Lainnya</li></ul>Tambahkan catatan penutupan → submit. Status berubah ke <strong>Selesai</strong>.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Kalau tidak bisa diselesaikan sendiri — eskalasi (lihat F04)</div><div class="step-desc">Lanjut ke flow eskalasi kalau butuh akses atau wewenang yang CS tidak punya.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">CS wajib menghubungi user via WA dalam 1 jam pertama setelah ambil tiket. Tidak perlu langsung ada solusi — cukup konfirmasi bahwa laporan sudah diterima dan sedang diproses.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau user tidak balas WA dalam 3×24 jam, CS boleh tutup tiket dengan resolusi <strong>"Tidak Ada Respons dari User"</strong> setelah kirim WA reminder terakhir.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">CS tidak boleh menjanjikan refund ke user sebelum mendapat konfirmasi dari Agung (Finance). Cukup sampaikan bahwa sedang diproses.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User marah dan mengancam akan lapor ke OJK/media sosial</div>
+          <div class="bc-user">User semakin emosional meski sudah dihubungi CS.</div>
+          <div class="bc-handle">CS tetap profesional, tidak membalas emosi. Sampaikan bahwa masalah sedang ditangani dengan serius dan berikan estimasi waktu yang jelas. Eskalasi ke Acoy untuk di-handle langsung oleh yang lebih senior. Kalau ada ancaman serius ke reputasi GoPop, Acoy koordinasi dengan Bili.</div>
+          <div class="bc-owner">PIC: Acoy (handle langsung) · Bili (keputusan komunikasi publik)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">CS tidak tahu cara menjawab pertanyaan teknikal tentang kenapa transaksi gagal</div>
+          <div class="bc-user">CS memberikan jawaban yang tidak akurat dan user semakin bingung.</div>
+          <div class="bc-handle">CS cukup sampaikan: "Kami sedang investigasi lebih lanjut dan akan update kamu segera." Jangan tebak-tebak penyebab teknikal. Eskalasi ke Rifky/Acoy untuk jawaban yang akurat, baru sampaikan ke user.</div>
+          <div class="bc-owner">PIC: Acoy (buat knowledge base jawaban standar untuk CS)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">CS tidak punya panduan jawaban standar — setiap CS menjawab berbeda untuk kasus yang sama</div>
+          <div class="bn-a">Buat knowledge base sederhana di dashboard: daftar skenario umum (pulsa gagal, token listrik tidak masuk, dll) beserta template jawaban yang sudah disetujui. CS tinggal pilih template yang sesuai dan modifikasi sedikit sesuai konteks. Ini memastikan konsistensi jawaban dan mempercepat response time.</div>
+          <div class="bn-owner">PIC: Acoy (buat knowledge base awal) · Isal + Ipong (integrasikan ke dashboard)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Tiket ditutup dengan resolusi yang jelas</div><div class="hasil-item">User sudah dihubungi dan tahu statusnya</div><div class="hasil-item">Durasi penanganan tercatat untuk laporan SLA</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Masalah tidak bisa diselesaikan CS sendiri → eskalasi ke F04</div><div class="hasil-item">User tidak balas WA dalam 3 hari → tutup dengan resolusi "Tidak Ada Respons"</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cmp-f02',null)">← F02: CS Terima</div>
+    <div class="fn-btn next" onclick="go('cmp-f04',null)">F04: Eskalasi →</div>
+  </div>
+</div>
+
+<!-- CMP F04 - ESKALASI -->
+<div id="page-cmp-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🎫 Komplain & Tiket <span>›</span> F04</div>
+    <div class="fh-title">Eskalasi Tiket ke Ops atau Finance</div>
+    <div class="fh-desc">Ada kasus yang CS tidak bisa selesaikan sendiri — butuh akses atau wewenang lebih tinggi. Flow ini menjelaskan cara eskalasi yang tepat dan apa yang terjadi setelahnya.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 CS → Ops (Acoy) / Finance (Agung)</span><span class="pill pill-trigger">🔔 CS tidak bisa resolve sendiri</span><span class="pill pill-time">⏱ Target respons eskalasi: &lt;2 jam</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Kapan Harus Eskalasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">⚙️</div><div class="rule-text"><strong>Eskalasi ke Ops (Acoy):</strong> Butuh cek/retry transaksi ke supplier, force update status transaksi, atau investigasi transaksi stuck lebih dari 1 jam.</div></div>
+        <div class="rule"><div class="rule-icon">💰</div><div class="rule-text"><strong>Eskalasi ke Finance (Agung):</strong> Butuh proses refund manual, approve refund di atas batas nominal CS, atau investigasi selisih saldo reseller.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">CS tap "Eskalasi Tiket" di detail tiket</div><div class="step-desc">Muncul form eskalasi: pilih tujuan (Ops/Finance/IT), isi alasan eskalasi (wajib, minimal 20 kata), pilih prioritas (Normal atau Urgent).</div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Notifikasi dikirim ke yang bersangkutan</div><div class="step-desc">Acoy atau Agung dapat notifikasi di dashboard dan WA internal: nama CS yang eskalasi, kategori masalah, alasan eskalasi, dan prioritas. Status tiket berubah ke <strong>Dieskala</strong>.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Acoy/Agung buka tiket dan ambil tindakan</div><div class="step-desc">Mereka bisa lihat semua riwayat tiket dan percakapan sebelumnya. Lakukan aksi yang diperlukan langsung dari dashboard (retry, refund, update status) tanpa koordinasi manual.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Selesai — update kembali ke CS</div><div class="step-desc">Acoy/Agung klik "Selesai dari Sisi Saya" + isi catatan aksi yang dilakukan. Tiket kembali ke CS dengan status "Perlu Follow-up ke User". CS dapat notifikasi dan langsung WA user dengan update.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Eskalasi hanya bisa dilakukan <strong>satu kali per tiket per level</strong>. CS → Ops/Finance. Tidak bisa CS → Ops → Finance → Ops lagi. Kalau perlu koordinasi antar Ops dan Finance, lakukan via catatan internal di tiket.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Eskalasi Urgent yang tidak direspons dalam <strong>1 jam</strong> akan trigger pengingat WA kedua ke yang bersangkutan, dan notifikasi ke Acoy sebagai monitor.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Semua catatan eskalasi, aksi yang dilakukan, dan hasilnya tersimpan permanen di timeline tiket sebagai audit trail.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Acoy dan Agung keduanya tidak available — eskalasi tidak direspons</div>
+          <div class="bc-user">User tidak mendapat update setelah dijanjikan 2 jam.</div>
+          <div class="bc-handle">CS informasikan ke user bahwa penanganan sedikit terlambat karena tim sedang handle prioritas lain, berikan estimasi baru. Jangan biarkan user tanpa update lebih dari 4 jam. Ke depan, tentukan backup PIC untuk eskalasi kalau kedua orang utama tidak available.</div>
+          <div class="bc-owner">PIC: Acoy (tentukan backup eskalasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">5</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Eskalasi yang tidak perlu — CS eskalasi hal-hal yang seharusnya bisa diselesaikan sendiri</div>
+          <div class="bn-a">Buat panduan yang jelas: apa saja yang CS bisa selesaikan sendiri vs yang harus dieskalasi. Terlalu sering eskalasi hal kecil akan membebani Acoy dan Agung. Sebaliknya, terlalu jarang eskalasi bisa menyebabkan masalah besar tidak tertangani. Knowledge base yang baik akan mengurangi eskalasi yang tidak perlu.</div>
+          <div class="bn-owner">PIC: Acoy (buat panduan eskalasi yang jelas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">6</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Masalah yang butuh akses lebih tinggi tertangani dengan benar</div><div class="hasil-item">Semua aksi tercatat di timeline — audit trail lengkap</div><div class="hasil-item">User mendapat update via WA dengan solusi konkret</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Tidak ada yang merespons eskalasi — user menunggu tanpa kabar</div><div class="hasil-item">Ping-pong eskalasi bolak-balik — user tidak dapat kepastian</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cmp-f03',null)">← F03: Investigate</div>
+    <div class="fn-btn next" onclick="go('cmp-f05',null)">F05: Tiket Re-open →</div>
+  </div>
+</div>
+
+<!-- CMP F05 - REOPEN -->
+<div id="page-cmp-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🎫 Komplain & Tiket <span>›</span> F05</div>
+    <div class="fh-title">Tiket Re-open Setelah Ditutup</div>
+    <div class="fh-desc">Kadang tiket sudah ditutup tapi masalah belum benar-benar selesai. User bisa re-open dalam 3 hari setelah tiket ditutup — semua riwayat sebelumnya tetap ada.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 User + CS</span><span class="pill pill-trigger">🔔 User masalah belum selesai setelah tiket ditutup</span><span class="pill pill-time">⏱ Window re-open: 3 hari setelah tutup</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">User minta buka kembali tiket</div><div class="step-desc">Dua cara:<ul><li><strong>Balas WA terakhir dari CS</strong> dalam 3 hari → sistem deteksi balasan → tiket otomatis re-open</li><li><strong>Dari app:</strong> Buka Riwayat Tiket → pilih tiket yang "Selesai" → tap "Masalah Belum Selesai? Buka Kembali" → isi alasan singkat</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-sys">2</div><div class="step-body"><div class="step-title">Tiket re-open dengan semua riwayat sebelumnya</div><div class="step-desc">Label <strong>RE-OPENED</strong> muncul di tiket. CS yang sama otomatis di-assign ulang. Ada section baru "Alasan Re-open" di atas tiket. Semua thread sebelumnya masih terbaca di bawah.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">CS handle ulang dengan konteks lengkap</div><div class="step-desc">CS baca alasan re-open → cek ulang status transaksi terkait → hubungi user dengan update terbaru. Kalau masalahnya berbeda dari sebelumnya → bisa eskalasi lagi (F04).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Re-open hanya bisa dilakukan dalam <strong>3 hari</strong> setelah tiket ditutup. Lebih dari itu, user perlu buat tiket baru (bisa cantumkan nomor tiket lama sebagai referensi).</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu tiket bisa di-reopen maksimal <strong>2 kali</strong>. Re-open ketiga otomatis di-flag ke Acoy sebagai monitor — berarti ada sesuatu yang perlu perhatian khusus.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Re-open tidak akan diterima kalau status akhir tiket adalah "Tidak Ada Respons dari User" — user yang tidak responsif tidak bisa tiba-tiba re-open setelah 3 hari. Harus buat tiket baru.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User re-open tiket berkali-kali padahal masalah sudah selesai — hanya ingin perhatian lebih</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Setelah re-open ke-2, Acoy di-cc secara otomatis dan bisa lihat polanya. Kalau terbukti masalah sudah selesai (ada bukti di timeline), Acoy bisa tutup tiket secara final dan blokir re-open lebih lanjut untuk tiket ini.</div>
+          <div class="bc-owner">PIC: Acoy (monitor dan putuskan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">CS berbeda yang handle re-open — tidak tahu konteks sebelumnya</div>
+          <div class="bn-a">Sistem prioritaskan assign re-open ke CS yang sama. Kalau CS itu tidak aktif, ada banner peringatan di atas tiket untuk CS pengganti: "Tiket ini sebelumnya ditangani oleh [nama]. Baca riwayat lengkap sebelum hubungi user." Seluruh riwayat selalu tersedia di bawah.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (preferential assign) · Isal + Ipong (banner konteks di UI)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">User punya jalur follow-up tanpa buat tiket baru dari awal</div><div class="hasil-item">CS punya konteks lengkap dari interaksi sebelumnya</div><div class="hasil-item">Masalah akhirnya benar-benar selesai dengan konfirmasi dari user</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Sudah lewat 3 hari — user harus buat tiket baru</div><div class="hasil-item">Re-open berulang tanpa penyelesaian nyata — perlu Acoy intervensi</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cmp-f04',null)">← F04: Eskalasi</div>
+    <div class="fn-btn next" onclick="go('rsl-f01',null)">🏪 Manajemen Reseller →</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ RESELLER ============================================================ -->
+<div id="page-rsl-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🏪 Manajemen Reseller <span>›</span> F01</div>
+    <div class="fh-title">Approve / Reject Reseller Baru</div>
+    <div class="fh-desc">Setiap orang yang mendaftar sebagai reseller tidak langsung aktif — perlu persetujuan admin dulu. Flow ini menjelaskan proses review dan keputusan approve atau reject.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Acoy (Ops)</span><span class="pill pill-trigger">🔔 Ada pendaftar reseller baru</span><span class="pill pill-time">⏱ Target: Keputusan dalam 1×24 jam kerja</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Notifikasi pendaftar baru masuk</div><div class="step-desc">Badge merah di menu Reseller bertambah. Tab "Menunggu Persetujuan" menampilkan jumlah pendaftar yang belum diproses. Acoy mendapat notifikasi WA internal kalau ada pendaftar baru.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Acoy buka tab "Menunggu Persetujuan"</div><div class="step-desc">Daftar pendaftar baru tampil dengan informasi: nama, nomor HP, nama usaha, kota, tanggal daftar, dan kode referral (kalau ada). Klik nama untuk lihat detail lengkap profil pendaftar.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Review profil pendaftar</div><div class="step-desc">Lihat kelengkapan data: apakah nama usaha diisi, kota jelas, nomor HP valid. Tidak ada verifikasi KTP atau dokumen — cukup review data yang diisi saat registrasi.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Putuskan: Approve atau Reject</div><div class="step-desc"><ul><li><strong>Approve:</strong> Klik "Setujui" → sistem buat wallet reseller dengan saldo 0, assign tier Bronze, kirim WA selamat datang ke reseller. Reseller langsung bisa login dan top up saldo.</li><li><strong>Reject:</strong> Klik "Tolak" → isi alasan penolakan (wajib) → kirim WA pemberitahuan ke pendaftar dengan alasan penolakan.</li></ul></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Semua reseller yang baru diapprove otomatis mulai di <strong>tier Bronze</strong>. Naik tier hanya bisa melalui omzet kumulatif yang mencapai threshold — tidak bisa di-set manual kecuali ada alasan khusus oleh Super Admin.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau pendaftar menggunakan kode referral reseller lain, relasi upline-downline terbentuk otomatis saat di-approve. Upline akan mulai dapat bonus dari transaksi downline ini.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Reseller yang di-reject bisa mendaftar ulang setelah memperbaiki data mereka. Tidak ada blacklist permanen kecuali ada indikasi penipuan.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu nomor HP hanya bisa memiliki <strong>satu akun reseller</strong>. Sistem otomatis tolak pendaftaran dengan nomor HP yang sudah terdaftar.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Pendaftar mengisi data palsu atau nama usaha tidak masuk akal</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Reject dengan alasan "Data tidak lengkap/tidak valid" dan minta pendaftar untuk mendaftar ulang dengan data yang benar. Kalau ada indikasi penipuan (nomor HP mencurigakan, pola data yang aneh), catat dan laporkan ke Acoy untuk diblacklist manual.</div>
+          <div class="bc-owner">PIC: Acoy (keputusan reject dan blacklist)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Reseller yang sudah di-approve langsung tidak aktif — saldo tidak pernah diisi</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini bukan masalah yang perlu ditindak segera. Tapi kalau lebih dari 30 hari setelah approve tidak ada aktivitas, bisa ada trigger WA reminder otomatis: "Akun reseller GoPop kamu sudah siap. Top up saldo untuk mulai transaksi." Ini tugas marketing.</div>
+          <div class="bc-owner">PIC: Kayong/Luqman (setup WA reminder untuk reseller tidak aktif)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada tab khusus "Menunggu Persetujuan" di halaman Reseller — Acoy tidak tahu ada pendaftar baru yang menunggu</div>
+          <div class="bn-a">Tab ini harus ada dan menonjol — dengan badge count yang terlihat dari menu sidebar. Tanpa ini, pendaftar baru bisa menunggu berhari-hari tanpa diproses karena Acoy tidak tahu mereka ada.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (tambah tab Menunggu Persetujuan) · Irwan + Rifky (notifikasi WA ke Acoy)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Approve</div><div class="hasil-items"><div class="hasil-item">Reseller baru aktif dengan wallet saldo 0 dan tier Bronze</div><div class="hasil-item">WA selamat datang terkirim ke reseller</div><div class="hasil-item">Kalau ada referral, relasi upline-downline terbentuk otomatis</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Reject</div><div class="hasil-items"><div class="hasil-item">WA penolakan terkirim ke pendaftar dengan alasan yang jelas</div><div class="hasil-item">Pendaftar bisa daftar ulang dengan data yang diperbaiki</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cmp-f05',null)">← Komplain F05</div>
+    <div class="fn-btn next" onclick="go('rsl-f02',null)">F02: Monitor Saldo & Omzet →</div>
+  </div>
+</div>
+
+<div id="page-rsl-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🏪 Manajemen Reseller <span>›</span> F02</div>
+    <div class="fh-title">Monitor Saldo & Omzet Reseller</div>
+    <div class="fh-desc">Acoy dan Ipong perlu memantau kesehatan ekosistem reseller — siapa yang aktif, siapa yang saldonya hampir habis, dan bagaimana progress tier masing-masing.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Acoy · Ipong</span><span class="pill pill-trigger">🔔 Monitoring rutin harian/mingguan</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka halaman Manajemen Reseller</div><div class="step-desc">Tampil daftar semua reseller aktif. Ada tab per tier: Semua, Bronze, Silver, Gold, Platinum. Ringkasan di atas: total reseller aktif, total omzet hari ini, total saldo di sistem.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Gunakan filter dan pencarian</div><div class="step-desc">Filter berdasarkan: tier, status (aktif/suspend), kota, atau range omzet. Pencarian by nama atau nomor HP. Urutkan berdasarkan omzet tertinggi, saldo terendah, atau terbaru bergabung.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Klik reseller untuk lihat detail</div><div class="step-desc">Halaman detail reseller menampilkan:<ul><li><strong>Profil:</strong> Nama, HP, nama usaha, kota, tanggal bergabung, kode referral</li><li><strong>Wallet:</strong> Saldo saat ini, total omzet kumulatif all-time, riwayat top up</li><li><strong>Tier:</strong> Tier saat ini, progress ke tier berikutnya (berapa omzet lagi yang dibutuhkan)</li><li><strong>Downline:</strong> Jumlah downline dan total omzet downline</li><li><strong>Riwayat Transaksi:</strong> Semua transaksi yang pernah dilakukan reseller ini</li></ul></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Omzet reseller adalah <strong>kumulatif all-time sejak bergabung</strong> — tidak pernah reset, tidak bisa turun. Tier yang sudah dicapai juga tidak bisa turun kecuali ada sanksi khusus dari Super Admin.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Model bisnis reseller adalah <strong>margin</strong> — bukan komisi. Reseller beli produk di harga HPP (sesuai tier) dan jual ke pelanggan mereka dengan harga yang mereka tentukan sendiri. Profit = harga jual - HPP. GoPop tidak ada kewajiban "mencairkan" apapun ke reseller.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Saldo reseller adalah <strong>saldo prepaid</strong> — harus diisi dulu sebelum bisa transaksi. Tidak ada kredit atau hutang. Kalau saldo habis, transaksi otomatis ditolak sampai saldo diisi ulang.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Dashboard masih menampilkan "Komisi" dan "Pencairan" — model bisnis yang salah</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini masalah yang harus segera difix. Hapus semua referensi ke komisi dan pencairan. Ganti dengan tampilan yang benar: Saldo, Total Omzet Kumulatif, Tier, dan riwayat top up. Ini bukan hanya UI — perlu dipastikan tidak ada logika komisi di BE juga.</div>
+          <div class="bc-owner">PIC: Bili (konfirmasi model bisnis) · Irwan + Rifky (hapus logika komisi di BE) · Isal + Ipong (update UI)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada alert otomatis saat saldo reseller hampir habis — reseller baru sadar saat transaksi ditolak</div>
+          <div class="bn-a">Sistem harus kirim WA reminder ke reseller saat saldo di bawah threshold (misalnya Rp 50.000). Reseller bisa set threshold sendiri dari profil mereka. Ini mengurangi frustrasi reseller yang tidak sadar saldo habis di tengah transaksi penting.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi trigger notifikasi saldo) · Dileh (UI pengaturan threshold di reseller app)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Acoy punya gambaran lengkap kondisi ekosistem reseller</div><div class="hasil-item">Reseller yang butuh perhatian (saldo rendah, omzet stagnan) mudah diidentifikasi</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Dashboard masih menampilkan data komisi yang sudah tidak relevan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rsl-f01',null)">← F01: Approve/Reject</div>
+    <div class="fn-btn next" onclick="go('rsl-f03',null)">F03: Suspend & Reaktivasi →</div>
+  </div>
+</div>
+
+<div id="page-rsl-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🏪 Manajemen Reseller <span>›</span> F03</div>
+    <div class="fh-title">Suspend & Reaktivasi Reseller</div>
+    <div class="fh-desc">Kalau ada reseller yang bermasalah — melanggar aturan, ada aktivitas mencurigakan, atau permintaan sendiri — admin bisa suspend. Reseller yang ter-suspend tidak bisa login atau transaksi.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Acoy (keputusan) · Super Admin</span><span class="pill pill-trigger">🔔 Reseller bermasalah atau permintaan reaktivasi</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Suspend</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka detail reseller yang akan di-suspend</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Suspend Akun" — isi alasan wajib</div><div class="step-desc">Pilih alasan dari dropdown: Pelanggaran Aturan / Aktivitas Mencurigakan / Permintaan Reseller / Lainnya. Tambahkan catatan internal (tidak dilihat reseller).</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Akun ter-suspend — WA notif dikirim</div><div class="step-desc">Reseller langsung tidak bisa login atau transaksi. WA dikirim: <em>"Akun reseller GoPop kamu sementara dinonaktifkan. Hubungi tim GoPop untuk informasi lebih lanjut."</em><br><strong>Saldo reseller tetap aman</strong> — tidak hangus, tidak hilang. Kalau nanti direaktivasi, saldo masih ada.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Reaktivasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Reseller hubungi CS untuk reaktivasi</div><div class="step-desc">Biasanya via WA ke CS GoPop. CS buat tiket dan eskalasi ke Acoy.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Acoy review alasan suspend dan pertimbangkan reaktivasi</div><div class="step-desc">Baca catatan internal di profil reseller. Apakah alasan suspend sudah diselesaikan? Apakah ada jaminan tidak terulang?</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Klik "Aktifkan Kembali" — isi catatan</div><div class="step-desc">Reseller langsung bisa login lagi. Saldo sebelumnya masih ada. WA konfirmasi dikirim ke reseller.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Saldo reseller tidak hangus saat di-suspend.</strong> Dana reseller adalah milik mereka — GoPop hanya membekukan akses, bukan mengambil dananya.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Downline reseller yang di-suspend <strong>tidak terpengaruh</strong> — mereka tetap bisa transaksi normal. Hanya relasi upline sementara dibekukan.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Suspend tidak menghapus riwayat tier dan omzet. Saat reaktivasi, tier tetap sama dan omzet tidak direset.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Reseller yang di-suspend complain keras dan mengancam akan lapor ke pihak berwenang</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Acoy pastikan alasan suspend valid dan terdokumentasi dengan baik di sistem. Kalau ada dispute, semua catatan di timeline bisa dijadikan bukti. Bila perlu Bili dan tim legal/manajemen dilibatkan untuk keputusan lanjutan.</div>
+          <div class="bc-owner">PIC: Acoy (koordinasi) · Bili (keputusan eskalasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Suspend Berhasil</div><div class="hasil-items"><div class="hasil-item">Reseller tidak bisa akses platform — tapi saldo aman</div><div class="hasil-item">WA notif terkirim ke reseller</div><div class="hasil-item">Downline tidak terpengaruh</div></div></div>
+        <div class="hasil-box hasil-ok" style="border-color:#BBF7D0;"><div class="hasil-title">✅ Reaktivasi Berhasil</div><div class="hasil-items"><div class="hasil-item">Reseller kembali bisa login dan transaksi</div><div class="hasil-item">Saldo, tier, dan omzet tetap seperti sebelumnya</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rsl-f02',null)">← F02: Monitor</div>
+    <div class="fn-btn next" onclick="go('rsl-f04',null)">F04: Top Up Saldo Manual →</div>
+  </div>
+</div>
+
+<div id="page-rsl-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🏪 Manajemen Reseller <span>›</span> F04</div>
+    <div class="fh-title">Top Up Saldo Reseller Manual dari Dashboard</div>
+    <div class="fh-desc">Dalam kondisi tertentu, Acoy bisa menambahkan saldo reseller langsung dari dashboard — misalnya untuk kompensasi, bonus khusus, atau koreksi saldo yang salah.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Acoy · Agung (approve nominal besar)</span><span class="pill pill-trigger">🔔 Permintaan kompensasi atau koreksi saldo</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka detail reseller yang akan ditambah saldo</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Top Up Saldo Manual"</div><div class="step-desc">Form muncul: isi nominal (dalam Rupiah), pilih kategori (Kompensasi / Bonus / Koreksi / Lainnya), dan alasan wajib diisi.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Submit — saldo langsung bertambah</div><div class="step-desc">Saldo reseller langsung bertambah. WA notif ke reseller: <em>"Saldo kamu bertambah Rp [nominal] dari tim GoPop. [Alasan singkat]."</em> Transaksi ini tercatat di riwayat wallet reseller dengan tipe "Penambahan Manual".</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Top up manual dari dashboard <strong>tidak mempengaruhi omzet kumulatif reseller</strong>. Hanya transaksi produk yang dihitung sebagai omzet untuk keperluan naik tier.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Nominal di atas Rp 500.000 membutuhkan <strong>persetujuan Agung (Finance)</strong> sebelum bisa disubmit. Acoy klik "Ajukan untuk Disetujui" → Agung dapat notifikasi → approve atau tolak.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Semua top up manual tercatat permanen dengan alasan dan nama admin yang melakukan. Tidak bisa dihapus atau diubah setelah disubmit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Top up ke reseller yang salah — nominal sudah masuk tapi bukan reseller yang dimaksud</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Tidak bisa di-undo langsung. Agung perlu koordinasi: (1) kurangi saldo reseller yang salah terima (dengan Top Up negatif/debit manual), dan (2) tambahkan ke reseller yang benar. Kedua aksi perlu didokumentasikan dengan baik dan Acoy wajib persetujuan Agung untuk kedua koreksi ini.</div>
+          <div class="bc-owner">PIC: Agung (approve koreksi) · Acoy (dokumentasi) · Irwan + Rifky (pastikan ada mekanisme debit manual)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Saldo reseller bertambah sesuai nominal yang diisi</div><div class="hasil-item">WA konfirmasi terkirim ke reseller</div><div class="hasil-item">Tercatat permanen di riwayat wallet</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Top up ke reseller yang salah — perlu koreksi manual yang memakan waktu</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rsl-f03',null)">← F03: Suspend</div>
+    <div class="fn-btn next" onclick="go('rek-f01',null)">🔄 Rekonsiliasi →</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ REKONSILIASI ============================================================ -->
+<div id="page-rek-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🔄 Rekonsiliasi <span>›</span> F01</div>
+    <div class="fh-title">Upload Laporan Supplier & Cocokkan Data</div>
+    <div class="fh-desc">Rekonsiliasi adalah proses memastikan bahwa data transaksi GoPop cocok dengan laporan dari supplier (Digiflazz). Dilakukan Rifky secara berkala untuk memastikan tidak ada selisih.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Rifky</span><span class="pill pill-trigger">🔔 Harian atau mingguan</span><span class="pill pill-time">⏱ 30–60 menit per sesi</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Download laporan transaksi dari Digiflazz</div><div class="step-desc">Login ke portal Digiflazz → download laporan transaksi dalam format CSV untuk periode yang akan direkonsiliasi (misalnya kemarin atau minggu lalu).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Buka menu Rekonsiliasi di dashboard GoPop</div><div class="step-desc">Klik "Upload Laporan Supplier" → pilih supplier (Digiflazz) → upload file CSV yang sudah didownload.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Sistem proses dan cocokkan data</div><div class="step-desc">Sistem membandingkan data dari file CSV dengan data transaksi GoPop menggunakan referensi unik dari supplier. Proses ini memakan waktu 1–3 menit tergantung jumlah transaksi.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Baca hasil rekonsiliasi</div><div class="step-desc">Hasil dibagi tiga kategori:<ul><li><strong>✅ Cocok:</strong> Data GoPop dan Digiflazz sama — tidak perlu tindakan</li><li><strong>⚠️ Selisih:</strong> Ada perbedaan nominal atau status — perlu investigasi</li><li><strong>❌ Tidak Ada di GoPop / Tidak Ada di Digiflazz:</strong> Transaksi ada di satu sisi tapi tidak ada di sisi lain — perlu investigasi serius</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Export laporan hasil rekonsiliasi</div><div class="step-desc">Klik "Export Hasil" → download file Excel yang berisi hanya item yang tidak cocok. Berguna untuk laporan ke Agung atau untuk investigasi lebih lanjut.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Rekonsiliasi <strong>wajib dilakukan setidaknya seminggu sekali</strong>. Makin sering dilakukan, makin kecil risiko selisih yang menumpuk dan susah dilacak.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Item yang dinyatakan "Cocok" oleh sistem tidak berarti 100% akurat — Rifky tetap perlu spot-check beberapa item secara random untuk memastikan sistem rekonsiliasi bekerja benar.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Hasil rekonsiliasi disimpan di sistem selama 90 hari untuk keperluan audit. Setelah itu otomatis diarsipkan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Format file CSV dari Digiflazz berubah — sistem tidak bisa baca</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Sistem tampilkan error: "Format file tidak dikenali." Rifky perlu cek apakah Digiflazz mengubah format laporan mereka (bisa hubungi support Digiflazz). Sementara itu, lakukan rekonsiliasi manual dengan membandingkan data secara manual di Excel. Laporkan ke Irwan + Rifky BE untuk update parser format CSV.</div>
+          <div class="bc-owner">PIC: Rifky (rekonsiliasi manual sementara) · Irwan (update parser)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Banyak item "Tidak Ada di Digiflazz" — GoPop punya catatan transaksi tapi Digiflazz tidak</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini serius — bisa berarti ada transaksi yang diterima GoPop tapi tidak pernah dikirim ke Digiflazz, atau laporan Digiflazz tidak lengkap. Rifky laporkan ke Ipong untuk konfirmasi langsung ke Digiflazz. Jangan assume ini kesalahan salah satu pihak sebelum ada konfirmasi.</div>
+          <div class="bc-owner">PIC: Rifky + Ipong (konfirmasi ke Digiflazz) · Irwan (investigasi teknikal)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Proses upload manual CSV setiap hari memakan waktu dan bisa terlewat kalau Rifky sedang sibuk</div>
+          <div class="bn-a">Ke depan, perlu otomasi: sistem secara otomatis pull laporan dari API Digiflazz setiap malam dan langsung rekonsiliasi tanpa perlu Rifky upload manual. Ini bergantung pada ketersediaan API dari Digiflazz dan keputusan implementasi dari Irwan + Rifky BE. Sementara manual, pastikan ada checklist harian untuk Rifky.</div>
+          <div class="bn-owner">PIC: Acoy (buat checklist Rifky) · Irwan + Rifky (implementasi otomasi rekonsiliasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Semua data cocok — tidak ada selisih</div><div class="hasil-item">Export laporan tersedia untuk arsip dan audit</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">⚠️ Ada Selisih</div><div class="hasil-items"><div class="hasil-item">Item selisih teridentifikasi → lanjut ke F02 untuk tindak lanjut</div><div class="hasil-item">Format CSV tidak dikenali → rekonsiliasi manual sementara</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rsl-f04',null)">← Reseller F04</div>
+    <div class="fn-btn next" onclick="go('rek-f02',null)">F02: Tindak Lanjut Selisih →</div>
+  </div>
+</div>
+
+<div id="page-rek-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🔄 Rekonsiliasi <span>›</span> F02</div>
+    <div class="fh-title">Tindak Lanjut Item Selisih</div>
+    <div class="fh-desc">Setelah rekonsiliasi menemukan item yang tidak cocok, Rifky perlu menindaklanjuti satu per satu — investigasi penyebab, klarifikasi ke supplier, dan update status item tersebut.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Rifky · Ipong (koordinasi supplier)</span><span class="pill pill-trigger">🔔 Ada item selisih dari hasil rekonsiliasi</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka daftar item selisih</div><div class="step-desc">Filter hasil rekonsiliasi by "Selisih" atau "Tidak Cocok". Tiap item menampilkan: ID transaksi GoPop, data GoPop vs data Digiflazz, dan jenis selisih (nominal berbeda, status berbeda, tidak ada di satu sisi).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Investigasi per item</div><div class="step-desc">Klik item → lihat detail lengkap. Klik "Lihat Transaksi" untuk buka detail di Monitoring. Bandingkan timeline transaksi di GoPop dengan data yang ada di laporan Digiflazz.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Pilih tindak lanjut yang tepat per item</div><div class="step-desc"><ul><li><strong>Tandai Sudah Diklarifikasi:</strong> Kalau penyebab selisih sudah jelas dan tidak ada aksi lebih lanjut (misalnya selisih karena perbedaan timezone)</li><li><strong>Buat Tiket Investigasi:</strong> Kalau perlu tindakan lanjut dari tim lain (Ops, BE, atau konfirmasi ke supplier)</li><li><strong>Tandai Butuh Koreksi:</strong> Kalau ada yang perlu dikoreksi di sisi GoPop atau supplier</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Isi catatan untuk setiap item yang ditindaklanjuti</div><div class="step-desc">Wajib isi penjelasan singkat: apa penyebab selisih dan aksi apa yang diambil. Ini penting untuk audit trail dan kalau ada pertanyaan dari Agung nanti.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setiap item selisih <strong>harus ada status akhirnya</strong> — tidak boleh dibiarkan menggantung tanpa keputusan. Deadline: semua item dari rekonsiliasi minggu ini harus selesai ditindaklanjuti sebelum rekonsiliasi minggu berikutnya.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Item yang sudah "Ditandai Diklarifikasi" tetap tersimpan di sistem — tidak dihapus. Agung bisa audit kapan saja.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau ditemukan selisih yang menyebabkan GoPop rugi (misalnya GoPop catat sukses tapi supplier catat gagal — berarti produk tidak terkirim tapi uang sudah diterima supplier), ini harus segera dilaporkan ke Agung untuk kalkulasi dampak finansial.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Item selisih menumpuk karena tidak ditindaklanjuti minggu-minggu sebelumnya</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Rekonsiliasi yang tertunda membuat investigasi jauh lebih susah karena data makin lama makin susah dikonfirmasi ke supplier. Prioritaskan semua item dari 7 hari terakhir dulu. Untuk yang lebih lama, koordinasi dengan Ipong untuk konfirmasi batch ke Digiflazz.</div>
+          <div class="bc-owner">PIC: Acoy (pastikan Rifky punya jadwal rutin rekonsiliasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Semua item selisih punya status akhir yang jelas</div><div class="hasil-item">Penyebab selisih terdokumentasi untuk audit</div><div class="hasil-item">Item yang butuh koreksi sudah diteruskan ke pihak yang tepat</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Item menggantung tanpa keputusan — risiko audit bermasalah</div><div class="hasil-item">Selisih finansial ditemukan tapi tidak dilaporkan ke Agung</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rek-f01',null)">← F01: Upload & Cocokkan</div>
+    <div class="fn-btn next" onclick="go('prd-f01',null)">📦 Produk & Harga →</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ PRODUK & HARGA ============================================================ -->
+<div id="page-prd-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📦 Produk & Harga <span>›</span> F01</div>
+    <div class="fh-title">Kelola Produk & Update Harga</div>
+    <div class="fh-desc">Ipong mengelola semua produk yang tersedia di GoPop — apa yang dijual, berapa harganya, dan dari supplier mana. Perubahan harga langsung berdampak ke harga yang user lihat di app.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Ipong (Aggregator) · Acoy (monitor)</span><span class="pill pill-trigger">🔔 Ada perubahan HPP dari supplier atau produk baru</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu Produk & Harga</div><div class="step-desc">Tampil semua produk dikelompokkan per kategori: Pulsa, Token Listrik, Transfer E-Wallet, Voucher Game, BPJS, Internet & TV, PDAM, PBB. Ada filter status (aktif/nonaktif) dan pencarian nama produk.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Cari dan buka produk yang akan diupdate</div><div class="step-desc">Misalnya Ipong mendapat info dari Digiflazz bahwa HPP Pulsa Telkomsel 5.000 naik. Cari produk tersebut di daftar → klik nama produk untuk buka halaman detailnya.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Update harga dan simpan</div><div class="step-desc">Di halaman detail produk ada tiga field harga yang bisa diedit:<ul><li><strong>HPP (Harga Pokok Penjualan):</strong> Harga yang GoPop bayar ke Digiflazz per unit</li><li><strong>Harga Jual Consumer:</strong> Harga yang ditampilkan ke user di app/web</li><li><strong>Supplier/Biller:</strong> Dari supplier mana produk ini dikirim (primary dan backup)</li></ul>Update nilai yang perlu diubah → klik "Simpan Perubahan".</div></div></div>
+        <div class="step"><div class="step-num sn-sys">4</div><div class="step-body"><div class="step-title">Harga baru langsung berlaku</div><div class="step-desc">Harga baru langsung tampil di app/web consumer tanpa perlu deploy ulang atau menunggu. Transaksi yang sudah dalam progress tidak berubah — hanya transaksi baru yang pakai harga baru.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Harga jual tidak boleh di bawah HPP.</strong> Sistem blokir penyimpanan kalau harga jual lebih rendah dari HPP — mencegah GoPop jual rugi secara tidak sengaja.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setiap perubahan harga dicatat dengan timestamp dan nama Ipong. Riwayat harga bisa dilihat kapan saja untuk audit atau kalau ada pertanyaan dari Agung.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Produk bisa <strong>dinonaktifkan tanpa dihapus</strong>. Produk nonaktif tidak muncul di app/web tapi riwayat transaksinya tetap ada.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Kalau user sudah di screen checkout dengan harga lama tapi harga berubah, transaksi akan ditolak dengan pesan "Harga produk telah berubah." User perlu mulai dari awal. Ini perilaku yang benar dan disengaja.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Ipong update HPP tapi lupa update harga jual — margin menjadi negatif tanpa disadari</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Dashboard harus selalu tampilkan margin (harga jual - HPP) secara real-time saat Ipong sedang edit. Kalau margin negatif muncul, tampilkan warning merah yang jelas sebelum bisa disimpan. Ini yang mencegah GoPop rugi tanpa terdeteksi.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (tampilkan kalkulasi margin real-time di form edit)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Produk yang perlu dinonaktifkan sementara (supplier gangguan) tapi lupa diaktifkan kembali</div>
+          <div class="bc-user">User tidak bisa beli produk tersebut meski supplier sudah normal kembali.</div>
+          <div class="bc-handle">Ipong set reminder manual untuk aktifkan ulang. Ke depan bisa ada fitur "nonaktifkan sementara hingga [waktu tertentu]" yang otomatis aktifkan kembali setelah durasi yang ditentukan.</div>
+          <div class="bc-owner">PIC: Ipong (reminder manual) · Isal + Ipong (fitur nonaktif sementara)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Update harga masih manual satu per satu — kalau supplier ubah puluhan produk sekaligus, Ipong perlu waktu lama</div>
+          <div class="bn-a">Ke depan perlu fitur import harga via CSV atau sinkronisasi otomatis dengan API Digiflazz. Ipong bisa upload satu file dan semua HPP terupdate sekaligus. Sementara belum ada, Ipong perlu update manual satu per satu — prioritaskan produk paling sering dibeli user dulu.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi import CSV atau sync API) · Ipong (workaround manual)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Harga terbaru langsung berlaku di app/web</div><div class="hasil-item">Margin produk tetap positif</div><div class="hasil-item">Perubahan tercatat untuk audit</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Harga jual lebih rendah dari HPP — sistem tolak perubahan</div><div class="hasil-item">Margin jadi negatif karena lupa update harga jual</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rek-f02',null)">← Rekonsiliasi F02</div>
+    <div class="fn-btn next" onclick="go('prd-f02',null)">F02: Switch Biller →</div>
+  </div>
+</div>
+
+<div id="page-prd-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📦 Produk & Harga <span>›</span> F02</div>
+    <div class="fh-title">Switch Biller Saat Ada Gangguan Supplier</div>
+    <div class="fh-desc">Kalau Digiflazz mengalami gangguan, Ipong perlu switch produk terdampak ke supplier backup agar user masih bisa transaksi. Flow ini harus bisa dilakukan cepat — target 15 menit sejak gangguan terdeteksi.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Ipong · Acoy (koordinasi) · Kayong (update CMS)</span><span class="pill pill-trigger">🔔 Banyak transaksi gagal dari satu supplier</span><span class="pill pill-time">⏱ Target switch: &lt;15 menit</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Gangguan terdeteksi</div><div class="step-desc">Dua jalur deteksi: (1) Rifky lapor ada banyak transaksi gagal dari supplier yang sama saat monitoring rutin, atau (2) sistem auto-alert ke Ipong dan Acoy saat error rate satu supplier melebihi batas normal dalam 15 menit terakhir.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Ipong konfirmasi gangguan ke Digiflazz</div><div class="step-desc">Login ke portal Digiflazz atau hubungi kontak PIC Digiflazz yang sudah tersimpan. Konfirmasi apakah ada gangguan dari sisi mereka dan estimasi waktu recovery. Sambil menunggu konfirmasi, mulai persiapan switch.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Switch ke supplier backup di dashboard</div><div class="step-desc">Di halaman detail produk yang terdampak, ubah urutan prioritas supplier: geser supplier backup ke posisi pertama, supplier utama ke posisi kedua. Klik "Simpan" → transaksi berikutnya otomatis ke supplier backup.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Koordinasi update banner ke Kayong</div><div class="step-desc">Kalau gangguan diperkirakan lebih dari 30 menit, minta Kayong pasang banner di homepage: "Layanan [nama produk/operator] sedang gangguan. Kami sedang menangani." Ini mengurangi transaksi gagal dan tiket komplain yang masuk.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Monitor dan switch balik saat supplier utama recover</div><div class="step-desc">Saat Digiflazz sudah stabil, switch kembali ke konfigurasi semula. Minta Kayong hapus banner maintenance dari CMS.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">HPP di supplier backup mungkin berbeda dengan Digiflazz. <strong>Kalau HPP backup lebih mahal, margin GoPop lebih kecil</strong> selama periode gangguan — ini trade-off yang diterima demi tetap melayani user.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Transaksi yang sudah dikirim ke Digiflazz dan masih "Diproses" saat gangguan terjadi <strong>tidak otomatis di-retry ke backup</strong> — perlu ditangani manual oleh Rifky/Acoy satu per satu di Monitoring.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setiap switch supplier dicatat otomatis: siapa yang switch, dari mana ke mana, dan kapan. Berguna untuk evaluasi performa dan reliabilitas supplier.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Tidak ada supplier backup yang dikonfigurasi — tidak bisa switch ke mana-mana</div>
+          <div class="bc-user">Semua transaksi produk terdampak gagal sampai Digiflazz recover.</div>
+          <div class="bc-handle">Nonaktifkan produk terdampak sementara agar user tidak bisa checkout (dan uang tidak tertahan). Pasang banner maintenance. Ini harus jadi pelajaran untuk segera setup supplier backup sebelum gangguan berikutnya terjadi.</div>
+          <div class="bc-owner">PIC: Ipong (setup supplier backup sebagai prioritas) · Kayong (banner maintenance)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Digiflazz sudah recover tapi Ipong lupa switch balik — semua transaksi terus ke backup yang lebih mahal</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ipong set alarm/reminder manual saat switch ke backup. Ke depan bisa ada fitur auto-switch balik saat Digiflazz terdeteksi stabil kembali selama X menit berturut-turut.</div>
+          <div class="bc-owner">PIC: Ipong (reminder manual) · Irwan + Rifky (auto-switch fitur)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Tidak ada auto-alert saat error rate Digiflazz tinggi — Ipong tahu gangguan hanya dari laporan Rifky atau user komplain</div>
+          <div class="bn-a">Sistem harus pantau error rate per supplier secara real-time. Kalau lebih dari X% transaksi ke satu supplier gagal dalam 15 menit, kirim alert WA otomatis ke Ipong dan Acoy. Deteksi lebih cepat = dampak lebih kecil ke user.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (implementasi auto-monitoring error rate supplier)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Layanan tetap berjalan via supplier backup selama gangguan</div><div class="hasil-item">User hanya sedikit yang terdampak</div><div class="hasil-item">Switch tercatat untuk evaluasi supplier</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Tidak ada backup → layanan mati total selama gangguan</div><div class="hasil-item">Lupa switch balik → margin lebih kecil dari seharusnya</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('prd-f01',null)">← F01: Kelola Produk</div>
+    <div class="fn-btn next" onclick="go('cms-f01',null)">📣 CMS →</div>
+  </div>
+</div>
+
+<!-- ============================================================ CMS ============================================================ -->
+<div id="page-cms-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📣 CMS <span>›</span> F01</div>
+    <div class="fh-title">Update Banner & Artikel di Homepage</div>
+    <div class="fh-desc">Kayong dan Luqman (Marketing) mengelola konten yang tampil di homepage app/web — banner promo dan artikel Tips & Promo. Perubahan yang disimpan di dashboard langsung terlihat user dalam beberapa menit.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Kayong / Luqman (Marketing)</span><span class="pill pill-trigger">🔔 Ada konten baru atau konten yang perlu diupdate</span><span class="pill pill-time">⏱ Berlaku dalam 5 menit setelah disimpan</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Update Banner</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu CMS di dashboard</div><div class="step-desc">Tampil daftar banner aktif dan nonaktif, dipisahkan per platform: App Mobile dan Web Desktop. Kayong bisa lihat preview bagaimana banner terlihat di masing-masing platform sebelum mengubah apapun.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Buat banner baru atau edit yang ada</div><div class="step-desc">Untuk banner baru klik "Tambah Banner". Form berisi:<ul><li><strong>Gambar:</strong> Upload file JPG/PNG, maksimal 2MB. Ada dua slot: versi mobile (portrait) dan desktop (landscape)</li><li><strong>Link tujuan:</strong> Ke mana user diarahkan saat tap banner — kategori produk, artikel, atau URL tertentu</li><li><strong>Platform:</strong> Tampil di App, Web, atau keduanya</li><li><strong>Status:</strong> Aktif atau nonaktif</li></ul></div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Preview sebelum publish</div><div class="step-desc">Klik "Lihat Preview" untuk pastikan gambar tampil dengan benar dan tidak terpotong di kedua platform. Wajib dilakukan sebelum simpan untuk menghindari tampilan yang aneh di app user.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Simpan — berlaku dalam 5 menit</div><div class="step-desc">Klik "Simpan" → banner tersimpan dan dalam maksimal 5 menit sudah tampil di app/web semua user. Tidak perlu approval tambahan untuk perubahan konten rutin.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Maksimal <strong>5 banner aktif sekaligus per platform</strong>. Kalau sudah 5, nonaktifkan yang lama dulu sebelum tambah yang baru. User melihat banner berputar carousel secara otomatis.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Konten yang menyebut harga atau promo spesifik <strong>wajib dikonfirmasi ke Bili atau Acoy sebelum dipublish</strong>. Jangan publish promo yang belum disetujui — bisa menimbulkan masalah kalau harga yang dijanjikan di banner berbeda dengan yang ada di sistem.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Untuk kondisi darurat (misalnya butuh pasang banner maintenance segera), ada tombol <strong>"Force Refresh"</strong> yang membuat perubahan tampil dalam hitungan detik, bukan menunggu 5 menit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Banner muncul tapi gambar tidak tampil — kotak kosong di homepage user</div>
+          <div class="bc-user">User melihat area banner kosong atau placeholder abu-abu.</div>
+          <div class="bc-handle">Biasanya karena file terlalu besar (lebih dari 2MB) atau format tidak didukung. Kayong perlu compress gambar dulu — bisa pakai tools online gratis seperti TinyPNG. Upload ulang file yang sudah dikompres.</div>
+          <div class="bc-owner">PIC: Kayong (compress dan re-upload gambar)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Kayong publish banner dengan harga promo yang belum disetujui Bili</div>
+          <div class="bc-user">User melihat promo dan mulai transaksi berharap dapat harga tersebut.</div>
+          <div class="bc-handle">Nonaktifkan banner segera (bisa dalam hitungan detik dengan Force Refresh). Koordinasi Acoy, Bili, dan Kayong untuk putuskan: apakah promo ini akan dihormati, atau perlu komunikasi klarifikasi ke user. Buat SOP yang jelas: semua konten yang menyebut harga atau persentase diskon harus dapat sign-off tertulis dari Bili dulu.</div>
+          <div class="bc-owner">PIC: Kayong (nonaktifkan segera) · Bili (keputusan) · Acoy (koordinasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">CMS belum terhubung ke server — perubahan Kayong tidak pernah sampai ke user</div>
+          <div class="bn-a">Ini gap kritis (D-GAP-18). Semua perubahan CMS yang Kayong buat saat ini hanya tersimpan di browser mereka — refresh browser maka data hilang, dan perubahan tidak pernah sampai ke app/web user. Irwan + Rifky perlu menghubungkan CMS ke server sebagai prioritas tinggi agar fitur ini benar-benar bisa dipakai Kayong.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (hubungkan CMS ke BE) · Isal + Ipong (update FE Dashboard)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Banner baru tampil di app/web user dalam 5 menit</div><div class="hasil-item">Konten sesuai strategi marketing yang sudah disetujui</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Gambar tidak tampil karena file terlalu besar</div><div class="hasil-item">Promo belum disetujui tapi sudah dipublish</div><div class="hasil-item">CMS tidak terhubung server — perubahan tidak sampai ke user</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('prd-f02',null)">← Produk F02</div>
+    <div class="fn-btn next" onclick="go('usr-f01',null)">👤 Pengguna →</div>
+  </div>
+</div>
+
+<!-- ============================================================ PENGGUNA ============================================================ -->
+<div id="page-usr-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">👤 Pengguna <span>›</span> F01</div>
+    <div class="fh-title">Cari & Lihat Profil User</div>
+    <div class="fh-desc">CS sering perlu mencari profil user saat ada komplain — untuk cek riwayat transaksi, verifikasi identitas, atau lihat status akun mereka. Ini adalah flow yang paling sering dipakai CS setiap harinya.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 CS · Acoy</span><span class="pill pill-trigger">🔔 Ada komplain atau kebutuhan verifikasi identitas user</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu Pengguna di dashboard</div><div class="step-desc">Tampil daftar semua consumer yang terdaftar, dengan kolom: nama, nomor HP, tanggal bergabung, total transaksi, dan status akun saat ini.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Cari user berdasarkan nama atau nomor HP</div><div class="step-desc">Ketik di kolom pencarian. Untuk transaksi guest (tanpa akun login), gunakan ref_id transaksi atau nomor WA yang mereka isi saat checkout via form pencarian khusus guest.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Buka profil — baca semua informasi</div><div class="step-desc">Halaman profil menampilkan:<ul><li><strong>Data profil:</strong> Nama, nomor HP, email (kalau ada), tanggal bergabung</li><li><strong>Status akun:</strong> Aktif / Terkunci (sisa waktu unlock) / Belum Terverifikasi / Suspend</li><li><strong>20 transaksi terakhir:</strong> Produk, nominal, status, waktu</li><li><strong>Riwayat tiket:</strong> Semua tiket komplain yang pernah dibuat user ini</li></ul></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">CS bisa lihat semua informasi profil tapi <strong>tidak bisa mengubah data profil user</strong>. Perubahan data hanya bisa dilakukan user sendiri dari app, atau Super Admin kalau ada alasan khusus yang terdokumentasi.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Password tidak pernah tampil di dashboard dalam bentuk apapun. CS tidak bisa tahu password user — kalau lupa password, hanya bisa trigger kirim link reset ke email atau OTP ke nomor HP terdaftar.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setiap admin yang membuka profil user dicatat secara otomatis untuk keperluan audit privacy. Ini standar keamanan data user.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User komplain via WA tapi tidak menyebutkan nomor HP terdaftar — CS tidak bisa cari</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">CS minta user berikan nomor HP yang terdaftar di GoPop, atau nomor tiket kalau pernah komplain sebelumnya. Alternatif: minta ID transaksi — CS bisa cari dari Monitoring menggunakan ID tersebut dan dari sana ketemu profil usernya.</div>
+          <div class="bc-owner">PIC: CS (minta info tambahan dari user)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Transaksi guest tidak bisa ditemukan karena tidak ada akun terdaftar</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Gunakan form pencarian guest di halaman Pengguna: masukkan ref_id transaksi (dari WA konfirmasi yang diterima guest) atau nomor WA yang diisi saat checkout. Kalau tidak ada keduanya, cari dari Monitoring Transaksi dengan filter periode waktu dan produk yang diklaim user.</div>
+          <div class="bc-owner">PIC: CS (investigasi manual) · Isal + Ipong (pastikan fitur guest lookup tersedia)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">CS menemukan profil dan punya gambaran lengkap situasi user</div><div class="hasil-item">Riwayat transaksi dan tiket sebelumnya tersedia untuk konteks</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">User tidak bisa ditemukan karena data yang diberikan tidak cukup</div><div class="hasil-item">Transaksi guest tidak ada di sistem karena tidak ada akun</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('cms-f01',null)">← CMS</div>
+    <div class="fn-btn next" onclick="go('usr-f02',null)">F02: Handle Akun Bermasalah →</div>
+  </div>
+</div>
+
+<div id="page-usr-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">👤 Pengguna <span>›</span> F02</div>
+    <div class="fh-title">Handle Akun User yang Bermasalah</div>
+    <div class="fh-desc">Akun user bisa bermasalah karena berbagai alasan: terkunci karena salah password berkali-kali, belum terverifikasi OTP, atau ter-suspend. CS perlu tahu cara menangani setiap situasi ini dengan benar.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 CS · Acoy (untuk suspend/reaktivasi)</span><span class="pill pill-trigger">🔔 User komplain tidak bisa login</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Tiga Situasi & Cara Handle</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">🔒</div><div class="rule-text"><strong>Akun Terkunci (salah password 5x):</strong><br>CS klik "Buka Kunci Akun" di profil user → akun langsung bisa dipakai tanpa menunggu 30 menit. Wajib verifikasi identitas dulu — tanya data yang hanya pemilik asli yang tahu (nama lengkap, nomor HP terdaftar, atau tanggal bergabung kira-kira).</div></div>
+        <div class="rule"><div class="rule-icon">📱</div><div class="rule-text"><strong>Akun Belum Terverifikasi (belum OTP sejak daftar):</strong><br>CS klik "Kirim Ulang OTP Verifikasi" → user dapat WA dengan kode OTP baru yang berlaku 5 menit. Berguna kalau user bilang OTP-nya tidak datang saat pertama daftar.</div></div>
+        <div class="rule"><div class="rule-icon">🚫</div><div class="rule-text"><strong>Akun Ter-suspend:</strong><br>CS tidak bisa lakukan reaktivasi — ini wewenang Acoy atau Super Admin. CS informasikan ke user untuk hubungi GoPop dengan alasan yang jelas kenapa ingin reaktivasi. CS buat tiket dan eskalasi ke Acoy.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Verifikasi identitas WAJIB sebelum unlock akun.</strong> CS tidak boleh unlock akun tanpa konfirmasi bahwa yang minta adalah pemilik asli — ada risiko orang lain mencoba ambil alih akun user lain.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Semua aksi CS pada akun user dicatat di sistem: siapa CS yang melakukan, aksi apa, dan kapan. Ini penting kalau ada dispute atau audit keamanan.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">CS tidak bisa melakukan suspend akun user — itu wewenang Acoy dan Super Admin saja.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Orang lain yang mengaku sebagai pemilik akun minta CS unlock — identitas mencurigakan</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">CS tolak dengan sopan dan minta user verifikasi melalui jalur yang lebih aman: minta reset password via OTP ke nomor HP yang terdaftar. Kalau bisa melakukan itu, berarti mereka punya akses ke nomor HP pemilik asli. Jangan pernah unlock berdasarkan "feeling" — selalu verifikasi data konkret.</div>
+          <div class="bc-owner">PIC: CS (keputusan kasus per kasus) · Acoy (eskalasi kalau ada indikasi pengambilalihan akun)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">OTP sudah dikirim ulang berkali-kali tapi tidak masuk ke WA user</div>
+          <div class="bc-user">"Kode OTP tidak pernah datang ke WA saya."</div>
+          <div class="bc-handle">CS perlu troubleshoot bersama user: (1) pastikan nomor HP yang terdaftar benar, (2) pastikan WA di nomor tersebut aktif dan tidak ada masalah, (3) minta user tunggu 5 menit lalu coba lagi. Kalau masih tidak masuk setelah 3 percobaan, kemungkinan ada masalah di layanan pengiriman WA — eskalasi ke Irwan untuk investigasi teknikal.</div>
+          <div class="bc-owner">PIC: CS (troubleshoot awal) · Irwan (investigasi teknikal layanan WA)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Status "Terkunci" dan "Belum Terverifikasi" tidak tampil di dashboard — CS tidak tahu kondisi akun sebenarnya</div>
+          <div class="bn-a">Status akun harus lengkap dan jelas di profil user: bukan hanya Aktif/Suspend, tapi juga Terkunci (beserta sisa waktu buka otomatis) dan Belum Terverifikasi. Tanpa ini CS tidak bisa bantu user yang datang dengan masalah login tanpa tahu apa penyebabnya.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (tampilkan semua status akun) · Irwan + Rifky (pastikan data status tersedia di BE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Akun terkunci berhasil dibuka — user bisa login kembali</div><div class="hasil-item">OTP terkirim — user bisa verifikasi akun</div><div class="hasil-item">Akun suspend → tiket dibuat dan dieskalasi ke Acoy</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Identitas tidak terverifikasi — CS tidak bisa unlock, user perlu jalur lain</div><div class="hasil-item">OTP tidak terdelivery — masalah di layanan WA perlu investigasi Irwan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('usr-f01',null)">← F01: Cari User</div>
+    <div class="fn-btn next" onclick="go('role-f01',null)">🛡️ Role & Akses →</div>
+  </div>
+</div>
+
+<!-- ============================================================ ROLE & AKSES ============================================================ -->
+<div id="page-role-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🛡️ Role & Akses <span>›</span> F01</div>
+    <div class="fh-title">Kelola Role & Permission Tim</div>
+    <div class="fh-desc">Acoy sebagai Super Admin mengatur apa yang bisa dilihat dan dilakukan setiap anggota tim di dashboard. Ini memastikan tidak ada yang bisa mengakses hal yang bukan wewenangnya.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Super Admin (Acoy)</span><span class="pill pill-trigger">🔔 Ada kebutuhan perubahan permission role</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu Role & Akses</div><div class="step-desc">Tampil semua role yang ada: Super Admin, Ops, Finance, CS, IT. Setiap role punya deskripsi singkat siapa yang memakainya dan berapa anggota tim yang punya role tersebut saat ini.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Pilih role yang akan diubah</div><div class="step-desc">Klik nama role → muncul matrix permission: daftar semua menu dan aksi di dashboard dengan toggle aktif/nonaktif. Contoh: role CS punya toggle aktif untuk "Lihat Monitoring" tapi nonaktif untuk "Aksi di Monitoring" seperti refund atau retry.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Update permission — simpan</div><div class="step-desc">Toggle permission yang perlu diubah → klik "Simpan Perubahan". Berlaku langsung untuk semua anggota tim dengan role tersebut — tidak perlu mereka logout/login ulang.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Hanya <strong>Super Admin yang bisa mengubah permission role</strong>. Tidak ada role lain yang bisa masuk ke menu ini — mencegah admin memberi dirinya sendiri akses lebih dari yang seharusnya.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Permission yang diset di sini <strong>harus di-enforce juga di server</strong>, bukan hanya menyembunyikan menu di tampilan. Seseorang yang tahu URL endpoint tidak boleh bisa bypass pembatasan ini.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Setiap perubahan permission dicatat permanen: siapa Acoy yang mengubah, apa yang diubah, dan kapan. Tidak bisa dihapus dari log.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Permission terlalu luas — CS bisa akses dan aksi hal yang bukan wewenangnya (misal refund)</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Audit log menampilkan aksi yang tidak seharusnya. Acoy perbaiki permission CS segera dan review semua aksi yang dilakukan CS dalam periode permission terlalu luas. Kalau ada aksi finansial yang tidak seharusnya, Agung perlu investigasi dampaknya.</div>
+          <div class="bc-owner">PIC: Acoy (perbaiki permission + audit dampak) · Agung (dampak finansial)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Permission hanya di tampilan (FE) tapi tidak di server — ada yang bypass lewat URL langsung</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Ini gap keamanan serius (D-GAP-21). Setiap endpoint sensitif di server HARUS punya pengecekan permission sendiri — tidak boleh hanya mengandalkan tampilan yang disembunyikan di FE. Harus diimplementasi Irwan + Rifky di BE sebagai prioritas tinggi.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (permission check di setiap endpoint BE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Acoy tidak bisa verifikasi permission sudah benar tanpa login pakai akun role lain untuk cek</div>
+          <div class="bn-a">Tambahkan fitur "Preview sebagai Role X" — Acoy bisa lihat tampilan dashboard persis seperti yang dilihat CS atau Finance tanpa perlu buat akun baru atau logout. Ini sangat membantu saat setup permission pertama kali atau setelah ada perubahan besar.</div>
+          <div class="bn-owner">PIC: Isal + Ipong (implementasi preview mode per role)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Flow Sukses</div><div class="hasil-items"><div class="hasil-item">Setiap anggota tim hanya bisa akses dan aksi sesuai wewenangnya</div><div class="hasil-item">Perubahan permission berlaku langsung tanpa perlu logout ulang</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Flow Gagal</div><div class="hasil-items"><div class="hasil-item">Permission terlalu luas — ada yang bisa aksi di luar wewenang</div><div class="hasil-item">Permission hanya di FE, tidak di server — bisa di-bypass</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('usr-f02',null)">← Pengguna F02</div>
+    <div class="fn-btn next" onclick="go('role-f02',null)">F02: Tambah & Nonaktifkan Anggota →</div>
+  </div>
+</div>
+
+<div id="page-role-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">🛡️ Role & Akses <span>›</span> F02</div>
+    <div class="fh-title">Tambah & Nonaktifkan Anggota Tim</div>
+    <div class="fh-desc">Saat ada anggota tim baru yang perlu akses dashboard, atau anggota lama yang sudah tidak bekerja di GoPop, Acoy yang mengatur akses mereka. Ini harus dilakukan segera — jangan tunggu berhari-hari.</div>
+    <div class="fh-pills"><span class="pill pill-who">👥 Super Admin (Acoy)</span><span class="pill pill-trigger">🔔 Ada anggota baru atau anggota yang keluar</span></div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Tambah Anggota Baru</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka menu Tim di Role & Akses</div><div class="step-desc">Tampil semua anggota tim yang punya akses dashboard, beserta role dan status akun masing-masing (Aktif/Nonaktif).</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Tambah Anggota" — isi data</div><div class="step-desc">Isi: email kerja anggota baru, nama lengkap, dan pilih role yang sesuai dengan posisi mereka. Email ini yang akan dipakai untuk login ke dashboard.</div></div></div>
+        <div class="step"><div class="step-num sn-sys">3</div><div class="step-body"><div class="step-title">Sistem kirim email undangan</div><div class="step-desc">Anggota baru dapat email berisi link untuk set password pertama kali. Link berlaku 24 jam. Setelah set password, mereka langsung bisa login dengan role yang sudah ditentukan Acoy.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Nonaktifkan Anggota yang Keluar</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Temukan anggota di daftar Tim</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Nonaktifkan Akun" — konfirmasi</div><div class="step-desc">Akun langsung tidak bisa dipakai login. Kalau yang bersangkutan sedang login saat dinonaktifkan, mereka otomatis di-logout dalam beberapa menit. Semua riwayat aksi mereka tetap tersimpan — tidak bisa dihapus.</div></div></div>
+      </div>
+      <div class="co co-warn" style="margin-top:10px;">
+        <span>⚠️</span>
+        <div><strong>Penting:</strong> Nonaktifkan akun anggota yang keluar sesegera mungkin — jangan tunggu. Akun aktif mantan karyawan adalah risiko keamanan serius yang tidak boleh dibiarkan.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text"><strong>Akun dinonaktifkan, bukan dihapus.</strong> Semua riwayat aksi mantan anggota tetap ada sebagai bagian dari audit trail. Nama mereka masih muncul di log aksi lama.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Satu email hanya bisa dipakai satu akun. Kalau seseorang bergabung kembali setelah keluar, akun lama bisa diaktifkan kembali — tidak perlu buat akun baru.</div></div>
+        <div class="rule"><div class="rule-icon">📌</div><div class="rule-text">Acoy disarankan melakukan <strong>audit daftar anggota setiap bulan</strong> — bandingkan dengan daftar karyawan aktif yang sebenarnya. Nonaktifkan yang sudah tidak relevan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Mantan karyawan masih punya akses aktif karena lupa dinonaktifkan</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Acoy audit daftar akun aktif vs daftar karyawan aktif yang sebenarnya. Nonaktifkan semua yang sudah tidak bekerja. Kalau ditemukan akses mencurigakan dari akun yang harusnya nonaktif, investigasi segera apakah ada data yang diakses atau aksi yang dilakukan.</div>
+          <div class="bc-owner">PIC: Acoy (audit bulanan dan tindakan segera)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Link undangan anggota baru sudah expired sebelum dibuka — sudah lewat 24 jam</div>
+          <div class="bc-user">Anggota baru tidak bisa set password karena link kadaluarsa.</div>
+          <div class="bc-handle">Acoy klik "Kirim Ulang Undangan" di profil anggota yang bersangkutan. Link baru dikirim ke email yang sama. Sarankan anggota baru langsung set password begitu email masuk — jangan ditunda.</div>
+          <div class="bc-owner">PIC: Acoy (kirim ulang undangan)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Tambah Anggota</div><div class="hasil-items"><div class="hasil-item">Anggota baru dapat email undangan dan bisa set password</div><div class="hasil-item">Setelah set password, langsung bisa akses dashboard sesuai role</div></div></div>
+        <div class="hasil-box hasil-ok" style="border-color:#BBF7D0;"><div class="hasil-title">✅ Nonaktifkan Anggota</div><div class="hasil-items"><div class="hasil-item">Akun langsung tidak bisa dipakai login</div><div class="hasil-item">Riwayat aksi tetap tersimpan untuk audit</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('role-f01',null)">← F01: Kelola Role</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Halaman Utama</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function go(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sbi').forEach(s => s.classList.remove('active'));
+  const p = document.getElementById('page-' + id);
+  if (p) p.classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    document.querySelectorAll('.sbi').forEach(s => {
+      if (s.getAttribute('onclick') && s.getAttribute('onclick').includes("'" + id + "'")) {
+        s.classList.add('active');
+      }
+    });
+  }
+  document.querySelector('.main').scrollTop = 0;
+}
+function tog(header) {
+  const body = header.nextElementSibling;
+  const t = header.querySelector('.fb-toggle');
+  const open = body.classList.toggle('open');
+  t.style.transform = open ? 'rotate(180deg)' : '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.fb-body').forEach(b => b.classList.add('open'));
+});
+</script>
+</body>
+</html>
