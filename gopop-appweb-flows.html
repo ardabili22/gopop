@@ -189,6 +189,29 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('a-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Lupa Password</span></div>
     <div class="sbi" onclick="go('a-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Logout</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#F59E0B"></div>03 · Transfer E-Wallet</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('t-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input Tujuan & Nominal</span></div>
+    <div class="sbi" onclick="go('t-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Inquiry Nama Penerima</span></div>
+    <div class="sbi" onclick="go('t-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Pilih Bayar</span></div>
+    <div class="sbi" onclick="go('t-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Bayar & Status Processing</span></div>
+    <div class="sbi" onclick="go('t-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Transfer Sukses</span></div>
+    <div class="sbi" onclick="go('t-f06',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F06 · Transfer Gagal & Refund</span></div>
+  </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#8B5CF6"></div>03 · Transfer E-Wallet</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('t-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Pilih E-Wallet & Input Data</span></div>
+    <div class="sbi" onclick="go('t-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Inquiry Nama Penerima</span></div>
+    <div class="sbi" onclick="go('t-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Pilih Bayar</span></div>
+    <div class="sbi" onclick="go('t-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Proses & Status Transaksi</span></div>
+    <div class="sbi" onclick="go('t-f05',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F05 · Transfer Gagal</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -1663,9 +1686,1442 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
       </div>
     </div>
   </div>
+  
+<!-- ============================================================ TRANSFER E-WALLET ============================================================ -->
+<div id="page-t-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F01</div>
+    <div class="fh-title">Input E-Wallet Tujuan & Nominal</div>
+    <div class="fh-desc">User memilih e-wallet tujuan dan mengisi nomor penerima serta nominal transfer. Ini adalah langkah pertama dari 3 langkah checkout — progress bar step 1 aktif (lime).</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 01 Input (node 1:297)</div>
+        <div class="figma-ref-desc">Header: "Transfer E-Wallet" + sub "Kirim ke dompet digital mana saja". Progress bar 3 langkah (step 1 lime). Strip CTA "PRODUK UNGGULAN — GoPay → OVO · Fee Rp 1.000". Section "Pilih E-Wallet Tujuan": grid 4 — GoPay, OVO, DANA, Shopee. Section "Nomor Tujuan": field "08xx xxxx xxxx". Section "Nominal Transfer": prefix Rp + input angka + 6 preset (Rp20rb/50rb/100rb/150rb/200rb/500rb).</div>
+        <div class="figma-screens">
+          <span class="fs-tag">01 - Transfer Input (1:297)</span>
+          <span class="fs-tag">01b - Input Alt (1:373)</span>
+          <span class="fs-tag">02 - Input Filled (1:449)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Transfer" dari homepage atau shortcut</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen Transfer E-Wallet terbuka — step 1 aktif</div>
+            <div class="step-desc">Header menampilkan tombol kembali "←", judul "Transfer E-Wallet", dan subjudul "Kirim ke dompet digital mana saja". Progress bar 3 langkah tampil di bawah header — step 1 berwarna lime, step 2 dan 3 abu-abu. Strip "PRODUK UNGGULAN: GoPay → OVO · Fee Rp 1.000" tampil sebagai highlight hero product.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User pilih e-wallet tujuan dari grid 4 pilihan</div>
+            <div class="step-desc">Grid menampilkan: <strong>GoPay, OVO, DANA, ShopeePay</strong>. Tap salah satu — pilihan yang dipilih berubah visual (border ungu aktif, ikon lebih besar atau background berbeda). Hanya bisa pilih satu e-wallet sekaligus.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User isi nomor tujuan</div>
+            <div class="step-desc">Field "Nomor Tujuan" dengan placeholder "08xx xxxx xxxx". User ketik nomor HP penerima yang terdaftar di e-wallet tujuan. Field otomatis format nomor dengan spasi setiap 4 digit untuk kemudahan baca. Keyboard numerik muncul otomatis.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User isi atau pilih nominal transfer</div>
+            <div class="step-desc">Dua cara mengisi nominal:<ul>
+              <li><strong>Ketik manual:</strong> Tap field "Nominal Transfer" (prefix Rp sudah ada), ketik angka langsung. Field menampilkan angka dengan format titik ribuan otomatis: "20.000"</li>
+              <li><strong>Tap preset:</strong> Ada 6 tombol nominal cepat: Rp20.000, Rp50.000, Rp100.000, Rp150.000, Rp200.000, Rp500.000. Tap langsung isi field.</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Tombol "Lanjut" aktif — user tap untuk ke step 2</div>
+            <div class="step-desc">Tombol "Lanjut" di bagian bawah screen aktif (lime) hanya setelah semua field terisi valid: e-wallet dipilih, nomor diisi minimal 10 digit, dan nominal lebih dari Rp0. Tap "Lanjut" untuk memulai inquiry nama penerima (step 2).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Minimal transfer Rp10.000, maksimal Rp5.000.000 per transaksi.</strong> Batas ini dari ketentuan e-wallet tujuan dan manajemen risiko GoPop. Kalau user isi di luar range ini, tombol "Lanjut" tetap nonaktif dan ada pesan batas yang jelas.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Fee layanan flat Rp1.000</strong> untuk semua transfer e-wallet ke semua tujuan (GoPay, OVO, DANA, ShopeePay) — ini differentiator utama GoPop vs kompetitor (OVO charge Rp1.500, LinkAja Rp1.500). Fee ini selalu ditampilkan transparan di strip CTA.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nomor tujuan harus nomor HP Indonesia</strong> (dimulai dengan 08 atau +62, 10-13 digit). Format internasional (+62xxx) otomatis dikonversi ke format lokal (08xxx) sebelum dikirim ke e-wallet.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak perlu login untuk mengisi form ini.</strong> Login hanya diminta saat checkout (step 3) kalau user belum login — setelah field terisi, bukan di awal.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User salah isi nominal — ketik "200000" tapi maksud hanya "20000"</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Field menampilkan "Rp 200.000" padahal maksudnya Rp 20.000.</div>
+          <div class="bc-handle">Tidak ada handle otomatis — user harus hapus dan isi ulang. Yang bisa dilakukan: tombol preset membuat nominal selalu tepat. Kalau user tap Rp20.000, tidak ada risiko salah ketik. Dorong penggunaan preset untuk nominal umum.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (pastikan field nominal punya tombol hapus yang mudah diakses)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User ingin transfer ke e-wallet lain yang tidak ada di list (mis. LinkAja, Dana Kopi, dll)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Grid hanya menampilkan 4 e-wallet: GoPay, OVO, DANA, ShopeePay.</div>
+          <div class="bc-handle">Saat ini hanya 4 e-wallet yang didukung. Tampilkan keterangan kecil di bawah grid: "Lebih banyak e-wallet akan segera hadir." Ke depan, penambahan e-wallet perlu koordinasi Ipong (setting produk di dashboard) dan Irwan (integrasi biller).</div>
+          <div class="bc-owner">PIC: Ipong + Irwan (roadmap penambahan e-wallet) · Agung + Fikly (copy "segera hadir")</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Ada 3 versi screen Transfer Input di Figma (01, 01b, 01c) — Agung tidak tahu mana yang final</div>
+          <div class="bn-a">Sama seperti Homepage, Bili perlu tentukan satu versi final dan rename jadi "01 - Transfer Input [FINAL]". Arsipkan dua lainnya. Berdasarkan yang gue baca via Figma MCP, node 1:297 adalah versi paling lengkap dengan semua elemen (strip CTA, grid 4, field nomor, field nominal + 6 preset). Ini yang paling mungkin jadi final.</div>
+          <div class="bn-owner">PIC: Bili (konfirmasi versi final screen Transfer Input)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">E-wallet dipilih, nomor dan nominal terisi valid</div>
+            <div class="hasil-item">Tombol "Lanjut" aktif → user lanjut ke step 2 inquiry</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal / Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nominal di bawah Rp10.000 atau di atas Rp5.000.000 → tombol nonaktif + pesan batas</div>
+            <div class="hasil-item">Nomor kurang dari 10 digit → tombol nonaktif</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="flow-nav">
-    <div class="fn-btn" onclick="go('a-f04',null)">← F04: Lupa Password</div>
+    <div class="fn-btn" onclick="go('a-f05',null)">← Auth F05</div>
+    <div class="fn-btn next" onclick="go('t-f02',null)">F02: Inquiry Nama →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F02: INQUIRY -->
+<div id="page-t-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F02</div>
+    <div class="fh-title">Inquiry Nama Penerima</div>
+    <div class="fh-desc">Sebelum lanjut ke checkout, GoPop memverifikasi nomor tujuan ke e-wallet penerima dan mengambil nama terdaftar. Ini langkah kritis untuk mencegah salah kirim — user bisa konfirmasi nama penerima sebelum bayar.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 02 Filled (node 1:449)</div>
+        <div class="figma-ref-desc">State setelah nomor diisi dan inquiry berhasil. Field nomor tampil dengan nilai terisi. Di screen checkout (1:617) terlihat hasil inquiry: "081249343953 · Dewi Lestari" — nama penerima berhasil diambil dari sistem e-wallet tujuan.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">02 - Input Filled (1:449)</span>
+          <span class="fs-tag">03 - Checkout (1:617) — nama penerima tampil</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Lanjut" dari step 1</span>
+      <span class="pill pill-time">⏱ Target inquiry: &lt;3 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Sistem query ke e-wallet tujuan untuk verifikasi nomor</div>
+            <div class="step-desc">Saat user tap "Lanjut" dari step 1, GoPop mengirim permintaan ke Digiflazz untuk verifikasi nomor tujuan. Tombol "Lanjut" berubah jadi loading spinner. Di bawah field nomor muncul loading indicator kecil: "Memverifikasi nomor..."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Nama penerima berhasil didapat — tampilkan ke user</div>
+            <div class="step-desc">Di bawah field nomor tujuan muncul card kecil dengan nama penerima: misalnya <strong>"Dewi Lestari"</strong>. User bisa verifikasi ini adalah orang yang benar sebelum lanjut membayar. Ini momen paling penting untuk mencegah salah kirim.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User konfirmasi nama benar — tap "Lanjut" ke checkout</div>
+            <div class="step-desc">User melihat nama penerima dan mengkonfirmasi itu benar. Tap "Lanjut" membuka step 3 checkout. Progress bar step 2 berubah warna (dari abu ke ungu aktif), step 3 masih abu.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Inquiry nama penerima adalah langkah wajib</strong> — tidak bisa di-skip. Ini untuk melindungi user dari salah transfer karena nomor yang mirip. GoPop tidak bertanggung jawab atas transfer yang sudah dikonfirmasi user dengan nama yang benar.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nama dari inquiry adalah nama resmi yang terdaftar di e-wallet penerima.</strong> GoPop tidak memodifikasi atau memformat nama ini — ditampilkan apa adanya dari sistem e-wallet. Kalau nama tampil aneh (misalnya semua huruf besar), itu memang dari sistem mereka.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau inquiry gagal atau timeout, transaksi tidak bisa dilanjutkan.</strong> GoPop tidak akan proses transfer tanpa konfirmasi nama penerima. User harus coba lagi atau periksa kembali nomor yang diisi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Nomor tidak terdaftar di e-wallet tujuan — inquiry return "tidak ditemukan"</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Di bawah field nomor muncul: "Nomor ini tidak terdaftar di GoPay. Periksa kembali nomor tujuan." Tombol "Lanjut" tetap nonaktif.</div>
+          <div class="bc-handle">User harus perbaiki nomor — bisa salah ketik atau penerima memang tidak punya e-wallet tersebut. Pastikan pesan kesalahan menyebutkan nama e-wallet yang dicek (GoPay/OVO/DANA/ShopeePay) agar user tahu konteksnya.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (pesan error spesifik per e-wallet) · Irwan + Rifky (parse error dari Digiflazz dengan benar)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Inquiry timeout lebih dari 10 detik — Digiflazz atau e-wallet tujuan sedang lambat</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Loading spinner jalan lebih dari 10 detik, lalu muncul: "Verifikasi memakan waktu lama. Coba lagi?"</div>
+          <div class="bc-handle">Timeout setelah 10 detik. Tampilkan tombol "Coba Lagi" yang retry inquiry tanpa user perlu isi ulang nomor. Kalau setelah 3x retry masih gagal, tampilkan opsi: "Lanjut tanpa verifikasi nama" dengan peringatan risiko — ini untuk kasus emergency kalau sistem e-wallet sedang gangguan tapi user sangat yakin dengan nomor tujuannya.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (implementasi timeout + retry) · Bili (keputusan apakah ada opsi "lanjut tanpa verifikasi")</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User melihat nama penerima tidak sesuai ekspektasi — mungkin salah ketik nomor</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Nama tampil "Budi Santoso" padahal yang dimaksud adalah "Sari Dewi".</div>
+          <div class="bc-handle">User tap tombol "← Ubah Nomor" untuk kembali ke form input dan perbaiki nomor. Data yang sudah diisi (e-wallet dan nominal) tetap tersimpan — hanya nomor yang perlu diubah. Ini adalah fungsi yang paling penting dari fitur inquiry: menangkap salah ketik sebelum uang terkirim.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (tombol "Ubah Nomor" yang mempertahankan state form)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nama penerima tampil — user konfirmasi identitas sudah benar</div>
+            <div class="hasil-item">Lanjut ke checkout dengan data lengkap: e-wallet + nomor + nama + nominal</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor tidak terdaftar → pesan error jelas + user perbaiki nomor</div>
+            <div class="hasil-item">Timeout → retry otomatis, lalu opsi lanjut manual</div>
+            <div class="hasil-item">Nama salah → user bisa ubah nomor tanpa isi ulang dari awal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f01',null)">← F01: Input</div>
+    <div class="fn-btn next" onclick="go('t-f03',null)">F03: Checkout →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F03: CHECKOUT -->
+<div id="page-t-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F03</div>
+    <div class="fh-title">Checkout — Konfirmasi & Pilih Metode Bayar</div>
+    <div class="fh-desc">Step 3 (terakhir) sebelum bayar. User melihat ringkasan lengkap transaksi, bisa pakai kode promo, dan memilih metode pembayaran. Sticky bar di bawah selalu tampilkan total dan tombol "Bayar Sekarang".</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 03 Checkout (node 1:617)</div>
+        <div class="figma-ref-desc">Header: "Konfirmasi & Bayar" + sub "Transfer ke GoPay". Progress bar step 3 lime. Card ringkasan: E-Wallet GoPay, No. 081249343953, Nama Dewi Lestari, Nominal Rp20.000, Biaya layanan Rp1.000. Card total: Subtotal Rp20.000 + Biaya layanan Rp1.000 + Biaya pembayaran Gratis = Total Bayar Rp21.000. Kode Promo (opsional). Metode Pembayaran: Instan (QRIS ✓ default), E-Wallet (GoPay/OVO/DANA/ShopeePay), Virtual Account (BCA/BNI/Mandiri/BRI — Rp2.500), Gerai Retail (Alfamart/Indomaret — Rp3.000). Sticky bottom: "Total Bayar Rp21.000" + "Bayar Sekarang" (lime).</div>
+        <div class="figma-screens">
+          <span class="fs-tag">03 - Checkout (1:617)</span>
+          <span class="fs-tag-miss">Payment Instruction screen — BLOCKER, belum ada</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest (soft prompt login)</span>
+      <span class="pill pill-trigger">🔔 Tap "Lanjut" dari step 2 inquiry</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Halaman checkout terbuka — progress bar step 3 aktif (lime)</div>
+            <div class="step-desc">User melihat ringkasan lengkap di card pertama:<ul>
+              <li>Ikon e-wallet tujuan (misal GoPay) dengan label "Transfer ke GoPay"</li>
+              <li>Nomor dan nama penerima: "081249343953 · Dewi Lestari"</li>
+              <li>Baris detail: E-Wallet, No. Tujuan, Nama Penerima, Nominal, Biaya Layanan</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Card total ditampilkan</div>
+            <div class="step-desc">Card kedua menampilkan kalkulasi:<ul>
+              <li>Subtotal: Rp20.000</li>
+              <li>Biaya layanan: Rp1.000</li>
+              <li>Biaya pembayaran: Gratis (untuk QRIS/e-wallet) atau Rp2.500 (VA) atau Rp3.000 (retail)</li>
+              <li><strong>Total Bayar: Rp21.000</strong> (ditampilkan bold ungu)</li>
+            </ul>Total di sticky bar bawah selalu update real-time sesuai metode pembayaran yang dipilih.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User bisa isi kode promo (opsional)</div>
+            <div class="step-desc">Field kode promo dengan placeholder "COBA: MUURAH5". Tombol "Pakai" di sebelah kanan. Kalau kode valid, diskon diterapkan ke total dan tampil baris "Diskon" di card total. Kode promo tidak wajib diisi.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User pilih metode pembayaran</div>
+            <div class="step-desc">Empat kelompok metode pembayaran:<ul>
+              <li><strong>Instan — QRIS</strong> (default terpilih, Gratis) — scan QR dari semua e-wallet & bank</li>
+              <li><strong>E-Wallet</strong> — GoPay, OVO, DANA, ShopeePay (Gratis, deep-link ke app)</li>
+              <li><strong>Virtual Account</strong> — BCA, BNI, Mandiri, BRI (Rp2.500 per transaksi)</li>
+              <li><strong>Gerai Retail</strong> — Alfamart, Indomaret (Rp3.000, bayar tunai di kasir)</li>
+            </ul>Pilih metode → total di sticky bar update otomatis sesuai biaya pembayaran yang dipilih.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Bayar Sekarang" — proses pembayaran dimulai</div>
+            <div class="step-desc">Tombol "Bayar Sekarang" di sticky bar bawah. Tap → sistem buat order dan arahkan ke instruksi pembayaran sesuai metode yang dipilih.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>QRIS adalah metode default yang dipilih.</strong> Ini karena QRIS gratis (tidak ada biaya tambahan), tersedia di hampir semua bank dan e-wallet, dan prosesnya paling cepat. User bisa ganti ke metode lain kalau mau.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya pembayaran selalu tampil transparan</strong> di setiap pilihan metode dan update real-time di total. User tidak boleh kaget dengan biaya tambahan setelah tap bayar.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Soft prompt login muncul di sini untuk guest</strong> — bukan di awal flow. Sebelum tap "Bayar Sekarang", guest yang belum login mendapat modal kecil: "Login untuk simpan riwayat transaksi ini" dengan opsi "Login / Daftar" atau "Lanjut sebagai tamu". Guest tetap bisa bayar tanpa login.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setelah tap "Bayar Sekarang", data transaksi dikunci.</strong> User tidak bisa ubah nominal, nomor tujuan, atau e-wallet lagi. Kalau mau ubah, harus kembali ke step 1 (batalkan checkout).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Kode promo tidak valid atau sudah expired</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Pakai", muncul pesan inline merah di bawah field: "Kode promo tidak valid atau sudah berakhir."</div>
+          <div class="bc-handle">Field kode promo dikosongkan otomatis. Total tidak berubah. User bisa coba kode lain atau lanjut tanpa promo. Jangan blokir checkout hanya karena kode promo gagal.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (handle error kode promo tanpa blokir flow)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User pilih VA atau Retail tapi tidak sadar ada biaya tambahan — kaget saat lihat total</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Pilih BCA Virtual Account → total berubah dari Rp21.000 ke Rp23.500 (tambah Rp2.500).</div>
+          <div class="bc-handle">Ini perilaku yang benar dan transparan — biaya tambahan sudah tertulis jelas di setiap opsi ("Biaya Rp2.500" atau "Biaya Rp3.000") DAN total di sticky bar update real-time. User yang kaget berarti tidak baca — edukasi lewat copy yang lebih jelas. Tidak ada yang perlu di-fix di level teknikal.</div>
+          <div class="bc-owner">PIC: Bili (review copy biaya pembayaran agar lebih menonjol)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Setelah tap "Bayar Sekarang", user perlu lihat instruksi pembayaran — tapi screen Payment Instruction belum ada di Figma</div>
+          <div class="bn-a">Ini BLOCKER besar. Setelah tap "Bayar Sekarang", user yang pilih VA atau Retail perlu tahu nomor VA atau kode pembayaran mereka. Tanpa screen Payment Instruction (yang tampilkan nomor VA, QR code QRIS, atau kode Alfamart/Indomaret), flow tidak bisa selesai. Bili harus buat screen ini di Figma sebelum Agung bisa implement checkout sepenuhnya. Ini yang paling urgent dari semua missing screens.</div>
+          <div class="bn-owner">🔴 BLOCKER — PIC: Bili (buat Payment Instruction screen untuk QRIS, VA, E-Wallet deep-link, dan Retail code)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User melihat ringkasan lengkap dan total transparan</div>
+            <div class="hasil-item">Metode bayar dipilih, total terupdate</div>
+            <div class="hasil-item">Tap "Bayar Sekarang" → lanjut ke instruksi pembayaran</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Kode promo tidak valid → pesan inline, total tidak berubah</div>
+            <div class="hasil-item">Payment Instruction screen belum ada → BLOCKER implementasi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f02',null)">← F02: Inquiry</div>
+    <div class="fn-btn next" onclick="go('t-f04',null)">F04: Bayar & Processing →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F04: PROCESSING -->
+<div id="page-t-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F04</div>
+    <div class="fh-title">Bayar & Status Processing</div>
+    <div class="fh-desc">Setelah user selesai bayar (misalnya scan QRIS), sistem menunggu konfirmasi pembayaran dari Midtrans/DOKU lalu meneruskan transfer ke Digiflazz. Selama proses ini user melihat screen "Sedang Diproses".</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 04 Processing (node 1:829)</div>
+        <div class="figma-screens">
+          <span class="fs-tag">04 - Status Cek Transaksi (1:829)</span>
+          <span class="fs-tag-miss">Payment Instruction screen — BLOCKER</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Pembayaran berhasil dikonfirmasi gateway</span>
+      <span class="pill pill-time">⏱ Target selesai: &lt;30 detik untuk transfer e-wallet</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Per Metode Pembayaran</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:14px;"><span>ℹ️</span><div>Flow berbeda tergantung metode pembayaran yang dipilih di step sebelumnya.</div></div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1a</div>
+          <div class="step-body">
+            <div class="step-title">QRIS: User scan QR code dan bayar dari app bank/e-wallet</div>
+            <div class="step-desc">Screen Payment Instruction menampilkan QR code. User buka app GoPay/BCA/dll, scan QR, konfirmasi di app mereka. Setelah bayar, app tersebut menutup dan user kembali ke GoPop.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">1b</div>
+          <div class="step-body">
+            <div class="step-title">E-Wallet: Deep-link ke app e-wallet — user konfirmasi di sana</div>
+            <div class="step-desc">GoPop otomatis membuka app GoPay/OVO/DANA/ShopeePay via deep-link. User konfirmasi pembayaran di app tersebut lalu kembali ke GoPop. Kalau app tidak terinstall, GoPop tampilkan link alternatif (misalnya bayar via web).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">1c</div>
+          <div class="step-body">
+            <div class="step-title">Virtual Account: Tampilkan nomor VA — user transfer dari bank</div>
+            <div class="step-desc">Screen menampilkan nomor VA (misal: BCA 123456789012). User buka app bank, transfer ke nomor VA tersebut. VA berlaku 24 jam. Setelah transfer, sistem otomatis deteksi pembayaran.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">1d</div>
+          <div class="step-body">
+            <div class="step-title">Gerai Retail: Tampilkan kode pembayaran — user bayar di kasir</div>
+            <div class="step-desc">Screen menampilkan kode unik (misal: 12345678) dan instruksi ke kasir Alfamart/Indomaret. Kode berlaku 2 jam. Kasir input kode, user bayar tunai, kasir berikan struk.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Midtrans/DOKU kirim webhook konfirmasi pembayaran</div>
+            <div class="step-desc">Setelah user bayar, payment gateway (Midtrans atau DOKU) mengirim notifikasi ke server GoPop bahwa pembayaran berhasil. Status transaksi berubah dari <code>pending_payment</code> ke <code>paid</code>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">GoPop kirim perintah transfer ke Digiflazz</div>
+            <div class="step-desc">Setelah pembayaran dikonfirmasi, server GoPop mengirim perintah transfer ke Digiflazz. Status berubah ke <code>processing</code>. User melihat screen "Sedang Diproses" dengan animasi loading dan estimasi waktu.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">4</div>
+          <div class="step-body">
+            <div class="step-title">Digiflazz konfirmasi transfer berhasil</div>
+            <div class="step-desc">Digiflazz mengirim callback ke GoPop bahwa transfer ke e-wallet penerima sudah berhasil. Status berubah ke <code>sukses</code>. User otomatis diarahkan ke screen sukses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Selama processing, user tidak boleh tap tombol "Bayar" lagi.</strong> Mencegah double payment. Tombol "Bayar Sekarang" hilang setelah pembayaran dikonfirmasi. Screen processing hanya ada satu tombol: "Cek Status Transaksi".</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Transfer e-wallet seharusnya selesai dalam 30 detik</strong> setelah pembayaran dikonfirmasi. Kalau lebih dari 1 menit masih processing, perlu ada mekanisme auto-retry atau eskalasi ke Acoy.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau user tutup app saat processing, transaksi tetap berjalan di server.</strong> User bisa cek status nanti dari Riwayat Transaksi — statusnya akan terupdate sesuai hasil akhir.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Pembayaran berhasil tapi webhook dari Midtrans terlambat datang — status di GoPop masih "Menunggu Pembayaran"</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Sudah bayar QRIS tapi screen masih menunggu. User panik.</div>
+          <div class="bc-handle">Tampilkan pesan: "Pembayaran mungkin sedang diproses. Tunggu 5 menit dan tap 'Cek Status' sebelum bayar ulang." Ada tombol "Cek Status Transaksi" yang manual poll status. Ini penting untuk cegah user bayar dua kali karena panik. Kalau setelah 15 menit masih pending, sistem harus auto-check dan resolve.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (implementasi webhook handler + polling fallback) · Agung + Fikly (UI pesan jelas jangan bayar ulang)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User tutup app saat processing — kembali ke app tapi tidak tahu status transaksi</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Buka app lagi, kembali ke homepage. Tidak ada notifikasi status.</div>
+          <div class="bc-handle">Saat app dibuka kembali, cek apakah ada transaksi yang sedang processing. Kalau ada, tampilkan banner kecil di homepage: "Transaksi terakhir kamu sedang diproses. Tap untuk lihat status." Banner mengarah ke screen riwayat atau detail transaksi tersebut.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (banner resume transaksi saat app re-open) · Irwan + Rifky (API cek transaksi aktif)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pembayaran dikonfirmasi → Digiflazz proses transfer</div>
+            <div class="hasil-item">Transfer selesai dalam &lt;30 detik → screen sukses</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Webhook terlambat → pesan jelas jangan bayar ulang</div>
+            <div class="hasil-item">App ditutup saat processing → banner resume saat buka lagi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f03',null)">← F03: Checkout</div>
+    <div class="fn-btn next" onclick="go('t-f05',null)">F05: Transfer Sukses →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F05: SUKSES -->
+<div id="page-t-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F05</div>
+    <div class="fh-title">Transfer Sukses</div>
+    <div class="fh-desc">Transfer berhasil — Digiflazz konfirmasi uang sudah sampai ke e-wallet penerima. Screen sukses tampil dengan detail transaksi dan beberapa CTA lanjutan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 05 Sukses (node 1:866)</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05 - Status Sukses (1:866)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Digiflazz callback sukses → status jadi "sukses"</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses muncul dengan animasi konfeti/check</div>
+            <div class="step-desc">Screen langsung ganti dari "Sedang Diproses" ke tampilan sukses. Ada animasi singkat (checkmark hijau atau konfeti kecil) untuk memberi feedback positif yang jelas. Judul: "Transfer Berhasil! 🎉"</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Detail transaksi ditampilkan</div>
+            <div class="step-desc">Card detail berisi:<ul>
+              <li>Tujuan: GoPay — Dewi Lestari (081249343953)</li>
+              <li>Nominal transfer: Rp20.000</li>
+              <li>Biaya layanan: Rp1.000</li>
+              <li>Total dibayar: Rp21.000</li>
+              <li>Waktu: 14 Jan 2025, 13:42 WIB</li>
+              <li>ID Transaksi: GOP-2025011400123</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Notifikasi WA dikirim ke user (kalau ada nomor terdaftar)</div>
+            <div class="step-desc">Untuk user yang sudah login dengan nomor HP terdaftar, WA konfirmasi dikirim otomatis: "Transfer GoPop berhasil! Rp20.000 → Dewi Lestari (GoPay). ID: GOP-2025011400123."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">CTA lanjutan tersedia</div>
+            <div class="step-desc">Dua tombol di bawah:<ul>
+              <li><strong>"Transfer Lagi"</strong> — kembali ke screen Transfer Input dengan form kosong</li>
+              <li><strong>"Kembali ke Beranda"</strong> — kembali ke homepage</li>
+            </ul>Link "Lihat Detail Transaksi" mengarah ke halaman detail di Riwayat.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Screen sukses tidak boleh bisa di-back.</strong> Tombol Back Android/iOS di screen ini tidak aktif — mencegah user "kembali" ke checkout dan bingung mengira bisa bayar lagi. Satu-satunya cara keluar adalah via tombol CTA yang tersedia.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>ID Transaksi harus bisa di-copy.</strong> Tap ID transaksi → salin ke clipboard. Ini penting kalau user perlu report ke CS atau ke penerima sebagai bukti transfer.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Riwayat transaksi diupdate segera.</strong> Begitu screen sukses tampil, transaksi ini sudah bisa ditemukan di Riwayat dengan status "Sukses".</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Screen sukses muncul tapi notifikasi WA tidak terkirim ke user</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Screen sukses normal, tapi tidak ada WA masuk.</div>
+          <div class="bc-handle">Transaksi tetap sukses — notifikasi WA adalah bonus, bukan syarat. User bisa lihat bukti di screen sukses dan di Riwayat. Irwan perlu cek delivery log WA kalau ada laporan massal notifikasi tidak terkirim — kemungkinan ada masalah di layanan WA Business API.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (monitor WA notification delivery rate)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Screen sukses dengan animasi dan detail lengkap</div>
+            <div class="hasil-item">WA konfirmasi terkirim ke user (kalau ada nomor)</div>
+            <div class="hasil-item">Riwayat terupdate — transaksi bisa ditemukan</div>
+            <div class="hasil-item">User bisa transfer lagi atau kembali ke beranda</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal (minor)</div>
+          <div class="hasil-items">
+            <div class="hasil-item">WA tidak terkirim → transaksi tetap sukses, monitor delivery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f04',null)">← F04: Processing</div>
+    <div class="fn-btn next" onclick="go('t-f06',null)">F06: Gagal & Refund →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F06: GAGAL & REFUND -->
+<div id="page-t-f06" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F06</div>
+    <div class="fh-title">Transfer Gagal & Proses Refund</div>
+    <div class="fh-desc">Transfer gagal setelah pembayaran berhasil dikonfirmasi — misalnya nomor tidak aktif di e-wallet, sistem e-wallet tujuan sedang down, atau limit transfer terlampaui. Uang user sudah masuk ke GoPop tapi transfer tidak berhasil — harus di-refund.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 05h Gagal (node 1:11683)</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05h - Status Transaksi Gagal (1:11683)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Digiflazz callback gagal → status jadi "gagal"</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Transfer Gagal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-warn">1</div>
+          <div class="step-body">
+            <div class="step-title">Digiflazz callback gagal — status berubah ke "gagal"</div>
+            <div class="step-desc">Screen processing berganti ke screen gagal. Ada ikon X merah atau tanda seru. Judul: "Transfer Gagal" dengan pesan alasan yang ramah (bukan error code teknikal): misalnya "Nomor tujuan tidak aktif di GoPay saat ini."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Refund otomatis diproses — uang dikembalikan</div>
+            <div class="step-desc">Karena user sudah bayar, GoPop wajib kembalikan uang. Refund diproses ke metode pembayaran asal:<ul>
+              <li>QRIS/E-Wallet: Refund ke saldo e-wallet, 1–3 hari kerja</li>
+              <li>Virtual Account: Refund ke rekening bank sumber, 3–5 hari kerja</li>
+              <li>Gerai Retail: Refund via transfer bank manual oleh Agung, 3–5 hari kerja</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User diberitahu refund akan masuk</div>
+            <div class="step-desc">Screen gagal menampilkan: "Dana kamu akan dikembalikan ke [metode bayar] dalam [estimasi waktu]. Kamu akan mendapat konfirmasi via WA setelah refund diproses." Ada tombol "Hubungi CS" kalau user perlu bantuan lebih lanjut.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">CTA untuk coba lagi</div>
+            <div class="step-desc">Tombol "Coba Transfer Lagi" membawa user kembali ke screen input dengan e-wallet dan nominal yang sama terisi — user hanya perlu verifikasi ulang nomor tujuan. Ini mengurangi friction kalau masalahnya adalah kesalahan nomor yang bisa diperbaiki.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Refund wajib diproses paling lambat 1 hari kerja setelah transaksi gagal.</strong> Ini komitmen layanan GoPop ke user. Keterlambatan refund tanpa komunikasi adalah alasan terbesar user meninggalkan platform.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Alasan kegagalan harus ditampilkan dalam bahasa manusia,</strong> bukan kode error. "Gagal: ERR_503" tidak membantu user. "Nomor GoPay tujuan sedang tidak bisa menerima transfer" jauh lebih baik.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya layanan Rp1.000 juga di-refund</strong> bersamaan dengan nominal transfer. User tidak menanggung biaya apapun kalau transaksi gagal bukan karena kesalahan mereka.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya pembayaran gateway (misalnya Rp2.500 VA) mungkin tidak bisa di-refund</strong> karena sudah dibayar ke Midtrans/DOKU. Ini perlu dikomunikasikan jelas ke user dan dicantumkan di syarat & ketentuan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Refund terlambat lebih dari estimasi yang dijanjikan</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Sudah 3 hari kerja, uang belum kembali. User marah dan lapor ke CS.</div>
+          <div class="bc-handle">Acoy dan Agung harus monitor semua transaksi dengan status "gagal" yang refundnya belum selesai dalam SLA. Dashboard monitoring harus ada kolom "waktu refund" yang color-coded: hijau (dalam SLA), kuning (hampir lewat), merah (sudah lewat SLA). Proses manual refund yang terlambat segera dengan prioritas tinggi dan kirim WA permintaan maaf ke user.</div>
+          <div class="bc-owner">PIC: Agung (Finance — proses refund tepat waktu) · Acoy (monitor SLA refund) · Isal + Ipong (kolom refund status di dashboard)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User mencoba transfer lagi dengan nomor yang sama yang barusan gagal — kemungkinan besar akan gagal lagi</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Tap "Coba Transfer Lagi", form terisi sama, mencoba lagi.</div>
+          <div class="bc-handle">Tampilkan peringatan ringan sebelum proses ulang: "Nomor ini baru saja gagal. Pastikan penerima sudah konfirmasi nomor GoPay mereka aktif sebelum coba lagi." User tetap bisa lanjut kalau mau. Ini mengurangi biaya refund berulang untuk kasus yang sama.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (warning untuk retry ke nomor yang sama gagal)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Ditangani Dengan Baik</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User tahu transfer gagal dan alasannya (dalam bahasa manusia)</div>
+            <div class="hasil-item">Refund diproses otomatis dalam SLA yang dijanjikan</div>
+            <div class="hasil-item">WA konfirmasi refund dikirim saat dana kembali</div>
+            <div class="hasil-item">User bisa coba lagi dengan warning yang tepat</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Tidak Ditangani</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Refund molor tanpa notifikasi → user marah, CS kewalahan</div>
+            <div class="hasil-item">Alasan gagal berupa error code teknikal → user bingung</div>
+            <div class="hasil-item">Tidak ada monitoring SLA refund → terlambat tidak terdeteksi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f05',null)">← F05: Sukses</div>
     <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+<div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f04',null)">← F04: Lupa Password</div>
+    <div class="fn-btn" onclick="go('wel
+<!-- ============================================================ TRANSFER F01 ============================================================ -->
+<div id="page-t-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F01</div>
+    <div class="fh-title">Pilih E-Wallet Tujuan & Input Data Transfer</div>
+    <div class="fh-desc">Langkah pertama dari 3 langkah flow transfer. User pilih e-wallet tujuan, masukkan nomor HP penerima, dan pilih atau ketik nominal yang ingin dikirim. Ini adalah screen input utama sebelum konfirmasi.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 01 (node 1:297)</div>
+        <div class="figma-ref-desc">Header "Transfer E-Wallet" + "Kirim ke dompet digital mana saja". Progress bar 3 langkah (step 1 = lime aktif). Strip PRODUK UNGGULAN: "GoPay → OVO · Fee Rp 1.000". Card e-wallet: grid 4 (GoPay, OVO, DANA, Shopee). Field Nomor Tujuan (placeholder 08xx xxxx xxxx). Field Nominal Transfer (prefix Rp) + 6 preset: Rp20k/50k/100k/150k/200k/500k.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">01 - Transfer E-Wallet Input (1:297)</span>
+          <span class="fs-tag">02 - Transfer Filled (1:449)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Transfer" dari homepage atau navbar</span>
+      <span class="pill pill-time">⏱ Langkah 1 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen Transfer terbuka — user lihat form input lengkap</div>
+            <div class="step-desc">Ada 3 card section yang harus diisi secara berurutan:<ul>
+              <li><strong>Strip PRODUK UNGGULAN</strong> di atas — "GoPay → OVO · Fee Rp 1.000" sebagai reminder differentiator utama GoPop</li>
+              <li><strong>Card "Pilih E-Wallet Tujuan"</strong> — grid 4 ikon: GoPay, OVO, DANA, ShopeePay</li>
+              <li><strong>Card "Nomor Tujuan"</strong> — field input nomor HP</li>
+              <li><strong>Card "Nominal Transfer"</strong> — field input angka + 6 tombol preset</li>
+            </ul>
+            Progress bar 3 langkah ada di atas: step 1 (aktif, lime), step 2 (abu), step 3 (abu).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User tap ikon e-wallet tujuan</div>
+            <div class="step-desc">Tap salah satu dari 4 pilihan: GoPay, OVO, DANA, atau ShopeePay. E-wallet yang dipilih mendapat border ungu aktif dan background highlight. Hanya satu yang bisa dipilih sekaligus. Pilihan ini menentukan ke mana uang akan dikirim dan siapa yang memproses transfer.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User isi nomor HP tujuan</div>
+            <div class="step-desc">Tap field "Nomor Tujuan" — keyboard numerik muncul. Masukkan nomor HP yang terdaftar di e-wallet tujuan. Contoh: untuk transfer ke GoPay OVO penerima, masukkan nomor HP yang terdaftar di akun GoPay/OVO mereka. Format: minimal 10 digit, maksimal 13 digit.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User isi nominal transfer</div>
+            <div class="step-desc">Dua cara mengisi nominal:<ul>
+              <li><strong>Preset cepat:</strong> Tap salah satu dari 6 tombol (Rp20k, Rp50k, Rp100k, Rp150k, Rp200k, Rp500k) — langsung terisi di field input</li>
+              <li><strong>Ketik manual:</strong> Tap field "Rp 0" dan ketik angka bebas</li>
+            </ul>
+            Batas minimal dan maksimal transfer ditentukan oleh aturan bisnis masing-masing e-wallet tujuan.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">5</div>
+          <div class="step-body">
+            <div class="step-title">Tombol "Lanjutkan" aktif — user tap untuk ke langkah 2</div>
+            <div class="step-desc">Tombol "Lanjutkan" di sticky bar bawah tidak bisa diklik sampai semua 3 field terisi: e-wallet dipilih, nomor HP diisi, dan nominal lebih dari 0. Setelah semua terisi, tombol berubah aktif (lime). User tap untuk masuk ke F02 — proses inquiry nama penerima.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya transfer flat Rp 1.000</strong> untuk semua e-wallet tujuan dan semua nominal. Ini adalah hero differentiator GoPop — tidak ada biaya yang berbeda per e-wallet atau per nominal. Biaya ini dari GoPop, bukan dari payment gateway.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Batas nominal transfer per e-wallet berbeda-beda</strong> sesuai aturan masing-masing provider:<ul>
+          <li>GoPay: minimal Rp10.000 — maksimal Rp10.000.000 per transaksi</li>
+          <li>OVO: minimal Rp10.000 — maksimal Rp5.000.000 per transaksi</li>
+          <li>DANA & ShopeePay: konfirmasi dengan Irwan + Rifky dari dokumentasi API masing-masing</li>
+        </ul></div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nomor HP yang diinput harus nomor yang terdaftar di e-wallet tujuan.</strong> Kalau nomor tidak terdaftar, sistem tidak bisa lookup nama penerima — ini terdeteksi di langkah inquiry (F02), bukan di sini.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Transfer bisa dilakukan tanpa login (guest).</strong> Tapi riwayat transfer tidak tersimpan di akun manapun kalau guest. Notifikasi tetap dikirim ke nomor WA yang diisi saat checkout.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User memasukkan nomor HP yang formatnya tidak valid (terlalu pendek, mengandung huruf, dll)</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Validasi langsung di field: border merah muncul saat user selesai ketik dan pindah ke field lain. Pesan: "Nomor HP tidak valid. Masukkan 10–13 digit angka."</div>
+          <div class="bc-handle">Validasi format terjadi di FE (client-side) — tidak perlu hit server. Keyboard keyboard numerik mencegah input huruf. Tombol "Lanjutkan" tetap nonaktif selama format masih salah.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (validasi format nomor HP real-time)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User memasukkan nominal di bawah minimum e-wallet tujuan yang dipilih</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Pesan di bawah field nominal: "Transfer minimum ke GoPay adalah Rp10.000."</div>
+          <div class="bc-handle">Validasi ini bisa dilakukan di FE karena batas minimal per e-wallet bisa di-hardcode atau di-fetch saat pilih e-wallet. Tampilkan minimal otomatis saat user pilih e-wallet sehingga user sudah tahu sebelum isi nominal.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (tampilkan batas minimal per e-wallet saat dipilih) · Irwan + Rifky (konfirmasi limit terbaru dari API)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Hanya 4 e-wallet di grid homepage (GoPay, OVO, DANA, Shopee) — kalau GoPop tambah e-wallet baru di masa depan (misalnya LinkAja atau Dana Cita), grid tidak cukup</div>
+          <div class="bn-a">Desain saat ini hardcode 4 ikon di grid 4 kolom. Pertimbangkan menambah tombol "Lainnya" di slot ke-5 yang membuka bottom sheet dengan semua e-wallet tersedia termasuk yang baru. Ini membuat penambahan e-wallet baru tidak perlu redesign screen utama.</div>
+          <div class="bn-owner">PIC: Bili (desain pola extensible untuk e-wallet grid) · Agung + Fikly (implementasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">E-wallet dipilih, nomor HP valid, nominal sesuai batas</div>
+            <div class="hasil-item">Tombol "Lanjutkan" aktif — siap ke langkah 2 (inquiry nama)</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal / Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Format nomor HP salah → validasi merah, tombol nonaktif</div>
+            <div class="hasil-item">Nominal di bawah minimum → pesan error spesifik per e-wallet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('a-f05',null)">← Auth F05</div>
+    <div class="fn-btn next" onclick="go('t-f02',null)">F02: Inquiry Nama →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F02: INQUIRY -->
+<div id="page-t-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F02</div>
+    <div class="fh-title">Inquiry Nama Penerima</div>
+    <div class="fh-desc">Setelah user tap "Lanjutkan" dari F01, sistem lookup nama penerima dari e-wallet tujuan berdasarkan nomor HP yang diisi. Ini langkah 2 dari 3 — progress bar step 2 aktif. User perlu konfirmasi nama sebelum lanjut ke pembayaran.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 02 - Transfer Filled (1:449) menunjukkan state setelah nomor diisi. Nama penerima muncul di bawah field nomor. Checkout screen (1:617) menampilkan: "081249343953 · Dewi Lestari" — ini hasil inquiry yang berhasil.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">02 - Transfer Filled (1:449)</span>
+          <span class="fs-tag">03 - Checkout (1:617) — nama Dewi Lestari tampil</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User tap "Lanjutkan" dari F01</span>
+      <span class="pill pill-time">⏱ Langkah 2 dari 3 — loading &lt;3 detik</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Sistem kirim request inquiry ke e-wallet tujuan</div>
+            <div class="step-desc">Begitu user tap "Lanjutkan", sistem langsung kirim nomor HP ke API e-wallet yang dipilih untuk lookup nama penerima. Proses ini berlangsung di background sambil screen bergerak ke state loading. Biasanya selesai dalam 1–3 detik.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Nama penerima berhasil ditemukan — tampil di screen</div>
+            <div class="step-desc">Di bawah field nomor HP muncul nama penerima yang terdaftar di e-wallet tujuan. Contoh dari Figma: "081249343953 · Dewi Lestari". User bisa lihat ini sebelum konfirmasi — ini safety check penting agar user tidak salah kirim ke orang yang salah.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User konfirmasi nama penerima benar — tap "Konfirmasi & Bayar"</div>
+            <div class="step-desc">User pastikan nama yang tampil sesuai dengan penerima yang dimaksud. Kalau benar, tap tombol untuk lanjut ke langkah 3 (Checkout). Kalau salah, user bisa kembali ke langkah 1 dan ubah nomor HP.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Inquiry nama adalah langkah wajib</strong> — tidak bisa di-skip. Ini adalah safety net terpenting dalam flow transfer. Satu-satunya cara untuk memastikan user tidak salah kirim uang adalah dengan menampilkan nama penerima sebelum transaksi dikonfirmasi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nama yang tampil langsung dari database e-wallet tujuan</strong> — bukan dari input user. GoPop tidak bisa manipulasi atau mengubah nama ini. Kalau nama yang tampil "Akun Tidak Dikenal", itu memang kondisi dari e-wallet tujuan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Inquiry tidak mengurangi saldo atau mengunci dana apapun.</strong> Ini hanya proses cek nama — tidak ada transaksi finansial di langkah ini.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Nomor HP tidak terdaftar di e-wallet tujuan — inquiry gagal menemukan penerima</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Muncul pesan: "Nomor 081xxxxxxxx tidak terdaftar di GoPay. Pastikan nomor dan e-wallet tujuan sudah benar."</div>
+          <div class="bc-handle">Tampilkan dua opsi: "Ubah Nomor" (kembali ke F01 dengan nomor sudah terisi) atau "Ganti E-Wallet" (kembali ke F01 dengan pilih e-wallet berbeda). Jangan paksa user restart dari nol.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (navigasi kembali dengan data terisi) · Irwan + Rifky (handle 404/not found dari API e-wallet)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">API e-wallet tujuan timeout atau error — nama tidak bisa di-lookup</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah loading lebih dari 5 detik, muncul: "Tidak bisa verifikasi penerima saat ini. Coba lagi?"</div>
+          <div class="bc-handle">Tampilkan tombol "Coba Lagi" yang retry request yang sama. Kalau sudah 3x retry masih gagal, tampilkan opsi: user bisa lanjut dengan risiko diri sendiri ("Lanjut Tanpa Verifikasi"), atau tunggu dan coba lagi nanti. Opsi lanjut tanpa verifikasi wajib tampilkan warning yang jelas.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (retry logic + "lanjut tanpa verifikasi" flow) · Irwan + Rifky (timeout handling di BE)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Inquiry Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nama penerima tampil di screen (ex: "Dewi Lestari")</div>
+            <div class="hasil-item">User konfirmasi dan lanjut ke Checkout (F03)</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Inquiry Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor tidak terdaftar → pesan + opsi ubah nomor/ganti e-wallet</div>
+            <div class="hasil-item">API timeout → retry 3x → opsi lanjut tanpa verifikasi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f01',null)">← F01: Input Data</div>
+    <div class="fn-btn next" onclick="go('t-f03',null)">F03: Checkout & Bayar →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F03: CHECKOUT -->
+<div id="page-t-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F03</div>
+    <div class="fh-title">Checkout — Konfirmasi & Pilih Metode Bayar</div>
+    <div class="fh-desc">Langkah terakhir (step 3 dari 3). User melihat ringkasan lengkap transaksi, bisa masukkan kode promo, lalu pilih metode pembayaran. Tap "Bayar Sekarang" untuk proses transaksi.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — Screen 03 (node 1:617)</div>
+        <div class="figma-ref-desc">Header "Konfirmasi & Bayar" + "Transfer ke GoPay". Progress bar step 3 (lime aktif). Card ringkasan: E-Wallet GoPay, No. 081249343953, Nama Dewi Lestari, Nominal Rp20k, Biaya layanan Rp1.000. Card total: Subtotal Rp20k + Biaya layanan Rp1k + Biaya pembayaran Gratis = Total Rp21.000. Kode Promo (optional, placeholder COBA: MUURAH5). Metode pembayaran 4 grup: Instan (QRIS default terpilih), E-Wallet (GoPay/OVO/DANA/ShopeePay, semua Gratis), Virtual Account (BCA/BNI/Mandiri/BRI, Rp2.500), Gerai Retail (Alfamart/Indomaret, Rp3.000). Sticky bar: Total Rp21.000 + tombol "Bayar Sekarang →".</div>
+        <div class="figma-screens">
+          <span class="fs-tag">03 - Checkout Pilih Pembayaran (1:617)</span>
+          <span class="fs-tag-miss">Payment Instruction (QRIS/VA) — BLOCKER — belum ada di Figma</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 User konfirmasi nama penerima di F02</span>
+      <span class="pill pill-time">⏱ Langkah 3 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen checkout terbuka — user lihat ringkasan lengkap</div>
+            <div class="step-desc">Semua detail transaksi ditampilkan dalam dua card:<ul>
+              <li><strong>Card detail:</strong> E-Wallet tujuan, nomor HP, nama penerima (hasil inquiry), nominal transfer, biaya layanan Rp1.000</li>
+              <li><strong>Card total:</strong> Subtotal + Biaya layanan + Biaya pembayaran = Total Bayar</li>
+            </ul>
+            QRIS sudah terpilih sebagai metode pembayaran default (ditandai dengan border ungu dan radio button terisi).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User pilih metode pembayaran (opsional — QRIS sudah default)</div>
+            <div class="step-desc">Empat grup metode bayar tersedia:<ul>
+              <li><strong>Instan:</strong> QRIS (default, scan dari semua e-wallet/bank, Gratis)</li>
+              <li><strong>E-Wallet:</strong> GoPay, OVO, DANA, ShopeePay (semua Gratis)</li>
+              <li><strong>Virtual Account:</strong> BCA, BNI, Mandiri, BRI (masing-masing Rp2.500)</li>
+              <li><strong>Gerai Retail:</strong> Alfamart, Indomaret (masing-masing Rp3.000)</li>
+            </ul>
+            Saat user ganti metode, "Biaya pembayaran" dan "Total Bayar" di card total berubah otomatis.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User masukkan kode promo (opsional)</div>
+            <div class="step-desc">Field kode promo ada dengan placeholder "COBA: MUURAH5". User ketik kode lalu tap tombol "Pakai". Kalau kode valid, diskon muncul sebagai baris baru di card total dan Total Bayar berkurang. Kalau tidak valid, muncul pesan error kecil di bawah field.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User tap "Bayar Sekarang" — transaksi diproses</div>
+            <div class="step-desc">Tombol di sticky bar bawah: kiri menampilkan total ("Total Bayar — Rp21.000"), kanan tombol lime "Bayar Sekarang →". Tap tombol ini mengirim permintaan transaksi ke server dan membuka instruksi pembayaran sesuai metode yang dipilih.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya layanan Rp1.000 selalu ada</strong> dan tidak bisa dihilangkan, kecuali ada promo khusus yang memberikan cashback biaya layanan. Ini adalah pendapatan utama GoPop dari setiap transaksi transfer.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya pembayaran bergantung pada metode yang dipilih:</strong> QRIS dan E-Wallet = Gratis; VA = +Rp2.500; Gerai Retail = +Rp3.000. Total bayar wajib update real-time saat user ganti metode.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Setelah tap "Bayar Sekarang", transaksi masuk status "draft" di database.</strong> Status berubah ke "pending_payment" setelah instruksi pembayaran ditampilkan. Tidak ada dana yang bergerak di langkah ini — dana bergerak hanya setelah payment gateway konfirmasi pembayaran.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau user pilih VA atau Gerai Retail, instruksi pembayaran berlaku selama 24 jam.</strong> Setelah 24 jam tanpa pembayaran, transaksi otomatis di-cancel dan nomor VA tidak valid lagi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Harga tidak boleh berubah setelah user sampai di screen checkout.</strong> Kalau Ipong update harga saat user sedang di checkout, transaksi saat ini tetap pakai harga yang ditampilkan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User tap "Bayar Sekarang" tapi tidak ada koneksi internet</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Loading spinner sebentar, lalu pesan: "Koneksi bermasalah. Transaksi belum diproses. Cek internet kamu dan coba lagi."</div>
+          <div class="bc-handle">Pastikan jelas bahwa transaksi BELUM diproses dan TIDAK ada dana yang keluar. User bisa coba lagi begitu koneksi kembali. Semua data di form tetap ada — tidak perlu input ulang dari awal.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (pesan error yang meyakinkan tidak ada dana keluar)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Kode promo sudah kadaluarsa atau sudah pernah dipakai</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Pakai", muncul pesan di bawah field: "Kode promo tidak valid atau sudah kadaluarsa."</div>
+          <div class="bc-handle">Hapus kode dari field dan biarkan user coba kode lain atau lanjut tanpa promo. Jangan blokir user untuk lanjut checkout hanya karena kode promo gagal.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (handling promo error tanpa block checkout) · Irwan + Rifky (validasi promo dari BE)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User pilih VA tapi tidak bayar dalam 24 jam — kembali ke app dan transaksi sudah cancelled</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Di Riwayat, transaksi tampil dengan status "Dibatalkan" karena expired.</div>
+          <div class="bc-handle">Kirim notifikasi WA kepada user 1 jam sebelum VA expired: "Pesanan kamu akan kadaluarsa dalam 1 jam. Segera bayar atau buat transaksi baru." Ini memberikan kesempatan user untuk bayar sebelum expired.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (auto-notif WA 1 jam sebelum VA expired) · Agung + Fikly (tampilkan countdown timer di screen instruksi pembayaran VA)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Screen Payment Instruction (untuk QRIS, VA, E-Wallet redirect) tidak ada di Figma — ini BLOCKER setelah tap "Bayar Sekarang"</div>
+          <div class="bn-a">Setelah user tap "Bayar Sekarang" dan memilih QRIS, user perlu melihat QR code untuk di-scan. Setelah pilih VA, user perlu melihat nomor VA dan instruksi transfer. Kedua screen ini belum ada di Figma. Agung dan Fikly tidak bisa implement screen setelah checkout sampai Bili membuat screen Payment Instruction ini.</div>
+          <div class="bn-owner">🚨 BLOCKER — PIC: Bili (buat screen Payment Instruction segera — QRIS QR Code + VA nomor + Retail code)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User konfirmasi ringkasan transaksi yang akurat</div>
+            <div class="hasil-item">Metode pembayaran dipilih, total berubah sesuai</div>
+            <div class="hasil-item">Tap "Bayar Sekarang" → masuk ke instruksi pembayaran</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Gagal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Koneksi putus saat tap bayar → pesan "belum diproses"</div>
+            <div class="hasil-item">Promo invalid → error kecil, lanjut checkout tetap bisa</div>
+            <div class="hasil-item">VA expired → user perlu buat transaksi baru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f02',null)">← F02: Inquiry Nama</div>
+    <div class="fn-btn next" onclick="go('t-f04',null)">F04: Proses & Status →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F04: PROSES & STATUS -->
+<div id="page-t-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F04</div>
+    <div class="fh-title">Proses Transaksi & Status Sukses</div>
+    <div class="fh-desc">Setelah payment gateway konfirmasi pembayaran, GoPop memproses transfer ke e-wallet tujuan. User melihat status "Sedang Diproses" lalu "Sukses". Seluruh siklus dari bayar sampai dana masuk ke penerima.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">04 - Status Cek Transaksi (1:829)</span>
+          <span class="fs-tag">05 - Status Sukses (1:866)</span>
+          <span class="fs-tag-miss">Payment Instruction — BLOCKER</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Payment gateway konfirmasi pembayaran berhasil</span>
+      <span class="pill pill-time">⏱ Proses transfer: 1–60 detik setelah bayar</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Payment gateway konfirmasi — status berubah dari "pending_payment" ke "paid"</div>
+            <div class="step-desc">Untuk QRIS: konfirmasi muncul dalam hitungan detik setelah scan. Untuk VA: konfirmasi muncul setelah transfer bank masuk (bisa 1–15 menit). Untuk Gerai Retail: konfirmasi muncul setelah kasir input kode (real-time). GoPop menerima webhook dari gateway.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Status berubah ke "processing" — GoPop kirim ke Digiflazz</div>
+            <div class="step-desc">Setelah pembayaran dikonfirmasi, server GoPop otomatis kirim request ke Digiflazz untuk memproses transfer e-wallet. Status DB berubah ke "processing". User melihat screen "Sedang Diproses" dengan animasi loading.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Status berubah ke "sukses" — dana masuk ke penerima</div>
+            <div class="step-desc">Digiflazz konfirmasi transfer berhasil. Status DB berubah ke "sukses". Screen user otomatis update ke layar sukses. Waktu total biasanya 5–30 detik dari pembayaran.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses — user mendapat konfirmasi lengkap</div>
+            <div class="step-desc">Screen Sukses (screen 05) menampilkan:<ul>
+              <li>Ikon centang hijau besar</li>
+              <li>Detail transaksi: e-wallet tujuan, nomor penerima, nama penerima, nominal yang diterima</li>
+              <li>Nomor referensi transaksi untuk keperluan komplain</li>
+              <li>Notifikasi WA terkirim ke user dan penerima (kalau tersedia)</li>
+              <li>Tombol "Buat Transaksi Baru" dan "Lihat Riwayat"</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Status transaksi di DB mengikuti urutan:</strong> draft → pending_payment → paid → processing → pending → sukses. Status "pending" setelah "processing" berarti Digiflazz sedang menangani tapi belum konfirmasi. Ini bisa berlangsung sampai beberapa menit.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User tidak perlu refresh manual</strong> untuk lihat update status. App polling atau menggunakan push notification untuk update status secara real-time setiap beberapa detik selama transaksi dalam proses.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Notifikasi WA dikirim ke user saat transaksi sukses</strong> — berisi detail lengkap sebagai bukti transaksi. Ini penting terutama untuk user guest yang tidak punya akun dan tidak bisa cek riwayat di app.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User sudah bayar tapi status lama stuck di "Sedang Diproses" lebih dari 5 menit</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Screen "Sedang Diproses" terus berputar tanpa update.</div>
+          <div class="bc-handle">Setelah 5 menit, tampilkan opsi "Hubungi CS" dengan nomor ref transaksi yang sudah terisi otomatis. CS bisa cek status di dashboard dan escalate ke Digiflazz kalau perlu. Jangan biarkan user menunggu tanpa tahu harus ke mana.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (tampilkan opsi CS setelah 5 menit) · Acoy + CS (handle komplain dengan ref transaksi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Transfer Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Dana masuk ke e-wallet penerima dalam 5–30 detik</div>
+            <div class="hasil-item">Screen sukses tampil dengan detail lengkap + nomor ref</div>
+            <div class="hasil-item">Notifikasi WA terkirim ke user</div>
+            <div class="hasil-item">Riwayat tersimpan (kalau user login)</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Tertunda</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Stuck di "Processing" &gt;5 menit → tampilkan opsi hubungi CS</div>
+            <div class="hasil-item">Digiflazz error → masuk ke F05 Transfer Gagal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f03',null)">← F03: Checkout</div>
+    <div class="fn-btn next" onclick="go('t-f05',null)">F05: Transfer Gagal →</div>
+  </div>
+</div>
+
+<!-- TRANSFER F05: GAGAL -->
+<div id="page-t-f05" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 03 — Transfer E-Wallet <span>›</span> F05</div>
+    <div class="fh-title">Transfer Gagal & Refund</div>
+    <div class="fh-desc">Kadang transfer gagal di sisi Digiflazz meski user sudah bayar. Ini adalah situasi paling sensitif — user sudah keluar uang tapi transaksi tidak berhasil. Harus ditangani cepat dan transparan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05h - Status Transaksi Gagal (1:11683)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah bayar</span>
+      <span class="pill pill-trigger">🔔 Digiflazz return status gagal</span>
+      <span class="pill pill-time">⏱ Refund: maksimal 1x24 jam kerja</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal Gagal + Refund</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-sys">1</div>
+          <div class="step-body">
+            <div class="step-title">Digiflazz return status gagal</div>
+            <div class="step-desc">Berbagai alasan transfer bisa gagal dari sisi Digiflazz: nomor penerima tidak aktif, e-wallet tujuan sedang gangguan, saldo Digiflazz GoPop habis, atau limit harian tercapai. Status DB berubah ke "gagal".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User melihat screen "Transaksi Gagal"</div>
+            <div class="step-desc">Screen 05h tampil dengan ikon silang merah, pesan penjelasan kenapa gagal (kalau bisa diketahui), dan dua pilihan: "Coba Lagi" (buat transaksi baru dengan data yang sama) atau "Hubungi CS" (dengan nomor ref terisi otomatis).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">3</div>
+          <div class="step-body">
+            <div class="step-title">Refund diproses otomatis</div>
+            <div class="step-desc">Karena user sudah bayar tapi transaksi gagal, GoPop wajib refund. Proses refund bergantung pada metode pembayaran yang dipakai:<ul>
+              <li><strong>QRIS / E-Wallet:</strong> Refund otomatis ke sumber pembayaran dalam 1–3 jam</li>
+              <li><strong>Virtual Account:</strong> Refund manual ke rekening bank user dalam 1x24 jam kerja</li>
+              <li><strong>Gerai Retail:</strong> Proses refund manual, user perlu hubungi CS dengan bukti struk</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User dapat notifikasi WA konfirmasi refund</div>
+            <div class="step-desc">Setelah refund diproses, user menerima notifikasi WA: "Dana Rp21.000 untuk transaksi [ref] sudah dikembalikan ke [metode pembayaran kamu]. Proses dalam 1–3 jam." Ini mengurangi user yang komplain ke CS karena tidak tahu statusnya.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Refund adalah kewajiban GoPop, bukan opsional.</strong> Tidak ada kondisi di mana user sudah bayar tapi transaksi gagal dan uangnya tidak dikembalikan. Kalau ada dispute soal ini, Agung sebagai Finance yang handle.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Jangan tampilkan pesan error teknikal ke user.</strong> "Error 5032: Digiflazz timeout" tidak berguna untuk user. Terjemahkan ke bahasa yang bisa dipahami: "Layanan transfer sedang gangguan sementara. Dana kamu aman dan akan dikembalikan."</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Semua transaksi gagal wajib muncul di dashboard Monitoring</strong> dan bisa dilihat Acoy + Rifky. Status "gagal" yang tidak ditindaklanjuti dalam 2 jam harus trigger alert ke tim.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Gagal tapi Tertangani</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User melihat screen gagal yang informatif (bukan error teknikal)</div>
+            <div class="hasil-item">Refund diproses otomatis dalam SLA yang dijanjikan</div>
+            <div class="hasil-item">Notifikasi WA konfirmasi refund dikirim ke user</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Gagal Tidak Tertangani</div>
+          <div class="hasil-items">
+            <div class="hasil-item">User tidak tahu statusnya → komplain ke CS</div>
+            <div class="hasil-item">Refund lebih dari 24 jam → eskalasi ke Agung + CS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('t-f04',null)">← F04: Status Sukses</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow</div>
+  </div>
+</div>
+
+come',null)">🏠 Semua Flow</div>
   </div>
 </div>
 
