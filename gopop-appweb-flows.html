@@ -292,6 +292,24 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
     <div class="sbi" onclick="go('pr-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Ganti Password</span></div>
     <div class="sbi" onclick="go('pr-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Notifikasi & Pengaturan</span></div>
   </div>
+
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#F97316"></div>09 · Voucher Game</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('vg-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Pilih Game & Input ID</span></div>
+    <div class="sbi" onclick="go('vg-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Pilih Nominal & Checkout</span></div>
+    <div class="sbi" onclick="go('vg-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Status Sukses & Riwayat</span></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="sb-sec">
+    <div class="sb-label"><div class="sb-dot" style="background:#EAB308"></div>10 · Token Listrik</div>
+    <div class="sb-flow-label">Flow</div>
+    <div class="sbi" onclick="go('tl-f01',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F01 · Input Nomor Meter</span></div>
+    <div class="sbi" onclick="go('tl-f02',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F02 · Pilih Nominal Token</span></div>
+    <div class="sbi" onclick="go('tl-f03',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F03 · Checkout & Terima Token</span></div>
+    <div class="sbi" onclick="go('tl-f04',this)"><span class="sbi-icon">▶</span><span class="sbi-text">F04 · Error States Token</span></div>
+  </div>
 </nav>
 
 <main class="main">
@@ -5794,7 +5812,735 @@ lu minta tanda lunas resmi (SSPD/STTS) dari kantor Dispenda setempat.</div></div
 </div>
 
 terbayar dan terupdate di sistem BPJS</div>
-            <div class="hasil-item">Screen sukses dengan nomor referensi lengkap</div>
+         
+<!-- ============================================================ VOUCHER GAME ============================================================ -->
+<div id="page-vg-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 09 — Voucher Game <span>›</span> F01</div>
+    <div class="fh-title">Pilih Game & Input ID Akun</div>
+    <div class="fh-desc">User beli diamond, UC, atau mata uang in-game untuk akun game mereka. Pertama pilih game, lalu input ID akun yang ingin ditop-up. Flow ini lebih sederhana dari pulsa karena tidak perlu deteksi operator — user yang tahu akun game mereka sendiri.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 14 - Voucher Game Pilih Game (1:1835, 1:1868): grid game yang tersedia. Screen 15/15b - Mobile Legends Input (1:1901, 1:2132): form input ID game + Zone ID. Screen 16/16b - Free Fire Input (1:2020, 1:2264): form input ID akun Free Fire (lebih sederhana, hanya satu field).</div>
+        <div class="figma-screens">
+          <span class="fs-tag">14 - Pilih Game (1:1835)</span>
+          <span class="fs-tag">14b - Pilih Game v2 (1:1868)</span>
+          <span class="fs-tag">15/15b - Mobile Legends Input</span>
+          <span class="fs-tag">16/16b - Free Fire Input</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Game" dari homepage atau Layanan Semua</span>
+      <span class="pill pill-time">⏱ Langkah 1 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User melihat grid pilih game</div>
+            <div class="step-desc">Screen 14 menampilkan grid game yang tersedia — Mobile Legends, Free Fire, dan game lain yang terdaftar di Digiflazz. Setiap item menampilkan logo game dan nama. User tap game yang ingin dibeli vouchernya.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Screen input ID game muncul — berbeda per game</div>
+            <div class="step-desc">Setiap game punya field yang berbeda:<ul>
+              <li><strong>Mobile Legends (screen 15):</strong> Dua field — "User ID" dan "Zone ID" (keduanya wajib diisi untuk identifikasi akun ML yang unik)</li>
+              <li><strong>Free Fire (screen 16):</strong> Satu field — "User ID" saja</li>
+              <li><strong>Game lain:</strong> Menyesuaikan format ID masing-masing game</li>
+            </ul>
+            Ada panduan singkat di bawah field: "Temukan User ID di profil game kamu" dengan ilustrasi atau link ke cara menemukannya.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">User isi ID akun dan tap "Lanjut"</div>
+            <div class="step-desc">Setelah field terisi, tombol "Lanjut" aktif. Tap untuk masuk ke screen pilih nominal/item (F02). Tidak ada inquiry/verifikasi ID akun di langkah ini — verifikasi dilakukan di sisi Digiflazz saat proses pembelian.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada inquiry nama akun sebelum beli.</strong> Berbeda dari Transfer E-Wallet yang lookup nama penerima dulu, voucher game langsung ke pilih nominal tanpa verifikasi nama pemilik akun. Ini konsekuensi dari cara kerja Digiflazz untuk game voucher.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>User bertanggung jawab atas kebenaran ID akun yang diinput.</strong> GoPop tidak bisa verifikasi apakah ID akun benar sebelum transaksi. Kalau ID salah dan diamond masuk ke akun orang lain, tidak bisa di-refund — ini harus dijelaskan dengan jelas di UI.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Mobile Legends butuh dua field</strong> (User ID + Zone ID) karena sistem akun ML menggunakan kombinasi keduanya. Zone ID biasanya 2–4 digit angka dalam kurung di profil ML. Ini sering membingungkan user — panduan cara menemukan Zone ID wajib ada.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Daftar game yang tersedia</strong> tergantung pada produk yang ada di Digiflazz — Ipong bisa tambah atau hapus dari dashboard Produk tanpa perlu update app.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User tidak tahu Zone ID Mobile Legends — mengosongkan field atau isi sembarang</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Field kosong atau isi angka sembarangan.</div>
+          <div class="bc-handle">Tambahkan tombol "?" atau link "Cara temukan Zone ID" yang membuka modal atau halaman panduan dengan screenshot step-by-step. Ini mengurangi tiket CS "Zone ID itu apa?" yang pasti banyak.</div>
+          <div class="bc-owner">PIC: Bili (desain panduan Zone ID) · Kayong (buat artikel panduan di Tips & Edukasi)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User salah input ID akun — diamond masuk ke akun orang lain</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat setelah sukses:</span> Diamond tidak masuk ke akun sendiri.</div>
+          <div class="bc-handle">GoPop tidak bisa reverse transaksi game voucher yang sudah sukses. CS handle dengan empati tapi tidak ada yang bisa dilakukan dari sisi GoPop. Pencegahan: tampilkan disclaimer jelas sebelum checkout: "Pastikan User ID dan Zone ID benar. Diamond yang sudah terkirim tidak bisa dikembalikan." dengan checkbox konfirmasi.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (disclaimer + checkbox konfirmasi sebelum lanjut checkout) · CS (handle dengan empati)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Game dipilih, ID akun terisi dengan benar</div>
+            <div class="hasil-item">Tap "Lanjut" → masuk ke pilih nominal F02</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">ID salah → diamond ke akun lain, tidak bisa refund</div>
+            <div class="hasil-item">Zone ID ML tidak diketahui → butuh panduan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('pbb-f02',null)">← PBB F02</div>
+    <div class="fn-btn next" onclick="go('vg-f02',null)">F02: Pilih Nominal →</div>
+  </div>
+</div>
+
+<!-- VOUCHER GAME F02 -->
+<div id="page-vg-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 09 — Voucher Game <span>›</span> F02</div>
+    <div class="fh-title">Pilih Nominal & Checkout</div>
+    <div class="fh-desc">Setelah input ID akun, user memilih berapa diamond/UC yang ingin dibeli. Tampilan berbeda dari pulsa — setiap item menampilkan jumlah item in-game dan harga jual. Checkout flow sama dengan produk lain.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">15b - ML Input + nominal grid</span>
+          <span class="fs-tag">03g - Checkout Token (pola sama)</span>
+          <span class="fs-tag">05i/05j - Sukses Game ML/FF</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Setelah ID akun terisi di F01</span>
+      <span class="pill pill-time">⏱ Langkah 2–3 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Grid nominal item in-game tampil</div>
+            <div class="step-desc">Grid 2 kolom berisi semua pilihan diamond/UC yang tersedia untuk game yang dipilih. Setiap card menampilkan:<ul>
+              <li><strong>Jumlah item:</strong> Misal "86 💎" atau "500 UC" (besar, bold)</li>
+              <li><strong>Harga:</strong> Harga jual dari GoPop (abu, lebih kecil)</li>
+              <li><strong>Bonus (kalau ada):</strong> Label "BONUS" atau "+50 💎 Extra" untuk promo tertentu</li>
+            </ul>
+            User tap salah satu nominal → card terpilih (border ungu aktif) → sticky bar update Total Bayar.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Disclaimer konfirmasi ID muncul sebelum lanjut</div>
+            <div class="step-desc">Sebelum ke checkout, muncul prompt singkat: "Konfirmasi akun tujuan: [User ID] [Zone ID]. Diamond yang sudah terkirim tidak bisa dikembalikan." User centang checkbox konfirmasi lalu tap "Lanjut ke Pembayaran".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Checkout — identik dengan produk lain</div>
+            <div class="step-desc">Screen checkout menampilkan ringkasan: game, ID akun, item yang dibeli, harga. Pilih metode bayar (QRIS/E-Wallet/VA/Retail). Tap "Bayar Sekarang" untuk proses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Tidak ada biaya layanan tambahan untuk voucher game</strong> — harga yang tampil di grid sudah all-in. Margin GoPop sudah termasuk dalam harga jual yang diatur Ipong di dashboard.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Diamond/item game tidak bisa di-refund</strong> setelah transaksi sukses — berbeda dari transfer yang bisa refund kalau gagal. Setelah terkirim ke akun game, permanen.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Disclaimer konfirmasi ID wajib ada</strong> sebelum checkout — bukan setelah. Ini mencegah klaim "saya tidak tahu ID bisa salah" setelah transaksi.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">3</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Checkout Berhasil</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nominal dipilih, disclaimer dikonfirmasi</div>
+            <div class="hasil-item">Bayar → Digiflazz proses pengiriman diamond</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Risiko</div>
+          <div class="hasil-items">
+            <div class="hasil-item">ID salah + sudah lewat disclaimer → tidak ada refund</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('vg-f01',null)">← F01: Pilih Game</div>
+    <div class="fn-btn next" onclick="go('vg-f03',null)">F03: Status & Riwayat →</div>
+  </div>
+</div>
+
+<!-- VOUCHER GAME F03 -->
+<div id="page-vg-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 09 — Voucher Game <span>›</span> F03</div>
+    <div class="fh-title">Status Sukses & Riwayat Voucher Game</div>
+    <div class="fh-desc">Setelah bayar, diamond/item langsung dikirim ke akun game via Digiflazz. Screen sukses menampilkan konfirmasi pengiriman. Ada juga screen riwayat khusus game (32/32b) yang menampilkan history pembelian voucher per akun game.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">05i - Sukses Game ML (1:3515)</span>
+          <span class="fs-tag">05j - Sukses Game FF (1:3599)</span>
+          <span class="fs-tag">32 - Riwayat Voucher Game ML (1:5053)</span>
+          <span class="fs-tag">32b - Riwayat Voucher Game FF (1:5255)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah bayar</span>
+      <span class="pill pill-trigger">🔔 Digiflazz konfirmasi pengiriman berhasil</span>
+      <span class="pill pill-time">⏱ Diamond masuk dalam 1–5 menit</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Sukses</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses tampil — konfirmasi pengiriman diamond</div>
+            <div class="step-desc">Screen 05i (ML) atau 05j (FF) menampilkan: ikon centang hijau, jumlah diamond yang dikirim, ID akun tujuan, nama game, harga yang dibayar, dan nomor referensi. Pesan: "Diamond berhasil dikirim ke akun kamu! Cek game untuk konfirmasi."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">User bisa akses riwayat pembelian game</div>
+            <div class="step-desc">Screen 32/32b adalah halaman riwayat khusus voucher game yang tampil sebagai card di homepage atau bisa diakses dari riwayat transaksi. Menampilkan: thumbnail game, ID akun, item yang dibeli, tanggal, dan status. Berguna kalau user sering top-up game yang sama dan ingin lihat histori.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Diamond biasanya masuk dalam 1–5 menit</strong>, tapi ada kalanya memakan waktu hingga 1 jam tergantung server game dan beban Digiflazz. Kalau lebih dari 1 jam belum masuk, user bisa hubungi CS dengan nomor referensi.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau transaksi gagal di Digiflazz</strong> (ID akun tidak ditemukan di server game, server game sedang maintenance), refund diproses seperti produk lain. Tapi ini jarang — Digiflazz biasanya retry beberapa kali sebelum declare gagal.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Screen riwayat game (32/32b) adalah fitur convenience</strong> — bukan wajib. Ditampilkan sebagai card khusus di homepage untuk user yang sering beli voucher game. Berguna untuk track pengeluaran gaming dan top-up ulang dengan cepat (ID akun sudah tersimpan).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Diamond tidak masuk setelah 1 jam — status di GoPop sukses tapi di game tidak ada</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Transaksi GoPop sukses, tapi buka game diamond tidak bertambah.</div>
+          <div class="bc-handle">CS perlu investigasi ke Digiflazz dengan nomor referensi. Kemungkinan: (1) Digiflazz sukses kirim tapi server game delay update, tunggu 24 jam; (2) ID akun valid tapi server game reject — Digiflazz perlu trace. Berikan user estimasi waktu resolusi yang jelas: "Kami sedang investigasi bersama supplier, maks 24 jam."</div>
+          <div class="bc-owner">PIC: CS (escalate ke Digiflazz dengan ref ID) · Acoy (pantau dan follow up resolusi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Transaksi Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Diamond masuk ke akun game dalam 1–5 menit</div>
+            <div class="hasil-item">Screen sukses + notifikasi WA terkirim</div>
+            <div class="hasil-item">Riwayat game tersimpan di screen 32/32b</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Diamond belum masuk &gt;1 jam → CS escalate ke Digiflazz</div>
+            <div class="hasil-item">Gagal → refund standar, tapi jarang terjadi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('vg-f02',null)">← F02: Pilih Nominal</div>
+    <div class="fn-btn next" onclick="go('tl-f01',null)">⚡ Token Listrik →</div>
+  </div>
+</div>
+
+<!-- ============================================================ TOKEN LISTRIK ============================================================ -->
+<div id="page-tl-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 10 — Token Listrik <span>›</span> F01</div>
+    <div class="fh-title">Input Nomor Meter & Pilih Nominal</div>
+    <div class="fh-desc">Beli token listrik prabayar PLN. User input nomor meter (11 digit) yang tertera di meteran listrik, lalu pilih nominal token yang mau dibeli. Token 20 digit hasilnya dimasukkan ke meteran untuk menambah saldo kWh.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-ref-desc">Screen 19 - Token Listrik Input (1:4118): field "Nomor Meter" + tombol "Cek". Screen 19 v2 (21d, 1:11959): versi terbaru input. Screen 20/20b - Pilih Nominal (1:4148, 1:4209): grid nominal dalam Rupiah (bukan kWh) dengan info kWh yang didapat.</div>
+        <div class="figma-screens">
+          <span class="fs-tag">19 - Token Input (1:4118)</span>
+          <span class="fs-tag">21d - Token Input v2 (1:11959)</span>
+          <span class="fs-tag">20 - Pilih Nominal (1:4148)</span>
+          <span class="fs-tag">20b - Pilih Nominal v2 (1:4209)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User Login · Guest</span>
+      <span class="pill pill-trigger">🔔 Tap "Token PLN" dari homepage atau Layanan Semua</span>
+      <span class="pill pill-time">⏱ Langkah 1–2 dari 3</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">User input nomor meter 11 digit</div>
+            <div class="step-desc">Field "Nomor Meter" dengan tombol "Cek" di sebelah kanan. Nomor meter 11 digit tertera di fisik meteran listrik prabayar (biasanya di label stiker putih pada meteran). Hint di bawah field: "Temukan di stiker meteran listrik prabayar PLN kamu (11 digit)."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Tap "Cek" → sistem verifikasi nomor meter ke PLN via Digiflazz</div>
+            <div class="step-desc">Digiflazz query ke sistem PLN untuk memverifikasi nomor meter valid dan mendapat info pelanggan (nama dan alamat). Ini inquiry ringan — hanya verifikasi meter, belum ada tagihan.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Info pelanggan tampil — user konfirmasi lalu pilih nominal</div>
+            <div class="step-desc">Nama pemilik meter dan alamat tampil sebagai konfirmasi nomor benar. Lalu grid nominal tampil di bawahnya: pilihan dalam Rupiah (Rp20.000, Rp50.000, Rp100.000, dll) dengan info kWh yang didapat. Pilihan berbeda karena tarif PLN bergantung pada daya listrik di meteran.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User tap nominal → sticky bar update → tap "Lanjut"</div>
+            <div class="step-desc">Tap salah satu nominal → card terpilih (border aktif) → sticky bar menampilkan "Total Bayar Rp[nominal]". Tap "Lanjut" untuk ke checkout (F03).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Nominal token listrik = nominal yang dibayar user.</strong> Berbeda dari pulsa di mana nominal pulsa ≠ harga — untuk token listrik Rp50.000 = bayar Rp50.000 (plus biaya admin PLN Rp1.600 yang sudah termasuk). GoPop tidak menambah biaya layanan untuk token listrik.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>kWh yang didapat berbeda per golongan tarif.</strong> Pelanggan 450VA mendapat lebih banyak kWh per Rupiah dibanding pelanggan 1300VA karena tarif per kWh berbeda. Info kWh di grid nominal diambil dari sistem PLN via Digiflazz — akurat per golongan tarif pelanggan.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Satu nomor meter hanya bisa beli satu token sekaligus.</strong> Tidak bisa beli dua token berurutan untuk nomor meter yang sama dalam waktu singkat — PLN mencegah pembelian ganda yang belum dimasukkan ke meteran.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Nomor meter 11 digit yang diinput tidak terdaftar di sistem PLN</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Cek": "Nomor meter tidak ditemukan. Pastikan nomor yang kamu masukkan benar."</div>
+          <div class="bc-handle">Tampilkan panduan: "Pastikan nomor 11 digit dari stiker di meteran (bukan nomor 8 digit)." Kalau masih tidak ditemukan, sarankan hubungi PLN 123 atau CS GoPop. Nomor meter bisa berbeda antara meter lama dan baru — beberapa user mungkin salah baca.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (panduan nomor meter yang informatif)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Ada token yang belum dimasukkan ke meteran — PLN blokir pembelian token baru</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Setelah tap "Cek": "Masih ada token yang belum diinput ke meteran. Masukkan token sebelumnya dulu."</div>
+          <div class="bc-handle">Tampilkan pesan yang jelas dan helpful: "PLN mendeteksi ada token yang belum dimasukkan ke meteran kamu. Masukkan token lama dulu, baru beli yang baru." Ini bukan error GoPop — ini fitur keamanan PLN.</div>
+          <div class="bc-owner">PIC: Agung + Fikly (pesan error PLN "pending token" yang ramah dan informatif)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Flow Sukses</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Nomor meter valid, nama pelanggan tampil sebagai konfirmasi</div>
+            <div class="hasil-item">Grid nominal + info kWh spesifik per golongan tarif</div>
+            <div class="hasil-item">User pilih nominal, lanjut ke checkout F03</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Flow Blocked</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Meter tidak ditemukan → panduan nomor meter</div>
+            <div class="hasil-item">Pending token → instruksi masukkan token lama dulu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('vg-f03',null)">← Voucher Game F03</div>
+    <div class="fn-btn next" onclick="go('tl-f02',null)">F02: Pilih Nominal →</div>
+  </div>
+</div>
+
+<!-- TOKEN LISTRIK F02: SUDAH DI F01, ini shortcut ke checkout -->
+<div id="page-tl-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 10 — Token Listrik <span>›</span> F02</div>
+    <div class="fh-title">Checkout & Terima Token 20 Digit</div>
+    <div class="fh-desc">Setelah nominal dipilih, user masuk checkout dan bayar. Bedanya dengan produk lain: hasil transaksi adalah <strong>kode token 20 digit</strong> yang harus dimasukkan manual ke meteran listrik. Token ini HARUS dicatat atau disimpan.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">03g - Checkout Token Listrik (1:4282)</span>
+          <span class="fs-tag">21 - Token Sukses/Rincian (1:11781)</span>
+          <span class="fs-tag">05k - Sukses Token Listrik (1:4484)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang sudah pilih nominal</span>
+      <span class="pill pill-trigger">🔔 Tap "Lanjut" dari screen pilih nominal</span>
+      <span class="pill pill-time">⏱ Token diterima dalam 1–3 menit setelah bayar</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Checkout — ringkasan + pilih metode bayar</div>
+            <div class="step-desc">Card ringkasan: nomor meter, nama pelanggan, nominal token, estimasi kWh yang didapat, biaya admin PLN (Rp1.600 sudah termasuk dalam nominal). Pilih metode bayar, tap "Bayar Sekarang".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-sys">2</div>
+          <div class="step-body">
+            <div class="step-title">Bayar → Digiflazz generate token dari PLN</div>
+            <div class="step-desc">Digiflazz memproses pembelian ke PLN dan PLN generate token 20 digit unik untuk nomor meter tersebut. Proses ini biasanya 1–3 menit.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">3</div>
+          <div class="step-body">
+            <div class="step-title">Screen sukses tampil — TOKEN 20 DIGIT muncul besar</div>
+            <div class="step-desc">Screen 21 atau 05k menampilkan token 20 digit dengan format yang mudah dibaca (misal: 1234-5678-9012-3456-7890). Ada tombol "Salin Token" untuk copy ke clipboard. Ada reminder besar: "Catat token ini! Token juga dikirim ke WhatsApp kamu." Dua tombol: "Masukkan Token ke Meteran" (panduan) dan "Beli Lagi".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">4</div>
+          <div class="step-body">
+            <div class="step-title">User catat/copy token lalu masukkan ke meteran</div>
+            <div class="step-desc">User pergi ke meteran listrik, tekan tombol "Enter" atau sesuai instruksi meteran, lalu input 20 digit token via keypad meteran. Saldo kWh bertambah otomatis setelah token diinput benar. Token berlaku selamanya — tidak ada expiry.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">2</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Token 20 digit TIDAK PERNAH expiry.</strong> Token yang dibeli tapi belum dimasukkan ke meteran tetap valid selamanya. User tidak perlu panik kalau lupa input — token masih tersimpan di riwayat transaksi GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Token selalu terkirim ke WA user</strong> dan tersimpan di detail riwayat transaksi. Ini fallback wajib kalau user tidak sempat catat dari screen sukses.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Token hanya bisa digunakan satu kali di satu meteran.</strong> Token yang sudah diinput ke meteran tidak bisa dipakai lagi di meteran lain. Kalau user salah meteran — hubungi PLN 123, bukan GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Biaya admin PLN Rp1.600</strong> sudah termasuk dalam nominal yang dibayar — bukan biaya tambahan GoPop. Ini berbeda dari produk lain dan perlu dijelaskan agar user tidak bingung kenapa dapat kWh "lebih sedikit dari yang diharapkan".</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">3</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">User salah memasukkan token ke meteran (salah satu digit) — meteran reject</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Meteran menampilkan error dan tidak menerima token.</div>
+          <div class="bc-handle">Token tidak hilang atau expired — user bisa coba lagi input ulang dengan hati-hati. Cek di riwayat transaksi GoPop untuk memastikan token yang benar. Kalau masih reject setelah input ulang yang benar, kemungkinan ada masalah teknikal di meteran — hubungi PLN 123 (bukan GoPop).</div>
+          <div class="bc-owner">PIC: CS (jelaskan bahwa token valid, masalah ada di meteran → hubungi PLN)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">User membeli token untuk nomor meter yang salah — token tergenerate untuk meteran lain</div>
+          <div class="bc-user"><span class="bc-user-label">Yang user lihat:</span> Token sukses tapi saat dimasukkan ke meteran sendiri, tidak valid.</div>
+          <div class="bc-handle">Token sudah di-generate PLN untuk nomor meter yang diinput. Tidak bisa di-refund atau di-transfer ke meteran lain — ini aturan PLN, bukan kebijakan GoPop. Satu-satunya solusi: hubungi PLN 123 dengan bukti pembelian untuk proses lebih lanjut. CS GoPop bisa berikan bukti transaksi tapi tidak bisa resolve sendiri.</div>
+          <div class="bc-owner">PIC: CS (berikan bukti transaksi) · User (hubungi PLN 123)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Token Berhasil Diterima</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Token 20 digit tampil besar + bisa disalin</div>
+            <div class="hasil-item">Token terkirim ke WA dan tersimpan di riwayat</div>
+            <div class="hasil-item">Token tidak pernah expiry — bisa diinput kapan saja</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Situasi Khusus</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Token gagal di meteran → coba ulang input atau hubungi PLN</div>
+            <div class="hasil-item">Salah meter → hubungi PLN 123 dengan bukti GoPop</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('tl-f01',null)">← F01: Input Meter</div>
+    <div class="fn-btn next" onclick="go('tl-f03',null)">F03: Checkout Token Sukses →</div>
+  </div>
+</div>
+
+<div id="page-tl-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 10 — Token Listrik <span>›</span> F03</div>
+    <div class="fh-title">Screen Sukses/Rincian Token (Screen 21)</div>
+    <div class="fh-desc">Screen 21 adalah screen khusus Token Listrik yang berbeda dari screen sukses produk lain. Selain konfirmasi sukses, ada tampilan detail rincian token — jumlah kWh yang didapat, biaya admin, dan tentu saja token 20 digit yang harus dimasukkan ke meteran.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma</div>
+        <div class="figma-screens">
+          <span class="fs-tag">21 - Token Listrik Sukses/Rincian (1:11781)</span>
+          <span class="fs-tag">05k - Sukses Token Listrik (1:4484)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang baru beli token</span>
+      <span class="pill pill-trigger">🔔 Digiflazz berhasil generate token dari PLN</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Konten Screen 21</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Token 20 digit</strong> — ditampilkan besar dengan format grup 4 digit (misal: 1234-5678-9012-3456-7890). Tombol "Salin" di sebelah untuk copy ke clipboard satu tap. Ini elemen terpenting di screen ini.</div></div>
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Rincian pembelian</strong> — nomor meter, nama pelanggan, daya (golongan tarif), kWh yang didapat, nominal yang dibayar, biaya admin PLN Rp1.600, tanggal transaksi, nomor referensi.</div></div>
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Panduan input token</strong> — tombol atau link "Cara input token ke meteran" untuk user yang baru pertama kali beli token. Langkah: tekan tombol Enter di meteran → input 20 digit → tekan Enter lagi → tunggu konfirmasi kWh bertambah.</div></div>
+        <div class="rule"><span>⚡</span><div class="rule-text"><strong>Reminder WA</strong> — "Token juga sudah dikirim ke WhatsApp kamu" dengan preview nomor WA yang digunakan. Ini meyakinkan user bahwa token aman meski tidak sempat screenshot.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">2</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Screen Sukses Ideal</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Token 20 digit tampil besar, bisa disalin satu tap</div>
+            <div class="hasil-item">Rincian kWh jelas sesuai golongan tarif</div>
+            <div class="hasil-item">Panduan input token tersedia untuk user baru</div>
+            <div class="hasil-item">Reminder token juga ada di WA dan riwayat</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">⚠️ Edge Case</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Token tidak tampil (generate lambat) → polling status</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('tl-f02',null)">← F02: Checkout</div>
+    <div class="fn-btn next" onclick="go('tl-f04',null)">F04: Error States →</div>
+  </div>
+</div>
+
+<div id="page-tl-f04" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">App & Web Consumer › Modul 10 — Token Listrik <span>›</span> F04</div>
+    <div class="fh-title">Error States Token Listrik</div>
+    <div class="fh-desc">Token Listrik punya dua error state unik yang tidak ada di produk lain, karena langsung terintegrasi dengan sistem PLN. Keduanya ada di Figma: "Sistem Sibuk" dan "Tidak Ada Tagihan". Keduanya perlu ditangani berbeda.</div>
+    <div class="figma-ref">
+      <div class="figma-ref-icon">🎨</div>
+      <div>
+        <div class="figma-ref-title">Referensi Figma — 2 error screen khusus</div>
+        <div class="figma-ref-desc">Screen 21b - Error Sistem Sibuk (1:11840): PLN/Digiflazz sedang tidak bisa proses, user diminta coba lagi nanti. Screen 21c - Error Tidak Ada Tagihan (1:11904): nomor meter valid tapi tidak ada token yang bisa dibeli (meteran listrik pascabayar, bukan prabayar).</div>
+        <div class="figma-screens">
+          <span class="fs-tag">21b - Error Sistem Sibuk (1:11840)</span>
+          <span class="fs-tag">21c - Error Tidak Ada Tagihan (1:11904)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👤 User yang gagal beli token</span>
+      <span class="pill pill-trigger">🔔 Response error dari Digiflazz/PLN</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Error 1: Sistem Sibuk (Screen 21b)</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-warn" style="margin-bottom:10px;">
+        <span>⚠️</span>
+        <div><strong>Kondisi:</strong> PLN atau Digiflazz sedang overload / maintenance. Request token tidak bisa diproses saat ini.</div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen 21b tampil — pesan ramah, bukan error teknikal</div>
+            <div class="step-desc">Ikon gambar sistem sibuk (dari Figma: sedang-sibuk 1 dan 2). Pesan: "Sistem PLN sedang sibuk. Coba lagi dalam beberapa menit ya." Tombol "Coba Lagi" yang langsung retry request yang sama, dan tombol "Hubungi CS" kalau masalah berlanjut.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Kalau user sudah bayar sebelum error ini tampil</div>
+            <div class="step-desc">Kalau pembayaran sudah dikonfirmasi tapi token gagal di-generate, ini kasus refund. Refund otomatis diproses dan notifikasi WA dikirim. User tidak kehilangan uang karena error sistem PLN.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Error 2: Tidak Ada Tagihan (Screen 21c)</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:10px;">
+        <span>ℹ️</span>
+        <div><strong>Kondisi:</strong> Nomor meter valid dan ditemukan di PLN, tapi meteran tersebut adalah meteran <strong>listrik pascabayar</strong> (bayar tagihan, bukan beli token prabayar). Token tidak bisa dibeli untuk meteran pascabayar.</div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num sn-ok">1</div>
+          <div class="step-body">
+            <div class="step-title">Screen 21c tampil — penjelasan perbedaan prabayar vs pascabayar</div>
+            <div class="step-desc">Ikon info-aman dari Figma (info-aman 1). Pesan: "Nomor ini terdaftar sebagai listrik PASCABAYAR. Token listrik hanya untuk meteran PRABAYAR (ada keypad di meteran). Untuk bayar tagihan listrik pascabayar, gunakan layanan [Tagihan Listrik] di menu Tagihan."</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num sn-ok">2</div>
+          <div class="step-body">
+            <div class="step-title">Tombol redirect ke produk yang tepat</div>
+            <div class="step-desc">Tombol "Bayar Tagihan Listrik" yang langsung bawa user ke screen tagihan listrik pascabayar (kalau tersedia di GoPop). Ini mencegah user bingung dan kembali ke homepage tanpa solusi.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kedua error state ini tidak mengakibatkan user kehilangan uang</strong> — error terjadi sebelum atau saat generate token, bukan setelah payment. Kalau payment sudah masuk dan error terjadi setelahnya, refund otomatis.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Error 21c (pascabayar) adalah edukasi, bukan kesalahan.</strong> Banyak user tidak tahu perbedaan meteran prabayar dan pascabayar. Screen ini jadi oportunitas untuk menjelaskan dan redirect ke produk yang tepat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok">
+          <div class="hasil-title">✅ Error Tertangani Baik</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Sistem sibuk → pesan ramah + retry, refund kalau sudah bayar</div>
+            <div class="hasil-item">Pascabayar → edukasi prabayar vs pascabayar + redirect ke tagihan</div>
+          </div>
+        </div>
+        <div class="hasil-box hasil-fail">
+          <div class="hasil-title">❌ Error Tidak Tertangani</div>
+          <div class="hasil-items">
+            <div class="hasil-item">Pesan error teknikal PLN tampil langsung → user bingung</div>
+            <div class="hasil-item">Tidak ada redirect untuk user pascabayar → dead end</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('tl-f03',null)">← F03: Sukses Token</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Semua Flow — LENGKAP 🎉</div>
+  </div>
+</div>
+
+   <div class="hasil-item">Screen sukses dengan nomor referensi lengkap</div>
             <div class="hasil-item">Bukti pembayaran via WA dikirim ke user</div>
           </div>
         </div>
