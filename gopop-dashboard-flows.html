@@ -3774,6 +3774,258 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
   </div>
 </div>
 
+
+<!-- ============================================================ AUDIT LOG F01 ============================================================ -->
+<div id="page-al-f01" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F01</div>
+    <div class="fh-title">Baca & Filter Audit Log</div>
+    <div class="fh-desc">Audit Log mencatat semua aksi yang dilakukan oleh admin di dashboard GoPop — siapa melakukan apa, kapan, dan dari mana. Ini adalah lapisan keamanan dan akuntabilitas terakhir. Kalau ada yang aneh terjadi di sistem, Audit Log adalah tempat pertama untuk diperiksa.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin — akses penuh) · Rifky (bisa akses untuk keperluan rekonsiliasi)</span>
+      <span class="pill pill-trigger">🔔 Ada insiden keamanan, audit berkala, atau investigasi anomali</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Yang Dicatat di Audit Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="co co-info" style="margin-bottom:12px;">
+        <span>ℹ️</span>
+        <div>Setiap entri Audit Log berisi: <strong>Timestamp</strong> (tanggal + jam presisi detik), <strong>Admin</strong> (nama + email), <strong>IP Address</strong>, <strong>Modul</strong>, <strong>Aksi</strong>, <strong>Target</strong> (objek yang diubah), dan <strong>Detail</strong> (nilai sebelum dan sesudah perubahan).</div>
+      </div>
+      <div class="rule-list">
+        <div class="rule"><span>🔐</span><div class="rule-text"><strong>Autentikasi:</strong> Login berhasil, login gagal (termasuk IP dan device), logout, reset password, perubahan password.</div></div>
+        <div class="rule"><span>👥</span><div class="rule-text"><strong>Role & Tim:</strong> Tambah admin baru, ubah role, suspend/hapus akun, perubahan permission role.</div></div>
+        <div class="rule"><span>⚙️</span><div class="rule-text"><strong>Pengaturan Sistem:</strong> Semua perubahan di Pengaturan Umum, Saldo & Limit Biller (threshold, toggle otomatis, pop-up), Payment Gateway (rotasi API key, perubahan webhook), Fee & Biaya Admin, Promo & Voucher.</div></div>
+        <div class="rule"><span>📦</span><div class="rule-text"><strong>Produk & Harga:</strong> Update HPP, update harga jual, aktifkan/nonaktifkan produk, sync Digiflazz.</div></div>
+        <div class="rule"><span>🏪</span><div class="rule-text"><strong>Manajemen Reseller:</strong> Ubah tier reseller, suspend/aktifkan reseller, perubahan limit reseller.</div></div>
+        <div class="rule"><span>🎫</span><div class="rule-text"><strong>Komplain & Tiket:</strong> Update status tiket, assign tiket, tambah catatan, resolve tiket.</div></div>
+        <div class="rule"><span>💰</span><div class="rule-text"><strong>Rekonsiliasi & Settlement:</strong> Approve rekonsiliasi, konfirmasi penerimaan settlement, tambah adjustment entry.</div></div>
+        <div class="rule"><span>📣</span><div class="rule-text"><strong>CMS & Konten:</strong> Publish/unpublish artikel, update banner, ubah konten statis.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Normal — Baca & Filter Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Buka Audit Log — tampil log terbaru</div><div class="step-desc">Default tampil 50 entri terbaru, diurutkan dari yang paling baru ke lama. Setiap baris berisi: timestamp, nama admin, modul, dan ringkasan aksi. Klik baris untuk lihat detail lengkap termasuk nilai sebelum/sesudah perubahan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Filter sesuai kebutuhan investigasi</div><div class="step-desc">Filter yang tersedia dan bisa dikombinasikan:<ul>
+          <li><strong>Periode:</strong> Tanggal mulai dan akhir (range picker)</li>
+          <li><strong>Admin:</strong> Dropdown pilih admin tertentu atau "Semua Admin"</li>
+          <li><strong>Modul:</strong> Filter per modul (Pengaturan Sistem, Reseller, dll)</li>
+          <li><strong>Jenis Aksi:</strong> Create / Update / Delete / Login / Export</li>
+          <li><strong>IP Address:</strong> Filter aksi dari IP tertentu (berguna untuk investigasi akses tidak dikenal)</li>
+        </ul>
+        Filter bisa dikombinasikan — misal: "Semua aksi oleh Agung di modul Settlement bulan ini".</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Klik entri untuk lihat detail perubahan</div><div class="step-desc">Detail log menampilkan diff yang jelas: nilai field sebelum (merah) dan sesudah (hijau) perubahan. Misal kalau Ipong update harga jual produk: <em>"Harga Jual: Rp6.500 → Rp7.000"</em>. Ini memudahkan investigasi tanpa harus cross-check ke sumber lain.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log tidak bisa diedit atau dihapus oleh siapapun</strong> — termasuk Super Admin. Ini adalah immutable record. Kalau ada entri yang perlu "dikoreksi", buat correction entry baru — jangan hapus yang lama. Integritas Audit Log adalah fondasi dari kepercayaan sistem.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log disimpan minimal 2 tahun.</strong> Ini standar minimum untuk keperluan audit keuangan dan keamanan. Setelah 2 tahun, log lama bisa diarsipkan ke cold storage tapi tidak boleh dihapus permanen.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Akses Audit Log sendiri juga dicatat.</strong> Kalau Acoy membuka Audit Log dan memfilter log admin tertentu, aksi ini juga tercatat. Ini mencegah "cover track" — tidak ada yang bisa melihat log orang lain secara diam-diam tanpa meninggalkan jejak sendiri.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Audit Log hanya bisa diakses Super Admin dan role yang secara eksplisit diberi izin Acoy.</strong> Tidak semua admin perlu lihat apa yang dilakukan admin lain — ini menjaga privasi dan mencegah informasi sensitif tersebar ke yang tidak berhak.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n4">4</div><div class="fb-title">Bad Cases</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bad-list">
+        <div class="bad-case">
+          <div class="bc-scenario">Volume log sangat besar — mencari satu kejadian spesifik seperti "mencari jarum di tumpukan jerami"</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Filter kombinasi adalah kuncinya — mulai dari filter yang paling spesifik (admin tertentu + modul tertentu + range waktu sempit). Kalau masih terlalu banyak, gunakan search by keyword di kolom "Detail". Ke depan bisa tambahkan full-text search di seluruh log untuk kemudahan investigasi.</div>
+          <div class="bc-owner">PIC: Isal + Ipong (full-text search di Audit Log) · Irwan + Rifky (indexing yang efisien untuk query cepat)</div>
+        </div>
+        <div class="bad-case">
+          <div class="bc-scenario">Audit Log tidak mencatat aksi tertentu — ada "blind spot" di sistem logging</div>
+          <div class="bc-user">—</div>
+          <div class="bc-handle">Kalau ditemukan aksi penting yang tidak tercatat (misal: perubahan password tidak muncul di log), ini adalah bug kritis yang harus diperbaiki segera. Irwan perlu audit semua endpoint BE untuk memastikan setiap state-changing action punya logging middleware yang terpasang. Lakukan security review logging setiap 6 bulan.</div>
+          <div class="bc-owner">PIC: Irwan + Rifky (audit logging coverage di semua endpoint) · Acoy (identifikasi blind spot dari pengalaman investigasi)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Audit Log Berfungsi</div><div class="hasil-items"><div class="hasil-item">Semua aksi admin tercatat dengan detail sebelum/sesudah</div><div class="hasil-item">Filter kombinasi memudahkan investigasi cepat</div><div class="hasil-item">Log immutable — tidak bisa diedit atau dihapus</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Blind spot di logging → aksi tidak tercatat → tidak bisa diinvestigasi</div><div class="hasil-item">Volume terlalu besar tanpa filter yang baik → investigasi lambat</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('rt-f03',null)">← Role & Tim F03</div>
+    <div class="fn-btn next" onclick="go('al-f02',null)">F02: Investigasi Aktivitas Mencurigakan →</div>
+  </div>
+</div>
+
+<!-- ============================================================ AUDIT LOG F02 ============================================================ -->
+<div id="page-al-f02" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F02</div>
+    <div class="fh-title">Investigasi Aktivitas Mencurigakan</div>
+    <div class="fh-desc">Ketika ada indikasi bahwa sesuatu yang tidak normal terjadi di sistem — entah dari alert otomatis, laporan tim, atau Acoy yang menemukan anomali saat review rutin. Audit Log adalah tool utama untuk investigasi.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Rifky (forensics teknikal)</span>
+      <span class="pill pill-trigger">🔔 Alert anomali, laporan dari tim, atau review rutin menemukan sesuatu yang aneh</span>
+      <span class="pill pill-time">⏱ Investigasi ringan 15–30 menit, kasus serius bisa 1–2 hari</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Skenario Investigasi yang Umum</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 1: Admin yang sudah tidak aktif ternyata masih login</strong><br>
+        Filter: admin tersebut + jenis aksi "Login" + 30 hari terakhir. Kalau muncul login setelah tanggal offboarding → insiden keamanan. Langkah: suspend akun segera, cek semua aksi yang dilakukan setelah tanggal offboarding, evaluasi apakah ada data yang diakses atau perubahan yang dilakukan.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 2: Harga produk berubah tapi tidak ada yang mengakui</strong><br>
+        Filter: modul "Produk & Harga" + jenis aksi "Update" + range waktu sejak perubahan diketahui. Langsung ketahuan siapa yang mengubah, jam berapa, nilai sebelum dan sesudahnya. Tidak ada yang bisa menyangkal karena log tidak bisa diedit.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 3: Login dari IP yang tidak dikenal</strong><br>
+        Filter: IP address yang mencurigakan + semua admin. Kalau ada login dari IP asing (misal luar negeri padahal semua tim ada di Indonesia), ini red flag. Cek aksi apa yang dilakukan dari IP tersebut. Kalau ada perubahan setting atau akses data sensitif → insiden keamanan serius.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 4: Ada data reseller yang diubah secara massal tanpa alasan jelas</strong><br>
+        Filter: modul "Manajemen Reseller" + jenis aksi "Update" + range waktu tertentu. Kalau ada ratusan perubahan dalam waktu singkat oleh satu admin → kemungkinan bug, script yang salah, atau penyalahgunaan akses. Rollback perubahan kalau memungkinkan dan investigasi penyebabnya.</div></div>
+        <div class="rule"><span>🔍</span><div class="rule-text"><strong>Skenario 5: Pengaturan Sistem berubah tapi tidak ada yang aware</strong><br>
+        Ini kasus paling serius. Filter: modul "Pengaturan Sistem" + semua admin + tanggal terakhir bulan. Setiap perubahan di Pengaturan Sistem harus ada alasan yang tercatat. Kalau ada perubahan yang tidak bisa dijelaskan (misal API Key diganti tapi Acoy tidak melakukannya) → eskalasi segera ke level insiden keamanan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Alur Investigasi</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Identifikasi scope — apa yang dicurigai dan kapan</div><div class="step-desc">Sebelum mulai filter, tentukan dulu: apa anomali yang terdeteksi? Kapan pertama kali diketahui? Siapa yang mungkin terlibat? Ini menentukan filter apa yang paling efektif untuk digunakan pertama.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Filter Audit Log dengan parameter yang tepat</div><div class="step-desc">Mulai dari filter yang paling sempit berdasarkan hipotesis awal. Kalau tidak menemukan apa-apa, perluas range waktu atau ganti filter. Dokumentasikan setiap query filter yang digunakan — ini penting untuk laporan investigasi.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Kumpulkan bukti — screenshot dan export log</div><div class="step-desc">Setiap entri yang relevan di-screenshot atau di-export. Jangan mengandalkan ingatan — bukti dalam format yang bisa dibagikan ke tim atau pihak eksternal kalau diperlukan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Ambil tindakan sesuai temuan</div><div class="step-desc">
+          <ul>
+            <li><strong>Akses tidak sah terdeteksi:</strong> Suspend akun, rotate API key, reset semua password admin, dan dokumentasikan insiden</li>
+            <li><strong>Human error terdeteksi:</strong> Rollback perubahan jika memungkinkan, brief admin yang bersangkutan, update SOP untuk mencegah terulang</li>
+            <li><strong>Bug sistem terdeteksi:</strong> Eskalasi ke Irwan + Rifky untuk fix, sambil freeze aksi yang bermasalah sementara</li>
+          </ul>
+        </div></div></div>
+        <div class="step"><div class="step-num sn-ok">5</div><div class="step-body"><div class="step-title">Dokumentasikan hasil investigasi</div><div class="step-desc">Tulis incident report singkat: apa yang terjadi, kapan ditemukan, siapa yang terlibat, aksi yang sudah diambil, dan langkah pencegahan ke depan. Simpan di tempat yang bisa diakses tim (Notion, Google Docs, dll).</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Investigasi tidak boleh mengubah atau menghapus log apapun</strong> — bahkan kalau log tersebut "memalukan" bagi GoPop. Keutuhan log adalah prioritas utama. Semua tindakan korektif dilakukan di luar log, bukan dengan memanipulasi log.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau investigasi menemukan indikasi fraud eksternal atau internal yang serius</strong>, Acoy perlu konsultasi dengan penasihat hukum sebelum mengambil tindakan lebih lanjut. Beberapa tindakan (misal memecat karyawan karena temuan di Audit Log) memerlukan prosedur legal yang benar agar tidak berbalik menjadi masalah bagi GoPop.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Investigasi rutin bulanan direkomendasikan</strong> — bukan hanya saat ada masalah. Acoy jadwalkan 30 menit per bulan untuk review Audit Log: cek apakah ada login dari IP tidak biasa, perubahan setting tidak terduga, atau pola aksi yang anomali. Pencegahan lebih baik dari investigasi darurat.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">4</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Investigasi Berhasil</div><div class="hasil-items"><div class="hasil-item">Penyebab anomali teridentifikasi dari Audit Log</div><div class="hasil-item">Tindakan korektif diambil dan didokumentasikan</div><div class="hasil-item">Incident report tersimpan untuk referensi ke depan</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Investigasi Terhambat</div><div class="hasil-items"><div class="hasil-item">Blind spot di logging → aksi kritis tidak tercatat → investigasi buntu</div><div class="hasil-item">Log tidak ada diff sebelum/sesudah → sulit tentukan dampak perubahan</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('al-f01',null)">← F01: Baca & Filter Log</div>
+    <div class="fn-btn next" onclick="go('al-f03',null)">F03: Export untuk Compliance →</div>
+  </div>
+</div>
+
+<!-- ============================================================ AUDIT LOG F03 ============================================================ -->
+<div id="page-al-f03" class="page">
+  <div class="flow-header">
+    <div class="fh-breadcrumb">📋 Audit Log <span>›</span> F03</div>
+    <div class="fh-title">Export Log untuk Compliance & Audit Eksternal</div>
+    <div class="fh-desc">Ketika ada keperluan audit eksternal (auditor keuangan, regulator, atau due diligence investor), Audit Log perlu bisa diekspor dalam format yang bisa dibaca pihak luar. Flow ini juga mencakup penyimpanan arsip log jangka panjang.</div>
+    <div class="fh-pills">
+      <span class="pill pill-who">👥 Acoy (Super Admin) · Agung (Finance — kebutuhan audit keuangan)</span>
+      <span class="pill pill-trigger">🔔 Audit eksternal, due diligence investor, atau kebutuhan compliance regulasi</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">1</div><div class="fb-title">Alur Normal — Export Log</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-ok">1</div><div class="step-body"><div class="step-title">Tentukan scope export — periode dan modul</div><div class="step-desc">Acoy atau Agung tentukan: periode yang dibutuhkan auditor (misal Jan–Des 2024), modul yang relevan (misal hanya Settlement dan Rekonsiliasi untuk audit keuangan), dan level detail yang diperlukan.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Klik "Export Log" — pilih format</div><div class="step-desc">Dua format export tersedia:<ul>
+          <li><strong>CSV:</strong> Untuk analisis di Excel atau tool audit. Setiap baris adalah satu entri log dengan semua field sebagai kolom.</li>
+          <li><strong>PDF:</strong> Untuk laporan formal ke auditor atau regulator. Format lebih rapi dengan header GoPop dan timestamp export.</li>
+        </ul>
+        Ukuran file tergantung range waktu — kalau export setahun penuh bisa besar, sistem akan buat file di background dan kirim link download ke email Acoy.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">3</div><div class="step-body"><div class="step-title">Verifikasi keaslian export (opsional)</div><div class="step-desc">File export bisa disertai digital signature atau hash checksum yang bisa diverifikasi auditor bahwa file tidak dimodifikasi setelah export. Ini penting kalau auditor memerlukan jaminan integritas data.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">4</div><div class="step-body"><div class="step-title">Bagikan ke auditor dengan aman</div><div class="step-desc">Jangan kirim via email biasa kalau file mengandung data sensitif. Gunakan link download yang terproteksi password atau platform berbagi file yang aman (Google Drive dengan akses terbatas). Catat siapa yang mendapat akses ke file ini dan untuk keperluan apa.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n1">2</div><div class="fb-title">Arsip Log Jangka Panjang</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="steps">
+        <div class="step"><div class="step-num sn-sys">1</div><div class="step-body"><div class="step-title">Log lebih dari 2 tahun dipindah ke cold storage otomatis</div><div class="step-desc">Sistem otomatis memindahkan log yang sudah lebih dari 2 tahun ke cold storage (biaya penyimpanan lebih murah). Log di cold storage masih bisa diakses tapi butuh waktu lebih lama (bisa 1–24 jam) untuk di-retrieve. Acoy mendapat notifikasi setiap kali ada batch log yang dipindah ke arsip.</div></div></div>
+        <div class="step"><div class="step-num sn-ok">2</div><div class="step-body"><div class="step-title">Request retrieve log dari arsip kalau diperlukan</div><div class="step-desc">Kalau butuh log yang sudah diarsipkan (misal auditor minta log dari 3 tahun lalu), Acoy submit request retrieve dari halaman Audit Log. Sistem akan proses dalam background dan kirim notifikasi ke Acoy saat log sudah bisa diakses kembali.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n2">3</div><div class="fb-title">Aturan Bisnis</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="rule-list">
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Aksi export sendiri dicatat di Audit Log</strong> — siapa yang export, kapan, range waktu apa, dan format apa. Ini mencegah penyalahgunaan export untuk keperluan yang tidak sah.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Log yang diarsipkan tidak boleh dihapus</strong> — hanya dipindah ke storage yang lebih murah. GoPop wajib menyimpan log minimal 2 tahun, idealnya 5 tahun untuk keperluan audit keuangan jangka panjang.</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Export log yang mengandung data pribadi user</strong> (email, nomor HP) perlu persetujuan khusus dan harus diperlakukan sebagai data sensitif sesuai kebijakan privasi GoPop dan regulasi yang berlaku (UU PDP Indonesia).</div></div>
+        <div class="rule"><span>📌</span><div class="rule-text"><strong>Kalau ada subpoena atau permintaan resmi dari aparat penegak hukum</strong> untuk data log, Acoy tidak boleh memenuhi sendiri tanpa konsultasi hukum terlebih dahulu. Ini prosedur legal yang memerlukan verifikasi keabsahan permintaan.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n5">4</div><div class="fb-title">Bottleneck</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="bn-list">
+        <div class="bn">
+          <div class="bn-q">Export log dalam jumlah besar (setahun penuh) bisa timeout atau terlalu lama — auditor menunggu terlalu lama</div>
+          <div class="bn-a">Implementasikan async export: klik "Export" → sistem buat job di background → kirim link download ke email Acoy saat sudah selesai. Jangan paksa user menunggu di halaman sampai export selesai. Ini juga lebih reliabel karena tidak terpotong oleh timeout browser.</div>
+          <div class="bn-owner">PIC: Irwan + Rifky (async export job + email notification) · Isal + Ipong (progress indicator di dashboard)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="fb-header" onclick="tog(this)"><div class="fb-num n6">5</div><div class="fb-title">Hasil Akhir</div><div class="fb-toggle">▾</div></div>
+    <div class="fb-body open">
+      <div class="hasil-grid">
+        <div class="hasil-box hasil-ok"><div class="hasil-title">✅ Export & Arsip Berjalan Baik</div><div class="hasil-items"><div class="hasil-item">Auditor mendapat file log dalam format yang dibutuhkan</div><div class="hasil-item">Log lama terarsip otomatis — tidak makan storage produksi</div><div class="hasil-item">Integritas file export bisa diverifikasi dengan hash/signature</div></div></div>
+        <div class="hasil-box hasil-fail"><div class="hasil-title">❌ Risiko</div><div class="hasil-items"><div class="hasil-item">Export timeout → log tidak bisa diakses auditor tepat waktu</div><div class="hasil-item">Log dihapus sebelum 2 tahun → compliance violation</div><div class="hasil-item">Data pribadi di log tidak dilindungi → pelanggaran UU PDP</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-nav">
+    <div class="fn-btn" onclick="go('al-f02',null)">← F02: Investigasi Aktivitas</div>
+    <div class="fn-btn" onclick="go('welcome',null)">🏠 Halaman Utama — Dashboard Selesai 🎉</div>
+  </div>
+</div>
+
 </main>
 </div>
 
