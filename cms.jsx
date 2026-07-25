@@ -326,6 +326,78 @@ function BannerPanel({ platform }) {
   );
 }
 
+function BannerHomepageMockup({ form }) {
+  const t = BANNER_TONE_META[form.tone] || BANNER_TONE_META.purple;
+  return (
+    <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid #E0D9F5', boxShadow: '0 2px 10px rgba(26,18,40,0.06)' }}>
+      {/* Mini nav bar */}
+      <div style={{
+        padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        borderBottom: '1px solid #F0EBFF', background: '#FFFFFF',
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: '#1A1228' }}>gopop<span style={{ color: '#4A2D8C' }}>•</span></div>
+        <div style={{ display: 'flex', gap: 10, fontSize: 10, color: '#9085AE', fontWeight: 600 }}>
+          <span style={{ color: '#4A2D8C' }}>Home</span>
+          <span>Layanan</span>
+          <span>Tips &amp; Promo</span>
+        </div>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#FFFFFF', background: '#4A2D8C', padding: '4px 12px', borderRadius: 20 }}>Masuk</div>
+      </div>
+
+      {/* Hero */}
+      <div style={{
+        position: 'relative', padding: '18px 16px 26px', minHeight: 140,
+        background: t.bg, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+      }}>
+        <div style={{ maxWidth: '48%' }}>
+          <div style={{ fontSize: 9, color: '#574872', fontWeight: 600, marginBottom: 4 }}>Hai, Selamat Datang! 👋</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
+        </div>
+        {form.imgDesktop ? (
+          <div style={{ width: '48%', aspectRatio: '16/7', borderRadius: 10, overflow: 'hidden', flexShrink: 0 }}>
+            <img src={form.imgDesktop} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </div>
+        ) : (
+          <div style={{
+            width: '48%', aspectRatio: '16/7', borderRadius: 10, flexShrink: 0,
+            background: 'rgba(255,255,255,0.55)', border: '1px dashed rgba(87,72,114,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#574872', fontSize: 9, textAlign: 'center', padding: 6,
+          }}>Belum ada gambar</div>
+        )}
+
+        {/* Floating promo card, meniru posisi di homepage asli */}
+        <div style={{
+          position: 'absolute', left: 16, bottom: -18, right: 16,
+          background: '#FFFFFF', borderRadius: 10, padding: '8px 10px',
+          boxShadow: '0 8px 20px rgba(26,18,40,0.14)',
+          display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <div style={{
+            width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+            background: t.bg, color: t.fg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}><Icons.wallet size={13} /></div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1228', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {form.judul.trim() || 'Judul banner…'}
+            </div>
+            <div style={{ fontSize: 9, color: '#574872', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {form.subjudul.trim() || 'Subjudul/deskripsi pendek…'}
+            </div>
+          </div>
+          <div style={{
+            fontSize: 9, fontWeight: 700, color: '#FFFFFF', background: t.fg,
+            padding: '5px 9px', borderRadius: 6, flexShrink: 0,
+            display: 'inline-flex', alignItems: 'center', gap: 2, whiteSpace: 'nowrap',
+          }}>Coba <Icons.arrowR size={9} /></div>
+        </div>
+      </div>
+      {/* Spacer biar floating card gak numpuk sama konten di bawahnya */}
+      <div style={{ height: 18, background: '#FFFFFF' }} />
+    </div>
+  );
+}
+
 function BannerModal({ banner, onClose, onSave, platform }) {
   const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: '', tone: 'purple', status: 'aktif', imgDesktop: null, imgMobile: null });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -394,10 +466,10 @@ function BannerModal({ banner, onClose, onSave, platform }) {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <CmsField label="Gambar Desktop (16:7 · min 1280×560px)">
+            <CmsField label="Gambar Desktop — rasio 16:7, min 1280×560px (cth. 1440×630px, 1600×700px)">
               <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/7" minW={1280} minH={560} />
             </CmsField>
-            <CmsField label="Gambar Mobile (9:10 · min 360×400px)">
+            <CmsField label="Gambar Mobile — rasio 9:10, min 360×400px (cth. 720×800px)">
               <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="9/10" minW={360} minH={400} />
             </CmsField>
           </div>
@@ -421,28 +493,14 @@ function BannerModal({ banner, onClose, onSave, platform }) {
             </div>
           </CmsField>
 
-          {/* Preview */}
-          <div style={{
-            borderRadius: 14, padding: 18, overflow: 'hidden', position: 'relative',
-            background: (BANNER_TONE_META[form.tone] || BANNER_TONE_META.purple).bg,
-          }}>
-            {form.imgDesktop && (
-              <img src={form.imgDesktop} alt="" style={{
-                position: 'absolute', inset: 0, width: '100%', height: '100%',
-                objectFit: 'cover', opacity: 0.35,
-              }} />
-            )}
-            <div style={{ position: 'relative' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 10 }}>Preview</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1228' }}>{form.judul.trim() || 'Judul banner…'}</div>
-            <div style={{ fontSize: 12, color: '#574872', marginTop: 4 }}>{form.subjudul.trim() || 'Subjudul/deskripsi pendek…'}</div>
-            <div style={{
-              marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6,
-              background: '#FFFFFF', color: (BANNER_TONE_META[form.tone] || BANNER_TONE_META.purple).fg,
-              padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
-            }}>
-              {form.target} <Icons.arrowR size={12} />
+          {/* Preview — mockup homepage gopop.id, biar kebayang hasil akhirnya */}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
+              Preview di Homepage
             </div>
+            <BannerHomepageMockup form={form} />
+            <div style={{ fontSize: 10, color: '#9085AE', marginTop: 6, textAlign: 'center' }}>
+              Simulasi tampilan — posisi &amp; ukuran elemen asli di web/app bisa sedikit berbeda
             </div>
           </div>
         </div>
