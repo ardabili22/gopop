@@ -344,26 +344,28 @@ function BannerHomepageMockup({ form }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#FFFFFF', background: '#4A2D8C', padding: '4px 12px', borderRadius: 20 }}>Masuk</div>
       </div>
 
-      {/* Hero */}
+      {/* Hero — gambar dibikin full-bleed di sisi kanan (kayak di web asli), bukan kotak kecil */}
       <div style={{
-        position: 'relative', padding: '18px 16px 26px', minHeight: 140,
-        background: t.bg, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+        position: 'relative', minHeight: 240, overflow: 'hidden',
+        background: t.bg,
       }}>
-        <div style={{ maxWidth: '48%' }}>
-          <div style={{ fontSize: 9, color: '#574872', fontWeight: 600, marginBottom: 4 }}>Hai, Selamat Datang! 👋</div>
-          <div style={{ fontSize: 14, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
-        </div>
         {form.imgDesktop ? (
-          <div style={{ width: '48%', aspectRatio: '16/7', borderRadius: 10, overflow: 'hidden', flexShrink: 0 }}>
-            <img src={form.imgDesktop} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </div>
+          <img src={form.imgDesktop} alt="" style={{
+            position: 'absolute', top: 0, right: 0, bottom: 0, width: '58%',
+            objectFit: 'cover', display: 'block',
+          }} />
         ) : (
           <div style={{
-            width: '48%', aspectRatio: '16/7', borderRadius: 10, flexShrink: 0,
-            background: 'rgba(255,255,255,0.55)', border: '1px dashed rgba(87,72,114,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#574872', fontSize: 9, textAlign: 'center', padding: 6,
+            position: 'absolute', top: 0, right: 0, bottom: 0, width: '58%',
+            background: 'rgba(255,255,255,0.55)', borderLeft: '1px dashed rgba(87,72,114,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#574872', fontSize: 11, textAlign: 'center', padding: 12,
           }}>Belum ada gambar</div>
         )}
+
+        <div style={{ position: 'relative', padding: '20px 16px 44px', maxWidth: '46%' }}>
+          <div style={{ fontSize: 10, color: '#574872', fontWeight: 600, marginBottom: 4 }}>Hai, Selamat Datang! 👋</div>
+          <div style={{ fontSize: 17, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
+        </div>
 
         {/* Floating promo card, meniru posisi di homepage asli */}
         <div style={{
