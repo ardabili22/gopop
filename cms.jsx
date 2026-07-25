@@ -42,7 +42,7 @@ function getArtikelKategori() {
 
 const ARTIKEL_SEED = [
   { id: 1, judul: 'Cashback 5% Setiap Transfer E-Wallet Bulan Ini', kategori: 'Promo', excerpt: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet minimal Rp 50.000 selama periode promo.', konten: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet (GoPay, OVO, Dana, ShopeePay) dengan minimal transaksi Rp 50.000. Cashback otomatis masuk ke saldo dalam 24 jam. Berlaku selama periode promo dan kuota tersedia.', tone: 'coral', status: 'published', tgl: '2026-05-15',
-    kodePromo: 'CASHBACK5', autoApply: false, scope: ['GoPay', 'OVO', 'Dana', 'ShopeePay'],
+    voucherId: 1,
     caraKlaim: ['Buka menu Transfer E-Wallet di aplikasi Gopop', 'Pilih e-wallet tujuan (GoPay, OVO, Dana, atau ShopeePay)', 'Masukkan kode promo CASHBACK5 di halaman checkout', 'Transfer minimal Rp 50.000 — cashback masuk ke saldo dalam 24 jam'],
     faq: [
       { q: 'Apakah promo ini berlaku untuk semua e-wallet?', a: 'Berlaku untuk transfer ke GoPay, OVO, Dana, dan ShopeePay selama kuota promo masih tersedia.' },
@@ -51,7 +51,7 @@ const ARTIKEL_SEED = [
   { id: 2, judul: '5 Tips Aman Transaksi PPOB di Muurah', kategori: 'Tips', excerpt: 'Pastikan nomor tujuan benar, simpan bukti transaksi, dan kenali ciri promo resmi dari Muurah.', konten: 'Berikut tips aman bertransaksi di Muurah: 1) Selalu cek ulang nomor HP/ID tujuan sebelum bayar, 2) Simpan bukti pembayaran sampai produk masuk, 3) Promo resmi Muurah hanya diinformasikan lewat aplikasi dan channel official, 4) Jangan bagikan OTP/PIN ke siapapun, 5) Hubungi CS via menu Bantuan jika ada kendala.', tone: 'purple', status: 'published', tgl: '2026-05-10' },
   { id: 3, judul: 'Maintenance Sistem Terjadwal', kategori: 'Pengumuman', excerpt: 'Akan ada maintenance sistem pada 24 Mei pukul 23:00–01:00 WIB. Beberapa layanan mungkin terganggu.', konten: 'Kami akan melakukan maintenance sistem terjadwal pada 24 Mei 2026 pukul 23:00–01:00 WIB untuk meningkatkan kualitas layanan. Selama periode tersebut, beberapa transaksi mungkin mengalami keterlambatan. Kami mohon maaf atas ketidaknyamanan ini.', tone: 'blue', status: 'terjadwal', tgl: '2026-05-24' },
   { id: 4, judul: 'Diskon Spesial Token PLN Akhir Pekan', kategori: 'Promo', excerpt: 'Dapatkan diskon 2% untuk pembelian token PLN setiap Sabtu & Minggu.', konten: 'Setiap Sabtu dan Minggu, nikmati diskon 2% (maks Rp 2.000) untuk setiap pembelian token PLN minimal Rp 20.000. Promo otomatis diterapkan saat checkout, tanpa kode promo.', tone: 'gold', status: 'draft', tgl: '2026-05-23',
-    kodePromo: '', autoApply: true, scope: [],
+    voucherId: 2,
     caraKlaim: ['Pilih menu Token PLN', 'Masukkan ID pelanggan / nomor meter', 'Pilih nominal token minimal Rp 20.000', 'Diskon otomatis terpotong saat checkout di hari Sabtu/Minggu'],
     faq: [
       { q: 'Apakah perlu kode promo?', a: 'Tidak, diskon diterapkan otomatis tanpa kode promo.' },
@@ -867,20 +867,64 @@ function RichTextEditor({ value, onChange }) {
   );
 }
 
+// Links an artikel kategori Promo to a real voucher from window.MuurahPromoStore
+// (Pengaturan > Promo & Voucher), instead of re-entering kode promo & scope manually.
+// Dropdown cuma nawarin voucher berstatus 'aktif'; voucher yang udah ke-link tapi
+// statusnya berubah (misal jadi nonaktif/habis) tetep ditampilin biar gak ilang diem-diem.
+function VoucherPicker({ value, onChange }) {
+  const allPromos = window.MuurahPromoStore ? window.MuurahPromoStore.get() : [];
+  const selected = allPromos.find(p => p.id === value) || null;
+  const aktifPromos = allPromos.filter(p => p.status === 'aktif');
+  const options = (selected && selected.status !== 'aktif') ? [selected, ...aktifPromos] : aktifPromos;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ position: 'relative' }}>
+        <select value={value || ''} onChange={(e) => onChange(e.target.value ? parseInt(e.target.value, 10) : null)}
+          style={{ ...cmsInputStyle({ width: '100%' }), appearance: 'none', paddingRight: 30, cursor: 'pointer' }}>
+          <option value="">Pilih voucher yang aktif...</option>
+          {options.map(p => (
+            <option key={p.id} value={p.id}>
+              {p.kode} — {p.nama}{p.status !== 'aktif' ? ' (' + p.status + ')' : ''}
+            </option>
+          ))}
+        </select>
+        <Icons.chevron size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
+      </div>
+
+      {selected ? (
+        <div style={{
+          border: '1px solid #E0D9F5', borderRadius: 10, padding: 12,
+          background: '#FAF8FF', display: 'flex', flexDirection: 'column', gap: 6,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 12, color: '#4A2D8C' }}>{selected.kode}</span>
+            <PromoStatusPill status={selected.status} />
+          </div>
+          <div style={{ fontSize: 13, color: '#1A1228', fontWeight: 600 }}>
+            {selected.tipe === 'percent'
+              ? selected.nilai + '% diskon' + (selected.maksDiskon ? ' (maks Rp ' + selected.maksDiskon.toLocaleString('id-ID') + ')' : '')
+              : 'Rp ' + selected.nilai.toLocaleString('id-ID') + ' diskon'}
+          </div>
+          <div style={{ fontSize: 12, color: '#574872' }}>Berlaku untuk: {selected.scope.join(', ')}</div>
+          <div style={{ fontSize: 11, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace' }}>
+            Periode {selected.mulai} — {selected.akhir}
+          </div>
+        </div>
+      ) : (
+        <div style={{ fontSize: 12, color: '#9085AE' }}>Belum ada voucher dipilih.</div>
+      )}
+    </div>
+  );
+}
+
 function ArtikelModal({ artikel, onClose, onSave }) {
   const [form, setForm] = useCmsState(artikel || {
     judul: '', kategori: getArtikelKategori()[0] || 'Tips', excerpt: '', konten: '',
     tone: 'purple', status: 'draft', tgl: '2026-06-12', gambar: null,
-    kodePromo: '', autoApply: true, caraKlaim: [], faq: [], scope: [],
+    caraKlaim: [], faq: [], voucherId: null,
   });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  function toggleScope(s) {
-    setForm(f => {
-      if (s === 'Semua Produk') return { ...f, scope: f.scope.includes('Semua Produk') ? [] : ['Semua Produk'] };
-      const next = f.scope.includes(s) ? f.scope.filter(x => x !== s) : [...f.scope.filter(x => x !== 'Semua Produk'), s];
-      return { ...f, scope: next };
-    });
-  }
   const isPromo = form.kategori === 'Promo';
   const kontenText = (form.konten || '').replace(/<[^>]*>/g, '').trim();
   const isValid = form.judul.trim() && form.excerpt.trim() && kontenText;
@@ -971,24 +1015,9 @@ function ArtikelModal({ artikel, onClose, onSave }) {
 
           {isPromo && (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <CmsField label="Kode Promo">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#574872', cursor: 'pointer' }}>
-                      <Toggle checked={form.autoApply} onChange={(v) => u('autoApply', v)} />
-                      Otomatis diterapkan (tanpa kode)
-                    </label>
-                    {!form.autoApply && (
-                      <input value={form.kodePromo} onChange={(e) => u('kodePromo', e.target.value.toUpperCase())}
-                        placeholder="Contoh: GOPOP5"
-                        style={cmsInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.04em' })} />
-                    )}
-                  </div>
-                </CmsField>
-                <CmsField label="Berlaku untuk Produk">
-                  <ProductScopeDropdown selected={form.scope} onToggle={toggleScope} />
-                </CmsField>
-              </div>
+              <CmsField label="Pilih Voucher">
+                <VoucherPicker value={form.voucherId} onChange={(v) => u('voucherId', v)} />
+              </CmsField>
               <CmsField label="Cara Klaim">
                 <StepListEditor items={form.caraKlaim} onChange={(v) => u('caraKlaim', v)} placeholder="Contoh: Buka menu Transfer E-Wallet" />
               </CmsField>

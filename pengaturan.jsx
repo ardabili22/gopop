@@ -2409,17 +2409,16 @@ function FaqModal({ faq, onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 // NOTE: kategori/produk picker for "Berlaku untuk Produk" now lives in global.jsx
 // as getScopeCategoryGroups() + <ProductScopeDropdown>, shared with Tips & Promo Artikel.
-
-const PROMO_SEED = [
-  { id: 1, kode: 'CASHBACK5EW', nama: 'Cashback 5% Transfer E-Wallet', tipe: 'percent', nilai: 5, maksDiskon: 5_000, minTransaksi: 50_000, scope: ['Transfer E-Wallet'], mulai: '2026-05-15', akhir: '2026-05-31', kuota: 5000, terpakai: 1842, perUser: 3, status: 'aktif' },
-  { id: 2, kode: 'PLNWEEKEND2', nama: 'Token PLN Diskon 2% Weekend', tipe: 'percent', nilai: 2, maksDiskon: 2_000, minTransaksi: 20_000, scope: ['Token PLN'], mulai: '2026-05-23', akhir: '2026-06-30', kuota: 10000, terpakai: 0, perUser: 1, status: 'terjadwal' },
-  { id: 3, kode: 'GAMEHEMAT10K', nama: 'Potongan Rp10.000 Voucher Game', tipe: 'nominal', nilai: 10_000, maksDiskon: null, minTransaksi: 50_000, scope: ['Game & Voucher'], mulai: '2026-05-01', akhir: '2026-05-20', kuota: 2000, terpakai: 2000, perUser: 1, status: 'habis' },
-  { id: 4, kode: 'NEWUSER25', nama: 'Diskon 25% Pengguna Baru (Semua Produk)', tipe: 'percent', nilai: 25, maksDiskon: 15_000, minTransaksi: 10_000, scope: ['Semua Produk'], mulai: '2026-01-01', akhir: '2026-12-31', kuota: 50000, terpakai: 8120, perUser: 1, status: 'aktif' },
-  { id: 5, kode: 'PULSALEBARAN', nama: 'Promo Lebaran Pulsa & Paket Data', tipe: 'nominal', nilai: 3_000, maksDiskon: null, minTransaksi: 25_000, scope: ['Pulsa', 'Paket Data'], mulai: '2026-03-01', akhir: '2026-04-10', kuota: 8000, terpakai: 7960, perUser: 2, status: 'nonaktif' },
-];
+// Data promo sekarang di window.MuurahPromoStore (global.jsx) — jadi source of truth
+// yang sama juga dipake VoucherPicker di form artikel Tips & Promo.
 
 function PromoPanel() {
-  const [promos, setPromos] = usePsState(PROMO_SEED);
+  const [promos, setPromos] = usePsState(() => window.MuurahPromoStore ? window.MuurahPromoStore.get() : []);
+  const isFirst = React.useRef(true);
+  React.useEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    if (window.MuurahPromoStore) window.MuurahPromoStore.set(promos);
+  }, [promos]);
   const [statusF, setStatusF] = usePsState('semua');
   const [query, setQuery] = usePsState('');
   const [editing, setEditing] = usePsState(null);
