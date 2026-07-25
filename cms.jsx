@@ -47,25 +47,71 @@ const ARTIKEL_SEED = [
   { id: 4, judul: 'Diskon Spesial Token PLN Akhir Pekan', kategori: 'Promo', excerpt: 'Dapatkan diskon 2% untuk pembelian token PLN setiap Sabtu & Minggu.', konten: 'Setiap Sabtu dan Minggu, nikmati diskon 2% (maks Rp 2.000) untuk setiap pembelian token PLN minimal Rp 20.000. Promo otomatis diterapkan saat checkout, tanpa kode promo.', tone: 'gold', status: 'draft', tgl: '2026-05-23' },
 ];
 
-function ImageUploadField({ value, onChange, aspect = '16/9' }) {
+function ImageUploadField({ value, onChange, aspect = '16/9', minW, minH }) {
   const inputRef = React.useRef(null);
-  function handleFile(e) {
-    const file = e.target.files && e.target.files[0];
+  const [dragOver, setDragOver] = React.useState(false);
+  const [checking, setChecking] = React.useState(false);
+
+  function processFile(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       window.muurahToast('File harus berupa gambar (PNG/JPG)', 'error');
       return;
     }
+    setChecking(true);
     const reader = new FileReader();
-    reader.onload = () => onChange(reader.result);
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      if (!minW || !minH) { setChecking(false); onChange(dataUrl); return; }
+      const img = new Image();
+      img.onload = () => {
+        setChecking(false);
+        if (img.naturalWidth < minW || img.naturalHeight < minH) {
+          window.muurahToast(
+            'Gambar terlalu kecil (' + img.naturalWidth + '×' + img.naturalHeight + 'px) — minimal ' + minW + '×' + minH + 'px',
+            'error'
+          );
+          return;
+        }
+        onChange(dataUrl);
+      };
+      img.onerror = () => { setChecking(false); window.muurahToast('Gagal membaca gambar', 'error'); };
+      img.src = dataUrl;
+    };
+    reader.onerror = () => { setChecking(false); window.muurahToast('Gagal membaca file', 'error'); };
     reader.readAsDataURL(file);
   }
+
+  function handleFile(e) {
+    processFile(e.target.files && e.target.files[0]);
+    e.target.value = '';
+  }
+  function handleDragOver(e) { e.preventDefault(); setDragOver(true); }
+  function handleDragLeave() { setDragOver(false); }
+  function handleDrop(e) {
+    e.preventDefault();
+    setDragOver(false);
+    processFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+  }
+
+  const sizeHint = 'PNG/JPG, rasio ' + aspect + (minW && minH ? ' · min ' + minW + '×' + minH + 'px' : '');
+
   return (
     <div>
       <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
       {value ? (
-        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: aspect, background: '#F0EBFF' }}>
+        <div
+          onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+          style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: aspect, background: '#F0EBFF' }}
+        >
           <img src={value} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          {dragOver && (
+            <div style={{
+              position: 'absolute', inset: 0, background: 'rgba(74,45,140,0.6)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#FFFFFF', fontSize: 12, fontWeight: 700, textAlign: 'center', padding: 8,
+            }}>Lepas untuk ganti gambar</div>
+          )}
           <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 6 }}>
             <button type="button" onClick={() => inputRef.current.click()} style={{
               background: 'rgba(26,18,40,0.6)', color: '#FFFFFF', border: 0, borderRadius: 8,
@@ -78,15 +124,31 @@ function ImageUploadField({ value, onChange, aspect = '16/9' }) {
           </div>
         </div>
       ) : (
-        <button type="button" onClick={() => inputRef.current.click()} style={{
-          width: '100%', aspectRatio: aspect, borderRadius: 12,
-          border: '1.5px dashed #C5B8EF', background: '#FAF8FF', color: '#9085AE',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
-          cursor: 'pointer', fontFamily: 'inherit',
-        }}>
-          <Icons.image size={22} />
-          <span style={{ fontSize: 12, fontWeight: 600 }}>Upload Gambar</span>
-          <span style={{ fontSize: 10 }}>PNG/JPG, rasio {aspect}</span>
+        <button
+          type="button" onClick={() => inputRef.current.click()}
+          onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+          style={{
+            width: '100%', aspectRatio: aspect, borderRadius: 12,
+            border: '1.5px dashed ' + (dragOver ? '#4A2D8C' : '#C5B8EF'),
+            background: dragOver ? '#EDE8FF' : '#FAF8FF', color: dragOver ? '#4A2D8C' : '#9085AE',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+            cursor: 'pointer', fontFamily: 'inherit', transition: 'all 130ms ease',
+          }}>
+          {checking ? (
+            <>
+              <span className="muurah-spin" style={{
+                width: 18, height: 18, borderRadius: '50%',
+                border: '2px solid #C5B8EF', borderTopColor: '#4A2D8C', display: 'inline-block',
+              }} />
+              <span style={{ fontSize: 12, fontWeight: 600 }}>Memproses…</span>
+            </>
+          ) : (
+            <>
+              <Icons.image size={22} />
+              <span style={{ fontSize: 12, fontWeight: 600 }}>{dragOver ? 'Lepas di sini' : 'Upload Gambar'}</span>
+              <span style={{ fontSize: 10 }}>{sizeHint}</span>
+            </>
+          )}
         </button>
       )}
     </div>
@@ -333,10 +395,10 @@ function BannerModal({ banner, onClose, onSave, platform }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <CmsField label="Gambar Desktop (16:9 · min 1280×720px)">
-              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/9" />
+              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/9" minW={1280} minH={720} />
             </CmsField>
             <CmsField label="Gambar Mobile (3:4 · min 360×480px)">
-              <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="3/4" />
+              <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="3/4" minW={360} minH={480} />
             </CmsField>
           </div>
 
