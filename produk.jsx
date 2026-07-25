@@ -195,32 +195,11 @@ function Produk() {
       <>
 
       <Card padding={0} style={{ overflow: 'hidden' }}>
-        {/* Tabs */}
-        <div style={{
-          display: 'flex', borderBottom: '1px solid #E0D9F5',
-          padding: '0 20px',
-        }}>
-          {tabs.map((t) => {
-            const isActive = tab === t.id;
-            return (
-              <button key={t.id} onClick={() => setTab(t.id)} style={{
-                background: 'transparent', border: 0, padding: '16px 14px 14px',
-                fontSize: 13, fontWeight: isActive ? 600 : 500, cursor: 'pointer',
-                color: isActive ? '#4A2D8C' : '#574872',
-                borderBottom: isActive ? '2px solid #4A2D8C' : '2px solid transparent',
-                marginBottom: -1, fontFamily: 'inherit',
-                transition: 'all 130ms ease',
-              }}>
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Filter row */}
+        {/* Filter row — Kategori dipindah jadi dropdown (bukan tab) biar tetap ringkes
+             walau kategorinya nambah banyak dari Master Data */}
         <div style={{
           padding: '14px 20px', display: 'flex', gap: 10, alignItems: 'center',
-          borderBottom: '1px solid #E0D9F5',
+          borderBottom: '1px solid #E0D9F5', flexWrap: 'wrap',
         }}>
           <div style={{ position: 'relative', width: 280 }}>
             <Icons.search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9085AE' }} />
@@ -228,6 +207,9 @@ function Produk() {
               placeholder="Cari SKU, nama produk…"
               style={prInputStyle({ paddingLeft: 36, width: '100%' })} />
           </div>
+          <ProdSelect value={tab} onChange={setTab} options={
+            tabs.map(t => ({ value: t.id, label: t.label }))
+          } />
           <ProdSelect value={operator} onChange={setOperator} options={[
             { value: 'semua', label: 'Semua Operator' },
             { value: 'Telkomsel', label: 'Telkomsel' },
