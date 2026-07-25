@@ -546,26 +546,35 @@ function BannerModal({ banner, onClose, onSave, platform }) {
             </CmsField>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <CmsField label="Gambar Desktop — rasio 16:7, min 1280×560px (cth. 1440×630px, 1600×700px)">
-              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/7" minW={1280} minH={560} />
-            </CmsField>
-            <CmsField label="Gambar Mobile — rasio 9:10, min 360×400px (cth. 720×800px)">
+          {platform === 'app' ? (
+            <CmsField label="Gambar Banner — rasio 9:10, min 360×400px (cth. 720×800px)">
               <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="9/10" minW={360} minH={400} />
             </CmsField>
-          </div>
-
-          {/* Preview — mockup homepage & app gopop.id, biar kebayang hasil akhirnya */}
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
-              Preview Web
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <CmsField label="Gambar Desktop — rasio 16:7, min 1280×560px (cth. 1440×630px, 1600×700px)">
+                <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/7" minW={1280} minH={560} />
+              </CmsField>
+              <CmsField label="Gambar Mobile — rasio 9:10, min 360×400px (cth. 720×800px)">
+                <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="9/10" minW={360} minH={400} />
+              </CmsField>
             </div>
-            <BannerHomepageMockup form={form} />
-          </div>
+          )}
+
+          {/* Preview — mockup homepage & app gopop.id, biar kebayang hasil akhirnya.
+               Banner App cuma satu ukuran, jadi cuma tampil preview app-nya aja. */}
+          {platform !== 'app' && (
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
+                Preview Web
+              </div>
+              <BannerHomepageMockup form={form} />
+            </div>
+          )}
 
           <div>
             <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
-              Preview Mobile App
+              {platform === 'app' ? 'Preview' : 'Preview Mobile App'}
             </div>
             <BannerMobileMockup form={form} />
             <div style={{ fontSize: 10, color: '#9085AE', marginTop: 6, textAlign: 'center' }}>
