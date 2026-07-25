@@ -41,10 +41,22 @@ function getArtikelKategori() {
 }
 
 const ARTIKEL_SEED = [
-  { id: 1, judul: 'Cashback 5% Setiap Transfer E-Wallet Bulan Ini', kategori: 'Promo', excerpt: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet minimal Rp 50.000 selama periode promo.', konten: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet (GoPay, OVO, Dana, ShopeePay) dengan minimal transaksi Rp 50.000. Cashback otomatis masuk ke saldo dalam 24 jam. Berlaku selama periode promo dan kuota tersedia.', tone: 'coral', status: 'published', tgl: '2026-05-15' },
+  { id: 1, judul: 'Cashback 5% Setiap Transfer E-Wallet Bulan Ini', kategori: 'Promo', excerpt: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet minimal Rp 50.000 selama periode promo.', konten: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet (GoPay, OVO, Dana, ShopeePay) dengan minimal transaksi Rp 50.000. Cashback otomatis masuk ke saldo dalam 24 jam. Berlaku selama periode promo dan kuota tersedia.', tone: 'coral', status: 'published', tgl: '2026-05-15',
+    kodePromo: 'CASHBACK5', autoApply: false, platforms: ['gopay', 'ovo', 'dana', 'shopeepay'],
+    caraKlaim: ['Buka menu Transfer E-Wallet di aplikasi Gopop', 'Pilih e-wallet tujuan (GoPay, OVO, Dana, atau ShopeePay)', 'Masukkan kode promo CASHBACK5 di halaman checkout', 'Transfer minimal Rp 50.000 — cashback masuk ke saldo dalam 24 jam'],
+    faq: [
+      { q: 'Apakah promo ini berlaku untuk semua e-wallet?', a: 'Berlaku untuk transfer ke GoPay, OVO, Dana, dan ShopeePay selama kuota promo masih tersedia.' },
+      { q: 'Berapa maksimal cashback yang bisa didapat?', a: 'Cashback dihitung 5% dari nominal transfer tanpa batas maksimal per transaksi.' },
+    ] },
   { id: 2, judul: '5 Tips Aman Transaksi PPOB di Muurah', kategori: 'Tips', excerpt: 'Pastikan nomor tujuan benar, simpan bukti transaksi, dan kenali ciri promo resmi dari Muurah.', konten: 'Berikut tips aman bertransaksi di Muurah: 1) Selalu cek ulang nomor HP/ID tujuan sebelum bayar, 2) Simpan bukti pembayaran sampai produk masuk, 3) Promo resmi Muurah hanya diinformasikan lewat aplikasi dan channel official, 4) Jangan bagikan OTP/PIN ke siapapun, 5) Hubungi CS via menu Bantuan jika ada kendala.', tone: 'purple', status: 'published', tgl: '2026-05-10' },
   { id: 3, judul: 'Maintenance Sistem Terjadwal', kategori: 'Pengumuman', excerpt: 'Akan ada maintenance sistem pada 24 Mei pukul 23:00–01:00 WIB. Beberapa layanan mungkin terganggu.', konten: 'Kami akan melakukan maintenance sistem terjadwal pada 24 Mei 2026 pukul 23:00–01:00 WIB untuk meningkatkan kualitas layanan. Selama periode tersebut, beberapa transaksi mungkin mengalami keterlambatan. Kami mohon maaf atas ketidaknyamanan ini.', tone: 'blue', status: 'terjadwal', tgl: '2026-05-24' },
-  { id: 4, judul: 'Diskon Spesial Token PLN Akhir Pekan', kategori: 'Promo', excerpt: 'Dapatkan diskon 2% untuk pembelian token PLN setiap Sabtu & Minggu.', konten: 'Setiap Sabtu dan Minggu, nikmati diskon 2% (maks Rp 2.000) untuk setiap pembelian token PLN minimal Rp 20.000. Promo otomatis diterapkan saat checkout, tanpa kode promo.', tone: 'gold', status: 'draft', tgl: '2026-05-23' },
+  { id: 4, judul: 'Diskon Spesial Token PLN Akhir Pekan', kategori: 'Promo', excerpt: 'Dapatkan diskon 2% untuk pembelian token PLN setiap Sabtu & Minggu.', konten: 'Setiap Sabtu dan Minggu, nikmati diskon 2% (maks Rp 2.000) untuk setiap pembelian token PLN minimal Rp 20.000. Promo otomatis diterapkan saat checkout, tanpa kode promo.', tone: 'gold', status: 'draft', tgl: '2026-05-23',
+    kodePromo: '', autoApply: true, platforms: [],
+    caraKlaim: ['Pilih menu Token PLN', 'Masukkan ID pelanggan / nomor meter', 'Pilih nominal token minimal Rp 20.000', 'Diskon otomatis terpotong saat checkout di hari Sabtu/Minggu'],
+    faq: [
+      { q: 'Apakah perlu kode promo?', a: 'Tidak, diskon diterapkan otomatis tanpa kode promo.' },
+      { q: 'Kapan promo ini berlaku?', a: 'Setiap hari Sabtu dan Minggu selama periode promo berlangsung.' },
+    ] },
 ];
 
 function ImageUploadField({ value, onChange, aspect = '16/9', minW, minH }) {
@@ -730,13 +742,157 @@ function ArtikelStatusPill({ status }) {
   return <span style={{ fontSize: 10, fontWeight: 700, color: m.fg, background: m.bg, padding: '2px 8px', borderRadius: 6 }}>{m.label}</span>;
 }
 
+const PROMO_PLATFORMS = [
+  { id: 'gopay', label: 'GoPay' },
+  { id: 'ovo', label: 'OVO' },
+  { id: 'dana', label: 'Dana' },
+  { id: 'shopeepay', label: 'ShopeePay' },
+  { id: 'linkaja', label: 'LinkAja' },
+  { id: 'isaku', label: 'i.saku' },
+];
+function PlatformTagPicker({ value, onChange }) {
+  const toggle = (id) => onChange(value.includes(id) ? value.filter(v => v !== id) : [...value, id]);
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      {PROMO_PLATFORMS.map(p => {
+        const active = value.includes(p.id);
+        return (
+          <button key={p.id} type="button" onClick={() => toggle(p.id)} style={{
+            padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 12, fontWeight: 600,
+            background: active ? '#4A2D8C' : '#F0EBFF', color: active ? '#FFFFFF' : '#574872',
+            border: 0, fontFamily: 'inherit',
+          }}>{p.label}</button>
+        );
+      })}
+      {value.length === 0 && <span style={{ fontSize: 12, color: '#9085AE', padding: '6px 0' }}>Belum ada platform dipilih.</span>}
+    </div>
+  );
+}
+
+function StepListEditor({ items, onChange, placeholder }) {
+  const update = (i, v) => onChange(items.map((it, idx) => idx === i ? v : it));
+  const remove = (i) => onChange(items.filter((_, idx) => idx !== i));
+  const add = () => onChange([...items, '']);
+  const move = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    const next = items.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    onChange(next);
+  };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {items.map((step, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{
+            width: 22, height: 22, borderRadius: '50%', background: '#EDE8FF', color: '#4A2D8C',
+            fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>{i + 1}</span>
+          <input value={step} onChange={(e) => update(i, e.target.value)} placeholder={placeholder}
+            style={cmsInputStyle({ flex: 1 })} />
+          <button type="button" onClick={() => move(i, -1)} disabled={i === 0} style={cmsIconBtn(i === 0)} title="Naik"><Icons.arrowUp size={12} /></button>
+          <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} style={cmsIconBtn(i === items.length - 1)} title="Turun"><Icons.arrowDown size={12} /></button>
+          <button type="button" onClick={() => remove(i)} style={cmsIconBtn(false)} title="Hapus"><Icons.trash size={12} /></button>
+        </div>
+      ))}
+      <button type="button" onClick={add} style={{ ...cmsSecondaryBtn(), alignSelf: 'flex-start', height: 32, padding: '0 12px', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Icons.plus size={13} /> Tambah Langkah
+      </button>
+      {items.length === 0 && <div style={{ fontSize: 12, color: '#9085AE' }}>Belum ada langkah klaim.</div>}
+    </div>
+  );
+}
+
+function FaqListEditor({ items, onChange }) {
+  const update = (i, key, v) => onChange(items.map((it, idx) => idx === i ? { ...it, [key]: v } : it));
+  const remove = (i) => onChange(items.filter((_, idx) => idx !== i));
+  const add = () => onChange([...items, { q: '', a: '' }]);
+  const move = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    const next = items.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    onChange(next);
+  };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {items.map((item, i) => (
+        <div key={i} style={{ border: '1px solid #E0D9F5', borderRadius: 10, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input value={item.q} onChange={(e) => update(i, 'q', e.target.value)} placeholder={`Pertanyaan ${i + 1}`}
+              style={cmsInputStyle({ flex: 1, fontWeight: 600 })} />
+            <button type="button" onClick={() => move(i, -1)} disabled={i === 0} style={cmsIconBtn(i === 0)} title="Naik"><Icons.arrowUp size={12} /></button>
+            <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} style={cmsIconBtn(i === items.length - 1)} title="Turun"><Icons.arrowDown size={12} /></button>
+            <button type="button" onClick={() => remove(i)} style={cmsIconBtn(false)} title="Hapus"><Icons.trash size={12} /></button>
+          </div>
+          <textarea value={item.a} onChange={(e) => update(i, 'a', e.target.value)} placeholder="Jawaban" rows={2}
+            style={cmsInputStyle({ width: '100%', height: 'auto', padding: '8px 12px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit' })} />
+        </div>
+      ))}
+      <button type="button" onClick={add} style={{ ...cmsSecondaryBtn(), alignSelf: 'flex-start', height: 32, padding: '0 12px', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Icons.plus size={13} /> Tambah FAQ
+      </button>
+      {items.length === 0 && <div style={{ fontSize: 12, color: '#9085AE' }}>Belum ada FAQ.</div>}
+    </div>
+  );
+}
+
+function RteBtn({ onClick, title, children }) {
+  return (
+    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={onClick} title={title} style={{
+      width: 26, height: 26, border: 0, borderRadius: 6, background: 'transparent', color: '#574872',
+      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>{children}</button>
+  );
+}
+function RichTextEditor({ value, onChange }) {
+  const ref = React.useRef(null);
+  useCmsEffect(() => {
+    if (ref.current) ref.current.innerHTML = value || '';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const exec = (cmd, arg) => {
+    if (ref.current) ref.current.focus();
+    if (document.execCommand) document.execCommand(cmd, false, arg);
+    if (ref.current) onChange(ref.current.innerHTML);
+  };
+  const handleLink = () => {
+    const url = window.prompt('Masukkan URL link:');
+    if (url) exec('createLink', url);
+  };
+  return (
+    <div style={{ border: '1px solid #E0D9F5', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', gap: 2, padding: '6px 8px', background: '#F7F4FF', borderBottom: '1px solid #E0D9F5' }}>
+        <RteBtn onClick={() => exec('bold')} title="Bold"><Icons.bold size={13} /></RteBtn>
+        <RteBtn onClick={() => exec('italic')} title="Italic"><Icons.italic size={13} /></RteBtn>
+        <RteBtn onClick={() => exec('insertUnorderedList')} title="Bullet list"><Icons.list size={13} /></RteBtn>
+        <RteBtn onClick={handleLink} title="Sisipkan link"><Icons.link size={13} /></RteBtn>
+      </div>
+      <div
+        ref={ref}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        data-testid="rte-body"
+        style={{
+          minHeight: 130, padding: '10px 12px', fontSize: 13, lineHeight: 1.6,
+          color: '#1A1228', outline: 'none', fontFamily: 'inherit',
+        }}
+      />
+    </div>
+  );
+}
+
 function ArtikelModal({ artikel, onClose, onSave }) {
   const [form, setForm] = useCmsState(artikel || {
     judul: '', kategori: getArtikelKategori()[0] || 'Tips', excerpt: '', konten: '',
     tone: 'purple', status: 'draft', tgl: '2026-06-12', gambar: null,
+    kodePromo: '', autoApply: true, caraKlaim: [], faq: [], platforms: [],
   });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const isValid = form.judul.trim() && form.excerpt.trim() && form.konten.trim();
+  const isPromo = form.kategori === 'Promo';
+  const kontenText = (form.konten || '').replace(/<[^>]*>/g, '').trim();
+  const isValid = form.judul.trim() && form.excerpt.trim() && kontenText;
 
   useCmsEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -821,11 +977,43 @@ function ArtikelModal({ artikel, onClose, onSave }) {
               rows={2}
               style={cmsInputStyle({ width: '100%', height: 'auto', padding: '10px 12px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit' })} />
           </CmsField>
+
+          {isPromo && (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <CmsField label="Kode Promo">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#574872', cursor: 'pointer' }}>
+                      <Toggle checked={form.autoApply} onChange={(v) => u('autoApply', v)} />
+                      Otomatis diterapkan (tanpa kode)
+                    </label>
+                    {!form.autoApply && (
+                      <input value={form.kodePromo} onChange={(e) => u('kodePromo', e.target.value.toUpperCase())}
+                        placeholder="Contoh: GOPOP5"
+                        style={cmsInputStyle({ width: '100%', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.04em' })} />
+                    )}
+                  </div>
+                </CmsField>
+                <CmsField label="Platform E-Wallet Didukung">
+                  <PlatformTagPicker value={form.platforms} onChange={(v) => u('platforms', v)} />
+                </CmsField>
+              </div>
+              <CmsField label="Cara Klaim">
+                <StepListEditor items={form.caraKlaim} onChange={(v) => u('caraKlaim', v)} placeholder="Contoh: Buka menu Transfer E-Wallet" />
+              </CmsField>
+            </>
+          )}
+
           <CmsField label="Isi Konten Lengkap">
-            <textarea value={form.konten} onChange={(e) => u('konten', e.target.value)}
-              rows={6}
-              style={cmsInputStyle({ width: '100%', height: 'auto', padding: '10px 12px', lineHeight: 1.6, resize: 'vertical', fontFamily: 'inherit' })} />
+            <RichTextEditor value={form.konten} onChange={(v) => u('konten', v)} />
           </CmsField>
+
+          {isPromo && (
+            <CmsField label="FAQ">
+              <FaqListEditor items={form.faq} onChange={(v) => u('faq', v)} />
+            </CmsField>
+          )}
+
           <CmsField label="Status">
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Toggle checked={form.status === 'published'} onChange={() => u('status', form.status === 'published' ? 'draft' : 'published')} />

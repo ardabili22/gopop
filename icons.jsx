@@ -50,6 +50,12 @@ const Icons = {
   image:  (p) => <Icon {...p}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></Icon>,
   arrowUp: (p) => <Icon {...p}><path d="M12 19V5M5 12l7-7 7 7"/></Icon>,
   arrowDown: (p) => <Icon {...p}><path d="M12 5v14M19 12l-7 7-7-7"/></Icon>,
+  plus:   (p) => <Icon {...p}><path d="M12 5v14M5 12h14"/></Icon>,
+  trash:  (p) => <Icon {...p}><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/><path d="M10 11v6M14 11v6"/></Icon>,
+  bold:   (p) => <Icon {...p}><path d="M6 4h7a3.5 3.5 0 0 1 0 7H6zM6 11h8a3.5 3.5 0 0 1 0 7H6z"/></Icon>,
+  italic: (p) => <Icon {...p}><path d="M10 4h8M6 20h8M13.5 4 10.5 20"/></Icon>,
+  list:   (p) => <Icon {...p}><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.4" fill="currentColor" stroke="none"/></Icon>,
+  link:   (p) => <Icon {...p}><path d="M9 15 15 9"/><path d="M11 6.5 12.5 5a3.54 3.54 0 0 1 5 5L16 11.5"/><path d="M13 17.5 11.5 19a3.54 3.54 0 0 1-5-5L8 12.5"/></Icon>,
 };
 
 window.Icons = Icons;
