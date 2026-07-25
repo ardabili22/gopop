@@ -344,25 +344,32 @@ function BannerHomepageMockup({ form }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#FFFFFF', background: '#4A2D8C', padding: '4px 12px', borderRadius: 20 }}>Masuk</div>
       </div>
 
-      {/* Hero — gambar dibikin full-bleed di sisi kanan (kayak di web asli), bukan kotak kecil */}
+      {/* Hero — gambar full-bleed nutupin seluruh lebar hero (bukan cuma sisi kanan) */}
       <div style={{
         position: 'relative', minHeight: 240, overflow: 'hidden',
         background: t.bg,
       }}>
         {form.imgDesktop ? (
           <img src={form.imgDesktop} alt="" style={{
-            position: 'absolute', top: 0, right: 0, bottom: 0, width: '58%',
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
             objectFit: 'cover', display: 'block',
           }} />
         ) : (
           <div style={{
-            position: 'absolute', top: 0, right: 0, bottom: 0, width: '58%',
-            background: 'rgba(255,255,255,0.55)', borderLeft: '1px dashed rgba(87,72,114,0.3)',
+            position: 'absolute', inset: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#574872', fontSize: 11, textAlign: 'center', padding: 12,
           }}>Belum ada gambar</div>
         )}
 
-        <div style={{ position: 'relative', padding: '20px 16px 44px', maxWidth: '46%' }}>
+        {/* Scrim biar teks tetap kebaca di atas foto */}
+        {form.imgDesktop && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(90deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.6) 42%, rgba(255,255,255,0) 72%)',
+          }} />
+        )}
+
+        <div style={{ position: 'relative', padding: '20px 16px 44px', maxWidth: '55%' }}>
           <div style={{ fontSize: 10, color: '#574872', fontWeight: 600, marginBottom: 4 }}>Hai, Selamat Datang! 👋</div>
           <div style={{ fontSize: 17, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
         </div>
