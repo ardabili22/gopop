@@ -344,9 +344,9 @@ function BannerHomepageMockup({ form }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#FFFFFF', background: '#4A2D8C', padding: '4px 12px', borderRadius: 20 }}>Masuk</div>
       </div>
 
-      {/* Hero — gambar full-bleed nutupin seluruh lebar hero (bukan cuma sisi kanan) */}
+      {/* Hero — gambar full-bleed nutupin seluruh lebar hero, tapi tetep ringkas tingginya */}
       <div style={{
-        position: 'relative', minHeight: 240, overflow: 'hidden',
+        position: 'relative', minHeight: 150, overflow: 'hidden',
         background: t.bg,
       }}>
         {form.imgDesktop ? (
@@ -369,23 +369,23 @@ function BannerHomepageMockup({ form }) {
           }} />
         )}
 
-        <div style={{ position: 'relative', padding: '20px 16px 44px', maxWidth: '55%' }}>
-          <div style={{ fontSize: 10, color: '#574872', fontWeight: 600, marginBottom: 4 }}>Hai, Selamat Datang! 👋</div>
-          <div style={{ fontSize: 17, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
+        <div style={{ position: 'relative', padding: '14px 16px 32px', maxWidth: '55%' }}>
+          <div style={{ fontSize: 9, color: '#574872', fontWeight: 600, marginBottom: 3 }}>Hai, Selamat Datang! 👋</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
         </div>
 
         {/* Floating promo card, meniru posisi di homepage asli */}
         <div style={{
-          position: 'absolute', left: 16, bottom: -18, right: 16,
-          background: '#FFFFFF', borderRadius: 10, padding: '8px 10px',
+          position: 'absolute', left: 14, bottom: -16, right: 14,
+          background: '#FFFFFF', borderRadius: 10, padding: '7px 9px',
           boxShadow: '0 8px 20px rgba(26,18,40,0.14)',
           display: 'flex', alignItems: 'center', gap: 8,
         }}>
           <div style={{
-            width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+            width: 24, height: 24, borderRadius: 7, flexShrink: 0,
             background: t.bg, color: t.fg,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}><Icons.wallet size={13} /></div>
+          }}><Icons.wallet size={12} /></div>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1228', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {form.judul.trim() || 'Judul banner…'}
@@ -402,7 +402,7 @@ function BannerHomepageMockup({ form }) {
         </div>
       </div>
       {/* Spacer biar floating card gak numpuk sama konten di bawahnya */}
-      <div style={{ height: 18, background: '#FFFFFF' }} />
+      <div style={{ height: 16, background: '#FFFFFF' }} />
     </div>
   );
 }
