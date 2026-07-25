@@ -35,7 +35,10 @@ function Pengaturan() {
     setPerms(ps => ps.map((p, idx) => idx === i ? { ...p, [role]: !p[role] } : p));
   };
   const addPerm = (label) => {
-    if (!label.trim()) return;
+    if (!label.trim()) {
+      window.muurahToast('Nama permission wajib diisi', 'error');
+      return;
+    }
     if (perms.some(p => p.perm.toLowerCase() === label.toLowerCase())) {
       window.muurahToast('Permission "' + label + '" sudah ada', 'error'); return;
     }
@@ -1810,10 +1813,10 @@ function RbacRoleHeader({ role }) {
   };
   const t = tones[role.tone] || tones.purple;
   return (
-    <th style={{ ...psThStyle, textAlign: 'center' }}>
+    <th style={{ ...psThStyle, textAlign: 'center', minWidth: 130, whiteSpace: 'nowrap' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
-        <span style={{ background: t.bg, color: t.fg, padding: '2px 9px', borderRadius: 6, fontWeight: 700, fontSize: 11, letterSpacing: '0.04em' }}>{role.label}</span>
-        <span style={{ fontSize: 10, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace', textTransform: 'none', letterSpacing: 0 }}>{role.members} user</span>
+        <span style={{ background: t.bg, color: t.fg, padding: '2px 9px', borderRadius: 6, fontWeight: 700, fontSize: 11, letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{role.label}</span>
+        <span style={{ fontSize: 10, color: '#9085AE', fontFamily: 'JetBrains Mono, monospace', textTransform: 'none', letterSpacing: 0, whiteSpace: 'nowrap' }}>{role.members} user</span>
       </div>
     </th>
   );

@@ -518,13 +518,17 @@ function TabAnggotaTim({ roles, admins, onAdd, onUpdate, onDeleteAdmin, onToggle
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      {/* Role filter chips */}
+      {/* Role filter — dropdown biar tetap ringkes walau role-nya banyak */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <RtFilterChip label="Semua" count={admins.length} active={roleF === 'semua'} tone="purple" onClick={() => setRoleF('semua')} />
-          {roles.map(r => (
-            <RtFilterChip key={r.id} label={r.label} count={admins.filter(a => a.role === r.id).length} active={roleF === r.id} tone={r.tone} onClick={() => setRoleF(r.id)} />
-          ))}
+        <div style={{ position: 'relative' }}>
+          <select value={roleF} onChange={(e) => setRoleF(e.target.value)}
+            style={rtInputStyle({ appearance: 'none', paddingRight: 30, cursor: 'pointer', minWidth: 220, fontWeight: 600 })}>
+            <option value="semua">Semua Role ({admins.length})</option>
+            {roles.map(r => (
+              <option key={r.id} value={r.id}>{r.label} ({admins.filter(a => a.role === r.id).length})</option>
+            ))}
+          </select>
+          <Icons.chevron size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#574872', pointerEvents: 'none' }} />
         </div>
         <button onClick={() => setAdding(true)} style={rtPrimaryBtn()}>
           <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> Tambah Admin
