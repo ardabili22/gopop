@@ -24,10 +24,10 @@ const NF_TABS = [
 ];
 
 const BROADCAST_HISTORY_SEED = [
-  { id: 'BC-014', judul: 'Promo Akhir Bulan: Cashback 5% E-Wallet', target: 'Semua User', channel: ['push','inapp'], penerima: 18_240, status: 'terkirim', tgl: '19 Mei · 09:00' },
-  { id: 'BC-013', judul: 'Maintenance Sistem Malam Ini 23:00–01:00', target: 'Semua User', channel: ['push','inapp','email'], penerima: 18_120, status: 'terkirim', tgl: '17 Mei · 18:00' },
-  { id: 'BC-012', judul: 'Reward Spesial untuk Reseller Gold & Platinum', target: 'Reseller Gold & Platinum', channel: ['push','whatsapp'], penerima: 16, status: 'terkirim', tgl: '15 Mei · 10:30' },
-  { id: 'BC-011', judul: 'Token PLN Diskon 2% Khusus Weekend', target: 'User Aktif 30 Hari', channel: ['push','inapp'], penerima: 9_840, status: 'terjadwal', tgl: '24 Mei · 08:00' },
+  { id: 'BC-014', judul: 'Promo Akhir Bulan: Cashback 5% E-Wallet', target: 'Semua User', channel: ['push','inapp'], penerima: 18_240, status: 'terkirim', tgl: '19 Mei · 09:00', tglISO: '2026-05-19' },
+  { id: 'BC-013', judul: 'Maintenance Sistem Malam Ini 23:00–01:00', target: 'Semua User', channel: ['push','inapp','email'], penerima: 18_120, status: 'terkirim', tgl: '17 Mei · 18:00', tglISO: '2026-05-17' },
+  { id: 'BC-012', judul: 'Reward Spesial untuk Reseller Gold & Platinum', target: 'Reseller Gold & Platinum', channel: ['push','whatsapp'], penerima: 16, status: 'terkirim', tgl: '15 Mei · 10:30', tglISO: '2026-05-15' },
+  { id: 'BC-011', judul: 'Token PLN Diskon 2% Khusus Weekend', target: 'User Aktif 30 Hari', channel: ['push','inapp'], penerima: 9_840, status: 'terjadwal', tgl: '24 Mei · 08:00', tglISO: '2026-05-24' },
 ];
 
 const NF_SEGMENTS = [
@@ -317,6 +317,12 @@ function BroadcastPanel({ broadcasts, setBroadcasts }) {
   const [schedule, setSchedule] = useNfState('now');
   const [scheduleAt, setScheduleAt] = useNfState('');
 
+  // Riwayat Broadcast — filter tanggal & pagination
+  const [bcDateFrom, setBcDateFrom] = useNfState('');
+  const [bcDateTo, setBcDateTo] = useNfState('');
+  const [bcPage, setBcPage] = useNfState(1);
+  const BC_PAGE_SIZE = 5;
+
   const seg = NF_SEGMENTS.find(s => s.id === segment);
   const isValid = judul.trim() && isi.trim() && Object.values(channels).some(Boolean);
 
@@ -343,12 +349,27 @@ function BroadcastPanel({ broadcasts, setBroadcasts }) {
           penerima: seg.count,
           status: willSchedule ? 'terjadwal' : 'terkirim',
           tgl: willSchedule ? scheduleAt : 'Baru saja',
+          tglISO: willSchedule && scheduleAt ? scheduleAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
         };
         setBroadcasts(b => [newBc, ...b]);
         setJudul(''); setIsi('');
         window.muurahToast(willSchedule ? 'Broadcast dijadwalkan' : 'Broadcast "' + newBc.judul + '" berhasil dikirim', 'success');
       },
     });
+  }
+
+  const filteredBroadcasts = broadcasts.filter(b => {
+    if (bcDateFrom && b.tglISO && b.tglISO < bcDateFrom) return false;
+    if (bcDateTo && b.tglISO && b.tglISO > bcDateTo) return false;
+    return true;
+  });
+  const bcHasFilter = !!(bcDateFrom || bcDateTo);
+  const bcPageCount = Math.max(1, Math.ceil(filteredBroadcasts.length / BC_PAGE_SIZE));
+  const bcPageClamped = Math.min(bcPage, bcPageCount);
+  const pagedBroadcasts = filteredBroadcasts.slice((bcPageClamped - 1) * BC_PAGE_SIZE, bcPageClamped * BC_PAGE_SIZE);
+
+  function resetBcFilter() {
+    setBcDateFrom(''); setBcDateTo(''); setBcPage(1);
   }
 
   return (
@@ -461,11 +482,41 @@ function BroadcastPanel({ broadcasts, setBroadcasts }) {
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #E0D9F5' }}>
           <div style={{ fontSize: 16, fontWeight: 600, color: '#1A1228' }}>Riwayat Broadcast</div>
           <div style={{ fontSize: 12, color: '#9085AE', marginTop: 2 }}>
-            {broadcasts.length} broadcast terkirim/terjadwal
+            {bcHasFilter
+              ? filteredBroadcasts.length + ' dari ' + broadcasts.length + ' broadcast'
+              : broadcasts.length + ' broadcast terkirim/terjadwal'}
           </div>
         </div>
+
+        {/* Filter tanggal */}
+        <div style={{ padding: '14px 20px', borderBottom: '1px solid #E0D9F5', display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <label style={{ fontSize: 10, fontWeight: 600, color: '#9085AE', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Dari</label>
+            <input type="date" value={bcDateFrom}
+              onChange={(e) => { setBcDateFrom(e.target.value); setBcPage(1); }}
+              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#1A1228', outline: 'none' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <label style={{ fontSize: 10, fontWeight: 600, color: '#9085AE', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sampai</label>
+            <input type="date" value={bcDateTo}
+              onChange={(e) => { setBcDateTo(e.target.value); setBcPage(1); }}
+              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#1A1228', outline: 'none' }} />
+          </div>
+          {bcHasFilter && (
+            <button onClick={resetBcFilter} style={{
+              background: 'transparent', color: '#4A2D8C', border: 0, height: 34, padding: '0 4px',
+              fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
+            }}>Reset</button>
+          )}
+        </div>
+
         <div>
-          {broadcasts.map((b, idx) => (
+          {pagedBroadcasts.length === 0 && (
+            <div style={{ padding: '32px 20px', textAlign: 'center', fontSize: 12, color: '#9085AE' }}>
+              Gak ada broadcast di rentang tanggal ini
+            </div>
+          )}
+          {pagedBroadcasts.map((b, idx) => (
             <div key={b.id} style={{
               padding: '14px 20px', borderTop: idx === 0 ? 0 : '1px solid #F0EBFF',
               display: 'flex', flexDirection: 'column', gap: 6,
@@ -493,6 +544,41 @@ function BroadcastPanel({ broadcasts, setBroadcasts }) {
             </div>
           ))}
         </div>
+
+        {/* Pagination */}
+        {filteredBroadcasts.length > 0 && (
+          <div style={{
+            padding: '12px 20px', borderTop: '1px solid #E0D9F5',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            background: '#FAF8FF',
+          }}>
+            <div style={{ fontSize: 11, color: '#9085AE' }}>
+              Halaman <b style={{ color: '#1A1228', fontFamily: 'JetBrains Mono, monospace' }}>{bcPageClamped}</b> dari <b style={{ color: '#1A1228', fontFamily: 'JetBrains Mono, monospace' }}>{bcPageCount}</b>
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={() => setBcPage(p => Math.max(1, p - 1))} disabled={bcPageClamped <= 1} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+                background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
+                height: 30, padding: '0 10px', borderRadius: 8,
+                fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                cursor: bcPageClamped <= 1 ? 'not-allowed' : 'pointer',
+                opacity: bcPageClamped <= 1 ? 0.45 : 1,
+              }}>
+                <Icons.chevronR size={12} style={{ transform: 'rotate(180deg)' }} /> Sebelumnya
+              </button>
+              <button onClick={() => setBcPage(p => Math.min(bcPageCount, p + 1))} disabled={bcPageClamped >= bcPageCount} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+                background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF',
+                height: 30, padding: '0 10px', borderRadius: 8,
+                fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                cursor: bcPageClamped >= bcPageCount ? 'not-allowed' : 'pointer',
+                opacity: bcPageClamped >= bcPageCount ? 0.45 : 1,
+              }}>
+                Selanjutnya <Icons.chevronR size={12} />
+              </button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
