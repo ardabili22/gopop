@@ -407,6 +407,78 @@ function BannerHomepageMockup({ form }) {
   );
 }
 
+function BannerMobileMockup({ form }) {
+  const t = BANNER_TONE_META[form.tone] || BANNER_TONE_META.purple;
+  return (
+    <div style={{
+      width: 220, margin: '0 auto', borderRadius: 22, overflow: 'hidden',
+      border: '1px solid #E0D9F5', boxShadow: '0 2px 10px rgba(26,18,40,0.06)',
+    }}>
+      {/* Mini app header */}
+      <div style={{
+        padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        borderBottom: '1px solid #F0EBFF', background: '#FFFFFF',
+      }}>
+        <div style={{ fontSize: 12, fontWeight: 800, color: '#1A1228' }}>gopop<span style={{ color: '#4A2D8C' }}>•</span></div>
+        <div style={{
+          width: 22, height: 22, borderRadius: '50%', background: '#F0EBFF',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icons.bell size={11} style={{ color: '#4A2D8C' }} /></div>
+      </div>
+
+      {/* Hero — gambar mobile full-bleed */}
+      <div style={{ position: 'relative', minHeight: 200, overflow: 'hidden', background: t.bg }}>
+        {form.imgMobile ? (
+          <img src={form.imgMobile} alt="" style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+          }} />
+        ) : (
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#574872', fontSize: 10, textAlign: 'center', padding: 10,
+          }}>Belum ada gambar</div>
+        )}
+
+        {/* Scrim biar teks atas tetap kebaca */}
+        {form.imgMobile && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0) 55%)',
+          }} />
+        )}
+
+        <div style={{ position: 'relative', padding: '12px 14px 0' }}>
+          <div style={{ fontSize: 8, color: '#574872', fontWeight: 600, marginBottom: 2 }}>Hai, Selamat Datang! 👋</div>
+          <div style={{ fontSize: 12, fontWeight: 800, color: '#1A1228', lineHeight: 1.25 }}>Mau bayar apa hari ini?</div>
+        </div>
+      </div>
+
+      {/* Promo card, ditaruh di bawah hero (pola umum app mobile) */}
+      <div style={{ padding: 10, background: '#FFFFFF' }}>
+        <div style={{
+          borderRadius: 10, padding: '8px 10px', border: '1px solid #F0EBFF',
+          display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <div style={{
+            width: 22, height: 22, borderRadius: 7, flexShrink: 0,
+            background: t.bg, color: t.fg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}><Icons.wallet size={11} /></div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#1A1228', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {form.judul.trim() || 'Judul banner…'}
+            </div>
+            <div style={{ fontSize: 8, color: '#574872', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {form.subjudul.trim() || 'Subjudul/deskripsi pendek…'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BannerModal({ banner, onClose, onSave, platform }) {
   const [form, setForm] = useCmsState(banner || { judul: '', subjudul: '', target: '', tone: 'purple', status: 'aktif', imgDesktop: null, imgMobile: null });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -483,31 +555,19 @@ function BannerModal({ banner, onClose, onSave, platform }) {
             </CmsField>
           </div>
 
-          <CmsField label="Warna Tema Banner">
-            <div style={{ display: 'flex', gap: 8 }}>
-              {BANNER_TONES.map(tn => {
-                const m = BANNER_TONE_META[tn];
-                const active = form.tone === tn;
-                return (
-                  <button key={tn} type="button" onClick={() => u('tone', tn)} style={{
-                    width: 32, height: 32, borderRadius: 9, cursor: 'pointer',
-                    background: m.bg, color: m.fg,
-                    border: active ? '2px solid ' + m.fg : '1px solid transparent',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    {active && <Icons.check size={13} strokeWidth={2.8} />}
-                  </button>
-                );
-              })}
-            </div>
-          </CmsField>
-
-          {/* Preview — mockup homepage gopop.id, biar kebayang hasil akhirnya */}
+          {/* Preview — mockup homepage & app gopop.id, biar kebayang hasil akhirnya */}
           <div>
             <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
-              Preview di Homepage
+              Preview Web
             </div>
             <BannerHomepageMockup form={form} />
+          </div>
+
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#574872', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>
+              Preview Mobile App
+            </div>
+            <BannerMobileMockup form={form} />
             <div style={{ fontSize: 10, color: '#9085AE', marginTop: 6, textAlign: 'center' }}>
               Simulasi tampilan — posisi &amp; ukuran elemen asli di web/app bisa sedikit berbeda
             </div>
