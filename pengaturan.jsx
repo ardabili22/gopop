@@ -1713,62 +1713,24 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
 
   return (
     <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Centang untuk memberikan permission ke role — kolom role otomatis sync dari menu Role & Tim" padded={false}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-        <thead>
-          <tr>
-            <th style={{ ...psThStyle, paddingLeft: 24, width: '35%' }}>Permission</th>
-            {roles.map(r => <RbacRoleHeader key={r.id} role={r} />)}
-            <th style={{ ...psThStyle, width: 44 }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {perms.map((p, i) => (
-            <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <td style={{ ...psTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500 }}>
-                {renamingIdx === i ? (
-                  <input autoFocus defaultValue={p.perm}
-                    onBlur={(e) => { onRename(i, e.target.value); setRenamingIdx(null); }}
-                    onKeyDown={(e) => { if (e.key === 'Enter') { onRename(i, e.target.value); setRenamingIdx(null); } if (e.key === 'Escape') setRenamingIdx(null); }}
-                    style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '90%' }} />
-                ) : p.perm}
-              </td>
-              {roles.map(r => (
-                <PermCell key={r.id} allowed={!!p[r.id]} onClick={() => onToggle(i, r.id)} locked={r.id === 'sa'} />
-              ))}
-              <td style={{ ...psTdStyle, textAlign: 'center' }}>
-                <div style={{ display: 'inline-flex', gap: 2 }}>
-                  <button onClick={() => setRenamingIdx(i)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icons.cog size={12} />
-                  </button>
-                  <button onClick={() => onDelete(i)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icons.x size={12} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-          {/* Add permission row */}
-          <tr style={{ borderTop: '1px solid #F0EBFF', height: 52 }}>
-            <td style={{ ...psTdStyle, paddingLeft: 24 }} colSpan={2 + roles.length}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input value={newPerm} onChange={(e) => setNewPerm(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { onAdd(newPerm); setNewPerm(''); } }}
-                  placeholder="Nama permission baru… (cth. Kelola Banner Homepage)"
-                  style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 340 }} />
-                <button onClick={() => { onAdd(newPerm); setNewPerm(''); }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div style={{ padding: '14px 24px', borderTop: '1px solid #E0D9F5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#574872' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14 }}>
+      {/* Toolbar: tambah permission + legend — dipindah ke atas biar gampang kelihatan */}
+      <div style={{ padding: '16px 24px', borderBottom: '1px solid #E0D9F5', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input value={newPerm} onChange={(e) => setNewPerm(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { onAdd(newPerm); setNewPerm(''); } }}
+              placeholder="Nama permission baru… (cth. Kelola Banner Homepage)"
+              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 340 }} />
+            <button onClick={() => { onAdd(newPerm); setNewPerm(''); }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
+              <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission
+            </button>
+          </div>
+          <button onClick={() => window.muurahGoTo('role-tim')} style={ghostBtn('#4A2D8C')}>
+            Kelola Role & Tim <Icons.arrowR size={13} />
+          </button>
+        </div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontSize: 12, color: '#574872' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={permChip(true)}>✓</span> Diizinkan
           </span>
@@ -1776,9 +1738,65 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
             <span style={permChip(false)}>—</span> Tidak diizinkan
           </span>
         </div>
-        <button onClick={() => window.muurahGoTo('role-tim')} style={ghostBtn('#4A2D8C')}>
-          Kelola Role & Tim <Icons.arrowR size={13} />
-        </button>
+      </div>
+
+      {/* Kolom Permission (kiri) & Aksi (kanan) sticky — cuma kolom role yang scroll saat role banyak */}
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr>
+              <th style={{
+                ...psThStyle, paddingLeft: 24, width: 260, minWidth: 260,
+                position: 'sticky', left: 0, zIndex: 3,
+                boxShadow: '2px 0 4px -2px rgba(26,18,40,0.12)',
+              }}>Permission</th>
+              {roles.map(r => <RbacRoleHeader key={r.id} role={r} />)}
+              <th style={{
+                ...psThStyle, width: 44, minWidth: 44,
+                position: 'sticky', right: 0, zIndex: 3,
+                boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
+              }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {perms.map((p, i) => (
+              <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <td style={{
+                  ...psTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500,
+                  position: 'sticky', left: 0, zIndex: 1, background: '#FFFFFF',
+                  boxShadow: '2px 0 4px -2px rgba(26,18,40,0.12)',
+                }}>
+                  {renamingIdx === i ? (
+                    <input autoFocus defaultValue={p.perm}
+                      onBlur={(e) => { onRename(i, e.target.value); setRenamingIdx(null); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { onRename(i, e.target.value); setRenamingIdx(null); } if (e.key === 'Escape') setRenamingIdx(null); }}
+                      style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '90%' }} />
+                  ) : p.perm}
+                </td>
+                {roles.map(r => (
+                  <PermCell key={r.id} allowed={!!p[r.id]} onClick={() => onToggle(i, r.id)} locked={r.id === 'sa'} />
+                ))}
+                <td style={{
+                  ...psTdStyle, textAlign: 'center',
+                  position: 'sticky', right: 0, zIndex: 1, background: '#FFFFFF',
+                  boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
+                }}>
+                  <div style={{ display: 'inline-flex', gap: 2 }}>
+                    <button onClick={() => setRenamingIdx(i)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icons.cog size={12} />
+                    </button>
+                    <button onClick={() => onDelete(i)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icons.x size={12} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </PanelCard>
   );
