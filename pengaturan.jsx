@@ -2620,30 +2620,38 @@ function ProductScopeDropdown({ selected, onToggle }) {
     .map(g => ({ ...g, items: g.items.filter(s => s.toLowerCase().includes(q)) }))
     .filter(g => g.items.length > 0);
 
-  const summary = selected.includes('Semua Produk')
-    ? 'Semua Produk'
-    : selected.length === 0
-      ? ''
-      : selected.length <= 2
-        ? selected.join(', ')
-        : `${selected.length} produk dipilih`;
+  const hasSelection = selected.length > 0;
 
   return (
     <div ref={wrapRef} style={{ position: 'relative' }}>
-      <button type="button" onClick={() => setOpen(o => !o)} style={{
-        ...psInputStyle({ width: '100%' }),
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+      <div onClick={() => setOpen(o => !o)} style={{
+        ...psInputStyle({ width: '100%', height: 'auto', minHeight: 38, padding: '6px 10px' }),
+        display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6,
+        cursor: 'pointer',
         border: open ? '1px solid #4A2D8C' : '1px solid transparent',
       }}>
-        <span style={{ fontSize: 13, color: summary ? '#1A1228' : '#9085AE', fontWeight: summary ? 500 : 400 }}>
-          {summary || 'Pilih produk...'}
-        </span>
+        {!hasSelection && (
+          <span style={{ fontSize: 13, color: '#9085AE' }}>Pilih produk...</span>
+        )}
+        {selected.map((s) => (
+          <span key={s} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            padding: '4px 6px 4px 10px', borderRadius: 7,
+            background: '#FFFFFF', border: '1px solid #4A2D8C',
+            color: '#4A2D8C', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+          }}>
+            {s}
+            <span onClick={(e) => { e.stopPropagation(); onToggle(s); }}
+              style={{ cursor: 'pointer', display: 'inline-flex', opacity: 0.6 }}>
+              <Icons.x size={11} strokeWidth={2.5} />
+            </span>
+          </span>
+        ))}
         <Icons.chevron size={13} style={{
-          color: '#574872', flexShrink: 0, marginLeft: 8,
+          color: '#574872', flexShrink: 0, marginLeft: 'auto',
           transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 130ms ease',
         }} />
-      </button>
+      </div>
 
       {open && (
         <div style={{
@@ -2813,23 +2821,6 @@ function PromoModal({ promo, onClose, onSave }) {
 
           <PsField label="Berlaku untuk Produk">
             <ProductScopeDropdown selected={form.scope} onToggle={toggleScope} />
-            {form.scope.length > 0 && (
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
-                {form.scope.map((s) => (
-                  <span key={s} style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                    padding: '5px 8px 5px 10px', borderRadius: 8,
-                    background: '#EDE8FF', border: '1px solid #4A2D8C',
-                    color: '#4A2D8C', fontSize: 11, fontWeight: 600,
-                  }}>
-                    {s}
-                    <span onClick={() => toggleScope(s)} style={{ cursor: 'pointer', display: 'inline-flex', opacity: 0.7 }}>
-                      <Icons.x size={11} strokeWidth={2.5} />
-                    </span>
-                  </span>
-                ))}
-              </div>
-            )}
           </PsField>
 
           {promo && (
