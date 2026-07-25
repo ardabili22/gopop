@@ -394,11 +394,11 @@ function BannerModal({ banner, onClose, onSave, platform }) {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <CmsField label="Gambar Desktop (16:9 · min 1280×720px)">
-              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/9" minW={1280} minH={720} />
+            <CmsField label="Gambar Desktop (16:7 · min 1280×560px)">
+              <ImageUploadField value={form.imgDesktop} onChange={(v) => u('imgDesktop', v)} aspect="16/7" minW={1280} minH={560} />
             </CmsField>
-            <CmsField label="Gambar Mobile (3:4 · min 360×480px)">
-              <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="3/4" minW={360} minH={480} />
+            <CmsField label="Gambar Mobile (9:10 · min 360×400px)">
+              <ImageUploadField value={form.imgMobile} onChange={(v) => u('imgMobile', v)} aspect="9/10" minW={360} minH={400} />
             </CmsField>
           </div>
 
