@@ -102,8 +102,9 @@ function Pengaturan() {
           })}
         </Card>
 
-        {/* Right panel */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Right panel — minWidth: 0 wajib biar grid item ini bisa menyempit dan overflow-x
+             tabel di dalamnya (RBAC) yang nge-scroll, bukan seluruh halaman yang ikut geser */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
           {innerNav === 'umum'     && <UmumPanel />}
           {innerNav === 'pg'       && <PaymentGatewayPanel />}
           {innerNav === 'notif'    && <NotifSubPanel />}
