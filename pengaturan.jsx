@@ -2407,26 +2407,8 @@ function FaqModal({ faq, onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   PROMO & VOUCHER
 // ════════════════════════════════════════════════════════════════════════════
-function getPromoScopes() {
-  const base = ['Semua Produk', 'Transfer E-Wallet', 'eSIM'];
-  if (window.MuurahKategoriStore) {
-    const kat = window.MuurahKategoriStore.getAktif ? window.MuurahKategoriStore.get().filter(k => k.aktif).map(k => k.label) : [];
-    return ['Semua Produk', ...kat, 'Transfer E-Wallet', 'eSIM'];
-  }
-  return ['Semua Produk', 'Pulsa', 'Paket Data', 'Token PLN', 'BPJS', 'Game & Voucher', 'E-Money', 'Transfer E-Wallet', 'Tagihan (PDAM/PBB/Internet&TV)'];
-}
-
-// Grouped version for the searchable "Berlaku untuk Produk" dropdown —
-// keeps kategori produk (dinamis, bisa terus nambah) terpisah dari layanan tetap (E-Wallet, eSIM)
-function getPromoScopeGroups() {
-  const all = getPromoScopes();
-  const layananLain = ['Transfer E-Wallet', 'eSIM'];
-  return [
-    { group: 'Umum', items: all.filter(s => s === 'Semua Produk') },
-    { group: 'Kategori Produk', items: all.filter(s => s !== 'Semua Produk' && !layananLain.includes(s)) },
-    { group: 'Layanan Lain', items: all.filter(s => layananLain.includes(s)) },
-  ].filter(g => g.items.length > 0);
-}
+// NOTE: kategori/produk picker for "Berlaku untuk Produk" now lives in global.jsx
+// as getScopeCategoryGroups() + <ProductScopeDropdown>, shared with Tips & Promo Artikel.
 
 const PROMO_SEED = [
   { id: 1, kode: 'CASHBACK5EW', nama: 'Cashback 5% Transfer E-Wallet', tipe: 'percent', nilai: 5, maksDiskon: 5_000, minTransaksi: 50_000, scope: ['Transfer E-Wallet'], mulai: '2026-05-15', akhir: '2026-05-31', kuota: 5000, terpakai: 1842, perUser: 3, status: 'aktif' },
@@ -2591,118 +2573,6 @@ function PromoStatusPill({ status }) {
   const m = map[status] || map.nonaktif;
   return (
     <span style={{ fontSize: 11, fontWeight: 700, color: m.fg, background: m.bg, padding: '4px 9px', borderRadius: 6, whiteSpace: 'nowrap' }}>{m.label}</span>
-  );
-}
-
-function ProductScopeDropdown({ selected, onToggle }) {
-  const [open, setOpen] = usePsState(false);
-  const [query, setQuery] = usePsState('');
-  const wrapRef = React.useRef(null);
-  const searchRef = React.useRef(null);
-
-  React.useEffect(() => {
-    function onDocClick(e) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) { setOpen(false); setQuery(''); }
-    }
-    function onKey(e) { if (e.key === 'Escape') { setOpen(false); setQuery(''); } }
-    document.addEventListener('mousedown', onDocClick);
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDocClick);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, []);
-
-  React.useEffect(() => { if (open && searchRef.current) searchRef.current.focus(); }, [open]);
-
-  const q = query.trim().toLowerCase();
-  const filteredGroups = getPromoScopeGroups()
-    .map(g => ({ ...g, items: g.items.filter(s => s.toLowerCase().includes(q)) }))
-    .filter(g => g.items.length > 0);
-
-  const hasSelection = selected.length > 0;
-
-  return (
-    <div ref={wrapRef} style={{ position: 'relative' }}>
-      <div onClick={() => setOpen(o => !o)} style={{
-        ...psInputStyle({ width: '100%', height: 'auto', minHeight: 38, padding: '6px 10px' }),
-        display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6,
-        cursor: 'pointer',
-        border: open ? '1px solid #4A2D8C' : '1px solid transparent',
-      }}>
-        {!hasSelection && (
-          <span style={{ fontSize: 13, color: '#9085AE' }}>Pilih produk...</span>
-        )}
-        {selected.map((s) => (
-          <span key={s} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '4px 6px 4px 10px', borderRadius: 7,
-            background: '#FFFFFF', border: '1px solid #4A2D8C',
-            color: '#4A2D8C', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
-          }}>
-            {s}
-            <span onClick={(e) => { e.stopPropagation(); onToggle(s); }}
-              style={{ cursor: 'pointer', display: 'inline-flex', opacity: 0.6 }}>
-              <Icons.x size={11} strokeWidth={2.5} />
-            </span>
-          </span>
-        ))}
-        <Icons.chevron size={13} style={{
-          color: '#574872', flexShrink: 0, marginLeft: 'auto',
-          transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 130ms ease',
-        }} />
-      </div>
-
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 30,
-          background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(26,18,40,0.16)', overflow: 'hidden',
-          animation: 'muurah-pop 160ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}>
-          <div style={{ padding: 8, borderBottom: '1px solid #E0D9F5' }}>
-            <div style={{ position: 'relative' }}>
-              <Icons.search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9085AE' }} />
-              <input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari produk..."
-                style={psInputStyle({ width: '100%', height: 34, paddingLeft: 30, background: '#FAF8FF' })} />
-            </div>
-          </div>
-
-          <div style={{ maxHeight: 240, overflowY: 'auto', padding: '6px 0' }}>
-            {filteredGroups.length === 0 && (
-              <div style={{ padding: '14px 12px', fontSize: 12, color: '#9085AE', textAlign: 'center' }}>
-                Produk tidak ditemukan
-              </div>
-            )}
-            {filteredGroups.map((g) => (
-              <div key={g.group}>
-                <div style={{ padding: '8px 12px 4px', fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  {g.group}
-                </div>
-                {g.items.map((s) => {
-                  const active = selected.includes(s);
-                  return (
-                    <div key={s} onClick={() => onToggle(s)}
-                      onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#FAF8FF'; }}
-                      onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '8px 12px', cursor: 'pointer', fontSize: 13,
-                        color: active ? '#4A2D8C' : '#1A1228', fontWeight: active ? 600 : 500,
-                        background: active ? '#F5F2FF' : 'transparent',
-                      }}>
-                      {s}
-                      {active && <Icons.check size={13} strokeWidth={2.8} style={{ color: '#4A2D8C', flexShrink: 0 }} />}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
   );
 }
 

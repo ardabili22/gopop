@@ -42,7 +42,7 @@ function getArtikelKategori() {
 
 const ARTIKEL_SEED = [
   { id: 1, judul: 'Cashback 5% Setiap Transfer E-Wallet Bulan Ini', kategori: 'Promo', excerpt: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet minimal Rp 50.000 selama periode promo.', konten: 'Nikmati cashback 5% untuk setiap transfer antar e-wallet (GoPay, OVO, Dana, ShopeePay) dengan minimal transaksi Rp 50.000. Cashback otomatis masuk ke saldo dalam 24 jam. Berlaku selama periode promo dan kuota tersedia.', tone: 'coral', status: 'published', tgl: '2026-05-15',
-    kodePromo: 'CASHBACK5', autoApply: false, platforms: ['gopay', 'ovo', 'dana', 'shopeepay'],
+    kodePromo: 'CASHBACK5', autoApply: false, scope: ['GoPay', 'OVO', 'Dana', 'ShopeePay'],
     caraKlaim: ['Buka menu Transfer E-Wallet di aplikasi Gopop', 'Pilih e-wallet tujuan (GoPay, OVO, Dana, atau ShopeePay)', 'Masukkan kode promo CASHBACK5 di halaman checkout', 'Transfer minimal Rp 50.000 — cashback masuk ke saldo dalam 24 jam'],
     faq: [
       { q: 'Apakah promo ini berlaku untuk semua e-wallet?', a: 'Berlaku untuk transfer ke GoPay, OVO, Dana, dan ShopeePay selama kuota promo masih tersedia.' },
@@ -51,7 +51,7 @@ const ARTIKEL_SEED = [
   { id: 2, judul: '5 Tips Aman Transaksi PPOB di Muurah', kategori: 'Tips', excerpt: 'Pastikan nomor tujuan benar, simpan bukti transaksi, dan kenali ciri promo resmi dari Muurah.', konten: 'Berikut tips aman bertransaksi di Muurah: 1) Selalu cek ulang nomor HP/ID tujuan sebelum bayar, 2) Simpan bukti pembayaran sampai produk masuk, 3) Promo resmi Muurah hanya diinformasikan lewat aplikasi dan channel official, 4) Jangan bagikan OTP/PIN ke siapapun, 5) Hubungi CS via menu Bantuan jika ada kendala.', tone: 'purple', status: 'published', tgl: '2026-05-10' },
   { id: 3, judul: 'Maintenance Sistem Terjadwal', kategori: 'Pengumuman', excerpt: 'Akan ada maintenance sistem pada 24 Mei pukul 23:00–01:00 WIB. Beberapa layanan mungkin terganggu.', konten: 'Kami akan melakukan maintenance sistem terjadwal pada 24 Mei 2026 pukul 23:00–01:00 WIB untuk meningkatkan kualitas layanan. Selama periode tersebut, beberapa transaksi mungkin mengalami keterlambatan. Kami mohon maaf atas ketidaknyamanan ini.', tone: 'blue', status: 'terjadwal', tgl: '2026-05-24' },
   { id: 4, judul: 'Diskon Spesial Token PLN Akhir Pekan', kategori: 'Promo', excerpt: 'Dapatkan diskon 2% untuk pembelian token PLN setiap Sabtu & Minggu.', konten: 'Setiap Sabtu dan Minggu, nikmati diskon 2% (maks Rp 2.000) untuk setiap pembelian token PLN minimal Rp 20.000. Promo otomatis diterapkan saat checkout, tanpa kode promo.', tone: 'gold', status: 'draft', tgl: '2026-05-23',
-    kodePromo: '', autoApply: true, platforms: [],
+    kodePromo: '', autoApply: true, scope: [],
     caraKlaim: ['Pilih menu Token PLN', 'Masukkan ID pelanggan / nomor meter', 'Pilih nominal token minimal Rp 20.000', 'Diskon otomatis terpotong saat checkout di hari Sabtu/Minggu'],
     faq: [
       { q: 'Apakah perlu kode promo?', a: 'Tidak, diskon diterapkan otomatis tanpa kode promo.' },
@@ -750,24 +750,8 @@ const PROMO_PLATFORMS = [
   { id: 'linkaja', label: 'LinkAja' },
   { id: 'isaku', label: 'i.saku' },
 ];
-function PlatformTagPicker({ value, onChange }) {
-  const toggle = (id) => onChange(value.includes(id) ? value.filter(v => v !== id) : [...value, id]);
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-      {PROMO_PLATFORMS.map(p => {
-        const active = value.includes(p.id);
-        return (
-          <button key={p.id} type="button" onClick={() => toggle(p.id)} style={{
-            padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-            background: active ? '#4A2D8C' : '#F0EBFF', color: active ? '#FFFFFF' : '#574872',
-            border: 0, fontFamily: 'inherit',
-          }}>{p.label}</button>
-        );
-      })}
-      {value.length === 0 && <span style={{ fontSize: 12, color: '#9085AE', padding: '6px 0' }}>Belum ada platform dipilih.</span>}
-    </div>
-  );
-}
+// NOTE: dipake sama getScopeCategoryGroups() di global.jsx buat isi grup "Transfer E-Wallet"
+// di dropdown "Berlaku untuk Produk" (dipake bareng Promo & Voucher + Tips & Promo Artikel).
 
 function StepListEditor({ items, onChange, placeholder }) {
   const update = (i, v) => onChange(items.map((it, idx) => idx === i ? v : it));
@@ -887,9 +871,16 @@ function ArtikelModal({ artikel, onClose, onSave }) {
   const [form, setForm] = useCmsState(artikel || {
     judul: '', kategori: getArtikelKategori()[0] || 'Tips', excerpt: '', konten: '',
     tone: 'purple', status: 'draft', tgl: '2026-06-12', gambar: null,
-    kodePromo: '', autoApply: true, caraKlaim: [], faq: [], platforms: [],
+    kodePromo: '', autoApply: true, caraKlaim: [], faq: [], scope: [],
   });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  function toggleScope(s) {
+    setForm(f => {
+      if (s === 'Semua Produk') return { ...f, scope: f.scope.includes('Semua Produk') ? [] : ['Semua Produk'] };
+      const next = f.scope.includes(s) ? f.scope.filter(x => x !== s) : [...f.scope.filter(x => x !== 'Semua Produk'), s];
+      return { ...f, scope: next };
+    });
+  }
   const isPromo = form.kategori === 'Promo';
   const kontenText = (form.konten || '').replace(/<[^>]*>/g, '').trim();
   const isValid = form.judul.trim() && form.excerpt.trim() && kontenText;
@@ -994,8 +985,8 @@ function ArtikelModal({ artikel, onClose, onSave }) {
                     )}
                   </div>
                 </CmsField>
-                <CmsField label="Platform E-Wallet Didukung">
-                  <PlatformTagPicker value={form.platforms} onChange={(v) => u('platforms', v)} />
+                <CmsField label="Berlaku untuk Produk">
+                  <ProductScopeDropdown selected={form.scope} onToggle={toggleScope} />
                 </CmsField>
               </div>
               <CmsField label="Cara Klaim">

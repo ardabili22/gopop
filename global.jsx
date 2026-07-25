@@ -90,6 +90,155 @@ window.MuurahKategoriStore = (() => {
 })();
 
 // ════════════════════════════════════════════════════════════════════════════
+//   PRODUCT SCOPE PICKER — shared "Berlaku untuk Produk" dropdown
+//   Used by: Promo & Voucher (Pengaturan) and Tips & Promo Artikel (CMS)
+//
+//   Kategori (Pulsa, Paket Data, dst) are non-clickable group headers only —
+//   the actual selectable leaves are individual produk, sourced from the real
+//   PRODUK_DATA catalog (produk.jsx) so this never drifts from real product data.
+//   Layanan tanpa SKU per-produk (Transfer E-Wallet, eSIM) get their own group;
+//   Transfer E-Wallet reuses PROMO_PLATFORMS (cms.jsx) as its produk list.
+//   Kategori yang belum punya produk terdaftar tetap tampil, jujur nampilin
+//   "Belum ada produk terdaftar" alih-alih dikarang.
+// ════════════════════════════════════════════════════════════════════════════
+function getScopeCategoryGroups() {
+  const katList = window.MuurahKategoriStore ? window.MuurahKategoriStore.get().filter(k => k.aktif) : [];
+  const katalog = (typeof PRODUK_DATA !== 'undefined') ? PRODUK_DATA : [];
+
+  const kategoriGroups = katList.map(k => ({
+    group: k.label,
+    items: katalog.filter(p => (p.kategori || '').toLowerCase() === k.id.toLowerCase() && p.status !== 'nonaktif').map(p => p.nama),
+  }));
+
+  const ewalletItems = (typeof PROMO_PLATFORMS !== 'undefined') ? PROMO_PLATFORMS.map(p => p.label) : [];
+
+  return [
+    { group: 'Umum', items: ['Semua Produk'] },
+    ...kategoriGroups,
+    { group: 'Transfer E-Wallet', items: ewalletItems },
+    { group: 'eSIM', items: [] },
+  ];
+}
+
+function ProductScopeDropdown({ selected, onToggle }) {
+  const [open, setOpen] = useGbState(false);
+  const [query, setQuery] = useGbState('');
+  const wrapRef = useGbRef(null);
+  const searchRef = useGbRef(null);
+
+  useGbEffect(() => {
+    function onDocClick(e) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) { setOpen(false); setQuery(''); }
+    }
+    function onKey(e) { if (e.key === 'Escape') { setOpen(false); setQuery(''); } }
+    document.addEventListener('mousedown', onDocClick);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
+  useGbEffect(() => { if (open && searchRef.current) searchRef.current.focus(); }, [open]);
+
+  const q = query.trim().toLowerCase();
+  const filteredGroups = getScopeCategoryGroups()
+    .map(g => ({ ...g, items: g.items.filter(s => s.toLowerCase().includes(q)) }))
+    .filter(g => (q === '' ? true : g.items.length > 0));
+
+  return (
+    <div ref={wrapRef} style={{ position: 'relative' }}>
+      <div onClick={() => setOpen(o => !o)} style={{
+        background: '#F0EBFF', border: open ? '1px solid #4A2D8C' : '1px solid transparent',
+        borderRadius: 10, minHeight: 38, padding: '6px 10px', fontSize: 13, fontFamily: 'inherit',
+        display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6, cursor: 'pointer',
+      }}>
+        {selected.length === 0 && (
+          <span style={{ fontSize: 13, color: '#9085AE' }}>Pilih produk...</span>
+        )}
+        {selected.map((s) => (
+          <span key={s} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            padding: '4px 6px 4px 10px', borderRadius: 7,
+            background: '#FFFFFF', border: '1px solid #4A2D8C',
+            color: '#4A2D8C', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+          }}>
+            {s}
+            <span onClick={(e) => { e.stopPropagation(); onToggle(s); }}
+              style={{ cursor: 'pointer', display: 'inline-flex', opacity: 0.6 }}>
+              <Icons.x size={11} strokeWidth={2.5} />
+            </span>
+          </span>
+        ))}
+        <Icons.chevron size={13} style={{
+          color: '#574872', flexShrink: 0, marginLeft: 'auto',
+          transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 130ms ease',
+        }} />
+      </div>
+
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 30,
+          background: '#FFFFFF', border: '1px solid #E0D9F5', borderRadius: 12,
+          boxShadow: '0 12px 32px rgba(26,18,40,0.16)', overflow: 'hidden',
+          animation: 'muurah-pop 160ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}>
+          <div style={{ padding: 8, borderBottom: '1px solid #E0D9F5' }}>
+            <div style={{ position: 'relative' }}>
+              <Icons.search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9085AE' }} />
+              <input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)}
+                placeholder="Cari produk..."
+                style={{
+                  width: '100%', height: 34, paddingLeft: 30, paddingRight: 12,
+                  background: '#FAF8FF', border: '1px solid transparent', borderRadius: 10,
+                  fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit',
+                }} />
+            </div>
+          </div>
+
+          <div style={{ maxHeight: 260, overflowY: 'auto', padding: '6px 0' }}>
+            {filteredGroups.length === 0 && (
+              <div style={{ padding: '14px 12px', fontSize: 12, color: '#9085AE', textAlign: 'center' }}>
+                Produk tidak ditemukan
+              </div>
+            )}
+            {filteredGroups.map((g) => (
+              <div key={g.group}>
+                <div style={{ padding: '8px 12px 4px', fontSize: 10, fontWeight: 700, color: '#9085AE', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  {g.group}
+                </div>
+                {g.items.length === 0 && (
+                  <div style={{ padding: '2px 12px 10px', fontSize: 12, color: '#9085AE', fontStyle: 'italic' }}>
+                    Belum ada produk terdaftar
+                  </div>
+                )}
+                {g.items.map((s) => {
+                  const active = selected.includes(s);
+                  return (
+                    <div key={s} onClick={() => onToggle(s)}
+                      onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#FAF8FF'; }}
+                      onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '8px 12px', cursor: 'pointer', fontSize: 13,
+                        color: active ? '#4A2D8C' : '#1A1228', fontWeight: active ? 600 : 500,
+                        background: active ? '#F5F2FF' : 'transparent',
+                      }}>
+                      {s}
+                      {active && <Icons.check size={13} strokeWidth={2.8} style={{ color: '#4A2D8C', flexShrink: 0 }} />}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 //   TOAST CONTAINER
 // ════════════════════════════════════════════════════════════════════════════
 function ToastContainer() {
