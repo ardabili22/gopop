@@ -17,51 +17,141 @@ const PS_NAV = [
 function Pengaturan() {
   const { Card } = window.MuurahShell;
   const [innerNav, setInnerNav] = usePsState('limit');
-  const [perms, setPerms] = usePsState(() => [
-    { perm: 'Lihat Dashboard',     sa: true, ao: true,  fn: true,  cs: true  },
-    { perm: 'Edit Harga Produk',   sa: true, ao: true,  fn: false, cs: false },
-    { perm: 'Edit HPP',            sa: true, ao: false, fn: true,  cs: false },
-    { perm: 'Proses Refund',       sa: true, ao: true,  fn: false, cs: true  },
-    { perm: 'Suspend Akun User',   sa: true, ao: true,  fn: false, cs: true  },
-    { perm: 'Export Laporan',      sa: true, ao: true,  fn: true,  cs: false },
-    { perm: 'Kelola Supplier',     sa: true, ao: false, fn: true,  cs: false },
-    { perm: 'Kelola Role & Akses', sa: true, ao: false, fn: false, cs: false },
+
+  // ── RBAC menu tree ──────────────────────────────────────────────────────────
+  // Struktur ini nyontek beneran dari sidebar gopop: 13 menu utama, 5 di antaranya
+  // (Master Data, Pengaturan Sistem, Konten Homepage, Notifikasi, Role & Tim) punya
+  // child sub-halaman beneran, sisanya flat (gak ada sub-halaman, atau sub-tab-nya
+  // cuma filter kayak Pulsa/PLN di Produk & Harga — bukan resource terpisah).
+  // 8 permission yang udah ada sebelumnya dipertahanin datanya, cuma dipindah
+  // masuk ke menu/child yang paling pas.
+  const [menus, setMenus] = usePsState(() => [
+    { id: 'dashboard', label: 'Dashboard', caps: [
+      { key: 'lihat', label: 'Lihat Dashboard', sa: true, ao: true, fn: true, cs: true },
+    ] },
+    { id: 'produk', label: 'Produk & Harga', caps: [
+      { key: 'edit-harga', label: 'Edit Harga Produk', sa: true, ao: true, fn: false, cs: false },
+      { key: 'edit-hpp',   label: 'Edit HPP',           sa: true, ao: false, fn: true, cs: false },
+    ] },
+    { id: 'transaksi', label: 'Transaksi', caps: [
+      { key: 'refund', label: 'Proses Refund', sa: true, ao: true, fn: false, cs: true },
+    ] },
+    { id: 'pengguna', label: 'Pengguna', caps: [
+      { key: 'suspend', label: 'Suspend Akun User', sa: true, ao: true, fn: false, cs: true },
+    ] },
+    { id: 'laporan', label: 'Laporan Keuangan', caps: [
+      { key: 'export', label: 'Export Laporan', sa: true, ao: true, fn: true, cs: false },
+    ] },
+    { id: 'konten', label: 'Konten Homepage', children: [
+      { id: 'banner-web',  label: 'Banner Web',        caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'banner-app',  label: 'Banner Mobile App', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'artikel-web', label: 'Tips & Promo Web',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'artikel-app', label: 'Tips & Promo App',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+    ] },
+    { id: 'master-data', label: 'Master Data', children: [
+      { id: 'md-kategori',    label: 'Kategori Produk',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-operator',    label: 'Master Operator',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-supplier',    label: 'Supplier & Biller', caps: [{ key: 'kelola-supplier', label: 'Kelola Supplier', sa: true, ao: false, fn: true, cs: false }] },
+      { id: 'md-channel',     label: 'Channel Komplain',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-bank',        label: 'Master Bank',       caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-kat-artikel', label: 'Kategori Artikel',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-kat-faq',     label: 'Kategori FAQ',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+    ] },
+    { id: 'pengaturan-sistem', label: 'Pengaturan Sistem', children: [
+      { id: 'ps-umum',  label: 'Umum',                 caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-pg',    label: 'Payment Gateway',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-notif', label: 'Notifikasi',           caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-faq',   label: 'FAQ & Bantuan',        caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-promo', label: 'Promo & Voucher',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-seo',   label: 'SEO',                  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-limit', label: 'Saldo & Limit Biller', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-fee',   label: 'Fee & Biaya Admin',    caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-rbac',  label: 'Role & Akses',         caps: [{ key: 'kelola-role-akses', label: 'Kelola Role & Akses', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-audit', label: 'Audit Log',            caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+    ] },
+    { id: 'notifikasi', label: 'Notifikasi', children: [
+      { id: 'nf-alert',     label: 'Alert Internal',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'nf-broadcast', label: 'Broadcast ke User', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+    ] },
+    { id: 'role-tim', label: 'Role & Tim', children: [
+      { id: 'rt-role',    label: 'Daftar Role',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'rt-anggota', label: 'Anggota Tim',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+    ] },
   ]);
-  const togglePerm = (i, role) => {
+
+  function toggleCap(menuId, childId, capKey, role) {
     if (role === 'sa') {
       window.muurahToast('Super Admin selalu punya akses penuh', 'warning');
       return;
     }
-    setPerms(ps => ps.map((p, idx) => idx === i ? { ...p, [role]: !p[role] } : p));
-  };
-  const addPerm = (label) => {
+    setMenus(ms => ms.map(m => {
+      if (m.id !== menuId) return m;
+      if (childId) {
+        return { ...m, children: m.children.map(c => c.id !== childId ? c : {
+          ...c, caps: c.caps.map(cap => cap.key !== capKey ? cap : { ...cap, [role]: !cap[role] }),
+        }) };
+      }
+      return { ...m, caps: m.caps.map(cap => cap.key !== capKey ? cap : { ...cap, [role]: !cap[role] }) };
+    }));
+  }
+  function addCap(targetValue, label) {
+    if (!targetValue) {
+      window.muurahToast('Pilih menu tujuan dulu', 'error');
+      return;
+    }
     if (!label.trim()) {
       window.muurahToast('Nama permission wajib diisi', 'error');
       return;
     }
-    if (perms.some(p => p.perm.toLowerCase() === label.toLowerCase())) {
-      window.muurahToast('Permission "' + label + '" sudah ada', 'error'); return;
-    }
-    setPerms(ps => [...ps, { perm: label.trim(), sa: true, ao: false, fn: false, cs: false }]);
+    const [menuId, childId] = targetValue.split('::');
+    const key = label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+    const newCap = { key, label: label.trim(), sa: true, ao: false, fn: false, cs: false };
+    let dupe = false;
+    setMenus(ms => ms.map(m => {
+      if (m.id !== menuId) return m;
+      if (childId) {
+        return { ...m, children: m.children.map(c => {
+          if (c.id !== childId) return c;
+          if (c.caps.some(cap => cap.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return c; }
+          return { ...c, caps: [...c.caps, newCap] };
+        }) };
+      }
+      if ((m.caps || []).some(cap => cap.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return m; }
+      return { ...m, caps: [...(m.caps || []), newCap] };
+    }));
+    if (dupe) { window.muurahToast('Permission "' + label + '" sudah ada di menu ini', 'error'); return; }
     window.muurahToast('Permission "' + label.trim() + '" ditambahkan — aktif untuk Super Admin', 'success');
-  };
-  const renamePerm = (i, label) => {
+  }
+  function renameCap(menuId, childId, capKey, label) {
     if (!label.trim()) return;
-    setPerms(ps => ps.map((p, idx) => idx === i ? { ...p, perm: label.trim() } : p));
+    setMenus(ms => ms.map(m => {
+      if (m.id !== menuId) return m;
+      if (childId) {
+        return { ...m, children: m.children.map(c => c.id !== childId ? c : {
+          ...c, caps: c.caps.map(cap => cap.key !== capKey ? cap : { ...cap, label: label.trim() }),
+        }) };
+      }
+      return { ...m, caps: m.caps.map(cap => cap.key !== capKey ? cap : { ...cap, label: label.trim() }) };
+    }));
     window.muurahToast('Permission diperbarui', 'success');
-  };
-  const deletePerm = (i) => {
-    const label = perms[i].perm;
+  }
+  function deleteCap(menuId, childId, capKey, label) {
     window.muurahConfirm({
       title: 'Hapus permission "' + label + '"?',
       body: 'Permission ini akan dihapus dari matrix dan tidak bisa digunakan lagi.',
       confirmLabel: 'Hapus', danger: true,
       onConfirm: () => {
-        setPerms(ps => ps.filter((_, idx) => idx !== i));
+        setMenus(ms => ms.map(m => {
+          if (m.id !== menuId) return m;
+          if (childId) {
+            return { ...m, children: m.children.map(c => c.id !== childId ? c : { ...c, caps: c.caps.filter(cap => cap.key !== capKey) }) };
+          }
+          return { ...m, caps: (m.caps || []).filter(cap => cap.key !== capKey) };
+        }));
         window.muurahToast('Permission "' + label + '" dihapus', 'success');
       },
     });
-  };
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -113,7 +203,7 @@ function Pengaturan() {
           {innerNav === 'seo'      && <SeoPanel />}
           {innerNav === 'limit'    && <SaldoLimitPanel />}
           {innerNav === 'fee'      && <FeePanel />}
-          {innerNav === 'rbac'     && <RbacPanel perms={perms} onToggle={togglePerm} onAdd={addPerm} onRename={renamePerm} onDelete={deletePerm} />}
+          {innerNav === 'rbac'     && <RbacPanel menus={menus} onToggle={toggleCap} onAdd={addCap} onRename={renameCap} onDelete={deleteCap} />}
           {innerNav === 'audit'    && <AuditPanel />}
         </div>
       </div>
@@ -1699,7 +1789,32 @@ function FeeModal({ fee, existingKategori, onClose, onSave }) {
 // ════════════════════════════════════════════════════════════════════════════
 //   ROLE & AKSES (sub-panel: permission matrix)
 // ════════════════════════════════════════════════════════════════════════════
-function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
+// Meratain tree menu jadi list row buat dirender di table, sambil ngehormatin
+// state collapsed (per top-level menu). Row-nya ada 2 jenis: 'menu' (group header,
+// gak ada checkbox, cuma buat expand/collapse) dan 'leaf' (baris permission beneran).
+function flattenRbacRows(menus, collapsed) {
+  const rows = [];
+  menus.forEach(menu => {
+    const hasChildren = !!menu.children;
+    rows.push({ type: 'menu', path: menu.id, menuId: menu.id, label: menu.label, hasChildren, isCollapsed: collapsed.has(menu.id) });
+    if (collapsed.has(menu.id)) return;
+    if (hasChildren) {
+      menu.children.forEach(child => {
+        child.caps.forEach(cap => {
+          const label = cap.label === 'Kelola' ? child.label : child.label + ' — ' + cap.label;
+          rows.push({ type: 'leaf', path: menu.id + '.' + child.id + '.' + cap.key, menuId: menu.id, childId: child.id, capKey: cap.key, label, cap, indent: 1 });
+        });
+      });
+    } else {
+      (menu.caps || []).forEach(cap => {
+        rows.push({ type: 'leaf', path: menu.id + '.' + cap.key, menuId: menu.id, childId: null, capKey: cap.key, label: cap.label, cap, indent: 1 });
+      });
+    }
+  });
+  return rows;
+}
+
+function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete }) {
   const { useState: usePsLocal, useEffect: usePsLocalEffect } = React;
   const [roles, setRoles] = usePsLocal(() => window.MuurahRolesStore ? window.MuurahRolesStore.get() : [
     { id: 'sa', label: 'Super Admin', tone: 'purple', members: 2 },
@@ -1707,25 +1822,56 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
     { id: 'fn', label: 'Finance',     tone: 'green',  members: 3 },
     { id: 'cs', label: 'CS',          tone: 'gold',   members: 8 },
   ]);
+  const [collapsed, setCollapsed] = usePsLocal(() => new Set());
+  const [newTarget, setNewTarget] = usePsLocal('');
   const [newPerm, setNewPerm] = usePsLocal('');
-  const [renamingIdx, setRenamingIdx] = usePsLocal(null);
+  const [renamingPath, setRenamingPath] = usePsLocal(null);
 
   usePsLocalEffect(() => {
     if (!window.MuurahRolesStore) return;
     return window.MuurahRolesStore.subscribe(setRoles);
   }, []);
 
+  function toggleCollapse(menuId) {
+    setCollapsed(prev => {
+      const next = new Set(prev);
+      if (next.has(menuId)) next.delete(menuId); else next.add(menuId);
+      return next;
+    });
+  }
+
+  const rows = flattenRbacRows(menus, collapsed);
+  const colCount = roles.length + 2;
+
+  function submitAdd() {
+    onAdd(newTarget, newPerm);
+    setNewPerm('');
+  }
+
   return (
     <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Centang untuk memberikan permission ke role — kolom role otomatis sync dari menu Role & Tim" padded={false}>
-      {/* Toolbar: tambah permission + legend — dipindah ke atas biar gampang kelihatan */}
+      {/* Toolbar: tambah permission (pilih menu tujuan dulu) + legend */}
       <div style={{ padding: '16px 24px', borderBottom: '1px solid #E0D9F5', display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <select value={newTarget} onChange={(e) => setNewTarget(e.target.value)} style={{
+              background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34,
+              padding: '0 10px', fontSize: 12, color: newTarget ? '#1A1228' : '#9085AE', outline: 'none',
+              fontFamily: 'inherit', width: 220, cursor: 'pointer', appearance: 'none',
+            }}>
+              <option value="">Pilih menu tujuan...</option>
+              {menus.map(m => m.children
+                ? <optgroup key={m.id} label={m.label}>
+                    {m.children.map(c => <option key={c.id} value={m.id + '::' + c.id}>{c.label}</option>)}
+                  </optgroup>
+                : <option key={m.id} value={m.id}>{m.label}</option>
+              )}
+            </select>
             <input value={newPerm} onChange={(e) => setNewPerm(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { onAdd(newPerm); setNewPerm(''); } }}
+              onKeyDown={(e) => { if (e.key === 'Enter') submitAdd(); }}
               placeholder="Nama permission baru… (cth. Kelola Banner Homepage)"
-              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 340 }} />
-            <button onClick={() => { onAdd(newPerm); setNewPerm(''); }}
+              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 280 }} />
+            <button onClick={submitAdd}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
               <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission
             </button>
@@ -1740,6 +1886,9 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={permChip(false)}>—</span> Tidak diizinkan
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#9085AE' }}>
+            <Icons.chevron size={11} /> Klik nama menu buat expand/collapse
           </span>
         </div>
       </div>
@@ -1763,25 +1912,46 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
             </tr>
           </thead>
           <tbody>
-            {perms.map((p, i) => (
-              <tr key={i} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
+            {rows.map((r) => r.type === 'menu' ? (
+              <tr key={r.path} onClick={() => toggleCollapse(r.menuId)}
+                style={{ borderTop: '1px solid #E0D9F5', height: 44, cursor: 'pointer', background: '#FAF8FF' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#F3EEFF'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#FAF8FF'}
+              >
+                <td colSpan={colCount} style={{ ...psTdStyle, paddingLeft: 24, fontWeight: 700, color: '#1A1228' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Icons.chevron size={13} style={{
+                      color: '#574872', flexShrink: 0,
+                      transform: r.isCollapsed ? 'rotate(-90deg)' : 'none', transition: 'transform 130ms ease',
+                    }} />
+                    {r.label}
+                    {r.hasChildren && (
+                      <span style={{ fontSize: 10, color: '#9085AE', fontWeight: 500, fontFamily: 'JetBrains Mono, monospace' }}>
+                        ({menus.find(m => m.id === r.menuId).children.length} sub-menu)
+                      </span>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              <tr key={r.path} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
                 onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 <td style={{
-                  ...psTdStyle, paddingLeft: 24, color: '#1A1228', fontWeight: 500,
+                  ...psTdStyle, paddingLeft: 24 + r.indent * 20, color: '#1A1228', fontWeight: 500,
                   position: 'sticky', left: 0, zIndex: 1, background: '#FFFFFF',
                   boxShadow: '2px 0 4px -2px rgba(26,18,40,0.12)',
                 }}>
-                  {renamingIdx === i ? (
-                    <input autoFocus defaultValue={p.perm}
-                      onBlur={(e) => { onRename(i, e.target.value); setRenamingIdx(null); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter') { onRename(i, e.target.value); setRenamingIdx(null); } if (e.key === 'Escape') setRenamingIdx(null); }}
-                      style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '90%' }} />
-                  ) : p.perm}
+                  {renamingPath === r.path ? (
+                    <input autoFocus defaultValue={r.label}
+                      onBlur={(e) => { onRename(r.menuId, r.childId, r.capKey, e.target.value); setRenamingPath(null); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { onRename(r.menuId, r.childId, r.capKey, e.target.value); setRenamingPath(null); } if (e.key === 'Escape') setRenamingPath(null); }}
+                      style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '85%' }} />
+                  ) : r.label}
                 </td>
-                {roles.map(r => (
-                  <PermCell key={r.id} allowed={!!p[r.id]} onClick={() => onToggle(i, r.id)} locked={r.id === 'sa'} />
+                {roles.map(role => (
+                  <PermCell key={role.id} allowed={!!r.cap[role.id]} onClick={() => onToggle(r.menuId, r.childId, r.capKey, role.id)} locked={role.id === 'sa'} />
                 ))}
                 <td style={{
                   ...psTdStyle, textAlign: 'center',
@@ -1789,10 +1959,10 @@ function RbacPanel({ perms, onToggle, onAdd, onRename, onDelete }) {
                   boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
                 }}>
                   <div style={{ display: 'inline-flex', gap: 2 }}>
-                    <button onClick={() => setRenamingIdx(i)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button onClick={() => setRenamingPath(r.path)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icons.cog size={12} />
                     </button>
-                    <button onClick={() => onDelete(i)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button onClick={() => onDelete(r.menuId, r.childId, r.capKey, r.label)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icons.x size={12} />
                     </button>
                   </div>
