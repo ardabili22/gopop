@@ -104,60 +104,73 @@ function RoleTim() {
   // (Master Data, Pengaturan Sistem, Konten Homepage, Notifikasi, Role & Tim) punya
   // child sub-halaman beneran, sisanya flat (gak ada sub-halaman, atau sub-tab-nya
   // cuma filter kayak Pulsa/PLN di Produk & Harga — bukan resource terpisah).
-  // Awalnya matrix ini nempel di Pengaturan Sistem, tapi dipindah kesini (tab Hak Akses)
-  // karena "Role & Akses" emang soal role — lebih pas nyatu sama Daftar Role & Anggota Tim
-  // ketimbang kepisah di menu laen (file ini dari awal emang diniatin "gabungan Role & Akses + Tim & Admin").
+  // Setiap menu/child SELALU dapet 4 baris standar: Read/Create/Edit/Delete — gak ada
+  // lagi "Kelola" atau "Aksi Khusus". Simpel: 1 resource = 4 kemampuan tetap, titik.
+  // Konsekuensinya: permission yang dulu granular per-aksi (misal Edit Harga Produk
+  // vs Edit HPP) sekarang kegabung jadi 1 baris "Edit" — AO & Finance jadi punya
+  // akses Edit yang sama persis buat Produk & Harga (union dari 2 permission lama).
+  const stdCaps = (over) => {
+    over = over || {};
+    const base = { sa: true, ao: false, fn: false, cs: false };
+    return [
+      { key: 'read',   label: 'Read',   ...base, ...over.all, ...over.read },
+      { key: 'create', label: 'Create', ...base, ...over.all, ...over.create },
+      { key: 'edit',   label: 'Edit',   ...base, ...over.all, ...over.edit },
+      { key: 'delete', label: 'Delete', ...base, ...over.all, ...over.delete },
+    ];
+  };
+
   const [menus, setMenus] = useRtState(() => [
-    { id: 'dashboard', label: 'Dashboard', caps: [
-      { key: 'lihat', label: 'Read', sa: true, ao: true, fn: true, cs: true },
-    ] },
-    { id: 'produk', label: 'Produk & Harga', caps: [
-      { key: 'edit-harga', label: 'Edit Harga Produk', sa: true, ao: true, fn: false, cs: false, custom: true },
-      { key: 'edit-hpp',   label: 'Edit HPP',           sa: true, ao: false, fn: true, cs: false, custom: true },
-    ] },
-    { id: 'transaksi', label: 'Transaksi', caps: [
-      { key: 'refund', label: 'Proses Refund', sa: true, ao: true, fn: false, cs: true, custom: true },
-    ] },
-    { id: 'pengguna', label: 'Pengguna', caps: [
-      { key: 'suspend', label: 'Suspend Akun User', sa: true, ao: true, fn: false, cs: true, custom: true },
-    ] },
-    { id: 'laporan', label: 'Laporan Keuangan', caps: [
-      { key: 'export', label: 'Export Laporan', sa: true, ao: true, fn: true, cs: false, custom: true },
-    ] },
+    { id: 'dashboard', label: 'Dashboard', caps: stdCaps({ read: { ao: true, fn: true, cs: true } }) },
+    { id: 'produk', label: 'Produk & Harga', caps: stdCaps({
+      read: { ao: true, fn: true },
+      edit: { ao: true, fn: true }, // union: Edit Harga Produk (ao) + Edit HPP (fn) digabung
+    }) },
+    { id: 'transaksi', label: 'Transaksi', caps: stdCaps({
+      read: { ao: true, cs: true },
+      edit: { ao: true, cs: true }, // dulu 'Proses Refund'
+    }) },
+    { id: 'pengguna', label: 'Pengguna', caps: stdCaps({
+      read: { ao: true, cs: true },
+      edit: { ao: true, cs: true }, // dulu 'Suspend Akun User'
+    }) },
+    { id: 'laporan', label: 'Laporan Keuangan', caps: stdCaps({
+      read: { ao: true, fn: true }, // dulu 'Export Laporan'
+    }) },
     { id: 'konten', label: 'Konten Homepage', children: [
-      { id: 'banner-web',  label: 'Banner Web',        caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'banner-app',  label: 'Banner Mobile App', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'artikel-web', label: 'Tips & Promo Web',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'artikel-app', label: 'Tips & Promo App',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'banner-web',  label: 'Banner Web',        caps: stdCaps() },
+      { id: 'banner-app',  label: 'Banner Mobile App', caps: stdCaps() },
+      { id: 'artikel-web', label: 'Tips & Promo Web',  caps: stdCaps() },
+      { id: 'artikel-app', label: 'Tips & Promo App',  caps: stdCaps() },
     ] },
     { id: 'master-data', label: 'Master Data', children: [
-      { id: 'md-kategori',    label: 'Kategori Produk',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'md-operator',    label: 'Master Operator',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'md-supplier',    label: 'Supplier & Biller', caps: [{ key: 'kelola-supplier', label: 'Kelola', sa: true, ao: false, fn: true, cs: false }] },
-      { id: 'md-channel',     label: 'Channel Komplain',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'md-bank',        label: 'Master Bank',       caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'md-kat-artikel', label: 'Kategori Artikel',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'md-kat-faq',     label: 'Kategori FAQ',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'md-kategori',    label: 'Kategori Produk',   caps: stdCaps() },
+      { id: 'md-operator',    label: 'Master Operator',   caps: stdCaps() },
+      { id: 'md-supplier',    label: 'Supplier & Biller', caps: stdCaps({ all: { fn: true } }) }, // dulu 'Kelola Supplier'
+      { id: 'md-channel',     label: 'Channel Komplain',  caps: stdCaps() },
+      { id: 'md-bank',        label: 'Master Bank',       caps: stdCaps() },
+      { id: 'md-kat-artikel', label: 'Kategori Artikel',  caps: stdCaps() },
+      { id: 'md-kat-faq',     label: 'Kategori FAQ',      caps: stdCaps() },
     ] },
     { id: 'pengaturan-sistem', label: 'Pengaturan Sistem', children: [
-      { id: 'ps-umum',  label: 'Umum',                 caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-pg',    label: 'Payment Gateway',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-notif', label: 'Notifikasi',           caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-faq',   label: 'FAQ & Bantuan',        caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-promo', label: 'Promo & Voucher',      caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-seo',   label: 'SEO',                  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-limit', label: 'Saldo & Limit Biller', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-fee',   label: 'Fee & Biaya Admin',    caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'ps-audit', label: 'Audit Log',            caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'ps-umum',  label: 'Umum',                 caps: stdCaps() },
+      { id: 'ps-pg',    label: 'Payment Gateway',      caps: stdCaps() },
+      { id: 'ps-notif', label: 'Notifikasi',           caps: stdCaps() },
+      { id: 'ps-faq',   label: 'FAQ & Bantuan',        caps: stdCaps() },
+      { id: 'ps-promo', label: 'Promo & Voucher',      caps: stdCaps() },
+      { id: 'ps-seo',   label: 'SEO',                  caps: stdCaps() },
+      { id: 'ps-limit', label: 'Saldo & Limit Biller', caps: stdCaps() },
+      { id: 'ps-fee',   label: 'Fee & Biaya Admin',    caps: stdCaps() },
+      { id: 'ps-audit', label: 'Audit Log',            caps: stdCaps() },
     ] },
     { id: 'notifikasi', label: 'Notifikasi', children: [
-      { id: 'nf-alert',     label: 'Alert Internal',   caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'nf-broadcast', label: 'Broadcast ke User', caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'nf-alert',     label: 'Alert Internal',   caps: stdCaps() },
+      { id: 'nf-broadcast', label: 'Broadcast ke User', caps: stdCaps() },
     ] },
     { id: 'role-tim', label: 'Role & Tim', children: [
-      { id: 'rt-role',    label: 'Daftar Role',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'rt-anggota', label: 'Anggota Tim',  caps: [{ key: 'kelola', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
-      { id: 'rt-akses',   label: 'Hak Akses',    caps: [{ key: 'kelola-role-akses', label: 'Kelola', sa: true, ao: false, fn: false, cs: false }] },
+      { id: 'rt-role',    label: 'Daftar Role',  caps: stdCaps() },
+      { id: 'rt-anggota', label: 'Anggota Tim',  caps: stdCaps() },
+      { id: 'rt-akses',   label: 'Hak Akses',    caps: stdCaps() },
     ] },
   ]);
 
@@ -176,61 +189,36 @@ function RoleTim() {
       return { ...m, caps: m.caps.map(cap => cap.key !== capKey ? cap : { ...cap, [role]: !cap[role] }) };
     }));
   }
-  function addCap(targetValue, label, isCustom) {
-    if (!targetValue) {
+  // Nambah SUB-MENU baru (bukan permission individual) — otomatis dapet 4 baris
+  // standar Read/Create/Edit/Delete, default Super Admin only.
+  function addChild(menuId, label) {
+    if (!menuId) {
       window.muurahToast('Pilih menu tujuan dulu', 'error');
       return;
     }
-    if (!label || !label.trim()) {
-      window.muurahToast(isCustom ? 'Nama aksi khusus wajib diisi' : 'Pilih aksi dulu', 'error');
+    if (!label.trim()) {
+      window.muurahToast('Nama sub-menu wajib diisi', 'error');
       return;
     }
-    const [menuId, childId] = targetValue.split('::');
-    const key = label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
-    const newCap = { key, label: label.trim(), sa: true, ao: false, fn: false, cs: false, ...(isCustom ? { custom: true } : {}) };
+    const childId = menuId + '-' + label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+    const newChild = { id: childId, label: label.trim(), caps: stdCaps() };
     let dupe = false;
     setMenus(ms => ms.map(m => {
       if (m.id !== menuId) return m;
-      if (childId) {
-        return { ...m, children: m.children.map(c => {
-          if (c.id !== childId) return c;
-          if (c.caps.some(cap => cap.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return c; }
-          return { ...c, caps: [...c.caps, newCap] };
-        }) };
-      }
-      if ((m.caps || []).some(cap => cap.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return m; }
-      return { ...m, caps: [...(m.caps || []), newCap] };
+      if ((m.children || []).some(c => c.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return m; }
+      return { ...m, children: [...(m.children || []), newChild] };
     }));
-    if (dupe) { window.muurahToast('Permission "' + label + '" sudah ada di menu ini', 'error'); return; }
-    window.muurahToast('Permission "' + label.trim() + '" ditambahkan — aktif untuk Super Admin', 'success');
+    if (dupe) { window.muurahToast('Sub-menu "' + label + '" sudah ada di menu ini', 'error'); return; }
+    window.muurahToast('Sub-menu "' + label.trim() + '" ditambahkan — 4 permission standar aktif untuk Super Admin', 'success');
   }
-  function renameCap(menuId, childId, capKey, label) {
-    if (!label.trim()) return;
-    setMenus(ms => ms.map(m => {
-      if (m.id !== menuId) return m;
-      if (childId) {
-        return { ...m, children: m.children.map(c => c.id !== childId ? c : {
-          ...c, caps: c.caps.map(cap => cap.key !== capKey ? cap : { ...cap, label: label.trim() }),
-        }) };
-      }
-      return { ...m, caps: m.caps.map(cap => cap.key !== capKey ? cap : { ...cap, label: label.trim() }) };
-    }));
-    window.muurahToast('Permission diperbarui', 'success');
-  }
-  function deleteCap(menuId, childId, capKey, label) {
+  function deleteChild(menuId, childId, label) {
     window.muurahConfirm({
-      title: 'Hapus permission "' + label + '"?',
-      body: 'Permission ini akan dihapus dari matrix dan tidak bisa digunakan lagi.',
+      title: 'Hapus sub-menu "' + label + '"?',
+      body: 'Sub-menu ini beserta 4 baris permission-nya (Read/Create/Edit/Delete) akan dihapus dari matrix.',
       confirmLabel: 'Hapus', danger: true,
       onConfirm: () => {
-        setMenus(ms => ms.map(m => {
-          if (m.id !== menuId) return m;
-          if (childId) {
-            return { ...m, children: m.children.map(c => c.id !== childId ? c : { ...c, caps: c.caps.filter(cap => cap.key !== capKey) }) };
-          }
-          return { ...m, caps: (m.caps || []).filter(cap => cap.key !== capKey) };
-        }));
-        window.muurahToast('Permission "' + label + '" dihapus', 'success');
+        setMenus(ms => ms.map(m => m.id !== menuId ? m : { ...m, children: m.children.filter(c => c.id !== childId) }));
+        window.muurahToast('Sub-menu "' + label + '" dihapus', 'success');
       },
     });
   }
@@ -290,7 +278,7 @@ function RoleTim() {
           onGoToTim={(roleId) => setTab('tim')} />
       )}
       {tab === 'akses' && (
-        <RbacPanel menus={menus} onToggle={toggleCap} onAdd={addCap} onRename={renameCap} onDelete={deleteCap} onGoToAnggota={() => setTab('tim')} />
+        <RbacPanel menus={menus} onToggle={toggleCap} onAddChild={addChild} onDeleteChild={deleteChild} onGoToAnggota={() => setTab('tim')} />
       )}
       {tab === 'tim' && (
         <TabAnggotaTim roles={roles} admins={admins}
@@ -930,8 +918,9 @@ const rtTdStyle = { padding: '14px 14px', verticalAlign: 'middle' };
 //   ROLE & AKSES (sub-panel: permission matrix)
 // ════════════════════════════════════════════════════════════════════════════
 // Meratain tree menu jadi list row buat dirender di table, sambil ngehormatin
-// state collapsed (per top-level menu). Row-nya ada 2 jenis: 'menu' (group header,
-// gak ada checkbox, cuma buat expand/collapse) dan 'leaf' (baris permission beneran).
+// state collapsed (per top-level menu). 3 jenis row: 'menu' (group header, expand/
+// collapse), 'child' (sub-menu header, cuma buat 2-level menu, ada tombol hapus),
+// dan 'leaf' (baris permission Read/Create/Edit/Delete beneran, checkbox per role).
 function flattenRbacRows(menus, collapsed) {
   const rows = [];
   menus.forEach(menu => {
@@ -940,9 +929,9 @@ function flattenRbacRows(menus, collapsed) {
     if (collapsed.has(menu.id)) return;
     if (hasChildren) {
       menu.children.forEach(child => {
+        rows.push({ type: 'child', path: menu.id + '.' + child.id, menuId: menu.id, childId: child.id, label: child.label });
         child.caps.forEach(cap => {
-          const label = cap.label === 'Kelola' ? child.label : child.label + ' — ' + cap.label;
-          rows.push({ type: 'leaf', path: menu.id + '.' + child.id + '.' + cap.key, menuId: menu.id, childId: child.id, capKey: cap.key, label, cap, indent: 1 });
+          rows.push({ type: 'leaf', path: menu.id + '.' + child.id + '.' + cap.key, menuId: menu.id, childId: child.id, capKey: cap.key, label: cap.label, cap, indent: 2 });
         });
       });
     } else {
@@ -954,7 +943,7 @@ function flattenRbacRows(menus, collapsed) {
   return rows;
 }
 
-function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete, onGoToAnggota }) {
+function RbacPanel({ menus, onToggle, onAddChild, onDeleteChild, onGoToAnggota }) {
   const { useState: usePsLocal, useEffect: usePsLocalEffect } = React;
   const [roles, setRoles] = usePsLocal(() => window.MuurahRolesStore ? window.MuurahRolesStore.get() : [
     { id: 'sa', label: 'Super Admin', tone: 'purple', members: 2 },
@@ -963,10 +952,8 @@ function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete, onGoToAnggota }
     { id: 'cs', label: 'CS',          tone: 'gold',   members: 8 },
   ]);
   const [collapsed, setCollapsed] = usePsLocal(() => new Set());
-  const [newTarget, setNewTarget] = usePsLocal('');
-  const [newAction, setNewAction] = usePsLocal('');
-  const [customAction, setCustomAction] = usePsLocal('');
-  const [renamingPath, setRenamingPath] = usePsLocal(null);
+  const [newParent, setNewParent] = usePsLocal('');
+  const [newChildName, setNewChildName] = usePsLocal('');
 
   usePsLocalEffect(() => {
     if (!window.MuurahRolesStore) return;
@@ -983,52 +970,34 @@ function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete, onGoToAnggota }
 
   const rows = flattenRbacRows(menus, collapsed);
   const colCount = roles.length + 2;
-  const STANDARD_ACTIONS = ['Read', 'Create', 'Edit', 'Delete', 'Kelola'];
+  const expandableMenus = menus.filter(m => m.children);
 
-  function submitAdd() {
-    const isCustom = newAction === '__custom__';
-    const label = isCustom ? customAction : newAction;
-    onAdd(newTarget, label, isCustom);
-    setCustomAction('');
+  function submitAddChild() {
+    onAddChild(newParent, newChildName);
+    setNewChildName('');
   }
 
   return (
     <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Centang untuk memberikan permission ke role — kolom role otomatis sync dari menu Role & Tim" padded={false}>
-      {/* Toolbar: tambah permission (pilih menu tujuan dulu) + legend */}
+      {/* Toolbar: tambah sub-menu baru (otomatis dapet 4 baris standar) + legend */}
       <div style={{ padding: '16px 24px', borderBottom: '1px solid #E0D9F5', display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <select value={newTarget} onChange={(e) => setNewTarget(e.target.value)} style={{
+            <select value={newParent} onChange={(e) => setNewParent(e.target.value)} style={{
               background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34,
-              padding: '0 10px', fontSize: 12, color: newTarget ? '#1A1228' : '#9085AE', outline: 'none',
+              padding: '0 10px', fontSize: 12, color: newParent ? '#1A1228' : '#9085AE', outline: 'none',
               fontFamily: 'inherit', width: 220, cursor: 'pointer', appearance: 'none',
             }}>
               <option value="">Pilih menu tujuan...</option>
-              {menus.map(m => m.children
-                ? <optgroup key={m.id} label={m.label}>
-                    {m.children.map(c => <option key={c.id} value={m.id + '::' + c.id}>{c.label}</option>)}
-                  </optgroup>
-                : <option key={m.id} value={m.id}>{m.label}</option>
-              )}
+              {expandableMenus.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
             </select>
-            <select value={newAction} onChange={(e) => { setNewAction(e.target.value); setCustomAction(''); }} style={{
-              background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34,
-              padding: '0 10px', fontSize: 12, color: newAction ? '#1A1228' : '#9085AE', outline: 'none',
-              fontFamily: 'inherit', width: 160, cursor: 'pointer', appearance: 'none',
-            }}>
-              <option value="">Pilih aksi...</option>
-              {STANDARD_ACTIONS.map(a => <option key={a} value={a}>{a}</option>)}
-              <option value="__custom__">+ Aksi Khusus...</option>
-            </select>
-            {newAction === '__custom__' && (
-              <input value={customAction} onChange={(e) => setCustomAction(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') submitAdd(); }}
-                placeholder="Nama aksi khusus… (cth. Proses Refund)"
-                style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 220 }} />
-            )}
-            <button onClick={submitAdd}
+            <input value={newChildName} onChange={(e) => setNewChildName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') submitAddChild(); }}
+              placeholder="Nama sub-menu baru… (cth. Master Kurir)"
+              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 260 }} />
+            <button onClick={submitAddChild}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
-              <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Permission
+              <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Sub-Menu
             </button>
           </div>
           <button onClick={onGoToAnggota} style={ghostBtn('#4A2D8C')}>
@@ -1042,9 +1011,8 @@ function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete, onGoToAnggota }
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={permChip(false)}>—</span> Tidak diizinkan
           </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 6, background: '#FFF1ED', color: '#FF6B4A', letterSpacing: '0.03em', textTransform: 'uppercase' }}>Aksi Khusus</span>
-            permission di luar Read/Create/Edit/Delete/Kelola standar
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#9085AE' }}>
+            Setiap menu/sub-menu otomatis punya 4 baris: Read, Create, Edit, Delete
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#9085AE' }}>
             <Icons.chevron size={11} /> Klik nama menu buat expand/collapse
@@ -1071,72 +1039,72 @@ function RbacPanel({ menus, onToggle, onAdd, onRename, onDelete, onGoToAnggota }
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => r.type === 'menu' ? (
-              <tr key={r.path} onClick={() => toggleCollapse(r.menuId)}
-                style={{ borderTop: '1px solid #E0D9F5', height: 44, cursor: 'pointer', background: '#FAF8FF' }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#F3EEFF'}
-                onMouseLeave={(e) => e.currentTarget.style.background = '#FAF8FF'}
-              >
-                <td colSpan={colCount} style={{ ...psTdStyle, paddingLeft: 24, fontWeight: 700, color: '#1A1228' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Icons.chevron size={13} style={{
-                      color: '#574872', flexShrink: 0,
-                      transform: r.isCollapsed ? 'rotate(-90deg)' : 'none', transition: 'transform 130ms ease',
-                    }} />
-                    {r.label}
-                    {r.hasChildren && (
-                      <span style={{ fontSize: 10, color: '#9085AE', fontWeight: 500, fontFamily: 'JetBrains Mono, monospace' }}>
-                        ({menus.find(m => m.id === r.menuId).children.length} sub-menu)
-                      </span>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              <tr key={r.path} style={{ borderTop: '1px solid #F0EBFF', height: 52 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <td style={{
-                  ...psTdStyle, paddingLeft: 24 + r.indent * 20, color: '#1A1228', fontWeight: 500,
-                  position: 'sticky', left: 0, zIndex: 1, background: '#FFFFFF',
-                  boxShadow: '2px 0 4px -2px rgba(26,18,40,0.12)',
-                }}>
-                  {renamingPath === r.path ? (
-                    <input autoFocus defaultValue={r.label}
-                      onBlur={(e) => { onRename(r.menuId, r.childId, r.capKey, e.target.value); setRenamingPath(null); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter') { onRename(r.menuId, r.childId, r.capKey, e.target.value); setRenamingPath(null); } if (e.key === 'Escape') setRenamingPath(null); }}
-                      style={{ background: '#F0EBFF', border: '1px solid #C5B8EF', borderRadius: 8, height: 30, padding: '0 8px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: '85%' }} />
-                  ) : (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            {rows.map((r) => {
+              if (r.type === 'menu') {
+                return (
+                  <tr key={r.path} onClick={() => toggleCollapse(r.menuId)}
+                    style={{ borderTop: '1px solid #E0D9F5', height: 44, cursor: 'pointer', background: '#FAF8FF' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#F3EEFF'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#FAF8FF'}
+                  >
+                    <td colSpan={colCount} style={{ ...psTdStyle, paddingLeft: 24, fontWeight: 700, color: '#1A1228' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Icons.chevron size={13} style={{
+                          color: '#574872', flexShrink: 0,
+                          transform: r.isCollapsed ? 'rotate(-90deg)' : 'none', transition: 'transform 130ms ease',
+                        }} />
+                        {r.label}
+                        {r.hasChildren && (
+                          <span style={{ fontSize: 10, color: '#9085AE', fontWeight: 500, fontFamily: 'JetBrains Mono, monospace' }}>
+                            ({menus.find(m => m.id === r.menuId).children.length} sub-menu)
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+              if (r.type === 'child') {
+                return (
+                  <tr key={r.path} style={{ borderTop: '1px solid #F0EBFF', height: 38, background: '#FCFBFF' }}>
+                    <td colSpan={colCount - 1} style={{ ...psTdStyle, paddingLeft: 24 + 20, fontWeight: 600, color: '#574872', fontSize: 12 }}>
                       {r.label}
-                      {r.cap.custom && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 6, background: '#FFF1ED', color: '#FF6B4A', letterSpacing: '0.03em', textTransform: 'uppercase', flexShrink: 0 }}>
-                          Aksi Khusus
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </td>
-                {roles.map(role => (
-                  <PermCell key={role.id} allowed={!!r.cap[role.id]} onClick={() => onToggle(r.menuId, r.childId, r.capKey, role.id)} locked={role.id === 'sa'} />
-                ))}
-                <td style={{
-                  ...psTdStyle, textAlign: 'center',
-                  position: 'sticky', right: 0, zIndex: 1, background: '#FFFFFF',
-                  boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
-                }}>
-                  <div style={{ display: 'inline-flex', gap: 2 }}>
-                    <button onClick={() => setRenamingPath(r.path)} title="Ubah nama" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#9085AE', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icons.cog size={12} />
-                    </button>
-                    <button onClick={() => onDelete(r.menuId, r.childId, r.capKey, r.label)} title="Hapus" style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icons.x size={12} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    </td>
+                    <td style={{
+                      ...psTdStyle, textAlign: 'center',
+                      position: 'sticky', right: 0, zIndex: 1, background: '#FCFBFF',
+                      boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
+                    }}>
+                      <button onClick={() => onDeleteChild(r.menuId, r.childId, r.label)} title="Hapus sub-menu ini (beserta 4 permission-nya)"
+                        style={{ width: 22, height: 22, border: 0, borderRadius: 6, background: 'transparent', color: '#C0001A', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icons.x size={12} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              }
+              return (
+                <tr key={r.path} style={{ borderTop: '1px solid #F0EBFF', height: 46 }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#FAF8FF'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={{
+                    ...psTdStyle, paddingLeft: 24 + r.indent * 20, color: '#574872', fontWeight: 500, fontSize: 12,
+                    position: 'sticky', left: 0, zIndex: 1, background: '#FFFFFF',
+                    boxShadow: '2px 0 4px -2px rgba(26,18,40,0.12)',
+                  }}>
+                    {r.label}
+                  </td>
+                  {roles.map(role => (
+                    <PermCell key={role.id} allowed={!!r.cap[role.id]} onClick={() => onToggle(r.menuId, r.childId, r.capKey, role.id)} locked={role.id === 'sa'} />
+                  ))}
+                  <td style={{
+                    position: 'sticky', right: 0, zIndex: 1, background: '#FFFFFF',
+                    boxShadow: '-2px 0 4px -2px rgba(26,18,40,0.12)',
+                  }}></td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
