@@ -1,73 +1,102 @@
 // komplain.jsx — Komplain & Tiket screen
 const { useState: useKpState, useMemo: useKpMemo, useEffect: useKpEffect, useRef: useKpRef } = React;
 
+// Field names & shape ini disamain persis sama response API GET Detail Komplain:
+// { ticket: { id, user, initials, avatar, hp, category, categoryCode, categoryDetail,
+//             channelCode, channelDetail, origin, descriptionShort, description,
+//             date, status, priority, txTerkait }, thread: [{ who, time, msg }] }
+// Internally digabung jadi 1 objek (ticket + thread sebagai field), match cara
+// TicketDrawer/LiveChat udah kerja dari awal.
+// NOTE: 'userStats' (Total Transaksi/Belanja/Saldo) DIHAPUS karena gak ada di response
+// ini — kalau backend nantinya nyediain endpoint terpisah buat itu, tinggal ditambah lagi.
+const CATEGORY_META = {
+  transaksi_gagal:       { label: 'Transaksi Gagal',       bg: '#FCE7E9', fg: '#C0001A' },
+  saldo_tidak_masuk:     { label: 'Saldo Tidak Masuk',     bg: '#FFFBEB', fg: '#D97706' },
+  produk_tidak_terkirim: { label: 'Produk Tidak Terkirim', bg: '#EDE8FF', fg: '#4A2D8C' },
+  lainnya:               { label: 'Lainnya',               bg: '#F0EBFF', fg: '#574872' },
+  umum:                  { label: 'Umum',                  bg: '#F0EBFF', fg: '#574872' },
+};
+
 const TICKETS = [
   {
-    id: 'TKT-001', user: 'Budi Raharjo',  inisial: 'BR', av: ['#4A2D8C','#B23A8E'],
-    hp: '081234xxxx', kategori: 'Transaksi Gagal', channel: 'whatsapp',
-    deskripsiShort: 'Token PLN tidak diterima setelah pembayaran berhasil…',
-    deskripsi: 'Token PLN 50.000 tidak diterima setelah pembayaran berhasil. Saldo sudah terpotong Rp 50.800 tapi token belum masuk ke meteran.',
-    tgl: '19 Mei · 14:32', status: 'baru', prioritas: 'tinggi',
+    id: 'CMP-A1F42B8C0091', user: 'Budi Raharjo', initials: 'BR', avatar: ['#4A2D8C','#B23A8E'],
+    hp: '081234xxxx', category: 'transaksi_gagal', categoryCode: 'PLN-TOKEN-50', categoryDetail: 'Token PLN 50.000',
+    channelCode: 'whatsapp', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Token PLN tidak diterima setelah pembayaran berhasil…',
+    description: 'Token PLN 50.000 tidak diterima setelah pembayaran berhasil. Saldo sudah terpotong Rp 50.800 tapi token belum masuk ke meteran.',
+    date: '19 Mei · 14:32', status: 'baru', priority: 'tinggi',
     txTerkait: 'TXN-9912832',
-    userStats: { txn: 48, belanja: 2_340_000, saldo: 125_000 },
     thread: [
-      { who: 'user', t: '14:32', msg: 'Token listrik saya belum masuk padahal sudah bayar tadi jam 14:30' },
-      { who: 'cs',   t: '14:38', who_name: 'CS Andre', msg: 'Halo Kak Budi, kami sedang cek ke sistem. Mohon tunggu sebentar ya.' },
-      { who: 'user', t: '15:08', msg: 'Sudah 30 menit nih, tolong segera diproses' },
+      { who: 'user', time: '14:32', msg: 'Token listrik saya belum masuk padahal sudah bayar tadi jam 14:30' },
+      { who: 'cs',   time: '14:38', msg: 'Halo Kak Budi, kami sedang cek ke sistem. Mohon tunggu sebentar ya.' },
+      { who: 'user', time: '15:08', msg: 'Sudah 30 menit nih, tolong segera diproses' },
     ],
   },
   {
-    id: 'TKT-002', user: 'Siti Rahayu', inisial: 'SR', av: ['#C0001A','#F5793B'],
-    hp: '087654xxxx', kategori: 'Saldo Tidak Masuk', channel: 'email',
-    deskripsiShort: 'Top-up via BCA sudah 2 jam belum masuk ke saldo aplikasi…',
-    deskripsi: 'Top-up via BCA VA sebesar Rp 200.000 sudah 2 jam belum masuk ke saldo aplikasi. Bukti transfer sudah terlampir.',
-    tgl: '19 Mei · 13:15', status: 'diproses', prioritas: 'sedang',
+    id: 'CMP-B27C915DA342', user: 'Siti Rahayu', initials: 'SR', avatar: ['#C0001A','#F5793B'],
+    hp: '087654xxxx', category: 'saldo_tidak_masuk', categoryCode: null, categoryDetail: null,
+    channelCode: 'email', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Top-up via BCA sudah 2 jam belum masuk ke saldo aplikasi…',
+    description: 'Top-up via BCA VA sebesar Rp 200.000 sudah 2 jam belum masuk ke saldo aplikasi. Bukti transfer sudah terlampir.',
+    date: '19 Mei · 13:15', status: 'diproses', priority: 'sedang',
     txTerkait: 'TOP-887124',
-    userStats: { txn: 86, belanja: 4_200_000, saldo: 0 },
     thread: [
-      { who: 'user', t: '13:15', msg: 'Saya sudah top-up Rp 200.000 via BCA VA tapi belum masuk.' },
-      { who: 'cs',   t: '13:42', who_name: 'CS Andre', msg: 'Mohon kirim bukti transfer kak, sedang dicek ke Midtrans.' },
+      { who: 'user', time: '13:15', msg: 'Saya sudah top-up Rp 200.000 via BCA VA tapi belum masuk.' },
+      { who: 'cs',   time: '13:42', msg: 'Mohon kirim bukti transfer kak, sedang dicek ke Midtrans.' },
     ],
   },
   {
-    id: 'TKT-003', user: 'Ahmad Fauzi', inisial: 'AF', av: ['#16A34A','#5B7C12'],
-    hp: '082345xxxx', kategori: 'Produk Tidak Terkirim', channel: 'whatsapp',
-    deskripsiShort: 'Pulsa Telkomsel 50rb sudah terpotong tapi tidak masuk ke nomor…',
-    deskripsi: 'Pulsa Telkomsel 50rb sudah terpotong dari saldo tapi tidak masuk ke nomor tujuan 0812xxxxxxxx.',
-    tgl: '19 Mei · 12:44', status: 'diproses', prioritas: 'tinggi',
+    id: 'CMP-C39D826EB753', user: 'Ahmad Fauzi', initials: 'AF', avatar: ['#16A34A','#5B7C12'],
+    hp: '082345xxxx', category: 'produk_tidak_terkirim', categoryCode: 'PLS-TSEL-50-APP', categoryDetail: 'Pulsa Telkomsel 50.000',
+    channelCode: 'whatsapp', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Pulsa Telkomsel 50rb sudah terpotong tapi tidak masuk ke nomor…',
+    description: 'Pulsa Telkomsel 50rb sudah terpotong dari saldo tapi tidak masuk ke nomor tujuan 0812xxxxxxxx.',
+    date: '19 Mei · 12:44', status: 'diproses', priority: 'tinggi',
     txTerkait: 'TXN-9912780',
-    userStats: { txn: 22, belanja: 1_180_000, saldo: 45_000 },
     thread: [],
   },
   {
-    id: 'TKT-004', user: 'Dewi Lestari', inisial: 'DL', av: ['#D4900A','#D97706'],
-    hp: '089123xxxx', kategori: 'Transaksi Gagal', channel: 'telegram',
-    deskripsiShort: 'BPJS gagal tapi saldo berkurang Rp 100.000…',
-    deskripsi: 'Pembayaran BPJS Kesehatan gagal tetapi saldo tetap berkurang Rp 100.500.',
-    tgl: '19 Mei · 11:20', status: 'selesai', prioritas: 'sedang',
+    id: 'CMP-D4AE137FC864', user: 'Dewi Lestari', initials: 'DL', avatar: ['#D4900A','#D97706'],
+    hp: '089123xxxx', category: 'transaksi_gagal', categoryCode: null, categoryDetail: null,
+    channelCode: 'telegram', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'BPJS gagal tapi saldo berkurang Rp 100.000…',
+    description: 'Pembayaran BPJS Kesehatan gagal tetapi saldo tetap berkurang Rp 100.500.',
+    date: '19 Mei · 11:20', status: 'selesai', priority: 'sedang',
     txTerkait: 'TXN-9912661',
-    userStats: { txn: 134, belanja: 7_840_000, saldo: 300_000 },
     thread: [],
   },
   {
-    id: 'TKT-005', user: 'Rudi Hartono', inisial: 'RH', av: ['#9085AE','#574872'],
-    hp: '085678xxxx', kategori: 'Lainnya', channel: 'form-web',
-    deskripsiShort: 'Ingin ganti nomor HP terdaftar di akun…',
-    deskripsi: 'Mohon dibantu mengganti nomor HP terdaftar di akun karena nomor lama sudah tidak aktif.',
-    tgl: '18 Mei · 16:05', status: 'selesai', prioritas: 'rendah',
+    id: 'CMP-E5BF248AD975', user: 'Rudi Hartono', initials: 'RH', avatar: ['#9085AE','#574872'],
+    hp: '085678xxxx', category: 'lainnya', categoryCode: null, categoryDetail: null,
+    channelCode: 'form-web', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Ingin ganti nomor HP terdaftar di akun…',
+    description: 'Mohon dibantu mengganti nomor HP terdaftar di akun karena nomor lama sudah tidak aktif.',
+    date: '18 Mei · 16:05', status: 'selesai', priority: 'rendah',
     txTerkait: null,
-    userStats: { txn: 9, belanja: 320_000, saldo: 25_000 },
     thread: [],
   },
   {
-    id: 'TKT-006', user: 'Wati Susanti', inisial: 'WS', av: ['#7B5BC0','#4A2D8C'],
-    hp: '083456xxxx', kategori: 'Transaksi Gagal', channel: 'manual',
-    deskripsiShort: 'Game voucher ML tidak masuk ke akun Mobile Legends…',
-    deskripsi: 'Voucher Mobile Legends 172 diamond tidak masuk ke akun ID 12345678.',
-    tgl: '18 Mei · 09:30', status: 'ditutup', prioritas: 'rendah',
+    id: 'CMP-F60D359BE086', user: 'Wati Susanti', initials: 'WS', avatar: ['#7B5BC0','#4A2D8C'],
+    hp: '083456xxxx', category: 'transaksi_gagal', categoryCode: 'GAM-MLBB-172D-APP', categoryDetail: 'Mobile Legends 172 Diamond',
+    channelCode: 'manual', channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Game voucher ML tidak masuk ke akun Mobile Legends…',
+    description: 'Voucher Mobile Legends 172 diamond tidak masuk ke akun ID 12345678.',
+    date: '18 Mei · 09:30', status: 'ditutup', priority: 'rendah',
     txTerkait: 'TXN-9912447',
-    userStats: { txn: 17, belanja: 780_000, saldo: 12_000 },
     thread: [],
+  },
+  // Contoh literal dari response API buat kasus anonymous/live chat (gak ada akun,
+  // gak ada hp, channelCode/channelDetail null — origin-nya tetep kebaca lewat live chat widget)
+  {
+    id: 'CMP-B09E5DBE25CB', user: 'Anonymous', initials: 'AN', avatar: ['#D97706','#2563EB'],
+    hp: '', category: 'umum', categoryCode: null, categoryDetail: null,
+    channelCode: null, channelDetail: null, origin: 'registered_user',
+    descriptionShort: 'Live chat', description: 'Live chat',
+    date: '13 Jul · 13:41', status: 'baru', priority: 'sedang',
+    txTerkait: '',
+    thread: [
+      { who: 'user', time: '13:41', msg: 'teads' },
+    ],
   },
 ];
 
@@ -84,15 +113,15 @@ function Komplain() {
 
   const filtered = useKpMemo(() => TICKETS.filter(t => {
     if (statusF !== 'semua' && t.status !== statusF) return false;
-    if (katF !== 'semua' && t.kategori !== katF) return false;
-    if (prioF !== 'semua' && t.prioritas !== prioF) return false;
+    if (katF !== 'semua' && t.category !== katF) return false;
+    if (prioF !== 'semua' && t.priority !== prioF) return false;
     if (tgl) {
       const tglShort = formatTglID(tgl).split(' ').slice(0, 2).join(' ');
-      if (!t.tgl.startsWith(tglShort)) return false;
+      if (!t.date.startsWith(tglShort)) return false;
     }
     if (query) {
       const q = query.toLowerCase();
-      if (!`${t.id} ${t.user} ${t.hp} ${t.deskripsi}`.toLowerCase().includes(q)) return false;
+      if (!`${t.id} ${t.user} ${t.hp} ${t.description}`.toLowerCase().includes(q)) return false;
     }
     return true;
   }), [statusF, katF, prioF, query, tgl]);
@@ -144,7 +173,7 @@ function Komplain() {
         <KpSelect prefix="Status:" value={statusF} onChange={setStatusF}
           options={[['semua','Semua'],['baru','Baru'],['diproses','Diproses'],['selesai','Selesai'],['ditutup','Ditutup']]} />
         <KpSelect prefix="Kategori:" value={katF} onChange={setKatF}
-          options={[['semua','Semua'],['Transaksi Gagal','Transaksi Gagal'],['Saldo Tidak Masuk','Saldo Tidak Masuk'],['Produk Tidak Terkirim','Produk Tidak Terkirim'],['Lainnya','Lainnya']]} />
+          options={[['semua','Semua'], ...Object.entries(CATEGORY_META).map(([code, meta]) => [code, meta.label])]} />
         <KpSelect prefix="Prioritas:" value={prioF} onChange={setPrioF}
           options={[['semua','Semua'],['tinggi','Tinggi'],['sedang','Sedang'],['rendah','Rendah']]} />
         <DatePickerButton value={tgl} onChange={setTgl} />
@@ -194,21 +223,21 @@ function Komplain() {
                   </td>
                   <td style={kpTdStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <MiniAvatar inisial={t.inisial} colors={t.av} />
+                      <MiniAvatar inisial={t.initials} colors={t.avatar} />
                       <span style={{ fontWeight: 600, color: '#1A1228' }}>{t.user}</span>
                     </div>
                   </td>
-                  <td style={{ ...kpTdStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#574872' }}>{t.hp}</td>
-                  <td style={kpTdStyle}><KategoriChip kategori={t.kategori} /></td>
-                  <td style={kpTdStyle}><ChannelBadge channel={t.channel} /></td>
+                  <td style={{ ...kpTdStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#574872' }}>{t.hp || '—'}</td>
+                  <td style={kpTdStyle}><KategoriChip category={t.category} categoryDetail={t.categoryDetail} /></td>
+                  <td style={kpTdStyle}><ChannelBadge channelCode={t.channelCode} channelDetail={t.channelDetail} /></td>
                   <td style={{ ...kpTdStyle, color: '#574872', maxWidth: 240 }}>
                     <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {t.deskripsiShort}
+                      {t.descriptionShort}
                     </span>
                   </td>
-                  <td style={{ ...kpTdStyle, fontSize: 12, color: '#574872', fontFamily: 'JetBrains Mono, monospace' }}>{t.tgl}</td>
+                  <td style={{ ...kpTdStyle, fontSize: 12, color: '#574872', fontFamily: 'JetBrains Mono, monospace' }}>{t.date}</td>
                   <td style={kpTdStyle}><StatusPill status={t.status} /></td>
-                  <td style={kpTdStyle}><PrioritasPill prio={t.prioritas} /></td>
+                  <td style={kpTdStyle}><PrioritasPill prio={t.priority} /></td>
                   <td style={{ ...kpTdStyle, paddingRight: 24, textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => setSelected(t)} style={kpGhostBtn(t.status === 'selesai' || t.status === 'ditutup' ? '#574872' : '#4A2D8C')}>
                       {t.status === 'selesai' || t.status === 'ditutup' ? 'Lihat' : 'Buka'}
@@ -343,34 +372,41 @@ function PrioFlame({ fg, prio }) {
   return <span style={{ width: 6, height: 6, borderRadius: '50%', background: fg }} />;
 }
 
-function ChannelBadge({ channel }) {
+function ChannelBadge({ channelCode, channelDetail }) {
+  if (!channelCode) {
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: '#4A2D8C18', color: '#4A2D8C' }}>
+        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4A2D8C', flexShrink: 0 }} />
+        Live Chat
+      </span>
+    );
+  }
   const channels = window.MuurahChannelStore ? window.MuurahChannelStore.get() : [];
-  const ch = channels.find(c => c.id === channel);
-  const label = ch ? ch.nama : (channel || '—');
+  const ch = channels.find(c => c.id === channelCode);
+  const label = ch ? ch.nama : channelCode;
   const color = ch ? ch.warna : '#9085AE';
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: color + '18', color }}>
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, flexShrink: 0 }} />
-      {label}
+      {label}{channelDetail ? ' · ' + channelDetail : ''}
     </span>
   );
 }
 
-function KategoriChip({ kategori }) {
-  const map = {
-    'Transaksi Gagal':         { bg: '#FCE7E9', fg: '#C0001A' },
-    'Saldo Tidak Masuk':       { bg: '#FFFBEB', fg: '#D97706' },
-    'Produk Tidak Terkirim':   { bg: '#EDE8FF', fg: '#4A2D8C' },
-    'Lainnya':                 { bg: '#F0EBFF', fg: '#574872' },
-  };
-  const t = map[kategori] || map['Lainnya'];
+function KategoriChip({ category, categoryDetail }) {
+  const t = CATEGORY_META[category] || CATEGORY_META['lainnya'];
   return (
-    <span style={{
-      background: t.bg, color: t.fg,
-      fontSize: 11, fontWeight: 600,
-      padding: '4px 9px', borderRadius: 8,
-      whiteSpace: 'nowrap',
-    }}>{kategori}</span>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span style={{
+        background: t.bg, color: t.fg,
+        fontSize: 11, fontWeight: 600,
+        padding: '4px 9px', borderRadius: 8,
+        whiteSpace: 'nowrap',
+      }}>{t.label}</span>
+      {categoryDetail && (
+        <span style={{ fontSize: 11, color: '#9085AE' }}>{categoryDetail}</span>
+      )}
+    </span>
   );
 }
 
@@ -391,12 +427,12 @@ function MiniAvatar({ inisial, colors, size = 30 }) {
 // ─── Drawer ──────────────────────────────────────────────────────────────────
 function TicketDrawer({ ticket, onClose }) {
   const [statusEdit, setStatusEdit] = useKpState(ticket.status);
-  const [prioritasEdit, setPrioritasEdit] = useKpState(ticket.prioritas);
+  const [priorityEdit, setPriorityEdit] = useKpState(ticket.priority);
   const [note, setNote] = useKpState('');
   const [, bump] = useKpState(0);
   if (!ticket.logAktivitas) ticket.logAktivitas = [];
 
-  const hasChange = statusEdit !== ticket.status || prioritasEdit !== ticket.prioritas;
+  const hasChange = statusEdit !== ticket.status || priorityEdit !== ticket.priority;
 
   useKpEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -440,7 +476,7 @@ function TicketDrawer({ ticket, onClose }) {
           }}>{ticket.id}</div>
           <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
             <StatusPill status={ticket.status} large />
-            <PrioritasPill prio={ticket.prioritas} large />
+            <PrioritasPill prio={ticket.priority} large />
           </div>
         </div>
 
@@ -448,32 +484,23 @@ function TicketDrawer({ ticket, onClose }) {
           {/* Info User */}
           <DrSection label="Info User">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <MiniAvatar inisial={ticket.inisial} colors={ticket.av} size={44} />
+              <MiniAvatar inisial={ticket.initials} colors={ticket.avatar} size={44} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1228', letterSpacing: '-0.01em' }}>{ticket.user}</div>
-                <div style={{ fontSize: 12, color: '#574872', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{ticket.hp}</div>
+                <div style={{ fontSize: 12, color: '#574872', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{ticket.hp || 'Tidak ada nomor terdaftar'}</div>
               </div>
-              <button onClick={() => window.muurahOpenUserProfile(ticket.hp)} style={kpGhostBtn('#4A2D8C')}>Lihat profil</button>
-            </div>
-            <div style={{
-              marginTop: 12, padding: 12,
-              background: '#F0EBFF', borderRadius: 10,
-              display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4,
-            }}>
-              <UserStat label="Total Transaksi" value={ticket.userStats.txn} mono />
-              <Divider />
-              <UserStat label="Total Belanja" value={`Rp ${(ticket.userStats.belanja/1_000_000).toFixed(2).replace('.',',')} jt`} mono />
-              <Divider />
-              <UserStat label="Saldo" value={`Rp ${ticket.userStats.saldo.toLocaleString('id-ID')}`} mono highlight={ticket.userStats.saldo === 0} />
+              {ticket.hp && (
+                <button onClick={() => window.muurahOpenUserProfile(ticket.hp)} style={kpGhostBtn('#4A2D8C')}>Lihat profil</button>
+              )}
             </div>
           </DrSection>
 
           {/* Detail Masalah */}
           <DrSection label="Detail Masalah">
-            <KV k="Kategori" v={<KategoriChip kategori={ticket.kategori} />} />
+            <KV k="Kategori" v={<KategoriChip category={ticket.category} categoryDetail={ticket.categoryDetail} />} />
             <div style={{ padding: '10px 0', borderBottom: '1px dashed #F0EBFF' }}>
               <div style={{ fontSize: 12, color: '#9085AE', fontWeight: 500, marginBottom: 6 }}>Deskripsi</div>
-              <div style={{ fontSize: 13, color: '#1A1228', lineHeight: 1.6 }}>{ticket.deskripsi}</div>
+              <div style={{ fontSize: 13, color: '#1A1228', lineHeight: 1.6 }}>{ticket.description}</div>
             </div>
             {ticket.txTerkait && (
               <KV k="Transaksi Terkait" v={
@@ -487,8 +514,8 @@ function TicketDrawer({ ticket, onClose }) {
                 </a>
               } />
             )}
-            <KV k="Channel" v={<ChannelBadge channel={ticket.channel} />} />
-            <KV k="Dibuka" v={ticket.tgl} mono />
+            <KV k="Channel" v={<ChannelBadge channelCode={ticket.channelCode} channelDetail={ticket.channelDetail} />} />
+            <KV k="Dibuka" v={ticket.date} mono />
             <KV k="SLA Respon" v={
               <span style={{ color: ticket.status === 'baru' ? '#D97706' : '#16A34A', fontWeight: 700 }}>
                 {ticket.status === 'baru' ? 'Tersisa 22 menit' : 'Terpenuhi'}
@@ -531,10 +558,10 @@ function TicketDrawer({ ticket, onClose }) {
                 </div>
                 <div style={{ display: 'flex', gap: 6, padding: 3, background: '#F0EBFF', borderRadius: 10 }}>
                   {[['rendah','Rendah'],['sedang','Sedang'],['tinggi','Tinggi']].map(([id, label]) => {
-                    const active = prioritasEdit === id;
+                    const active = priorityEdit === id;
                     const tone = id === 'tinggi' ? '#C0001A' : id === 'sedang' ? '#D97706' : '#16A34A';
                     return (
-                      <button key={id} onClick={() => setPrioritasEdit(id)} style={{
+                      <button key={id} onClick={() => setPriorityEdit(id)} style={{
                         flex: 1, border: 0, padding: '7px 8px', borderRadius: 8, cursor: 'pointer',
                         background: active ? '#FFFFFF' : 'transparent',
                         boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
@@ -551,10 +578,10 @@ function TicketDrawer({ ticket, onClose }) {
                 <button onClick={() => {
                   if (!hasChange) return;
                   const oldStatus = STATUS_LABEL[ticket.status], newStatus = STATUS_LABEL[statusEdit];
-                  const oldPrio = PRIO_LABEL[ticket.prioritas], newPrio = PRIO_LABEL[prioritasEdit];
+                  const oldPrio = PRIO_LABEL[ticket.priority], newPrio = PRIO_LABEL[priorityEdit];
                   const changes = [];
                   if (statusEdit !== ticket.status) changes.push('Status: ' + oldStatus + ' → ' + newStatus);
-                  if (prioritasEdit !== ticket.prioritas) changes.push('Prioritas: ' + oldPrio + ' → ' + newPrio);
+                  if (priorityEdit !== ticket.priority) changes.push('Prioritas: ' + oldPrio + ' → ' + newPrio);
                   window.muurahConfirm({
                     title: 'Terapkan perubahan pada ' + ticket.id + '?',
                     body: changes.join(' · ') + (statusEdit === 'selesai' || statusEdit === 'ditutup' ? '. User akan menerima notifikasi bahwa tiketnya sudah ditangani.' : '.'),
@@ -562,7 +589,7 @@ function TicketDrawer({ ticket, onClose }) {
                     onConfirm: () => {
                       ticket.logAktivitas.unshift({ tipe: 'sistem', oleh: 'CS Admin', waktu: nowStr(), isi: changes.join(' · ') });
                       ticket.status = statusEdit;
-                      ticket.prioritas = prioritasEdit;
+                      ticket.priority = priorityEdit;
                       bump(x => x + 1);
                       window.muurahToast('Perubahan pada ' + ticket.id + ' berhasil disimpan', 'success');
                     },
@@ -676,26 +703,6 @@ function KV({ k, v, mono }) {
   );
 }
 
-function UserStat({ label, value, mono, highlight }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '0 4px' }}>
-      <span style={{
-        fontFamily: mono ? 'JetBrains Mono, monospace' : 'inherit',
-        fontWeight: 700, fontSize: 14, color: highlight ? '#C0001A' : '#1A1228',
-        letterSpacing: '-0.01em', whiteSpace: 'nowrap',
-      }}>{value}</span>
-      <span style={{
-        fontSize: 9.5, fontWeight: 600, color: '#574872',
-        letterSpacing: '0.04em', textTransform: 'uppercase', textAlign: 'center',
-      }}>{label}</span>
-    </div>
-  );
-}
-
-function Divider() {
-  return <span style={{ width: 1, alignSelf: 'stretch', background: '#C5B8EF', margin: '4px 0' }} />;
-}
-
 function ChatBubble({ msg, ticket }) {
   // Kept for backwards-compat (used by static fallback). Live chat uses LiveBubble.
   const isUser = msg.who === 'user';
@@ -708,12 +715,12 @@ function ChatBubble({ msg, ticket }) {
     }}>
       <div style={{
         width: 28, height: 28, borderRadius: '50%',
-        background: isUser ? `linear-gradient(135deg, ${ticket.av[0]} 0%, ${ticket.av[1]} 100%)`
+        background: isUser ? `linear-gradient(135deg, ${ticket.avatar[0]} 0%, ${ticket.avatar[1]} 100%)`
                             : '#4A2D8C',
         color: '#FFFFFF',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontWeight: 700, fontSize: 10, flexShrink: 0,
-      }}>{isUser ? ticket.inisial : 'CS'}</div>
+      }}>{isUser ? ticket.initials : 'CS'}</div>
       <div style={{ maxWidth: '78%' }}>
         <div style={{
           padding: '10px 14px',
@@ -730,7 +737,7 @@ function ChatBubble({ msg, ticket }) {
           marginTop: 4, textAlign: isUser ? 'right' : 'left',
           fontFamily: 'JetBrains Mono, monospace',
         }}>
-          {isUser ? ticket.user.split(' ')[0] : (msg.who_name || 'CS')} · {msg.t}
+          {isUser ? ticket.user.split(' ')[0] : (msg.who_name || 'CS')} · {msg.time}
         </div>
       </div>
     </div>
@@ -818,10 +825,11 @@ const kpTdStyle = { padding: '12px 14px', verticalAlign: 'middle' };
 // ─── Modal: Tambah Tiket Manual ───────────────────────────────────────────────
 function AddTicketModal({ onClose, onCreated }) {
   const [form, setForm] = useKpState({
-    user: '', hp: '', kategori: 'Transaksi Gagal', prioritas: 'sedang',
-    channel: 'wa', txTerkait: '', deskripsi: '',
+    user: '', hp: '', category: 'transaksi_gagal', priority: 'sedang',
+    channelCode: 'whatsapp', txTerkait: '', description: '',
   });
   const u = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const channels = window.MuurahChannelStore ? window.MuurahChannelStore.get() : [];
 
   useKpEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -829,7 +837,7 @@ function AddTicketModal({ onClose, onCreated }) {
     return () => window.removeEventListener('keydown', h);
   }, [onClose]);
 
-  const isValid = form.user.trim() && form.hp.trim() && form.deskripsi.trim();
+  const isValid = form.user.trim() && form.hp.trim() && form.description.trim();
 
   function handleSave() {
     if (!isValid) {
@@ -837,18 +845,20 @@ function AddTicketModal({ onClose, onCreated }) {
       return;
     }
     const initials = form.user.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const randomHex = () => Array.from({ length: 12 }, () => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
+    const chLabel = (channels.find(c => c.id === form.channelCode) || {}).nama || form.channelCode;
     const newTicket = {
-      id: 'TKT-' + Math.floor(100 + Math.random() * 900),
-      user: form.user, inisial: initials || 'CS', av: ['#4A2D8C', '#7B5BC0'],
-      hp: form.hp, kategori: form.kategori,
-      deskripsiShort: form.deskripsi.slice(0, 80),
-      deskripsi: form.deskripsi,
-      tgl: 'Hari ini · ' + nowStr(), status: 'baru', prioritas: form.prioritas,
+      id: 'CMP-' + randomHex(),
+      user: form.user, initials: initials || 'CS', avatar: ['#4A2D8C', '#7B5BC0'],
+      hp: form.hp, category: form.category, categoryCode: null, categoryDetail: null,
+      channelCode: form.channelCode, channelDetail: null, origin: 'registered_user',
+      descriptionShort: form.description.slice(0, 80),
+      description: form.description,
+      date: 'Hari ini · ' + nowStr(), status: 'baru', priority: form.priority,
       txTerkait: form.txTerkait || null,
-      userStats: { txn: 0, belanja: 0, saldo: 0 },
       thread: [
-        { who: 'cs', t: nowStr(), who_name: 'CS Admin',
-          msg: 'Tiket dibuat manual via ' + CHANNEL_LABEL[form.channel] + '. ' + form.deskripsi },
+        { who: 'cs', time: nowStr(), who_name: 'CS Admin',
+          msg: 'Tiket dibuat manual via ' + chLabel + '. ' + form.description },
       ],
     };
     TICKETS.unshift(newTicket);
@@ -905,24 +915,25 @@ function AddTicketModal({ onClose, onCreated }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <KpField label="Kategori">
-              <KpSelect value={form.kategori} onChange={(v) => u('kategori', v)}
+              <KpSelect value={form.category} onChange={(v) => u('category', v)}
                 options={[
-                  ['Transaksi Gagal', 'Transaksi Gagal'],
-                  ['Saldo Tidak Masuk', 'Saldo Tidak Masuk'],
-                  ['Produk Tidak Terkirim', 'Produk Tidak Terkirim'],
-                  ['Lainnya', 'Lainnya'],
+                  ['transaksi_gagal', 'Transaksi Gagal'],
+                  ['saldo_tidak_masuk', 'Saldo Tidak Masuk'],
+                  ['produk_tidak_terkirim', 'Produk Tidak Terkirim'],
+                  ['umum', 'Umum'],
+                  ['lainnya', 'Lainnya'],
                 ]} />
             </KpField>
             <KpField label="Prioritas">
-              <KpSelect value={form.prioritas} onChange={(v) => u('prioritas', v)}
+              <KpSelect value={form.priority} onChange={(v) => u('priority', v)}
                 options={[['tinggi','Tinggi'],['sedang','Sedang'],['rendah','Rendah']]} />
             </KpField>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <KpField label="Channel Masuk">
-              <KpSelect value={form.channel} onChange={(v) => u('channel', v)}
-                options={[['wa','WhatsApp'],['telepon','Telepon'],['walkin','Walk-in / Tatap Muka'],['email','Email']]} />
+              <KpSelect value={form.channelCode} onChange={(v) => u('channelCode', v)}
+                options={channels.map(c => [c.id, c.nama])} />
             </KpField>
             <KpField label="ID Transaksi Terkait (opsional)">
               <input value={form.txTerkait} onChange={(e) => u('txTerkait', e.target.value)}
@@ -932,7 +943,7 @@ function AddTicketModal({ onClose, onCreated }) {
           </div>
 
           <KpField label="Deskripsi Keluhan">
-            <textarea value={form.deskripsi} onChange={(e) => u('deskripsi', e.target.value)}
+            <textarea value={form.description} onChange={(e) => u('description', e.target.value)}
               placeholder="Tuliskan detail keluhan yang disampaikan user…"
               rows={4}
               style={kpInputStyle({ width: '100%', height: 'auto', padding: '10px 12px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit' })} />
@@ -952,8 +963,6 @@ function AddTicketModal({ onClose, onCreated }) {
     </div>
   );
 }
-
-const CHANNEL_LABEL = { wa: 'WhatsApp', telepon: 'Telepon', walkin: 'Walk-in', email: 'Email' };
 
 function KpField({ label, children }) {
   return (
@@ -975,7 +984,7 @@ function LiveChat({ ticket }) {
   // Seed messages from the ticket thread, but give each one a stable id + status.
   const [messages, setMessages] = useKpState(() => ticket.thread.map((m, i) => ({
     id: `seed-${ticket.id}-${i}`, who: m.who, who_name: m.who_name,
-    t: m.t, msg: m.msg, status: m.who === 'user' ? 'read' : null,
+    time: m.time, msg: m.msg, status: m.who === 'user' ? 'read' : null,
   })));
   const [input, setInput] = useKpState('');
   const [csTyping, setCsTyping] = useKpState(false);
@@ -1034,7 +1043,7 @@ function LiveChat({ ticket }) {
     const trimmed = text.trim();
     if (!trimmed) return;
     const id = 'u-' + Date.now();
-    const userMsg = { id, who: 'user', t: nowStr(), msg: trimmed, status: 'sending' };
+    const userMsg = { id, who: 'user', time: nowStr(), msg: trimmed, status: 'sending' };
     setMessages(ms => [...ms, userMsg]);
     setInput('');
 
@@ -1053,8 +1062,8 @@ function LiveChat({ ticket }) {
           `${m.who === 'user' ? ticket.user : 'CS'}: ${m.msg || m}`
         ).join('\n');
         const prompt = `Kamu adalah Dimas Pratama, agen Customer Service di muurah.com (platform PPOB Indonesia).
-Tiket #${ticket.id} · Kategori: ${ticket.kategori}
-Keluhan awal user: ${ticket.deskripsi}
+Tiket #${ticket.id} · Kategori: ${(CATEGORY_META[ticket.category] || CATEGORY_META.lainnya).label}
+Keluhan awal user: ${ticket.description}
 
 Riwayat singkat:
 ${ctx}
@@ -1077,7 +1086,7 @@ Balas singkat dalam Bahasa Indonesia (1–2 kalimat, maks 30 kata), empati, prof
       setCsTyping(false);
       const csMsg = {
         id: 'cs-' + Date.now(), who: 'cs', who_name: 'Dimas Pratama',
-        t: nowStr(), msg: reply, status: null,
+        time: nowStr(), msg: reply, status: null,
       };
       setMessages(ms => [...ms, csMsg]);
       playPing();
@@ -1096,7 +1105,7 @@ Balas singkat dalam Bahasa Indonesia (1–2 kalimat, maks 30 kata), empati, prof
   const grouped = [];
   let cur = null;
   messages.forEach((m) => {
-    const period = periodLabel(m.t);
+    const period = periodLabel(m.time);
     if (!cur || cur.period !== period) {
       cur = { period, msgs: [m] };
       grouped.push(cur);
@@ -1249,11 +1258,11 @@ function LiveBubble({ msg, ticket }) {
     }}>
       <div style={{
         width: 26, height: 26, borderRadius: '50%',
-        background: isUser ? `linear-gradient(135deg, ${ticket.av[0]} 0%, ${ticket.av[1]} 100%)` : '#4A2D8C',
+        background: isUser ? `linear-gradient(135deg, ${ticket.avatar[0]} 0%, ${ticket.avatar[1]} 100%)` : '#4A2D8C',
         color: '#FFFFFF',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontWeight: 700, fontSize: 10, flexShrink: 0,
-      }}>{isUser ? ticket.inisial : 'DP'}</div>
+      }}>{isUser ? ticket.initials : 'DP'}</div>
       <div style={{ maxWidth: '78%' }}>
         <div style={{
           padding: '9px 13px',
@@ -1273,7 +1282,7 @@ function LiveBubble({ msg, ticket }) {
           alignItems: 'center', gap: 5,
           fontFamily: 'JetBrains Mono, monospace',
         }}>
-          <span>{isUser ? ticket.user.split(' ')[0] : (msg.who_name || 'Dimas Pratama')} (CS)·{msg.t}</span>
+          <span>{isUser ? ticket.user.split(' ')[0] : (msg.who_name || 'Dimas Pratama')} (CS)·{msg.time}</span>
           {isUser && <ReadReceipt status={msg.status} />}
         </div>
       </div>
