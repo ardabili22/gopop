@@ -137,6 +137,11 @@ function RoleTim() {
     { id: 'laporan', label: 'Laporan Keuangan', caps: stdCaps({
       read: { ao: true, fn: true }, // dulu 'Export Laporan'
     }) },
+    { id: 'reseller', label: 'Reseller', caps: stdCaps() },
+    { id: 'komplain', label: 'Komplain & Tiket', caps: stdCaps() },
+    { id: 'rekonsiliasi', label: 'Rekonsiliasi', caps: stdCaps() },
+    { id: 'settlement', label: 'Settlement', caps: stdCaps() },
+    { id: 'audit-log', label: 'Audit Log', caps: stdCaps() },
     { id: 'konten', label: 'Konten Homepage', children: [
       { id: 'banner-web',  label: 'Banner Web',        caps: stdCaps() },
       { id: 'banner-app',  label: 'Banner Mobile App', caps: stdCaps() },
@@ -188,28 +193,6 @@ function RoleTim() {
       }
       return { ...m, caps: m.caps.map(cap => cap.key !== capKey ? cap : { ...cap, [role]: !cap[role] }) };
     }));
-  }
-  // Nambah SUB-MENU baru (bukan permission individual) — otomatis dapet 4 baris
-  // standar Read/Create/Edit/Delete, default Super Admin only.
-  function addChild(menuId, label) {
-    if (!menuId) {
-      window.muurahToast('Pilih menu tujuan dulu', 'error');
-      return;
-    }
-    if (!label.trim()) {
-      window.muurahToast('Nama sub-menu wajib diisi', 'error');
-      return;
-    }
-    const childId = menuId + '-' + label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
-    const newChild = { id: childId, label: label.trim(), caps: stdCaps() };
-    let dupe = false;
-    setMenus(ms => ms.map(m => {
-      if (m.id !== menuId) return m;
-      if ((m.children || []).some(c => c.label.toLowerCase() === label.trim().toLowerCase())) { dupe = true; return m; }
-      return { ...m, children: [...(m.children || []), newChild] };
-    }));
-    if (dupe) { window.muurahToast('Sub-menu "' + label + '" sudah ada di menu ini', 'error'); return; }
-    window.muurahToast('Sub-menu "' + label.trim() + '" ditambahkan — 4 permission standar aktif untuk Super Admin', 'success');
   }
   function deleteChild(menuId, childId, label) {
     window.muurahConfirm({
@@ -278,7 +261,7 @@ function RoleTim() {
           onGoToTim={(roleId) => setTab('tim')} />
       )}
       {tab === 'akses' && (
-        <RbacPanel menus={menus} onToggle={toggleCap} onAddChild={addChild} onDeleteChild={deleteChild} onGoToAnggota={() => setTab('tim')} />
+        <RbacPanel menus={menus} onToggle={toggleCap} onDeleteChild={deleteChild} onGoToAnggota={() => setTab('tim')} />
       )}
       {tab === 'tim' && (
         <TabAnggotaTim roles={roles} admins={admins}
@@ -943,7 +926,7 @@ function flattenRbacRows(menus, collapsed) {
   return rows;
 }
 
-function RbacPanel({ menus, onToggle, onAddChild, onDeleteChild, onGoToAnggota }) {
+function RbacPanel({ menus, onToggle, onDeleteChild, onGoToAnggota }) {
   const { useState: usePsLocal, useEffect: usePsLocalEffect } = React;
   const [roles, setRoles] = usePsLocal(() => window.MuurahRolesStore ? window.MuurahRolesStore.get() : [
     { id: 'sa', label: 'Super Admin', tone: 'purple', members: 2 },
@@ -952,8 +935,6 @@ function RbacPanel({ menus, onToggle, onAddChild, onDeleteChild, onGoToAnggota }
     { id: 'cs', label: 'CS',          tone: 'gold',   members: 8 },
   ]);
   const [collapsed, setCollapsed] = usePsLocal(() => new Set());
-  const [newParent, setNewParent] = usePsLocal('');
-  const [newChildName, setNewChildName] = usePsLocal('');
 
   usePsLocalEffect(() => {
     if (!window.MuurahRolesStore) return;
@@ -970,40 +951,11 @@ function RbacPanel({ menus, onToggle, onAddChild, onDeleteChild, onGoToAnggota }
 
   const rows = flattenRbacRows(menus, collapsed);
   const colCount = roles.length + 2;
-  const expandableMenus = menus.filter(m => m.children);
-
-  function submitAddChild() {
-    onAddChild(newParent, newChildName);
-    setNewChildName('');
-  }
 
   return (
     <PanelCard title="Matrix Hak Akses (RBAC)" subtitle="Centang untuk memberikan permission ke role — kolom role otomatis sync dari menu Role & Tim" padded={false}>
-      {/* Toolbar: tambah sub-menu baru (otomatis dapet 4 baris standar) + legend */}
-      <div style={{ padding: '16px 24px', borderBottom: '1px solid #E0D9F5', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <select value={newParent} onChange={(e) => setNewParent(e.target.value)} style={{
-              background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34,
-              padding: '0 10px', fontSize: 12, color: newParent ? '#1A1228' : '#9085AE', outline: 'none',
-              fontFamily: 'inherit', width: 220, cursor: 'pointer', appearance: 'none',
-            }}>
-              <option value="">Pilih menu tujuan...</option>
-              {expandableMenus.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-            </select>
-            <input value={newChildName} onChange={(e) => setNewChildName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') submitAddChild(); }}
-              placeholder="Nama sub-menu baru… (cth. Master Kurir)"
-              style={{ background: '#F0EBFF', border: '1px solid transparent', borderRadius: 8, height: 34, padding: '0 10px', fontSize: 13, color: '#1A1228', outline: 'none', fontFamily: 'inherit', width: 260 }} />
-            <button onClick={submitAddChild}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFFFF', color: '#4A2D8C', border: '1px solid #C5B8EF', height: 34, padding: '0 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer' }}>
-              <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Tambah Sub-Menu
-            </button>
-          </div>
-          <button onClick={onGoToAnggota} style={ghostBtn('#4A2D8C')}>
-            Lihat Anggota Tim <Icons.arrowR size={13} />
-          </button>
-        </div>
+      {/* Legend */}
+      <div style={{ padding: '16px 24px', borderBottom: '1px solid #E0D9F5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontSize: 12, color: '#574872', flexWrap: 'wrap' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={permChip(true)}>✓</span> Diizinkan
@@ -1012,12 +964,12 @@ function RbacPanel({ menus, onToggle, onAddChild, onDeleteChild, onGoToAnggota }
             <span style={permChip(false)}>—</span> Tidak diizinkan
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#9085AE' }}>
-            Setiap menu/sub-menu otomatis punya 4 baris: Read, Create, Edit, Delete
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#9085AE' }}>
             <Icons.chevron size={11} /> Klik nama menu buat expand/collapse
           </span>
         </div>
+        <button onClick={onGoToAnggota} style={ghostBtn('#4A2D8C')}>
+          Lihat Anggota Tim <Icons.arrowR size={13} />
+        </button>
       </div>
 
       {/* Kolom Permission (kiri) & Aksi (kanan) sticky — cuma kolom role yang scroll saat role banyak */}
