@@ -523,10 +523,11 @@ function TicketDrawer({ ticket, onClose }) {
             } />
           </DrSection>
 
-          {/* Riwayat Percakapan — live chat */}
-          <DrSection label="Riwayat Percakapan">
-            <LiveChat ticket={ticket} />
-          </DrSection>
+          {/* Riwayat Percakapan (live chat) DIMATIKAN dulu — biaya subscription chat online
+              belum dianggarkan di fase awal ini. Komponen LiveChat/ChatBubble/LiveBubble
+              masih ada di file ini (gak dipanggil), tinggal aktifin lagi <LiveChat ticket={ticket} />
+              di sini kalau providernya udah settle. Data ticket.thread tetep disimpan
+              di data model (sesuai response API), cuma gak ditampilin buat sekarang. */}
 
           {/* Aksi CS */}
           <DrSection label="Aksi CS">
